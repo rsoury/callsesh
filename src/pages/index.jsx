@@ -5,7 +5,7 @@ const Index = () => {
 
 	return (
 		<div>
-			<p className={css({ fontSize: "32px" })}>Hello by hook</p>
+			<p className={css({ fontSize: "32px" })}>Styled by hook</p>
 		</div>
 	);
 };

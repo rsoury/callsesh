@@ -1,7 +1,7 @@
 import NextDocument, { Head, Main, NextScript } from "next/document";
 import { Provider as StyletronProvider } from "styletron-react";
-import { engine } from "@/config/styletron";
-import * as constants from "@/constants";
+import { engine } from "@config/styletron";
+import constants from "@config/constants";
 
 class Document extends NextDocument {
 	static getInitialProps(context) {

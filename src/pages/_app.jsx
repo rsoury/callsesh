@@ -4,8 +4,8 @@ import { LightTheme, BaseProvider } from "baseui";
 import { Provider as StyletronProvider } from "styletron-react";
 import { ToasterContainer, PLACEMENT } from "baseui/toast";
 import { DefaultSeo } from "next-seo";
-import { engine, debug } from "@/config/styletron";
-import seoConfig from "@/config/seo";
+import { engine, debug } from "@config/styletron";
+import seoConfig from "@config/seo";
 
 const theme = {
 	...LightTheme,

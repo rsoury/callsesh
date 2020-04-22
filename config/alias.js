@@ -1,11 +1,12 @@
 /**
- * Alias config file. Uses ES5 as it is used across the setup files and application
+ * Alias config file
  */
 
 const path = require("path");
 
 const mapToFolders = {
-	"@": "",
+	"@": "src",
+	"@config": "config",
 	"@tests": "tests"
 };
 
