@@ -1,4 +1,4 @@
-const { alias } = require("./config/alias");
+const alias = require("./config/alias");
 
 module.exports = {
 	extends: [
@@ -6,10 +6,11 @@ module.exports = {
 		"plugin:prettier/recommended",
 		"prettier/react",
 		"plugin:import/errors",
-		"plugin:import/warnings"
+		"plugin:import/warnings",
+		"plugin:jest/recommended"
 	],
 	parser: "babel-eslint",
-	plugins: ["babel", "react", "baseui"],
+	plugins: ["babel", "react", "baseui", "jest"],
 	env: {
 		browser: true,
 		jest: true

@@ -1,11 +1,11 @@
-import Document, { Head, Main, NextScript } from "next/document";
+import NextDocument, { Head, Main, NextScript } from "next/document";
 import { Provider as StyletronProvider } from "styletron-react";
 import { styletron } from "../styletron";
 import * as constants from "../constants";
 
-class MyDocument extends Document {
-	static getInitialProps(intialProps) {
-		const page = intialProps.renderPage((App) => (props) => (
+class Document extends NextDocument {
+	static getInitialProps(context) {
+		const page = context.renderPage((App) => (props) => (
 			<StyletronProvider value={styletron}>
 				<App {...props} />
 			</StyletronProvider>
@@ -15,10 +15,12 @@ class MyDocument extends Document {
 	}
 
 	render() {
+		const { stylesheets } = this.props;
+
 		return (
 			<html lang="en">
 				<Head>
-					{this.props.stylesheets.map((sheet, i) => {
+					{stylesheets.map((sheet, i) => {
 						console.log(sheet.attrs);
 
 						return (
@@ -41,4 +43,4 @@ class MyDocument extends Document {
 	}
 }
 
-export default MyDocument;
+export default Document;

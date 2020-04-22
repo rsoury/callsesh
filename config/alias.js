@@ -2,12 +2,7 @@
 
 const path = require("path");
 
-module.exports.alias = {
-	"@": path.resolve(__dirname, "./pages"),
-	"@tests": path.resolve(__dirname, "./tests")
-};
-
-module.exports.jestModuleNameMapper = {
-	"^@(tests/)(.*)$": "<rootDir>/tests/$2",
-	"^@(/)(.*)$": "<rootDir>/pages/$2"
+module.exports = {
+	"@": path.resolve(__dirname, "../"),
+	"@tests": path.resolve(__dirname, "../tests")
 };

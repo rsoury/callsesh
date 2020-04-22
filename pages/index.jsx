@@ -15,8 +15,8 @@ const SubTitle = styled("h2", ({ $size }) => ({
 }));
 
 export default () => {
-	// an alternative hook based API
 	const [css] = useStyletron();
+
 	return (
 		<div>
 			<Title>Title</Title>

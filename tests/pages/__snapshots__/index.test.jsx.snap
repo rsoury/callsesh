@@ -1,0 +1,21 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`With Snapshot Testing App shows "Hello, Sunshine!" 1`] = `
+<div>
+  <h1
+    className=""
+  >
+    Title
+  </h1>
+  <h2
+    className=""
+  >
+    Subtitle
+  </h2>
+  <p
+    className=""
+  >
+    Styled by hook
+  </p>
+</div>
+`;
