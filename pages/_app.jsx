@@ -2,7 +2,7 @@ import React from "react";
 import NextApp from "next/app";
 import { LightTheme, BaseProvider } from "baseui";
 import { Provider as StyletronProvider } from "styletron-react";
-import { styletron, debug } from "../styletron";
+import { engine, debug } from "@/config/styletron";
 
 const theme = {
 	...LightTheme,
@@ -24,7 +24,7 @@ class App extends NextApp {
 		const { Component, pageProps } = this.props;
 
 		return (
-			<StyletronProvider value={styletron} debug={debug} debugAfterHydration>
+			<StyletronProvider value={engine} debug={debug} debugAfterHydration>
 				<BaseProvider theme={theme}>
 					<Component {...pageProps} />
 				</BaseProvider>

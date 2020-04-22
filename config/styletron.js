@@ -1,11 +1,11 @@
 import { Client, Server } from "styletron-engine-atomic";
 import { DebugEngine } from "styletron-react";
-import * as constants from "./constants";
+import * as constants from "@/constants";
 
 const getHydrateClass = () =>
 	document.getElementsByClassName(constants.HYDRATE_CLASS);
 
-export const styletron =
+export const engine =
 	typeof window === "undefined"
 		? new Server()
 		: new Client({

@@ -1,16 +1,16 @@
 import NextDocument, { Head, Main, NextScript } from "next/document";
 import { Provider as StyletronProvider } from "styletron-react";
-import { styletron } from "../styletron";
-import * as constants from "../constants";
+import { engine } from "@/config/styletron";
+import * as constants from "@/constants";
 
 class Document extends NextDocument {
 	static getInitialProps(context) {
 		const page = context.renderPage((App) => (props) => (
-			<StyletronProvider value={styletron}>
+			<StyletronProvider value={engine}>
 				<App {...props} />
 			</StyletronProvider>
 		));
-		const stylesheets = styletron.getStylesheets() || [];
+		const stylesheets = engine.getStylesheets() || [];
 		return { ...page, stylesheets };
 	}
 

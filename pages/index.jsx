@@ -14,7 +14,7 @@ const SubTitle = styled("h2", ({ $size }) => ({
 	fontSize: `${$size}px`
 }));
 
-export default () => {
+const Index = () => {
 	const [css] = useStyletron();
 
 	return (
@@ -25,3 +25,5 @@ export default () => {
 		</div>
 	);
 };
+
+export default Index;

@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`With Snapshot Testing App shows "Hello, Sunshine!" 1`] = `
+exports[`With Snapshot Testing App shows matches snapshot 1`] = `
 <div>
   <h1
     className=""
