@@ -68,12 +68,10 @@
 	},
 	"lint-staged": {
 		"./**/*.+(js|jsx)": [
-			"yarn lint --fix",
-			"git add"
+			"yarn lint --fix"
 		],
 		"./**/*.{js,jsx,ts,tsx,json,css,scss,md}": [
-			"yarn format",
-			"git add"
+			"yarn format"
 		]
 	}
 }
