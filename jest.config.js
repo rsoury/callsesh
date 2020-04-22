@@ -4,13 +4,12 @@
  * https://medium.com/@kjaer/setting-up-jest-and-enzyme-for-typescript-next-js-apps-ce383167643
  */
 
+const { jestAlias } = require("./config/alias");
+
 module.exports = {
 	setupFiles: ["<rootDir>/tests/setup.js"],
 	testPathIgnorePatterns: ["<rootDir>/.next/", "<rootDir>/node_modules/"],
-	moduleNameMapper: {
-		"^@(/)(.*)$": "<rootDir>/$2",
-		"^@(tests/)(.*)$": "<rootDir>/tests/$2"
-	},
+	moduleNameMapper: jestAlias,
 	transform: {
 		"^.+\\.[t|j]sx?$": "babel-jest"
 	},

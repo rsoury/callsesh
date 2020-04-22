@@ -1,8 +1,37 @@
-// Deciding whether or not to use this moduleAlias. I want to test with Jest so this might be a bitch to deal with.
-
 const path = require("path");
 
-module.exports = {
-	"@": path.resolve(__dirname, "../"),
-	"@tests": path.resolve(__dirname, "../tests")
+const mapToFolders = {
+	"@": "",
+	"@tests": "tests"
 };
+
+/**
+ * eg.
+ * {
+ *  '@': '/Users/ryansoury/dev/wagecall',
+ *  '@tests': '/Users/ryansoury/dev/wagecall/tests'
+ * }
+ */
+module.exports.alias = Object.entries(mapToFolders).reduce(
+	(result, [map, target]) => {
+		result[map] = path.resolve(__dirname, "../", target);
+		return result;
+	},
+	{}
+);
+
+/**
+ * eg.
+ * {
+ * 	"^@(/)(.*)$": "<rootDir>/$2",
+ *  "^@(tests/)(.*)$": "<rootDir>/tests/$2"
+ * }
+ */
+module.exports.jestAlias = Object.entries(mapToFolders).reduce(
+	(result, [map, target]) => {
+		const s = map.substring(1);
+		result[`^@(${s}/)(.*)$`] = `<rootDir>/${target}${target ? "/" : ""}$2`;
+		return result;
+	},
+	{}
+);

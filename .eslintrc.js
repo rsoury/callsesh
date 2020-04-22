@@ -1,4 +1,4 @@
-const alias = require("./config/alias");
+const { alias } = require("./config/alias");
 
 module.exports = {
 	extends: [
@@ -34,6 +34,7 @@ module.exports = {
 		"no-console": ["warn"],
 		"no-unused-vars": ["error", { ignoreRestSiblings: true }],
 		"class-methods-use-this": 0,
+		"no-param-reassign": 0,
 		"react/jsx-props-no-spreading": 0,
 		"react/forbid-prop-types": [
 			"error",
