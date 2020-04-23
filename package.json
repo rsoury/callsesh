@@ -20,6 +20,7 @@
 		"format": "prettier --write \"./**/*.{js,jsx,mjs,ts,tsx,json,css,scss,md}\""
 	},
 	"dependencies": {
+		"@sentry/browser": "^5.15.5",
 		"baseui": "^9.71.0",
 		"country-list": "^2.2.0",
 		"formik": "^2.1.4",
@@ -33,12 +34,14 @@
 		"react-dom": "^16.8.0",
 		"styletron-engine-atomic": "^1.1.2",
 		"styletron-react": "^5.0.1",
+		"twilio": "^3.42.2",
 		"yup": "^0.28.4"
 	},
 	"devDependencies": {
 		"babel-eslint": "^10.1.0",
 		"babel-jest": "^25.4.0",
 		"babel-plugin-module-resolver": "^4.0.0",
+		"dotenv-webpack": "^1.7.0",
 		"enzyme": "^3.11.0",
 		"enzyme-adapter-react-16": "^1.15.2",
 		"eslint": "^6.8.0",

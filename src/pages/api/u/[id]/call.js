@@ -5,11 +5,21 @@
  * 3. Initiate
  */
 
-export default (req, res) => {
+// import * as comms from "@/comms";
+import error from "@/middleware/error";
+import combine from "@/middleware/combine";
+
+const middleware = combine(error);
+
+export default middleware(async (req, res) => {
 	const {
 		query: { id }
 	} = req;
 	// Get user using id.
 
+	// const { caller } await comms
+	// 	.createSession
+	// 	();
+
 	res.json({ user: id });
-};
+});

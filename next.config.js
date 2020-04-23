@@ -1,8 +1,12 @@
+const Dotenv = require("dotenv-webpack");
+
 module.exports = {
 	webpack: function webpack(config) {
-		const c = config;
-		c.externals = c.externals || {};
-		c.externals["styletron-server"] = "styletron-server";
-		return c;
+		config.externals = config.externals || {};
+		config.externals["styletron-server"] = "styletron-server";
+
+		config.plugins.push(new Dotenv({ silent: true }));
+
+		return config;
 	}
 };
