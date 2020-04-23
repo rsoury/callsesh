@@ -20,8 +20,6 @@
 		"format": "prettier --write \"./**/*.{js,jsx,mjs,ts,tsx,json,css,scss,md}\""
 	},
 	"dependencies": {
-		"axios": "^0.19.2",
-		"axios-retry": "^3.1.6",
 		"baseui": "^9.71.0",
 		"country-list": "^2.2.0",
 		"formik": "^2.1.4",
