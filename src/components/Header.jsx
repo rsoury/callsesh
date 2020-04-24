@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import isEmpty from "is-empty";
-import { useStyletron, withStyle } from "baseui";
+import PropTypes from "prop-types";
+import { useStyletron } from "baseui";
 import {
 	Button,
 	KIND as BUTTON_KIND,
@@ -19,43 +19,16 @@ import {
 	CreditCard as PaymentMethodsIcon,
 	Bell as NotificationsIcon
 } from "react-feather";
-import { StyledSpinnerNext } from "baseui/spinner";
 import routes from "@/routes";
-import useUser from "@/hooks/useUser";
-
-const Spinner = withStyle(StyledSpinnerNext, {
-	width: "16px",
-	height: "16px"
-});
 
 const logoUrl = "/logo/wagecall-logo@300.png";
 
-const Header = () => {
+const Header = ({ isAuthenticated }) => {
 	const [css, theme] = useStyletron();
 	const [mobileMenu, showMobileMenu] = useState(false);
-	const [user, { loading: userLoading }] = useUser();
 
 	let menuItems = [];
-	if (userLoading) {
-		menuItems = Object.entries({
-			loading: (props) => <Spinner {...props} />
-		});
-	} else if (isEmpty(user)) {
-		menuItems = Object.entries({
-			login: (props) => (
-				<Link href={routes.login}>
-					<Button kind={BUTTON_KIND.tertiary} {...props}>
-						Log in
-					</Button>
-				</Link>
-			),
-			register: (props) => (
-				<Link href={routes.register}>
-					<Button {...props}>Sign up</Button>
-				</Link>
-			)
-		});
-	} else {
+	if (isAuthenticated) {
 		menuItems = Object.entries({
 			paymentMethods: (props) => (
 				<Link href={routes.settings.paymentMethods}>
@@ -80,6 +53,21 @@ const Header = () => {
 				</Link>
 			)
 		});
+	} else {
+		menuItems = Object.entries({
+			login: (props) => (
+				<Link href={routes.login}>
+					<Button kind={BUTTON_KIND.tertiary} {...props}>
+						Log in
+					</Button>
+				</Link>
+			),
+			register: (props) => (
+				<Link href={routes.register}>
+					<Button {...props}>Sign up</Button>
+				</Link>
+			)
+		});
 	}
 
 	return (
@@ -97,17 +85,12 @@ const Header = () => {
 			>
 				<NavigationList $align={ALIGN.left}>
 					<NavigationItem className={css({ margin: "0 0 0 -10px" })}>
-						<Link
-							href={routes.index}
-							className={css({ textDecoration: "none" })}
-						>
-							<img
-								src={logoUrl}
-								alt="Wagecall logo"
-								title="Wagecall"
-								className={css({ width: "100%", maxWidth: "200px" })}
-							/>
-						</Link>
+						<img
+							src={logoUrl}
+							alt="Wagecall logo"
+							title="Wagecall"
+							className={css({ width: "100%", maxWidth: "200px" })}
+						/>
 					</NavigationItem>
 				</NavigationList>
 				<NavigationList
@@ -182,6 +165,14 @@ const Header = () => {
 			</Drawer>
 		</>
 	);
+};
+
+Header.propTypes = {
+	isAuthenticated: PropTypes.bool
+};
+
+Header.defaultProps = {
+	isAuthenticated: false
 };
 
 export default Header;
