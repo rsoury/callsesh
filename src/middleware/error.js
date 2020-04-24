@@ -2,8 +2,8 @@
  * Middleware to handle error
  */
 
-import handleException from "@/utils/handle-exception";
-import { isProd } from "@/env-config";
+import handleException from "@/utils/handleException";
+import { isProd } from "@/envConfig";
 
 export default (handler) => async (req, res) => {
 	try {
