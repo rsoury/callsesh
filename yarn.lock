@@ -1954,9 +1954,9 @@ aws4@^1.8.0:
   integrity sha512-wMHVg2EOHaMRxbzgFJ9gtjOOCrI80OHLG14rxi28XwOW8ux6IiEbRCGGGqCtdAIg4FQCbW20k9RsT4y3gJlFug==
 
 axios-retry@^3.1.7:
-  version "3.1.7"
-  resolved "https://registry.yarnpkg.com/axios-retry/-/axios-retry-3.1.7.tgz#600e234f88d38dd86e2e46d620ccace4ab03d3de"
-  integrity sha512-iF8yLLiS96MKaG4qSXhoDEpkZaA4XVs7FErWgIdYpy2RrVl+Hwc3JJ0lsFtPnL7ZAlE02Ocx56j/woxCh6iKHw==
+  version "3.1.8"
+  resolved "https://registry.yarnpkg.com/axios-retry/-/axios-retry-3.1.8.tgz#ffcfed757e1fab8cbf832f8505bb0e0af47c520c"
+  integrity sha512-yPw5Y4Bg6Dgmhm35KaJFtlh23s1TecW0HsUerK4/IS1UKl0gtN2aJqdEKtVomiOS/bDo5w4P3sqgki/M10eF8Q==
   dependencies:
     is-retry-allowed "^1.1.0"
 
@@ -2116,9 +2116,9 @@ base@^0.11.1:
     pascalcase "^0.1.1"
 
 baseui@^9.71.0:
-  version "9.71.0"
-  resolved "https://registry.yarnpkg.com/baseui/-/baseui-9.71.0.tgz#b9a8963d7c7522f9dd01e026e591310d36526b55"
-  integrity sha512-pLFRPBP1rXZT8QMiG50exZKUApubjYKPrRyE0RihscHs22/PtBhzrFAck76uflztqOG9k1FPP0ySJhfzEpcz6Q==
+  version "9.72.0"
+  resolved "https://registry.yarnpkg.com/baseui/-/baseui-9.72.0.tgz#862654e9dfe81ee7faa897f1e32fd486171bd04e"
+  integrity sha512-dhUOXJZU/jGoFLHCgrGEf1HvH5BYpGnEXNWPmdlmT/fzb0TFJMftkkOVkE/57sNKukMQ8jWXvwjn398Im0WXDA==
   dependencies:
     "@date-io/date-fns" "^2.4.0"
     card-validator "^6.2.0"
@@ -3745,9 +3745,9 @@ eslint-plugin-babel@^5.3.0:
     eslint-rule-composer "^0.3.0"
 
 eslint-plugin-baseui@^9.71.0:
-  version "9.71.0"
-  resolved "https://registry.yarnpkg.com/eslint-plugin-baseui/-/eslint-plugin-baseui-9.71.0.tgz#2b5fa429417b381d369b7e62ecaa3e49b7691d28"
-  integrity sha512-Fssbkviat1ylKtERvpPpEwXYKFWG5eNDqEixC0E9IArqsVtfMHzoc7BZaxsVcxeXlbRxTuxyoyct9jvawY23qg==
+  version "9.72.0"
+  resolved "https://registry.yarnpkg.com/eslint-plugin-baseui/-/eslint-plugin-baseui-9.72.0.tgz#929d07af4b79a471b13d915de3ac8237e11ee725"
+  integrity sha512-BCQdHZXJVNrD69x14CDcdH78Fjn5KT91dJJWkpg7gyjvYxr//v/XNZ1Juim6QY+UYzT/AZja19kgS92VybxDmQ==
 
 eslint-plugin-import@^2.20.2:
   version "2.20.2"
@@ -7721,6 +7721,13 @@ react-fast-compare@^2.0.1:
   version "2.0.4"
   resolved "https://registry.yarnpkg.com/react-fast-compare/-/react-fast-compare-2.0.4.tgz#e84b4d455b0fec113e0402c329352715196f81f9"
   integrity sha512-suNP+J1VU1MWFKcyt7RtjiSWUjvidmQSlqu+eHslq+342xCbGTYmC0mEhPCOHxlW0CywylOC1u2DFAT+bv4dBw==
+
+react-feather@^2.0.4:
+  version "2.0.4"
+  resolved "https://registry.yarnpkg.com/react-feather/-/react-feather-2.0.4.tgz#42f974ade8d2a7ce113aa8ede37f7ca3752f3b1d"
+  integrity sha512-XX+it8flg7ht3bjc5vvGC1RwqIf0YBdEzgGeTm6hNWkT613uTr/F4aah2cgY1n83/8W6qml5J9t+lAUQAUBlJQ==
+  dependencies:
+    prop-types "^15.7.2"
 
 react-focus-lock@^2.2.1:
   version "2.3.1"

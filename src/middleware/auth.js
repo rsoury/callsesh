@@ -22,7 +22,19 @@ const auth = nextConnect()
 		})
 	)
 	.use(passport.initialize())
-	.use(passport.session());
+	.use(passport.session())
+	.use((req, res, next) => {
+		// Add a unauthorised response handler.
+		res.unauthorised = () => {
+			return res.status(401).json({
+				success: false,
+				code: 401,
+				message: "Unauthorised"
+			});
+		};
+
+		next();
+	});
 // .use(passport.authenticate("remember-me"));
 
 export default auth;

@@ -11,11 +11,7 @@ const handler = getHandler();
 
 handler.use(auth).post(passport.authenticate("custom"), async (req, res) => {
 	if (isEmpty(req.user)) {
-		return res.status(401).json({
-			success: false,
-			code: 401,
-			message: "Unauthorised"
-		});
+		return res.unauthorised();
 	}
 
 	return res.json({

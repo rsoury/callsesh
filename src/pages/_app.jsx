@@ -1,6 +1,6 @@
 import React from "react";
 import NextApp from "next/app";
-import { LightTheme, BaseProvider } from "baseui";
+import { LightTheme, BaseProvider, styled } from "baseui";
 import { Provider as StyletronProvider } from "styletron-react";
 import { ToasterContainer, PLACEMENT } from "baseui/toast";
 import { DefaultSeo } from "next-seo";
@@ -22,6 +22,11 @@ const theme = {
 	}
 };
 
+const Container = styled("div", {
+	maxWidth: "1024px",
+	width: "100%"
+});
+
 class App extends NextApp {
 	render() {
 		const { Component, pageProps } = this.props;
@@ -41,9 +46,9 @@ class App extends NextApp {
 							}
 						}}
 					>
-						<div id="wagecall-app">
+						<Container id="wagecall-app">
 							<Component {...pageProps} />
-						</div>
+						</Container>
 					</ToasterContainer>
 				</BaseProvider>
 			</StyletronProvider>
