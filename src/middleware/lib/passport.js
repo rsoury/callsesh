@@ -5,9 +5,11 @@
 
 import passport from "passport";
 import CustomStrategy from "passport-custom";
+import RememberMeStrategy from "passport-remember-me";
 import isEmpty from "is-empty";
-import { findUser, findOrCreateUserBy } from "@/db";
+import * as db from "@/db";
 import { verificationCheck } from "@/comms";
+import randomString from "@/utils/randomString";
 
 passport.serializeUser((user, done) => {
 	console.log(user);
@@ -18,12 +20,12 @@ passport.serializeUser((user, done) => {
 passport.deserializeUser((id, done) => {
 	console.log(id);
 	// deserialize the user id back into user object
-	findUser(id)
+	db.findUser(id)
 		.then((user) => {
 			done(null, user);
 		})
 		.catch((e) => {
-			done(e, false);
+			done(e);
 		});
 });
 
@@ -34,7 +36,7 @@ passport.use(
 		verificationCheck(phoneNumber, code)
 			.then((success) => {
 				if (success) {
-					return findOrCreateUserBy("Phone Number", phoneNumber, {
+					return db.findOrCreateUserBy("Phone Number", phoneNumber, {
 						firstName: req.body.firstName,
 						lastName: req.body.firstName,
 						phoneNumber
@@ -51,9 +53,38 @@ passport.use(
 				return done(null, user);
 			})
 			.catch((e) => {
-				done(e, false);
+				done(e);
 			});
 	})
+);
+
+// Remember Me strategy to ensure authentications persist
+passport.use(
+	new RememberMeStrategy(
+		(token, done) => {
+			db.consumeAuthMemoryToken(token)
+				.then((user) => {
+					if (isEmpty(user)) {
+						return done(null, false);
+					}
+
+					return done(null, user);
+				})
+				.catch((e) => {
+					done(e);
+				});
+		},
+		(user, done) => {
+			const token = randomString(64);
+			db.saveAuthMemoryToken(user.id, token)
+				.then((updatedUser) => {
+					done(null, updatedUser);
+				})
+				.catch((e) => {
+					done(e);
+				});
+		}
+	)
 );
 
 export default passport;

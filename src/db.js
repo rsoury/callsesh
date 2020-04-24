@@ -19,6 +19,11 @@ const db = axios.create({
 
 axiosRetry(db, { retries: 3 });
 
+const formatParams = (params) =>
+	mapKeys(params, (value, key) => {
+		return startCase(key);
+	});
+
 /**
  * Retrieve user by record id.
  */
@@ -43,19 +48,43 @@ export const findUserBy = async (property, value) => {
 		return records[0];
 	}
 
-	return null;
+	return {};
 };
 
 /**
  * Create user with params.
- * Params are maped and keys are startCased to match casing of keys in Airtable
+ * Params are mapped and keys are startCased to match casing of keys in Airtable
  */
 export const createUser = async (params) => {
-	const p = mapKeys(params, (value, key) => {
-		return startCase(key);
-	});
+	const fields = formatParams(params);
 
-	return db.post(`Users`, p).then(({ data: { records } }) => records);
+	return db
+		.post(`Users`, {
+			records: [
+				{
+					fields
+				}
+			]
+		})
+		.then(({ data: { records } }) => (records.length ? records[0] : {}));
+};
+
+/**
+ * Update user with params
+ */
+export const updateUser = async (id, params) => {
+	const fields = formatParams(params);
+
+	return db
+		.patch(`Users`, {
+			records: [
+				{
+					id,
+					fields
+				}
+			]
+		})
+		.then(({ data: { records } }) => (records.length ? records[0] : {}));
 };
 
 /**
@@ -82,6 +111,28 @@ export const findOrCreateUserBy = async (property, value, params) => {
 	}
 
 	return result;
+};
+
+/**
+ * Authentication Memory Tokens are used to remember the user's last login.
+ * These tokens should eventually be stored in Redis or some in-memory store.
+ */
+const authMemoryTokenKey = "Auth Memory Token";
+
+/**
+ * Delete the current authentication memory token for a user
+ */
+export const consumeAuthMemoryToken = async (token) => {
+	const user = await findUserBy(authMemoryTokenKey, token);
+	return updateUser(user.id, { ...user.fields, [authMemoryTokenKey]: "" });
+};
+
+/**
+ * Save the auth memory token against the user
+ */
+export const saveAuthMemoryToken = async (id, token) => {
+	const user = await findUser(id);
+	return updateUser(user.id, { ...user.fields, [authMemoryTokenKey]: token });
 };
 
 export default db;

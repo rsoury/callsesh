@@ -23,5 +23,6 @@ const auth = nextConnect()
 	)
 	.use(passport.initialize())
 	.use(passport.session());
+// .use(passport.authenticate("remember-me"));
 
 export default auth;

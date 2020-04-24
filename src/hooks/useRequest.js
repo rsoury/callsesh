@@ -17,6 +17,7 @@ export default function useRequest(request, { initialData, ...config } = {}) {
 	);
 
 	return {
+		status: response && response.status,
 		data: response && response.data,
 		response,
 		error,
