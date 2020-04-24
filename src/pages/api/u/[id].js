@@ -3,12 +3,11 @@
  * If user doesn't exist, 404 error.
  */
 
-import error from "@/middleware/error";
-import combine from "@/middleware/combine";
+import getHandler from "@/middleware";
 
-const middleware = combine(error);
+const handler = getHandler();
 
-export default middleware((req, res) => {
+handler.get((req, res) => {
 	const {
 		query: { id }
 	} = req;
@@ -16,3 +15,5 @@ export default middleware((req, res) => {
 
 	res.json({ user: id });
 });
+
+export default handler;

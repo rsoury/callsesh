@@ -6,20 +6,17 @@
  */
 
 // import * as comms from "@/comms";
-import error from "@/middleware/error";
-import combine from "@/middleware/combine";
+import getHandler from "@/middleware";
 
-const middleware = combine(error);
+const handler = getHandler();
 
-export default middleware(async (req, res) => {
+handler.post((req, res) => {
 	const {
 		query: { id }
 	} = req;
 	// Get user using id.
 
-	// const { caller } await comms
-	// 	.createSession
-	// 	();
-
 	res.json({ user: id });
 });
+
+export default handler;
