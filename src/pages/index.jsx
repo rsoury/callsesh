@@ -13,7 +13,8 @@ const Index = ({ isAuth }) => {
 	);
 };
 
-Index.getServerSideProps = ({ req }) => {
+export const getServerSideProps = ({ req }) => {
+	console.log(req);
 	return {
 		isAuth: req.isAuthenticated()
 	};
