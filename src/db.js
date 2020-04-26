@@ -7,7 +7,7 @@ import axiosRetry from "axios-retry";
 import isEmpty from "is-empty";
 import mapKeys from "lodash/mapKeys";
 import startCase from "lodash/startCase";
-import { airtable as config } from "./envConfig";
+import { airtable as config } from "./env-config";
 
 const db = axios.create({
 	baseURL: `https://api.airtable.com/v0/${config.base}/`,

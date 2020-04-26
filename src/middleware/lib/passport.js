@@ -9,7 +9,7 @@ import RememberMeStrategy from "passport-remember-me";
 import isEmpty from "is-empty";
 import * as db from "@/db";
 import { verificationCheck } from "@/comms";
-import randomString from "@/utils/randomString";
+import randomString from "@/utils/random-string";
 
 passport.serializeUser((user, done) => {
 	console.log(user);

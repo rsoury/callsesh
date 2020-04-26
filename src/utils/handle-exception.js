@@ -2,7 +2,7 @@
 
 import { toaster } from "baseui/toast";
 import * as Sentry from "@sentry/browser";
-import { isProd, sentry } from "@/envConfig";
+import { isProd, sentry } from "@/env-config";
 
 if (sentry.dsn) {
 	Sentry.init({

@@ -1,5 +1,5 @@
 import Twilio from "twilio";
-import { twilio as config } from "@/envConfig";
+import { twilio as config } from "@/env-config";
 
 const client = Twilio(config.accountSid, config.authToken);
 const proxyService = client.proxy.services(config.proxyServiceSid);

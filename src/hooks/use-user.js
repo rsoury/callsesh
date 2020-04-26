@@ -1,4 +1,4 @@
-import useRequest from "./useRequest";
+import useRequest from "./use-request";
 
 export default function useUser() {
 	const { data, mutate } = useRequest({

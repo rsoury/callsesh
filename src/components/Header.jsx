@@ -17,7 +17,8 @@ import {
 import Link from "next/link";
 import {
 	CreditCard as PaymentMethodsIcon,
-	Bell as NotificationsIcon
+	Bell as NotificationsIcon,
+	User as ProfileIcon
 } from "react-feather";
 import routes from "@/routes";
 
@@ -30,6 +31,17 @@ const Header = ({ isAuthenticated }) => {
 	let menuItems = [];
 	if (isAuthenticated) {
 		menuItems = Object.entries({
+			profile: (props) => (
+				<Link href={routes.settings.profile}>
+					<Button
+						kind={BUTTON_KIND.tertiary}
+						startEnhancer={() => <ProfileIcon size={20} />}
+						{...props}
+					>
+						Profile
+					</Button>
+				</Link>
+			),
 			paymentMethods: (props) => (
 				<Link href={routes.settings.paymentMethods}>
 					<Button
@@ -62,8 +74,8 @@ const Header = ({ isAuthenticated }) => {
 					</Button>
 				</Link>
 			),
-			register: (props) => (
-				<Link href={routes.register}>
+			signup: (props) => (
+				<Link href={routes.signup}>
 					<Button {...props}>Sign up</Button>
 				</Link>
 			)
@@ -85,12 +97,21 @@ const Header = ({ isAuthenticated }) => {
 			>
 				<NavigationList $align={ALIGN.left}>
 					<NavigationItem className={css({ margin: "0 0 0 -10px" })}>
-						<img
-							src={logoUrl}
-							alt="Wagecall logo"
-							title="Wagecall"
-							className={css({ width: "100%", maxWidth: "200px" })}
-						/>
+						<div
+							className={css({
+								height: "100%",
+								display: "flex",
+								alignItems: "center",
+								justifyContent: "center"
+							})}
+						>
+							<img
+								src={logoUrl}
+								alt="Wagecall logo"
+								title="Wagecall"
+								className={css({ width: "100%", maxWidth: "140px" })}
+							/>
+						</div>
 					</NavigationItem>
 				</NavigationList>
 				<NavigationList

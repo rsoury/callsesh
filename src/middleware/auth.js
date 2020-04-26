@@ -3,7 +3,7 @@
  */
 
 import nextConnect from "next-connect";
-import { sessionSecret, isProd } from "@/envConfig";
+import { sessionSecret, isProd } from "@/env-config";
 import passport from "./lib/passport";
 import session from "./lib/session";
 

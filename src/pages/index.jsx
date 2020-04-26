@@ -1,5 +1,6 @@
 import { useStyletron } from "baseui";
 import PropTypes from "prop-types";
+import isEmpty from "is-empty";
 import Header from "@/components/Header";
 
 const Index = ({ isAuth }) => {
@@ -14,9 +15,10 @@ const Index = ({ isAuth }) => {
 };
 
 export const getServerSideProps = ({ req }) => {
-	console.log(req);
 	return {
-		isAuth: req.isAuthenticated()
+		props: {
+			isAuth: !isEmpty(req.user)
+		}
 	};
 };
 

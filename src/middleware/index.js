@@ -1,6 +1,6 @@
 import nextConnect from "next-connect";
-import handleException from "@/utils/handleException";
-import { isProd } from "@/envConfig";
+import handleException from "@/utils/handle-exception";
+import { isProd } from "@/env-config";
 
 export default function getHandler() {
 	return nextConnect({
