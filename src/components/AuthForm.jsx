@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import PropTypes from "prop-types";
 import { useStyletron } from "baseui";
-import { Button, KIND } from "baseui/button";
+import { Button, KIND as BUTTON_KIND } from "baseui/button";
 import ChevronLeft from "baseui/icon/chevron-left";
 import { ChildrenProps } from "@/utils/common-prop-types";
 import { isProd } from "@/env-config";
@@ -14,19 +14,6 @@ const Form = ({
 	isSubmitting
 }) => {
 	const [css] = useStyletron();
-
-	const previousButtonProps = {
-		kind: KIND.minimal,
-		disabled: isSubmitting,
-		startEnhancer: () => <ChevronLeft size={24} />,
-		overrides: {
-			BaseButton: {
-				style: {
-					height: "52px"
-				}
-			}
-		}
-	};
 
 	// Load a onbeforeleave listener to confirm that users want to leave the form.
 	useEffect(() => {
@@ -64,23 +51,37 @@ const Form = ({
 				{children}
 			</div>
 			<div>
-				<Button
-					type="submit"
-					isLoading={isSubmitting}
-					disabled={isSubmitting}
-					overrides={{
-						BaseButton: {
-							style: {
-								height: "52px"
+				<div className={css({ padding: "5px" })}>
+					<Button
+						type="submit"
+						isLoading={isSubmitting}
+						disabled={isSubmitting}
+						overrides={{
+							BaseButton: {
+								style: {
+									height: "52px"
+								}
 							}
-						}
-					}}
-				>
-					{actionLabel || "Continue"}
-				</Button>
+						}}
+					>
+						{actionLabel || "Continue"}
+					</Button>
+				</div>
 				{canGoBack && (
-					<div className={css({ marginTop: "10px" })}>
-						<Button onClick={goToPreviousStep} {...previousButtonProps}>
+					<div className={css({ padding: "5px" })}>
+						<Button
+							onClick={goToPreviousStep}
+							kind={BUTTON_KIND.minimal}
+							disabled={isSubmitting}
+							startEnhancer={() => <ChevronLeft size={24} />}
+							overrides={{
+								BaseButton: {
+									style: {
+										height: "52px"
+									}
+								}
+							}}
+						>
 							Cancel
 						</Button>
 					</div>
@@ -93,13 +94,13 @@ const Form = ({
 // Prop types form an object provided by Formik Wizard
 Form.propTypes = {
 	children: ChildrenProps.isRequired,
-	isLastStep: PropTypes.bool.isRequired,
+	// isLastStep: PropTypes.bool.isRequired,
 	goToPreviousStep: PropTypes.func.isRequired,
 	canGoBack: PropTypes.bool.isRequired,
 	actionLabel: PropTypes.string,
-	isSubmitting: PropTypes.bool.isRequired,
-	currentStep: PropTypes.string.isRequired,
-	steps: PropTypes.arrayOf(PropTypes.string).isRequired
+	isSubmitting: PropTypes.bool.isRequired
+	// currentStep: PropTypes.string.isRequired,
+	// steps: PropTypes.arrayOf(PropTypes.string).isRequired
 };
 
 Form.defaultProps = {
