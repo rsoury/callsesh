@@ -109,7 +109,7 @@ const Header = ({ isAuthenticated }) => {
 								src={logoUrl}
 								alt="Wagecall logo"
 								title="Wagecall"
-								className={css({ width: "100%", maxWidth: "140px" })}
+								className={css({ width: "100%", maxWidth: "150px" })}
 							/>
 						</div>
 					</NavigationItem>

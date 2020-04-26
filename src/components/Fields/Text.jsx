@@ -4,7 +4,7 @@ import { Field } from "formik";
 import { FormControl } from "baseui/form-control";
 import { Input } from "baseui/input";
 
-const TextField = ({ name, label, caption }) => (
+const TextField = ({ name, label, caption, placeholder, ...props }) => (
 	<Field name={name} id={name} type="text">
 		{({ field, form: { touched, errors } }) => (
 			<FormControl
@@ -14,7 +14,9 @@ const TextField = ({ name, label, caption }) => (
 			>
 				<Input
 					{...field}
+					placeholder={placeholder}
 					error={touched[field.name] ? !!errors[field.name] : false}
+					{...props}
 				/>
 			</FormControl>
 		)}
@@ -24,12 +26,14 @@ const TextField = ({ name, label, caption }) => (
 TextField.propTypes = {
 	name: PropTypes.string.isRequired,
 	label: PropTypes.string,
-	caption: PropTypes.string
+	caption: PropTypes.string,
+	placeholder: PropTypes.string
 };
 
 TextField.defaultProps = {
 	label: "",
-	caption: ""
+	caption: "",
+	placeholder: ""
 };
 
 export default TextField;

@@ -13,23 +13,26 @@ import {
 import ChevronLeft from "baseui/icon/chevron-left";
 import returnUserRedirect from "@/utils/return-user-redirect";
 
-const BackHeader = () => {
-	const buttonProps = {
-		startEnhancer: () => <ChevronLeft />,
-		kind: BUTTON_KIND.tertiary
-	};
-
-	return (
-		<HeaderNavigation>
-			<NavigationList $align={ALIGN.left}>
-				<NavigationItem>
-					<Button {...buttonProps} onClick={returnUserRedirect}>
-						Back
-					</Button>
-				</NavigationItem>
-			</NavigationList>
-		</HeaderNavigation>
-	);
-};
+const BackHeader = () => (
+	<HeaderNavigation
+		overrides={{
+			Root: {
+				style: { borderBottomColor: `transparent` }
+			}
+		}}
+	>
+		<NavigationList $align={ALIGN.left}>
+			<NavigationItem>
+				<Button
+					kind={BUTTON_KIND.tertiary}
+					startEnhancer={() => <ChevronLeft size={24} />}
+					onClick={returnUserRedirect}
+				>
+					Back
+				</Button>
+			</NavigationItem>
+		</NavigationList>
+	</HeaderNavigation>
+);
 
 export default BackHeader;

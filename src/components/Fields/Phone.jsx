@@ -1,6 +1,7 @@
 /* eslint-disable react/prop-types */
 
 import React, { useState } from "react";
+import PropTypes from "prop-types";
 import { Field } from "formik";
 import { FormControl } from "baseui/form-control";
 import { PhoneInput, COUNTRIES } from "baseui/phone-input";
@@ -10,10 +11,13 @@ import isEmpty from "is-empty";
 import onChangeIsNumber from "@/utils/on-change-is-number";
 import * as format from "@/utils/format";
 
-// TODO: Make this available for all phone numbers
+// TODO: Make this available for all countries
 const PhoneInputField = ({
 	field: { onChange, value, onBlur, ...field },
-	form: { touched, errors, setFieldValue }
+	form: { touched, errors, setFieldValue },
+	label,
+	caption,
+	placeholder
 }) => {
 	if (!isEmpty(value)) {
 		const phoneNumber = parsePhoneNumberFromString(value);
@@ -24,7 +28,11 @@ const PhoneInputField = ({
 	const [inputValue, setInputValue] = useState(value);
 
 	return (
-		<FormControl error={format.message(errors[field.name])}>
+		<FormControl
+			label={label ? () => label : null}
+			caption={caption ? () => caption : null}
+			error={format.message(errors[field.name])}
+		>
 			<PhoneInput
 				id={field.name}
 				country={COUNTRIES.AU}
@@ -47,15 +55,20 @@ const PhoneInputField = ({
 				}}
 				{...field}
 				value={inputValue}
+				placeholder={placeholder}
 			/>
 		</FormControl>
 	);
 };
 
-const PhoneField = () => (
-	<Field name="phone" id="phone" type="text">
-		{(props) => <PhoneInputField {...props} />}
+const PhoneField = ({ name, ...fieldProps }) => (
+	<Field name={name} id={name} type="text">
+		{(props) => <PhoneInputField {...props} {...fieldProps} />}
 	</Field>
 );
+
+PhoneField.propTypes = {
+	name: PropTypes.string.isRequired
+};
 
 export default PhoneField;

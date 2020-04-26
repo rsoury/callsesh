@@ -2,11 +2,12 @@ import React, { useEffect } from "react";
 import PropTypes from "prop-types";
 import { useStyletron } from "baseui";
 import { Button, KIND as BUTTON_KIND } from "baseui/button";
+import { Grid, Cell } from "baseui/layout-grid";
 import ChevronLeft from "baseui/icon/chevron-left";
 import { ChildrenProps } from "@/utils/common-prop-types";
 import { isProd } from "@/env-config";
 
-const Form = ({
+const AuthForm = ({
 	children,
 	goToPreviousStep,
 	canGoBack,
@@ -14,6 +15,19 @@ const Form = ({
 	isSubmitting
 }) => {
 	const [css] = useStyletron();
+
+	const buttonProps = {
+		disabled: isSubmitting,
+		overrides: {
+			BaseButton: {
+				style: {
+					height: "52px",
+					width: "100%",
+					maxWidth: "200px"
+				}
+			}
+		}
+	};
 
 	// Load a onbeforeleave listener to confirm that users want to leave the form.
 	useEffect(() => {
@@ -45,54 +59,48 @@ const Form = ({
 					flex: 1,
 					height: "100%",
 					textAlign: "left",
-					paddingBottom: "50px"
+					paddingBottom: "20px"
 				})}
 			>
 				{children}
 			</div>
-			<div>
-				<div className={css({ padding: "5px" })}>
-					<Button
-						type="submit"
-						isLoading={isSubmitting}
-						disabled={isSubmitting}
-						overrides={{
-							BaseButton: {
-								style: {
-									height: "52px"
-								}
-							}
-						}}
-					>
-						{actionLabel || "Continue"}
-					</Button>
-				</div>
-				{canGoBack && (
-					<div className={css({ padding: "5px" })}>
-						<Button
-							onClick={goToPreviousStep}
-							kind={BUTTON_KIND.minimal}
-							disabled={isSubmitting}
-							startEnhancer={() => <ChevronLeft size={24} />}
-							overrides={{
-								BaseButton: {
-									style: {
-										height: "52px"
-									}
-								}
-							}}
-						>
-							Cancel
-						</Button>
+			<Grid
+				overrides={{
+					Grid: {
+						style: {
+							width: "100%"
+						}
+					}
+				}}
+			>
+				<Cell span={12}>
+					<div className={css({ textAlign: "center" })}>
+						<div className={css({ padding: "5px" })}>
+							<Button type="submit" isLoading={isSubmitting} {...buttonProps}>
+								{actionLabel || "Continue"}
+							</Button>
+						</div>
+						{canGoBack && (
+							<div className={css({ padding: "5px" })}>
+								<Button
+									onClick={goToPreviousStep}
+									kind={BUTTON_KIND.minimal}
+									startEnhancer={() => <ChevronLeft size={24} />}
+									{...buttonProps}
+								>
+									Cancel
+								</Button>
+							</div>
+						)}
 					</div>
-				)}
-			</div>
+				</Cell>
+			</Grid>
 		</div>
 	);
 };
 
 // Prop types form an object provided by Formik Wizard
-Form.propTypes = {
+AuthForm.propTypes = {
 	children: ChildrenProps.isRequired,
 	// isLastStep: PropTypes.bool.isRequired,
 	goToPreviousStep: PropTypes.func.isRequired,
@@ -103,8 +111,8 @@ Form.propTypes = {
 	// steps: PropTypes.arrayOf(PropTypes.string).isRequired
 };
 
-Form.defaultProps = {
+AuthForm.defaultProps = {
 	actionLabel: ""
 };
 
-export default Form;
+export default AuthForm;
