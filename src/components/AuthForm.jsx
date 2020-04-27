@@ -12,10 +12,12 @@ const AuthForm = ({
 	goToPreviousStep,
 	canGoBack,
 	actionLabel,
-	isSubmitting
+	isSubmitting,
+	currentStep,
+	steps
 }) => {
 	const [css] = useStyletron();
-
+	const stepIndex = steps.indexOf(currentStep);
 	const buttonProps = {
 		disabled: isSubmitting,
 		overrides: {
@@ -30,7 +32,7 @@ const AuthForm = ({
 
 	// Load a onbeforeleave listener to confirm that users want to leave the form.
 	useEffect(() => {
-		if (isProd) {
+		if (isProd && stepIndex > 0) {
 			if (typeof window !== "undefined") {
 				const message = "Are you sure you would like to leave?";
 				window.onbeforeunload = () => message;
@@ -106,9 +108,9 @@ AuthForm.propTypes = {
 	goToPreviousStep: PropTypes.func.isRequired,
 	canGoBack: PropTypes.bool.isRequired,
 	actionLabel: PropTypes.string,
-	isSubmitting: PropTypes.bool.isRequired
-	// currentStep: PropTypes.string.isRequired,
-	// steps: PropTypes.arrayOf(PropTypes.string).isRequired
+	isSubmitting: PropTypes.bool.isRequired,
+	currentStep: PropTypes.string.isRequired,
+	steps: PropTypes.arrayOf(PropTypes.string).isRequired
 };
 
 AuthForm.defaultProps = {

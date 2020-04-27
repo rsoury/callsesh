@@ -37,16 +37,16 @@ const formSteps = [
 				</Cell>
 			</Grid>
 		),
-		// initialValues: {
-		// 	firstName: "Ryan",
-		// 	lastName: "Smithson",
-		// 	phoneNumber: "+61405227363"
-		// },
 		initialValues: {
-			firstName: "",
-			lastName: "",
-			phoneNumber: ""
+			firstName: "Ryan",
+			lastName: "Smithson",
+			phoneNumber: "+61405227363"
 		},
+		// initialValues: {
+		// 	firstName: "",
+		// 	lastName: "",
+		// 	phoneNumber: ""
+		// },
 		validationSchema: yup.object().shape({
 			firstName: yup.string().required(),
 			lastName: yup.string().required(),
