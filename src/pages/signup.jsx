@@ -19,18 +19,19 @@ const formSteps = [
 	{
 		id: "info",
 		component: () => (
-			<Grid>
+			<Grid gridGutters={16}>
 				<Cell span={[12, 4, 6]}>
-					<TextField name="firstName" label="First Name" />
+					<TextField name="First Name" placeholder="Ryan" />
 				</Cell>
 				<Cell span={[12, 4, 6]}>
-					<TextField name="lastName" label="Last Name" />
+					<TextField name="Last Name" placeholder="Soury" />
 				</Cell>
 				<Cell span={12}>
 					<PhoneField
-						name="phoneNumber"
-						label="Phone Number"
+						name="Phone Number"
 						caption="You will receive an SMS message to confirm your phone number."
+						placeholder="400 200 300"
+						ipLookup
 					/>
 				</Cell>
 			</Grid>
@@ -49,7 +50,7 @@ const formSteps = [
 	{
 		id: "verify",
 		component: () => (
-			<Grid>
+			<Grid gridGutters={16}>
 				<Cell span={12}>
 					<VerifyField
 						name="code"
