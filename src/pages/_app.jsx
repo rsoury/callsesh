@@ -7,7 +7,9 @@ import { DefaultSeo } from "next-seo";
 import initFastclick from "react-fastclick";
 import { engine, debug } from "@config/styletron";
 import seoConfig from "@config/seo";
+import "setimmediate";
 import "modern-normalize";
+import "@/styles.css";
 
 const theme = {
 	...LightTheme,

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useStyletron } from "baseui";
 import { H1 as Heading } from "baseui/typography";
 import { Grid, Cell } from "baseui/layout-grid";
@@ -37,6 +37,11 @@ const formSteps = [
 				</Cell>
 			</Grid>
 		),
+		// initialValues: {
+		// 	firstName: "Ryan",
+		// 	lastName: "Smithson",
+		// 	phoneNumber: "+61405227363"
+		// },
 		initialValues: {
 			firstName: "",
 			lastName: "",
@@ -54,7 +59,7 @@ const formSteps = [
 			<Grid gridGutters={16}>
 				<Cell span={12}>
 					<VerifyField
-						name="code"
+						name="verificationCode"
 						label="Verification Code"
 						caption="Please enter the 6-digit verification code found in the SMS sent to your phone number."
 					/>
@@ -62,15 +67,15 @@ const formSteps = [
 			</Grid>
 		),
 		initialValues: {
-			code: ""
+			verificationCode: ""
 		},
 		validationSchema: yup.object().shape({
-			code: yup.string().length(6).required()
+			verificationCode: yup.string().length(6).ensure().required()
 		})
 	}
 ];
 
-const Index = ({ isAuth }) => {
+const Signup = ({ isAuth }) => {
 	const [isSubmitting, setSubmitting] = useState(false);
 	const [css, theme] = useStyletron();
 
@@ -81,10 +86,10 @@ const Index = ({ isAuth }) => {
 		}
 	}, [isAuth]);
 
-	const handleSubmit = (values) => {
-		setSubmitting(true);
+	const handleSubmit = useCallback((values) => {
 		console.log(values);
-	};
+		setSubmitting(true);
+	}, []);
 
 	return (
 		<main>
@@ -121,8 +126,8 @@ export const getServerSideProps = ({ req }) => {
 	};
 };
 
-Index.propTypes = {
+Signup.propTypes = {
 	isAuth: PropTypes.bool.isRequired
 };
 
-export default Index;
+export default Signup;

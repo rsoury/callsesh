@@ -12,8 +12,10 @@ const AuthForm = ({
 	goToPreviousStep,
 	canGoBack,
 	actionLabel,
-	isSubmitting
+	isSubmitting,
+	...props
 }) => {
+	console.log(props);
 	const [css] = useStyletron();
 
 	const buttonProps = {
@@ -22,8 +24,7 @@ const AuthForm = ({
 			BaseButton: {
 				style: {
 					height: "52px",
-					width: "100%",
-					maxWidth: "200px"
+					width: "100%"
 				}
 			}
 		}
@@ -76,17 +77,18 @@ const AuthForm = ({
 				<Cell span={12}>
 					<div className={css({ textAlign: "center" })}>
 						<div className={css({ padding: "5px" })}>
-							<Button type="submit" isLoading={isSubmitting} {...buttonProps}>
+							<Button {...buttonProps} type="submit" isLoading={isSubmitting}>
 								{actionLabel || "Continue"}
 							</Button>
 						</div>
 						{canGoBack && (
 							<div className={css({ padding: "5px" })}>
 								<Button
+									{...buttonProps}
+									type="button"
 									onClick={goToPreviousStep}
 									kind={BUTTON_KIND.minimal}
 									startEnhancer={() => <ChevronLeft size={24} />}
-									{...buttonProps}
 								>
 									Cancel
 								</Button>
