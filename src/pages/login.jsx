@@ -5,7 +5,7 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { useStyletron } from "baseui";
-import { H1 as Heading } from "baseui/typography";
+import { H1 as Heading, Paragraph3 as Paragraph } from "baseui/typography";
 import { Grid, Cell } from "baseui/layout-grid";
 import PropTypes from "prop-types";
 import isEmpty from "is-empty";
@@ -16,8 +16,10 @@ import AuthForm from "@/components/AuthForm";
 import BackHeader from "@/components/BackHeader";
 import PhoneField from "@/components/Fields/Phone";
 import VerifyField from "@/components/Fields/Verify";
+import Link from "@/components/Link";
 import * as validations from "@/utils/validate";
 import returnUserRedirect from "@/utils/return-user-redirect";
+import routes from "@/routes";
 
 const formSteps = [
 	{
@@ -102,6 +104,14 @@ const Login = ({ isAuth }) => {
 						<AuthForm {...props} isSubmitting={isSubmitting} />
 					)}
 				/>
+				<Grid>
+					<Cell span={12}>
+						<Paragraph className={css({ textAlign: "center" })}>
+							Don&apos;t have an acount?{" "}
+							<Link href={routes.signup}>Sign up</Link>
+						</Paragraph>
+					</Cell>
+				</Grid>
 			</div>
 		</main>
 	);

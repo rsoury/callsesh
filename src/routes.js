@@ -14,8 +14,11 @@ export default {
 	api: {
 		auth: {
 			logout: "/api/auth/logout",
-			passwordless: "/api/auth/passwordless",
-			passwordlessVerify: "/api/auth/passwordless/verify"
+			passwordless: {
+				login: "/api/auth/passwordless/login",
+				signup: "/api/auth/passwordless/signup",
+				verify: "/api/auth/passwordless/verify"
+			}
 		}
 	}
 };

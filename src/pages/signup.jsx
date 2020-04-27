@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback } from "react";
 import { useStyletron } from "baseui";
-import { H1 as Heading } from "baseui/typography";
+import { H1 as Heading, Paragraph3 as Paragraph } from "baseui/typography";
 import { Grid, Cell } from "baseui/layout-grid";
 import PropTypes from "prop-types";
 import isEmpty from "is-empty";
@@ -12,6 +12,7 @@ import BackHeader from "@/components/BackHeader";
 import TextField from "@/components/Fields/Text";
 import PhoneField from "@/components/Fields/Phone";
 import VerifyField from "@/components/Fields/Verify";
+import Link from "@/components/Link";
 import * as validations from "@/utils/validate";
 import returnUserRedirect from "@/utils/return-user-redirect";
 import handleException, { alerts } from "@/utils/handle-exception";
@@ -95,7 +96,7 @@ const Signup = ({ isAuth }) => {
 		setLoading(true);
 		try {
 			const response = await request
-				.post(routes.api.auth.passwordlessVerify, {
+				.post(routes.api.auth.passwordless.verify, {
 					...values.info,
 					...values.verify
 				})
@@ -122,7 +123,7 @@ const Signup = ({ isAuth }) => {
 					setLoading(true);
 					try {
 						const response = await request
-							.post(routes.api.auth.passwordless, {
+							.post(routes.api.auth.passwordless.signup, {
 								phoneNumber
 							})
 							.then(({ data }) => data);
@@ -164,6 +165,13 @@ const Signup = ({ isAuth }) => {
 					onSubmit={handleSubmit}
 					render={(props) => <AuthForm {...props} isLoading={isLoading} />}
 				/>
+				<Grid>
+					<Cell span={12}>
+						<Paragraph className={css({ textAlign: "center" })}>
+							Already have an account? <Link href={routes.login}>Log in</Link>
+						</Paragraph>
+					</Cell>
+				</Grid>
 			</div>
 		</main>
 	);

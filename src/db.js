@@ -35,13 +35,8 @@ export const findUser = async (id) => {
  * Retrieve user by property
  */
 export const findUserBy = async (property, value) => {
-	const { records = [] } = db
-		.get(`Users`, {
-			params: {
-				maxRecords: 1,
-				filterByFormula: `{${property}}=${value}`
-			}
-		})
+	const { records = [] } = await db
+		.get(`Users?maxRecords=1&filterByFormula={${property}}=${value}`)
 		.then(({ data }) => data);
 
 	if (records.length) {
