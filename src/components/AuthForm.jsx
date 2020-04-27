@@ -12,10 +12,8 @@ const AuthForm = ({
 	goToPreviousStep,
 	canGoBack,
 	actionLabel,
-	isSubmitting,
-	...props
+	isSubmitting
 }) => {
-	console.log(props);
 	const [css] = useStyletron();
 
 	const buttonProps = {
