@@ -4,19 +4,21 @@ import { Field } from "formik";
 import { FormControl } from "baseui/form-control";
 import { Input } from "baseui/input";
 import snakeCase from "lodash/snakeCase";
+import * as format from "@/utils/format";
 
 const TextField = ({ name, label, caption, placeholder, ...props }) => (
-	<Field name={name} id={snakeCase(name)} type="text">
-		{({ field, form: { touched, errors } }) => (
+	<Field name={name} id={snakeCase(name)}>
+		{({ field, meta }) => (
 			<FormControl
 				label={label || name ? () => label || name : null}
 				caption={caption ? () => caption : null}
-				error={() => errors[field.name] || ""}
+				error={() => (meta.touched ? format.message(meta.error) : "")}
 			>
 				<Input
 					{...field}
+					type="text"
 					placeholder={placeholder}
-					error={touched[field.name] ? !!errors[field.name] : false}
+					error={meta.touched ? !!meta.error : false}
 					{...props}
 				/>
 			</FormControl>

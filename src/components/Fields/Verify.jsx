@@ -4,18 +4,20 @@ import { Field } from "formik";
 import { FormControl } from "baseui/form-control";
 import { PinCode } from "baseui/pin-code";
 import snakeCase from "lodash/snakeCase";
+import * as format from "@/utils/format";
 
 const VerifyField = ({ name, label, caption, ...props }) => {
 	return (
 		<Field name={name} id={snakeCase(name)} type="text">
 			{({
 				field: { value, onChange, ...field },
-				form: { touched, errors, setFieldValue }
+				form: { setFieldValue },
+				meta
 			}) => (
 				<FormControl
-					label={label ? () => label : null}
+					label={label || name ? () => label || name : null}
 					caption={caption ? () => caption : null}
-					error={() => errors[field.name] || ""}
+					error={meta.touched ? format.message(meta.error) : ""}
 				>
 					<PinCode
 						required
@@ -26,7 +28,7 @@ const VerifyField = ({ name, label, caption, ...props }) => {
 							setFieldValue(field.name, values.join(""));
 						}}
 						{...field}
-						error={touched[field.name] ? !!errors[field.name] : false}
+						error={meta.touched ? !!meta.error : false}
 						{...props}
 					/>
 				</FormControl>

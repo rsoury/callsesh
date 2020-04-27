@@ -8,7 +8,7 @@ export const phoneNumber = yup
 		const v = value || "";
 		if (v.length >= 9) {
 			const p = parsePhoneNumberFromString(v);
-			return p.isValid();
+			return p && p.isValid();
 		}
 		return false;
 	});

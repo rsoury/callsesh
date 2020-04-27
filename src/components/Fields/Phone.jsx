@@ -30,7 +30,8 @@ const Spinner = withStyle(StyledSpinnerNext, {
 
 const PhoneInputField = ({
 	field: { onChange, value, onBlur, ...field },
-	form: { touched, errors, setFieldValue },
+	form: { setFieldValue },
+	meta,
 	label,
 	caption,
 	placeholder: placeholderProp,
@@ -75,12 +76,12 @@ const PhoneInputField = ({
 		<FormControl
 			label={label || field.name ? () => label || field.name : null}
 			caption={caption ? () => caption : null}
-			error={format.message(errors[field.name])}
+			error={meta.touched ? format.message(meta.error) : ""}
 		>
 			<PhoneInput
 				id={snakeCase(field.name)}
 				country={country}
-				error={touched[field.name] ? !!errors[field.name] : false}
+				error={meta.touched ? !!meta.error : false}
 				onTextChange={onChangeIsNumber((e) => {
 					onChange(e);
 					setText(e.target.value);
