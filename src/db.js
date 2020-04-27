@@ -7,6 +7,7 @@ import axiosRetry from "axios-retry";
 import isEmpty from "is-empty";
 import mapKeys from "lodash/mapKeys";
 import startCase from "lodash/startCase";
+import { parsePhoneNumberFromString } from "libphonenumber-js";
 import { airtable as config } from "./env-config";
 
 const db = axios.create({
@@ -36,7 +37,7 @@ export const findUser = async (id) => {
  */
 export const findUserBy = async (property, value) => {
 	const { records = [] } = await db
-		.get(`Users?maxRecords=1&filterByFormula={${property}}=${value}`)
+		.get(`Users?maxRecords=1&filterByFormula={${property}}="${value}"`)
 		.then(({ data }) => data);
 
 	if (records.length) {
@@ -53,7 +54,31 @@ export const findUserBy = async (property, value) => {
 export const createUser = async (params) => {
 	const fields = formatParams(params);
 
-	return db
+	// Generate unique username.
+	const username = [fields["First Name"], fields["Last Name"]]
+		.join("")
+		.toLowerCase()
+		.substring(0, 15);
+	let finalUsername = username;
+	let available = false;
+	let suffix = 2;
+	while (!available) {
+		const user = await findUserBy("Username", finalUsername); // eslint-disable-line
+		console.log(user);
+		if (isEmpty(user)) {
+			available = true;
+		} else {
+			finalUsername = `${username}${suffix}`;
+		}
+		suffix += 1;
+	}
+	fields.Username = finalUsername;
+
+	// Get country from phone number
+	const phoneNumber = parsePhoneNumberFromString(fields["Phone Number"]);
+	fields["Local Country"] = phoneNumber ? phoneNumber.country : "";
+
+	const { records = [] } = await db
 		.post(`Users`, {
 			records: [
 				{
@@ -61,7 +86,13 @@ export const createUser = async (params) => {
 				}
 			]
 		})
-		.then(({ data: { records = [] } }) => (records.length ? records[0] : {}));
+		.then(({ data }) => data);
+
+	if (records[0]) {
+		return records[0];
+	}
+
+	return {};
 };
 
 /**
@@ -70,7 +101,7 @@ export const createUser = async (params) => {
 export const updateUser = async (id, params) => {
 	const fields = formatParams(params);
 
-	return db
+	const { records = [] } = await db
 		.patch(`Users`, {
 			records: [
 				{
@@ -79,7 +110,13 @@ export const updateUser = async (id, params) => {
 				}
 			]
 		})
-		.then(({ data: { records = [] } }) => (records.length ? records[0] : {}));
+		.then(({ data }) => data);
+
+	if (records.length) {
+		return records[0];
+	}
+
+	return {};
 };
 
 /**

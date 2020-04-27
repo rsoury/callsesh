@@ -3471,6 +3471,11 @@ dotenv@^6.2.0:
   resolved "https://registry.yarnpkg.com/dotenv/-/dotenv-6.2.0.tgz#941c0410535d942c8becf28d3f357dbd9d476064"
   integrity sha512-HygQCKUBSFl8wKQZBSemMywRWcEDNidvNbjGVyZu3nbZ8qq9ubiPoGLMdRDpfSrpkkm9BXYFkpKxxFX38o/76w==
 
+dotenv@^8.2.0:
+  version "8.2.0"
+  resolved "https://registry.yarnpkg.com/dotenv/-/dotenv-8.2.0.tgz#97e619259ada750eea3e4ea3e26bceea5424b16a"
+  integrity sha512-8sJ78ElpbDJBHNeBzUbUVLsqKdccaa/BXF1uPTw3GrvQTBgrQrtObr2mUrE38vzYd8cEv+m/JBfDLioYcfXoaw==
+
 duplexify@^3.4.2, duplexify@^3.6.0:
   version "3.7.1"
   resolved "https://registry.yarnpkg.com/duplexify/-/duplexify-3.7.1.tgz#2a4df5317f6ccfd91f86d6fd25d8d8a103b88309"
@@ -5496,6 +5501,13 @@ jest-message-util@^25.4.0:
     micromatch "^4.0.2"
     slash "^3.0.0"
     stack-utils "^1.0.1"
+
+jest-mock-axios@^3.2.0:
+  version "3.2.0"
+  resolved "https://registry.yarnpkg.com/jest-mock-axios/-/jest-mock-axios-3.2.0.tgz#e68f0360b8c6a04da4da9010b28ddd9c10ac5395"
+  integrity sha512-aRzSxGwjVQ54rhRG3wH3+guubJdlc5bFoUhE5Ic3pjHiaMlfRracADJ8mKQqptyqT5YGqXGKqRULxEQhiXOGoA==
+  dependencies:
+    synchronous-promise "^2.0.10"
 
 jest-mock@^25.4.0:
   version "25.4.0"

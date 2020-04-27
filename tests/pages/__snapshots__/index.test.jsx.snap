@@ -1,21 +1,118 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`With Snapshot Testing App shows matches snapshot 1`] = `
-<div>
-  <h1
+<main>
+  <nav
     className=""
+    data-baseweb="header-navigation"
+    role="navigation"
   >
-    Title
-  </h1>
-  <h2
-    className=""
-  >
-    Subtitle
-  </h2>
+    <ul
+      className=""
+    >
+      <li
+        className=""
+      >
+        <div
+          className=""
+        >
+          <img
+            alt="Wagecall logo"
+            className=""
+            src="/logo/wagecall-logo@300.png"
+            title="Wagecall"
+          />
+        </div>
+      </li>
+    </ul>
+    <ul
+      className=""
+    >
+      <li
+        className=""
+      >
+        <button
+          className=""
+          data-baseweb="button"
+          disabled={false}
+          onBlur={[Function]}
+          onClick={[Function]}
+          onFocus={[Function]}
+          onMouseEnter={[Function]}
+        >
+          Log in
+        </button>
+      </li>
+      <li
+        className=""
+      >
+        <button
+          className=""
+          data-baseweb="button"
+          disabled={false}
+          onBlur={[Function]}
+          onClick={[Function]}
+          onFocus={[Function]}
+          onMouseEnter={[Function]}
+        >
+          Sign up
+        </button>
+      </li>
+    </ul>
+    <ul
+      className=""
+    >
+      <li
+        className=""
+      >
+        <button
+          className=""
+          data-baseweb="button"
+          disabled={false}
+          onBlur={[Function]}
+          onClick={[Function]}
+          onFocus={[Function]}
+        >
+          <svg
+            className=""
+            data-baseweb="icon"
+            size={22}
+            title="Menu"
+            viewBox="0 0 24 24"
+          >
+            <title>
+              Menu
+            </title>
+            <rect
+              height="2"
+              rx="1"
+              width="16"
+              x="4"
+              y="11"
+            />
+            <rect
+              height="2"
+              rx="1"
+              width="16"
+              x="4"
+              y="5"
+            />
+            <rect
+              height="2"
+              rx="1"
+              width="16"
+              x="4"
+              y="17"
+            />
+          </svg>
+        </button>
+      </li>
+    </ul>
+  </nav>
   <p
     className=""
   >
     Styled by hook
   </p>
-</div>
+</main>
 `;

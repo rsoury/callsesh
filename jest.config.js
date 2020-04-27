@@ -7,7 +7,7 @@
 const { jestAlias } = require("./config/alias");
 
 module.exports = {
-	setupFiles: ["<rootDir>/tests/setup.js"],
+	setupFiles: ["<rootDir>/tests/setup.js", "dotenv/config"],
 	testPathIgnorePatterns: ["<rootDir>/.next/", "<rootDir>/node_modules/"],
 	moduleNameMapper: jestAlias,
 	transform: {
