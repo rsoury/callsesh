@@ -12,14 +12,14 @@ const AuthForm = ({
 	goToPreviousStep,
 	canGoBack,
 	actionLabel,
-	isSubmitting,
+	isLoading,
 	currentStep,
 	steps
 }) => {
 	const [css] = useStyletron();
 	const stepIndex = steps.indexOf(currentStep);
 	const buttonProps = {
-		disabled: isSubmitting,
+		disabled: isLoading,
 		overrides: {
 			BaseButton: {
 				style: {
@@ -77,7 +77,7 @@ const AuthForm = ({
 				<Cell span={12}>
 					<div className={css({ textAlign: "center" })}>
 						<div className={css({ padding: "5px" })}>
-							<Button {...buttonProps} type="submit" isLoading={isSubmitting}>
+							<Button {...buttonProps} type="submit" isLoading={isLoading}>
 								{actionLabel || "Continue"}
 							</Button>
 						</div>
@@ -108,7 +108,7 @@ AuthForm.propTypes = {
 	goToPreviousStep: PropTypes.func.isRequired,
 	canGoBack: PropTypes.bool.isRequired,
 	actionLabel: PropTypes.string,
-	isSubmitting: PropTypes.bool.isRequired,
+	isLoading: PropTypes.bool.isRequired,
 	currentStep: PropTypes.string.isRequired,
 	steps: PropTypes.arrayOf(PropTypes.string).isRequired
 };

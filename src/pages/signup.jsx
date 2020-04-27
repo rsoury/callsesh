@@ -14,6 +14,9 @@ import PhoneField from "@/components/Fields/Phone";
 import VerifyField from "@/components/Fields/Verify";
 import * as validations from "@/utils/validate";
 import returnUserRedirect from "@/utils/return-user-redirect";
+import handleException, { alerts } from "@/utils/handle-exception";
+import request from "@/utils/request";
+import routes from "@/routes";
 
 const formSteps = [
 	{
@@ -59,7 +62,7 @@ const formSteps = [
 			<Grid gridGutters={16}>
 				<Cell span={12}>
 					<VerifyField
-						name="verificationCode"
+						name="code"
 						label="Verification Code"
 						caption="Please enter the 6-digit verification code found in the SMS sent to your phone number."
 					/>
@@ -67,16 +70,16 @@ const formSteps = [
 			</Grid>
 		),
 		initialValues: {
-			verificationCode: ""
+			code: ""
 		},
 		validationSchema: yup.object().shape({
-			verificationCode: yup.string().length(6).ensure().required()
+			code: yup.string().length(6).ensure().required()
 		})
 	}
 ];
 
 const Signup = ({ isAuth }) => {
-	const [isSubmitting, setSubmitting] = useState(false);
+	const [isLoading, setLoading] = useState(false);
 	const [css, theme] = useStyletron();
 
 	useEffect(() => {
@@ -86,10 +89,60 @@ const Signup = ({ isAuth }) => {
 		}
 	}, [isAuth]);
 
-	const handleSubmit = useCallback((values) => {
-		console.log(values);
-		setSubmitting(true);
+	const handleSubmit = useCallback(async (values) => {
+		// Post data to passwordless verification check endpoint
+		// Successful request may require a refresh, or will automatically refresh due to isAuth prop
+		setLoading(true);
+		try {
+			const response = await request
+				.post(routes.api.auth.passwordlessVerify, {
+					...values.info,
+					...values.verify
+				})
+				.then(({ data }) => data);
+			if (response.success) {
+				console.log("SUCCESS!");
+			} else {
+				throw new Error(`Failed to passwordless verification authorisation`);
+			}
+		} catch (e) {
+			handleException(e);
+			alerts.error();
+		} finally {
+			setLoading(false);
+		}
 	}, []);
+
+	// Attach onAction handlers to steps.
+	const steps = formSteps.map((step) => {
+		switch (step.id) {
+			case "info":
+				step.onAction = async ({ phoneNumber }) => {
+					// Setup user verification for phoneNumber
+					setLoading(true);
+					try {
+						const response = await request
+							.post(routes.api.auth.passwordless, {
+								phoneNumber
+							})
+							.then(({ data }) => data);
+						if (!response.success) {
+							throw new Error(`Passwordless authentication failed to start`);
+						}
+					} catch (e) {
+						handleException(e);
+						alerts.error();
+						throw e; // Throw again to prevent the form from proceeding.
+					} finally {
+						setLoading(false);
+					}
+				};
+				break;
+			default:
+				break;
+		}
+		return step;
+	});
 
 	return (
 		<main>
@@ -107,11 +160,9 @@ const Signup = ({ isAuth }) => {
 					</Cell>
 				</Grid>
 				<FormikWizard
-					steps={formSteps}
+					steps={steps}
 					onSubmit={handleSubmit}
-					render={(props) => (
-						<AuthForm {...props} isSubmitting={isSubmitting} />
-					)}
+					render={(props) => <AuthForm {...props} isLoading={isLoading} />}
 				/>
 			</div>
 		</main>
@@ -119,6 +170,7 @@ const Signup = ({ isAuth }) => {
 };
 
 export const getServerSideProps = ({ req }) => {
+	console.log(req.user);
 	return {
 		props: {
 			isAuth: !isEmpty(req.user)

@@ -35,7 +35,7 @@ export const findUser = async (id) => {
  * Retrieve user by property
  */
 export const findUserBy = async (property, value) => {
-	const { records } = db
+	const { records = [] } = db
 		.get(`Users`, {
 			params: {
 				maxRecords: 1,
@@ -66,7 +66,7 @@ export const createUser = async (params) => {
 				}
 			]
 		})
-		.then(({ data: { records } }) => (records.length ? records[0] : {}));
+		.then(({ data: { records = [] } }) => (records.length ? records[0] : {}));
 };
 
 /**
@@ -84,7 +84,7 @@ export const updateUser = async (id, params) => {
 				}
 			]
 		})
-		.then(({ data: { records } }) => (records.length ? records[0] : {}));
+		.then(({ data: { records = [] } }) => (records.length ? records[0] : {}));
 };
 
 /**

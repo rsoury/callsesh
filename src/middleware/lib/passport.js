@@ -5,7 +5,7 @@
 
 import passport from "passport";
 import CustomStrategy from "passport-custom";
-import RememberMeStrategy from "passport-remember-me";
+import { Strategy as RememberMeStrategy } from "passport-remember-me";
 import isEmpty from "is-empty";
 import * as db from "@/db";
 import { verificationCheck } from "@/comms";
@@ -36,9 +36,10 @@ passport.use(
 		verificationCheck(phoneNumber, code)
 			.then((success) => {
 				if (success) {
+					const { firstName, lastName } = req.body;
 					return db.findOrCreateUserBy("Phone Number", phoneNumber, {
-						firstName: req.body.firstName,
-						lastName: req.body.firstName,
+						firstName,
+						lastName,
 						phoneNumber
 					});
 				}

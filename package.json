@@ -27,6 +27,7 @@
 		"baseui": "^9.71.0",
 		"cookie": "^0.4.1",
 		"country-list": "^2.2.0",
+		"express-pino-logger": "^4.0.0",
 		"formik": "^2.1.4",
 		"formik-wizard": "^3.1.2",
 		"is-empty": "^1.2.0",
@@ -77,6 +78,7 @@
 		"is-ci-cli": "^2.0.0",
 		"jest": "^25.4.0",
 		"lint-staged": "^10.1.7",
+		"pino-pretty": "^4.0.0",
 		"prettier": "^2.0.5",
 		"react-test-renderer": "^16.13.1"
 	},

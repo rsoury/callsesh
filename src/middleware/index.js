@@ -1,9 +1,11 @@
 import nextConnect from "next-connect";
+import pino from "express-pino-logger";
+
 import handleException from "@/utils/handle-exception";
 import { isProd } from "@/env-config";
 
 export default function getHandler() {
-	return nextConnect({
+	const handler = nextConnect({
 		onError(err, req, res) {
 			handleException(err);
 
@@ -26,4 +28,12 @@ export default function getHandler() {
 			});
 		}
 	});
+
+	handler.use(
+		pino({
+			prettyPrint: !isProd
+		})
+	);
+
+	return handler;
 }

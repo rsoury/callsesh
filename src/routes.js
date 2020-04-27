@@ -9,5 +9,13 @@ export default {
 		profile: "/settings/profile",
 		paymentMethods: "/settings/payment-methods",
 		notifications: "/settings/notifications"
+	},
+	// All API related endpoints
+	api: {
+		auth: {
+			logout: "/api/auth/logout",
+			passwordless: "/api/auth/passwordless",
+			passwordlessVerify: "/api/auth/passwordless/verify"
+		}
 	}
 };

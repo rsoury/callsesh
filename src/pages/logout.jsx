@@ -1,11 +1,12 @@
 import { useEffect } from "react";
 import { useRouter } from "next/router";
 import useRequest from "@/hooks/use-request";
+import routes from "@/routes";
 
 const Logout = () => {
 	const router = useRouter();
 	useRequest({
-		url: "/api/auth/logout"
+		url: routes.api.auth.logout
 	});
 
 	useEffect(() => {

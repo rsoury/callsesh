@@ -48,13 +48,16 @@ const PhoneInputField = ({
 	const [placeholder, setPlaceholder] = useState(placeholderProp);
 
 	// Lookup IP to localise phone number input.
-	const { data: lookupData = {} } = ipLookup
-		? useRequest({
-				url: "http://ip-api.com/json",
-				method: "GET"
-		  })
-		: { data: {} };
-	const isLoadingLookup = isEmpty(lookupData);
+	let lookupData = [];
+	let isLoadingLookup = true;
+	if (ipLookup) {
+		const { data, isValidating } = useRequest({
+			url: "http://ip-api.com/json",
+			method: "GET"
+		});
+		lookupData = data;
+		isLoadingLookup = isValidating;
+	}
 
 	useEffect(() => {
 		if (lookupData?.countryCode) {
