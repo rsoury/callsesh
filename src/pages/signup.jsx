@@ -6,6 +6,7 @@ import PropTypes from "prop-types";
 import isEmpty from "is-empty";
 import FormikWizard from "formik-wizard";
 import * as yup from "yup";
+import { toaster } from "baseui/toast";
 
 import AuthForm from "@/components/AuthForm";
 import BackHeader from "@/components/BackHeader";
@@ -122,15 +123,17 @@ const Signup = ({ isAuth }) => {
 					// Setup user verification for phoneNumber
 					setLoading(true);
 					try {
-						const response = await request
+						await request
 							.post(routes.api.auth.passwordless.signup, {
 								phoneNumber
 							})
 							.then(({ data }) => data);
-						if (!response.success) {
-							throw new Error(`Passwordless authentication failed to start`);
-						}
 					} catch (e) {
+						const serverMessage = e.response?.data?.message;
+						if (serverMessage) {
+							toaster.warning(serverMessage);
+							throw e;
+						}
 						handleException(e);
 						alerts.error();
 						throw e; // Throw again to prevent the form from proceeding.
