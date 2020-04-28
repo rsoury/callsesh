@@ -1,8 +1,6 @@
-/* eslint-disable no-console */
-
 import { toaster } from "baseui/toast";
-import * as Sentry from "@sentry/node";
-import SentryIntegrations from "@sentry/integrations";
+import * as Sentry from "@sentry/node"; // will be replaced by @sentry/browser by webpack
+import * as SentryIntegrations from "@sentry/integrations";
 import * as envConfig from "@/env-config";
 
 const { isProd, sentry } = envConfig;

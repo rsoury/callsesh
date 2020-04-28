@@ -40,6 +40,7 @@
 		"lodash": "^4.17.15",
 		"modern-normalize": "^0.6.0",
 		"next": "latest",
+		"next-compose-plugins": "^2.2.0",
 		"next-connect": "^0.6.4",
 		"next-seo": "^4.4.0",
 		"passport": "^0.4.1",
