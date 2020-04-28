@@ -2,7 +2,6 @@ import { useEffect, useState, useCallback } from "react";
 import { useStyletron } from "baseui";
 import { H1 as Heading, Paragraph3 as Paragraph } from "baseui/typography";
 import { Grid, Cell } from "baseui/layout-grid";
-import PropTypes from "prop-types";
 import isEmpty from "is-empty";
 import FormikWizard from "formik-wizard";
 import * as yup from "yup";
@@ -80,21 +79,24 @@ const formSteps = [
 	}
 ];
 
-const Signup = ({ isAuth }) => {
-	const [isLoading, setLoading] = useState(false);
+const Signup = () => {
+	const [isSubmitting, setSubmitting] = useState(false);
 	const [css, theme] = useStyletron();
+	// const [user, { loading: isLoading }] = useUser();
+	const user = {};
+	const isLoading = false;
 
 	useEffect(() => {
-		if (isAuth) {
+		if (!isEmpty(user)) {
 			// Return user if authenticated
 			returnUserRedirect();
 		}
-	}, [isAuth]);
+	}, [user]);
 
 	const handleSubmit = useCallback(async (values) => {
 		// Post data to passwordless verification check endpoint
 		// Successful request may require a refresh, or will automatically refresh due to isAuth prop
-		setLoading(true);
+		setSubmitting(true);
 		try {
 			const response = await request
 				.post(routes.api.auth.passwordless.verify, {
@@ -111,7 +113,7 @@ const Signup = ({ isAuth }) => {
 			handleException(e);
 			alerts.error();
 		} finally {
-			setLoading(false);
+			setSubmitting(false);
 		}
 	}, []);
 
@@ -121,7 +123,7 @@ const Signup = ({ isAuth }) => {
 			case "info":
 				step.onAction = async ({ phoneNumber }) => {
 					// Setup user verification for phoneNumber
-					setLoading(true);
+					setSubmitting(true);
 					try {
 						await request
 							.post(routes.api.auth.passwordless.signup, {
@@ -138,7 +140,7 @@ const Signup = ({ isAuth }) => {
 						alerts.error();
 						throw e; // Throw again to prevent the form from proceeding.
 					} finally {
-						setLoading(false);
+						setSubmitting(false);
 					}
 				};
 				break;
@@ -166,31 +168,26 @@ const Signup = ({ isAuth }) => {
 				<FormikWizard
 					steps={steps}
 					onSubmit={handleSubmit}
-					render={(props) => <AuthForm {...props} isLoading={isLoading} />}
+					render={(props) => (
+						<AuthForm
+							{...props}
+							isSubmitting={isSubmitting}
+							isLoading={isLoading}
+						/>
+					)}
 				/>
-				<Grid>
-					<Cell span={12}>
-						<Paragraph className={css({ textAlign: "center" })}>
-							Already have an account? <Link href={routes.login}>Log in</Link>
-						</Paragraph>
-					</Cell>
-				</Grid>
+				{!isLoading && (
+					<Grid>
+						<Cell span={12}>
+							<Paragraph className={css({ textAlign: "center" })}>
+								Already have an account? <Link href={routes.login}>Log in</Link>
+							</Paragraph>
+						</Cell>
+					</Grid>
+				)}
 			</div>
 		</main>
 	);
-};
-
-export const getServerSideProps = ({ req }) => {
-	console.log(req.user);
-	return {
-		props: {
-			isAuth: !isEmpty(req.user)
-		}
-	};
-};
-
-Signup.propTypes = {
-	isAuth: PropTypes.bool.isRequired
 };
 
 export default Signup;

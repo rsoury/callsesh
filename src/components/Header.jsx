@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import PropTypes from "prop-types";
 import { useStyletron } from "baseui";
 import {
 	Button,
@@ -20,16 +19,42 @@ import {
 	Bell as NotificationsIcon,
 	User as ProfileIcon
 } from "react-feather";
+import isEmpty from "is-empty";
+import Skeleton from "react-loading-skeleton";
 import routes from "@/routes";
+// import useUser from "@/hooks/use-user";
 
-const logoUrl = "/logo/wagecall-logo@300.png";
+const logoUrl = "/static/logo/wagecall-logo@300.png";
 
-const Header = ({ isAuthenticated }) => {
+const Header = () => {
 	const [css, theme] = useStyletron();
 	const [mobileMenu, showMobileMenu] = useState(false);
+	// const [user, { loading: isLoading }] = useUser();
+	const user = {};
+	const isLoading = false;
 
 	let menuItems = [];
-	if (isAuthenticated) {
+	if (isLoading) {
+		menuItems = Object.entries({
+			button1: () => <Skeleton height={45} width={100} />,
+			button2: () => <Skeleton height={45} width={100} />
+		});
+	} else if (isEmpty(user)) {
+		menuItems = Object.entries({
+			login: (props) => (
+				<Link href={routes.login}>
+					<Button kind={BUTTON_KIND.tertiary} {...props}>
+						Log in
+					</Button>
+				</Link>
+			),
+			signup: (props) => (
+				<Link href={routes.signup}>
+					<Button {...props}>Sign up</Button>
+				</Link>
+			)
+		});
+	} else {
 		menuItems = Object.entries({
 			profile: (props) => (
 				<Link href={routes.settings.profile}>
@@ -62,21 +87,6 @@ const Header = ({ isAuthenticated }) => {
 					>
 						Notifications
 					</Button>
-				</Link>
-			)
-		});
-	} else {
-		menuItems = Object.entries({
-			login: (props) => (
-				<Link href={routes.login}>
-					<Button kind={BUTTON_KIND.tertiary} {...props}>
-						Log in
-					</Button>
-				</Link>
-			),
-			signup: (props) => (
-				<Link href={routes.signup}>
-					<Button {...props}>Sign up</Button>
 				</Link>
 			)
 		});
@@ -186,14 +196,6 @@ const Header = ({ isAuthenticated }) => {
 			</Drawer>
 		</>
 	);
-};
-
-Header.propTypes = {
-	isAuthenticated: PropTypes.bool
-};
-
-Header.defaultProps = {
-	isAuthenticated: false
 };
 
 export default Header;

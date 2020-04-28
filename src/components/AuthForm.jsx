@@ -4,6 +4,8 @@ import { useStyletron } from "baseui";
 import { Button, KIND as BUTTON_KIND } from "baseui/button";
 import { Grid, Cell } from "baseui/layout-grid";
 import ChevronLeft from "baseui/icon/chevron-left";
+import Skeleton from "react-loading-skeleton";
+
 import { ChildrenProps } from "@/utils/common-prop-types";
 import { isProd } from "@/env-config";
 
@@ -12,14 +14,15 @@ const AuthForm = ({
 	goToPreviousStep,
 	canGoBack,
 	actionLabel,
-	isLoading,
 	currentStep,
-	steps
+	steps,
+	isSubmitting,
+	isLoading
 }) => {
 	const [css] = useStyletron();
 	const stepIndex = steps.indexOf(currentStep);
 	const buttonProps = {
-		disabled: isLoading,
+		disabled: isSubmitting,
 		overrides: {
 			BaseButton: {
 				style: {
@@ -63,7 +66,23 @@ const AuthForm = ({
 					paddingBottom: "20px"
 				})}
 			>
-				{children}
+				{isLoading ? (
+					<Grid>
+						<Cell span={[12, 4, 6]}>
+							<Skeleton height={50} />
+						</Cell>
+						<Cell span={[12, 4, 6]}>
+							<Skeleton height={50} />
+						</Cell>
+						<Cell span={12}>
+							<div className={css({ paddingTop: "20px" })}>
+								<Skeleton height={50} />
+							</div>
+						</Cell>
+					</Grid>
+				) : (
+					children
+				)}
 			</div>
 			<Grid
 				overrides={{
@@ -77,9 +96,13 @@ const AuthForm = ({
 				<Cell span={12}>
 					<div className={css({ textAlign: "center" })}>
 						<div className={css({ padding: "5px" })}>
-							<Button {...buttonProps} type="submit" isLoading={isLoading}>
-								{actionLabel || "Continue"}
-							</Button>
+							{isLoading ? (
+								<Skeleton height={45} />
+							) : (
+								<Button {...buttonProps} type="submit" isLoading={isSubmitting}>
+									{actionLabel || "Continue"}
+								</Button>
+							)}
 						</div>
 						{canGoBack && (
 							<div className={css({ padding: "5px" })}>
@@ -108,12 +131,15 @@ AuthForm.propTypes = {
 	goToPreviousStep: PropTypes.func.isRequired,
 	canGoBack: PropTypes.bool.isRequired,
 	actionLabel: PropTypes.string,
-	isLoading: PropTypes.bool.isRequired,
 	currentStep: PropTypes.string.isRequired,
-	steps: PropTypes.arrayOf(PropTypes.string).isRequired
+	steps: PropTypes.arrayOf(PropTypes.string).isRequired,
+	isSubmitting: PropTypes.bool,
+	isLoading: PropTypes.bool
 };
 
 AuthForm.defaultProps = {
+	isSubmitting: false,
+	isLoading: false,
 	actionLabel: ""
 };
 

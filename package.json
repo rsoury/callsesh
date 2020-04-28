@@ -22,6 +22,10 @@
 	"dependencies": {
 		"@hapi/iron": "^6.0.0",
 		"@sentry/browser": "^5.15.5",
+		"@sentry/integrations": "^5.15.5",
+		"@sentry/node": "^5.15.5",
+		"@zeit/next-source-maps": "^0.0.3",
+		"auth0-js": "^9.13.2",
 		"axios": "^0.19.2",
 		"axios-retry": "^3.1.7",
 		"baseui": "^9.71.0",
@@ -48,12 +52,14 @@
 		"react-dom": "^16.8.0",
 		"react-fastclick": "^3.0.2",
 		"react-feather": "^2.0.4",
+		"react-loading-skeleton": "^2.0.1",
 		"setimmediate": "^1.0.5",
 		"styletron-engine-atomic": "^1.1.2",
 		"styletron-react": "^5.0.1",
 		"swr": "^0.2.0",
 		"twilio": "^3.42.2",
 		"url-parse": "^1.4.7",
+		"use-auth0-hooks": "^0.7.0",
 		"yup": "^0.28.4"
 	},
 	"devDependencies": {
@@ -61,7 +67,6 @@
 		"babel-jest": "^25.4.0",
 		"babel-plugin-module-resolver": "^4.0.0",
 		"dotenv": "^8.2.0",
-		"dotenv-webpack": "^1.7.0",
 		"enzyme": "^3.11.0",
 		"enzyme-adapter-react-16": "^1.15.2",
 		"eslint": "^6.8.0",

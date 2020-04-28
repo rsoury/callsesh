@@ -8,7 +8,9 @@ import isEmpty from "is-empty";
 import mapKeys from "lodash/mapKeys";
 import startCase from "lodash/startCase";
 import { parsePhoneNumberFromString } from "libphonenumber-js";
-import { airtable as config } from "./env-config";
+// import { airtable as config } from "@/env-config";
+
+const config = {};
 
 const db = axios.create({
 	baseURL: `https://api.airtable.com/v0/${config.base}/`,

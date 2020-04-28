@@ -5,8 +5,11 @@ import { Provider as StyletronProvider } from "styletron-react";
 import { ToasterContainer, PLACEMENT } from "baseui/toast";
 import { DefaultSeo } from "next-seo";
 import initFastclick from "react-fastclick";
+
 import { engine, debug } from "@config/styletron";
 import seoConfig from "@config/seo";
+import handleException, { alerts } from "@/utils/handle-exception";
+
 import "setimmediate";
 import "modern-normalize";
 import "@/styles.css";
@@ -37,6 +40,11 @@ class App extends NextApp {
 		if (typeof window !== "undefined") {
 			initFastclick();
 		}
+	}
+
+	componentDidCatch(error, errorInfo) {
+		handleException(error, { errorInfo });
+		alerts.error();
 	}
 
 	render() {

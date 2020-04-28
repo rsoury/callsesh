@@ -29,11 +29,24 @@ export default function getHandler() {
 		}
 	});
 
+	// Add pino logger
 	handler.use(
 		pino({
 			prettyPrint: !isProd
 		})
 	);
+
+	// Add redirect handler
+	handler.use((req, res, next) => {
+		res.redirect = (status, path) => {
+			res.writeHead(status, {
+				Location: path
+			});
+			return res.end();
+		};
+
+		next();
+	});
 
 	return handler;
 }
