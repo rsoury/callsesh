@@ -1,12 +1,14 @@
+/* eslint-disable no-console */
+
 import { toaster } from "baseui/toast";
 import * as Sentry from "@sentry/node"; // will be replaced by @sentry/browser by webpack
-import * as SentryIntegrations from "@sentry/integrations";
 import * as envConfig from "@/env-config";
 
 const { isProd, sentry } = envConfig;
 
 const sentryOptions = {
 	dsn: sentry.dsn,
+	enabled: process.env.NODE_ENV !== "test",
 	release: sentry.release,
 	environment: process.env.NODE_ENV,
 	maxBreadcrumbs: 50,
@@ -15,31 +17,37 @@ const sentryOptions = {
 
 // If developing locally
 if (!isProd) {
-	// Don't actually send the errors to Sentry
-	sentryOptions.beforeSend = () => null;
-
-	// Instead, dump the errors to the console
-	sentryOptions.integrations = [
-		new SentryIntegrations.Debug({
-			// Trigger DevTools debugger instead of using console.log
-			debugger: false
-		})
-	];
+	// Don't actually send the errors to Sentry -- console.log them instead.
+	// Tried to use SentryDebug in @sentry/integrations, but kept getting an error "Can't resolve 'console'"
+	sentryOptions.beforeSend = (event) => {
+		// console.log(JSON.stringify(event, null, 2));
+		console.log(event);
+		return null;
+	};
 }
 
 if (sentry.dsn) {
 	Sentry.init(sentryOptions);
+
+	// Scope configured by default, subsequent calls to "configureScope" will add additional data
+	Sentry.configureScope((scope) => {
+		// See https://www.npmjs.com/package/@sentry/node
+		scope.setTag("nodejs", process.version);
+		scope.setTag("nodejsAWS", process.env.AWS_EXECUTION_ENV || null); // Optional - Available on production environment only
+		scope.setTag("memory", process.env.AWS_LAMBDA_FUNCTION_MEMORY_SIZE || null); // Optional - Available on production environment only
+		scope.setTag(
+			"runtimeEngine",
+			typeof window !== "undefined" ? "browser" : "server"
+		);
+		scope.setTag("buildTime", process.env.BUILD_TIME);
+	});
 }
 
 export { Sentry };
 
-export const setErrorTrackingUser = (user) => {
+export const setUser = (user) => {
 	Sentry.configureScope((scope) => {
-		scope.setUser({
-			id: user.id,
-			email: user.email,
-			name: `${user.firstName} ${user.lastName}`
-		});
+		scope.setUser(user);
 	});
 };
 
