@@ -3,7 +3,7 @@
  */
 
 import getHandler from "@/middleware";
-import auth from "@/auth";
+import auth from "@/middleware/auth";
 
 const handler = getHandler();
 
