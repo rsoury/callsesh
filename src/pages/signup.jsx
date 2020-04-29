@@ -5,7 +5,7 @@ import { Grid, Cell } from "baseui/layout-grid";
 import isEmpty from "is-empty";
 import FormikWizard from "formik-wizard";
 import * as yup from "yup";
-import { toaster } from "baseui/toast";
+// import { toaster } from "baseui/toast";
 
 import AuthForm from "@/components/AuthForm";
 import BackHeader from "@/components/BackHeader";
@@ -15,9 +15,10 @@ import VerifyField from "@/components/Fields/Verify";
 import Link from "@/components/Link";
 import * as validations from "@/utils/validate";
 import returnUserRedirect from "@/utils/return-user-redirect";
-import handleException, { alerts } from "@/utils/handle-exception";
-import request from "@/utils/request";
+// import handleException, { alerts } from "@/utils/handle-exception";
+// import request from "@/utils/request";
 import routes from "@/routes";
+import * as auth from "@/utils/auth";
 
 const formSteps = [
 	{
@@ -98,20 +99,14 @@ const Signup = () => {
 		// Successful request may require a refresh, or will automatically refresh due to isAuth prop
 		setSubmitting(true);
 		try {
-			const response = await request
-				.post(routes.api.auth.passwordless.verify, {
-					...values.info,
-					...values.verify
-				})
-				.then(({ data }) => data);
-			if (response.success) {
-				console.log("SUCCESS!");
-			} else {
-				throw new Error(`Failed to passwordless verification authorisation`);
-			}
+			const result = await auth.verify(
+				values.info.phoneNumber,
+				values.verify.code
+			);
+			console.log(result);
 		} catch (e) {
-			handleException(e);
-			alerts.error();
+			console.error(e);
+			throw e;
 		} finally {
 			setSubmitting(false);
 		}
@@ -125,20 +120,11 @@ const Signup = () => {
 					// Setup user verification for phoneNumber
 					setSubmitting(true);
 					try {
-						await request
-							.post(routes.api.auth.passwordless.signup, {
-								phoneNumber
-							})
-							.then(({ data }) => data);
+						const result = await auth.start(phoneNumber);
+						console.log(result);
 					} catch (e) {
-						const serverMessage = e.response?.data?.message;
-						if (serverMessage) {
-							toaster.warning(serverMessage);
-							throw e;
-						}
-						handleException(e);
-						alerts.error();
-						throw e; // Throw again to prevent the form from proceeding.
+						console.error(e);
+						throw e;
 					} finally {
 						setSubmitting(false);
 					}

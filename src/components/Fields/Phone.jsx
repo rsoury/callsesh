@@ -3,10 +3,8 @@
 import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import { Field } from "formik";
-import { withStyle } from "baseui";
 import { FormControl } from "baseui/form-control";
 import { PhoneInput, COUNTRIES } from "baseui/phone-input";
-import { StyledSpinnerNext } from "baseui/spinner";
 import {
 	parsePhoneNumberFromString,
 	getExampleNumber
@@ -15,18 +13,18 @@ import examplePhoneNumbers from "libphonenumber-js/examples.mobile.json";
 import isEmpty from "is-empty";
 import snakeCase from "lodash/snakeCase";
 
+import getSpinner from "@/components/getSpinner";
 import useRequest from "@/hooks/use-request";
 import onChangeIsNumber from "@/utils/on-change-is-number";
 import * as format from "@/utils/format";
 
-const Spinner = withStyle(StyledSpinnerNext, {
+const Spinner = getSpinner({
 	width: "22px",
-	height: "22px"
+	height: "22px",
+	borderBottomColor: "rgb(220, 220, 220)",
+	borderLeftColor: "rgb(220, 220, 220)",
+	borderRightColor: "rgb(220, 220, 220)"
 });
-
-// const InputLoading = () => (
-
-// );
 
 const PhoneInputField = ({
 	field: { onChange, value, onBlur, ...field },
