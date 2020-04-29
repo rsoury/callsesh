@@ -10,3 +10,5 @@ const handler = getHandler();
 handler.get(async (req, res) => {
 	await auth.handleLogin(req, res);
 });
+
+export default handler;

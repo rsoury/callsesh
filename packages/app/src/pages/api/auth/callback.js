@@ -11,3 +11,5 @@ handler.get(async (req, res) => {
 	// TODO: Use a cookie to store the return_url before login attempt
 	await auth.handleCallback(req, res, { redirectTo: "/" });
 });
+
+export default handler;

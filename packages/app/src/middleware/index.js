@@ -36,17 +36,5 @@ export default function getHandler() {
 		})
 	);
 
-	// Add redirect handler
-	handler.use((req, res, next) => {
-		res.redirect = (status, path) => {
-			res.writeHead(status, {
-				Location: path
-			});
-			return res.end();
-		};
-
-		next();
-	});
-
 	return handler;
 }
