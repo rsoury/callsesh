@@ -1,0 +1,15 @@
+{
+	"ast": null,
+	"code": "module.exports.HYDRATE_CLASS = \"_root_hydrate_\";",
+	"map": {
+		"version": 3,
+		"sources": [
+			"/Users/ryansoury/dev/wagecall/packages/wagecall/config/constants.js"
+		],
+		"names": ["module", "exports", "HYDRATE_CLASS"],
+		"mappings": "AAAAA,MAAM,CAACC,OAAP,CAAeC,aAAf,GAA+B,gBAA/B",
+		"sourcesContent": ["module.exports.HYDRATE_CLASS = \"_root_hydrate_\";\n"]
+	},
+	"metadata": {},
+	"sourceType": "script"
+}

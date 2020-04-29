@@ -1,0 +1,52 @@
+{
+	"ast": null,
+	"code": "import _extends from \"@babel/runtime/helpers/esm/extends\";\nimport _classCallCheck from \"@babel/runtime/helpers/esm/classCallCheck\";\nimport _createClass from \"@babel/runtime/helpers/esm/createClass\";\nimport _inherits from \"@babel/runtime/helpers/esm/inherits\";\nimport _possibleConstructorReturn from \"@babel/runtime/helpers/esm/possibleConstructorReturn\";\nimport _getPrototypeOf from \"@babel/runtime/helpers/esm/getPrototypeOf\";\nimport _defineProperty from \"@babel/runtime/helpers/esm/defineProperty\";\nvar _jsxFileName = \"/Users/ryansoury/dev/wagecall/packages/wagecall/src/pages/_app.jsx\";\nvar __jsx = React.createElement;\n\nfunction _createSuper(Derived) { return function () { var Super = _getPrototypeOf(Derived), result; if (_isNativeReflectConstruct()) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }\n\nfunction _isNativeReflectConstruct() { if (typeof Reflect === \"undefined\" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === \"function\") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }\n\nfunction ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }\n\nfunction _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }\n\nimport React from \"react\";\nimport NextApp from \"next/app\";\nimport { LightTheme, BaseProvider, styled } from \"baseui\";\nimport { Provider as StyletronProvider } from \"styletron-react\";\nimport { ToasterContainer, PLACEMENT } from \"baseui/toast\";\nimport { DefaultSeo } from \"next-seo\";\nimport initFastclick from \"react-fastclick\";\nimport { engine, debug } from \"@config/styletron\";\nimport seoConfig from \"@config/seo\";\nimport \"setimmediate\";\nimport \"modern-normalize\";\nimport \"@/styles.css\";\n\nvar theme = _objectSpread({}, LightTheme, {\n  mediaQuery: {\n    small: \"@media screen and (min-width: \".concat(LightTheme.breakpoints.small, \"px)\"),\n    medium: \"@media screen and (min-width: \".concat(LightTheme.breakpoints.medium, \"px)\"),\n    large: \"@media screen and (min-width: \".concat(LightTheme.breakpoints.large, \"px)\"),\n    maxSmall: \"@media screen and (max-width: \".concat(LightTheme.breakpoints.medium - 1, \"px)\"),\n    maxMedium: \"@media screen and (max-width: \".concat(LightTheme.breakpoints.large - 1, \"px)\")\n  }\n});\n\nvar Container = styled(\"div\", {\n  maxWidth: \"1024px\",\n  margin: \"0 auto\",\n  width: \"100%\"\n});\n\nvar App = /*#__PURE__*/function (_NextApp) {\n  _inherits(App, _NextApp);\n\n  var _super = _createSuper(App);\n\n  function App() {\n    _classCallCheck(this, App);\n\n    return _super.apply(this, arguments);\n  }\n\n  _createClass(App, [{\n    key: \"componentDidMount\",\n    value: function componentDidMount() {\n      if (true) {\n        initFastclick();\n      }\n    }\n  }, {\n    key: \"render\",\n    value: function render() {\n      var _this$props = this.props,\n          Component = _this$props.Component,\n          pageProps = _this$props.pageProps;\n      return __jsx(StyletronProvider, {\n        value: engine,\n        debug: debug,\n        debugAfterHydration: true,\n        __self: this,\n        __source: {\n          fileName: _jsxFileName,\n          lineNumber: 48,\n          columnNumber: 4\n        }\n      }, __jsx(BaseProvider, {\n        theme: theme,\n        __self: this,\n        __source: {\n          fileName: _jsxFileName,\n          lineNumber: 49,\n          columnNumber: 5\n        }\n      }, __jsx(DefaultSeo, _extends({}, seoConfig, {\n        __self: this,\n        __source: {\n          fileName: _jsxFileName,\n          lineNumber: 50,\n          columnNumber: 6\n        }\n      })), __jsx(ToasterContainer, {\n        placement: PLACEMENT.topRight,\n        autoHideDuration: 10000,\n        overrides: {\n          Root: {\n            style: {\n              zIndex: \"99999999\"\n            }\n          }\n        },\n        __self: this,\n        __source: {\n          fileName: _jsxFileName,\n          lineNumber: 51,\n          columnNumber: 6\n        }\n      }, __jsx(Container, {\n        id: \"wagecall-app\",\n        __self: this,\n        __source: {\n          fileName: _jsxFileName,\n          lineNumber: 62,\n          columnNumber: 7\n        }\n      }, __jsx(Component, _extends({}, pageProps, {\n        __self: this,\n        __source: {\n          fileName: _jsxFileName,\n          lineNumber: 63,\n          columnNumber: 8\n        }\n      }))))));\n    }\n  }]);\n\n  return App;\n}(NextApp);\n\nexport default App;",
+	"map": {
+		"version": 3,
+		"sources": [
+			"/Users/ryansoury/dev/wagecall/packages/wagecall/src/pages/_app.jsx"
+		],
+		"names": [
+			"React",
+			"NextApp",
+			"LightTheme",
+			"BaseProvider",
+			"styled",
+			"Provider",
+			"StyletronProvider",
+			"ToasterContainer",
+			"PLACEMENT",
+			"DefaultSeo",
+			"initFastclick",
+			"engine",
+			"debug",
+			"seoConfig",
+			"theme",
+			"mediaQuery",
+			"small",
+			"breakpoints",
+			"medium",
+			"large",
+			"maxSmall",
+			"maxMedium",
+			"Container",
+			"maxWidth",
+			"margin",
+			"width",
+			"App",
+			"props",
+			"Component",
+			"pageProps",
+			"topRight",
+			"Root",
+			"style",
+			"zIndex"
+		],
+		"mappings": ";;;;;;;;;;;;;;;;;;AAAA,OAAOA,KAAP,MAAkB,OAAlB;AACA,OAAOC,OAAP,MAAoB,UAApB;AACA,SAASC,UAAT,EAAqBC,YAArB,EAAmCC,MAAnC,QAAiD,QAAjD;AACA,SAASC,QAAQ,IAAIC,iBAArB,QAA8C,iBAA9C;AACA,SAASC,gBAAT,EAA2BC,SAA3B,QAA4C,cAA5C;AACA,SAASC,UAAT,QAA2B,UAA3B;AACA,OAAOC,aAAP,MAA0B,iBAA1B;AAEA,SAASC,MAAT,EAAiBC,KAAjB,QAA8B,mBAA9B;AACA,OAAOC,SAAP,MAAsB,aAAtB;AAEA,OAAO,cAAP;AACA,OAAO,kBAAP;AACA,OAAO,cAAP;;AAEA,IAAMC,KAAK,qBACPZ,UADO;AAEVa,EAAAA,UAAU,EAAE;AACXC,IAAAA,KAAK,0CAAmCd,UAAU,CAACe,WAAX,CAAuBD,KAA1D,QADM;AAEXE,IAAAA,MAAM,0CAAmChB,UAAU,CAACe,WAAX,CAAuBC,MAA1D,QAFK;AAGXC,IAAAA,KAAK,0CAAmCjB,UAAU,CAACe,WAAX,CAAuBE,KAA1D,QAHM;AAIXC,IAAAA,QAAQ,0CACPlB,UAAU,CAACe,WAAX,CAAuBC,MAAvB,GAAgC,CADzB,QAJG;AAOXG,IAAAA,SAAS,0CACRnB,UAAU,CAACe,WAAX,CAAuBE,KAAvB,GAA+B,CADvB;AAPE;AAFF,EAAX;;AAeA,IAAMG,SAAS,GAAGlB,MAAM,CAAC,KAAD,EAAQ;AAC/BmB,EAAAA,QAAQ,EAAE,QADqB;AAE/BC,EAAAA,MAAM,EAAE,QAFuB;AAG/BC,EAAAA,KAAK,EAAE;AAHwB,CAAR,CAAxB;;IAMMC,G;;;;;;;;;;;;;wCACe;AACnB,gBAAmC;AAClChB,QAAAA,aAAa;AACb;AACD;;;6BAEQ;AAAA,wBACyB,KAAKiB,KAD9B;AAAA,UACAC,SADA,eACAA,SADA;AAAA,UACWC,SADX,eACWA,SADX;AAGR,aACC,MAAC,iBAAD;AAAmB,QAAA,KAAK,EAAElB,MAA1B;AAAkC,QAAA,KAAK,EAAEC,KAAzC;AAAgD,QAAA,mBAAmB,MAAnE;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA,SACC,MAAC,YAAD;AAAc,QAAA,KAAK,EAAEE,KAArB;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA,SACC,MAAC,UAAD,eAAgBD,SAAhB;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA,SADD,EAEC,MAAC,gBAAD;AACC,QAAA,SAAS,EAAEL,SAAS,CAACsB,QADtB;AAEC,QAAA,gBAAgB,EAAE,KAFnB;AAGC,QAAA,SAAS,EAAE;AACVC,UAAAA,IAAI,EAAE;AACLC,YAAAA,KAAK,EAAE;AACNC,cAAAA,MAAM,EAAE;AADF;AADF;AADI,SAHZ;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA,SAWC,MAAC,SAAD;AAAW,QAAA,EAAE,EAAC,cAAd;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA,SACC,MAAC,SAAD,eAAeJ,SAAf;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA,SADD,CAXD,CAFD,CADD,CADD;AAsBA;;;;EAhCgB5B,O;;AAmClB,eAAeyB,GAAf",
+		"sourcesContent": [
+			"import React from \"react\";\nimport NextApp from \"next/app\";\nimport { LightTheme, BaseProvider, styled } from \"baseui\";\nimport { Provider as StyletronProvider } from \"styletron-react\";\nimport { ToasterContainer, PLACEMENT } from \"baseui/toast\";\nimport { DefaultSeo } from \"next-seo\";\nimport initFastclick from \"react-fastclick\";\n\nimport { engine, debug } from \"@config/styletron\";\nimport seoConfig from \"@config/seo\";\n\nimport \"setimmediate\";\nimport \"modern-normalize\";\nimport \"@/styles.css\";\n\nconst theme = {\n\t...LightTheme,\n\tmediaQuery: {\n\t\tsmall: `@media screen and (min-width: ${LightTheme.breakpoints.small}px)`,\n\t\tmedium: `@media screen and (min-width: ${LightTheme.breakpoints.medium}px)`,\n\t\tlarge: `@media screen and (min-width: ${LightTheme.breakpoints.large}px)`,\n\t\tmaxSmall: `@media screen and (max-width: ${\n\t\t\tLightTheme.breakpoints.medium - 1\n\t\t}px)`,\n\t\tmaxMedium: `@media screen and (max-width: ${\n\t\t\tLightTheme.breakpoints.large - 1\n\t\t}px)`\n\t}\n};\n\nconst Container = styled(\"div\", {\n\tmaxWidth: \"1024px\",\n\tmargin: \"0 auto\",\n\twidth: \"100%\"\n});\n\nclass App extends NextApp {\n\tcomponentDidMount() {\n\t\tif (typeof window !== \"undefined\") {\n\t\t\tinitFastclick();\n\t\t}\n\t}\n\n\trender() {\n\t\tconst { Component, pageProps } = this.props;\n\n\t\treturn (\n\t\t\t<StyletronProvider value={engine} debug={debug} debugAfterHydration>\n\t\t\t\t<BaseProvider theme={theme}>\n\t\t\t\t\t<DefaultSeo {...seoConfig} />\n\t\t\t\t\t<ToasterContainer\n\t\t\t\t\t\tplacement={PLACEMENT.topRight}\n\t\t\t\t\t\tautoHideDuration={10000}\n\t\t\t\t\t\toverrides={{\n\t\t\t\t\t\t\tRoot: {\n\t\t\t\t\t\t\t\tstyle: {\n\t\t\t\t\t\t\t\t\tzIndex: \"99999999\"\n\t\t\t\t\t\t\t\t}\n\t\t\t\t\t\t\t}\n\t\t\t\t\t\t}}\n\t\t\t\t\t>\n\t\t\t\t\t\t<Container id=\"wagecall-app\">\n\t\t\t\t\t\t\t<Component {...pageProps} />\n\t\t\t\t\t\t</Container>\n\t\t\t\t\t</ToasterContainer>\n\t\t\t\t</BaseProvider>\n\t\t\t</StyletronProvider>\n\t\t);\n\t}\n}\n\nexport default App;\n"
+		]
+	},
+	"metadata": {},
+	"sourceType": "module"
+}

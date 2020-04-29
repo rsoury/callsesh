@@ -1,4 +1,4 @@
 {
-	"eslint.workingDirectories": ["./"],
+	"eslint.validate": ["javascript", "javascriptreact"],
 	"prettier.configPath": "./.prettierrc"
 }

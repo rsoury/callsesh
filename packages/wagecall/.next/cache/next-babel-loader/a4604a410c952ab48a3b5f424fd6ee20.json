@@ -1,0 +1,33 @@
+{
+	"ast": null,
+	"code": "const {\n  Client,\n  Server\n} = require(\"styletron-engine-atomic\");\n\nconst {\n  DebugEngine\n} = require(\"styletron-react\");\n\nconst constants = require(\"./constants\");\n\nconst getHydrateClass = () => document.getElementsByClassName(constants.HYDRATE_CLASS);\n\nmodule.exports.engine = true ? new Server() : new Client({\n  hydrate: getHydrateClass()\n});\nmodule.exports.debug = true ? new DebugEngine() : undefined;",
+	"map": {
+		"version": 3,
+		"sources": [
+			"/Users/ryansoury/dev/wagecall/packages/wagecall/config/styletron.js"
+		],
+		"names": [
+			"Client",
+			"Server",
+			"require",
+			"DebugEngine",
+			"constants",
+			"getHydrateClass",
+			"document",
+			"getElementsByClassName",
+			"HYDRATE_CLASS",
+			"module",
+			"exports",
+			"engine",
+			"hydrate",
+			"debug",
+			"undefined"
+		],
+		"mappings": "AAAA,MAAM;AAAEA,EAAAA,MAAF;AAAUC,EAAAA;AAAV,IAAqBC,OAAO,CAAC,yBAAD,CAAlC;;AACA,MAAM;AAAEC,EAAAA;AAAF,IAAkBD,OAAO,CAAC,iBAAD,CAA/B;;AACA,MAAME,SAAS,GAAGF,OAAO,CAAC,aAAD,CAAzB;;AAEA,MAAMG,eAAe,GAAG,MACvBC,QAAQ,CAACC,sBAAT,CAAgCH,SAAS,CAACI,aAA1C,CADD;;AAGAC,MAAM,CAACC,OAAP,CAAeC,MAAf,GACC,OACG,IAAIV,MAAJ,EADH,GAEG,IAAID,MAAJ,CAAW;AACXY,EAAAA,OAAO,EAAEP,eAAe;AADb,CAAX,CAHJ;AAOAI,MAAM,CAACC,OAAP,CAAeG,KAAf,GACC,OAAwC,IAAIV,WAAJ,EAAxC,GAA4DW,SAD7D",
+		"sourcesContent": [
+			"const { Client, Server } = require(\"styletron-engine-atomic\");\nconst { DebugEngine } = require(\"styletron-react\");\nconst constants = require(\"./constants\");\n\nconst getHydrateClass = () =>\n\tdocument.getElementsByClassName(constants.HYDRATE_CLASS);\n\nmodule.exports.engine =\n\ttypeof window === \"undefined\"\n\t\t? new Server()\n\t\t: new Client({\n\t\t\t\thydrate: getHydrateClass()\n\t\t  });\n\nmodule.exports.debug =\n\tprocess.env.NODE_ENV !== \"production\" ? new DebugEngine() : undefined;\n"
+		]
+	},
+	"metadata": {},
+	"sourceType": "script"
+}

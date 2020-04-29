@@ -1,0 +1,17 @@
+{
+	"ast": null,
+	"code": "import _slicedToArray from \"@babel/runtime/helpers/esm/slicedToArray\";\n\nvar _this = this,\n    _jsxFileName = \"/Users/ryansoury/dev/wagecall/packages/wagecall/src/pages/index.jsx\";\n\nimport React from \"react\";\nvar __jsx = React.createElement;\nimport { useStyletron } from \"baseui\";\nimport Header from \"@/components/Header\";\n\nvar Index = function Index() {\n  var _useStyletron = useStyletron(),\n      _useStyletron2 = _slicedToArray(_useStyletron, 1),\n      css = _useStyletron2[0];\n\n  return __jsx(\"main\", {\n    __self: _this,\n    __source: {\n      fileName: _jsxFileName,\n      lineNumber: 8,\n      columnNumber: 3\n    }\n  }, __jsx(Header, {\n    __self: _this,\n    __source: {\n      fileName: _jsxFileName,\n      lineNumber: 9,\n      columnNumber: 4\n    }\n  }), __jsx(\"p\", {\n    className: css({\n      fontSize: \"32px\"\n    }),\n    __self: _this,\n    __source: {\n      fileName: _jsxFileName,\n      lineNumber: 10,\n      columnNumber: 4\n    }\n  }, \"Styled by hook\"));\n};\n\nexport default Index;",
+	"map": {
+		"version": 3,
+		"sources": [
+			"/Users/ryansoury/dev/wagecall/packages/wagecall/src/pages/index.jsx"
+		],
+		"names": ["useStyletron", "Header", "Index", "css", "fontSize"],
+		"mappings": ";;;;;;;AAAA,SAASA,YAAT,QAA6B,QAA7B;AACA,OAAOC,MAAP,MAAmB,qBAAnB;;AAEA,IAAMC,KAAK,GAAG,SAARA,KAAQ,GAAM;AAAA,sBACLF,YAAY,EADP;AAAA;AAAA,MACZG,GADY;;AAGnB,SACC;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA,KACC,MAAC,MAAD;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA,IADD,EAEC;AAAG,IAAA,SAAS,EAAEA,GAAG,CAAC;AAAEC,MAAAA,QAAQ,EAAE;AAAZ,KAAD,CAAjB;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA,sBAFD,CADD;AAMA,CATD;;AAWA,eAAeF,KAAf",
+		"sourcesContent": [
+			"import { useStyletron } from \"baseui\";\nimport Header from \"@/components/Header\";\n\nconst Index = () => {\n\tconst [css] = useStyletron();\n\n\treturn (\n\t\t<main>\n\t\t\t<Header />\n\t\t\t<p className={css({ fontSize: \"32px\" })}>Styled by hook</p>\n\t\t</main>\n\t);\n};\n\nexport default Index;\n"
+		]
+	},
+	"metadata": {},
+	"sourceType": "module"
+}

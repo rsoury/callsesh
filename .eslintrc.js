@@ -1,4 +1,4 @@
-const { alias } = require("./config/alias");
+const { alias } = require("./packages/wagecall/config/alias");
 
 module.exports = {
 	extends: [
