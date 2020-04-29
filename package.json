@@ -1,5 +1,5 @@
 {
-	"name": "wagecall-project",
+	"name": "wagecall",
 	"version": "1.0.0",
 	"description": "Wagecall project monorepo",
 	"repository": "git@gitlab.com:web-doodle/wagecall.git",
@@ -8,10 +8,20 @@
 	"workspaces": [
 		"packages/*"
 	],
+	"homepage": "https://www.wagecall.com/",
 	"engines": {
 		"node": ">= 12.14.0"
 	},
 	"scripts": {
+		"clean": "npm-run-all -p clean:*",
+		"build": "npm-run-all -p build:*",
+		"dev:app": "lerna run --scope @wagecall/app dev",
+		"start:app": "lerna run --scope @wagecall/app start",
+		"start:auth": "lerna run --scope @wagecall/auth start",
+		"build:app": "lerna run --scope @wagecall/app build",
+		"build:auth": "lerna run --scope @wagecall/auth build",
+		"clean:app": "lerna run --scope @wagecall/app clean",
+		"clean:auth": "lerna run --scope @wagecall/auth clean",
 		"lint": "eslint -c ./.eslintrc.js \"./**/*.{js,jsx,ts,tsx,mjs}\"",
 		"format": "prettier --write \"./**/*.{js,jsx,mjs,ts,tsx,json,css,scss,md}\""
 	},

@@ -1,0 +1,41 @@
+{
+	"name": "@wagecall/auth",
+	"version": "1.0.0",
+	"private": true,
+	"dependencies": {
+		"@testing-library/jest-dom": "^4.2.4",
+		"@testing-library/react": "^9.3.2",
+		"@testing-library/user-event": "^7.1.2",
+		"@wagecall/utils": "^1.0.0",
+		"auth0-js": "^9.13.2",
+		"axios": "^0.19.2",
+		"baseui": "^9.73.1",
+		"formik-wizard": "^3.1.2",
+		"is-empty": "^1.2.0",
+		"libphonenumber-js": "^1.7.51",
+		"prop-types": "^15.7.2",
+		"react": "^16.13.1",
+		"react-albus": "^2.0.0",
+		"react-dom": "^16.13.1",
+		"react-scripts": "3.4.1",
+		"swr": "^0.2.0"
+	},
+	"scripts": {
+		"start": "react-scripts start",
+		"build": "react-scripts build",
+		"test": "react-scripts test",
+		"eject": "react-scripts eject"
+	},
+	"browserslist": {
+		"production": [
+			">0.2%",
+			"not dead",
+			"not op_mini all"
+		],
+		"development": [
+			"last 1 chrome version",
+			"last 1 firefox version",
+			"last 1 safari version"
+		]
+	}
+}
