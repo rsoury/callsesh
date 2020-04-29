@@ -1,8 +1,8 @@
 {
 	"eslint.workingDirectories": [
 		"./",
-		"./packages/wagecall-app",
-		"./packages/wagecall-auth"
+		"./packages/app",
+		"./packages/auth"
 	],
 	"eslint.validate": ["javascript", "javascriptreact"],
 	"prettier.configPath": "./.prettierrc",
