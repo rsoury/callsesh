@@ -1,7 +1,6 @@
-/* eslint-disable no-console */
-
 import { toaster } from "baseui/toast";
 import * as Sentry from "@sentry/node"; // will be replaced by @sentry/browser by webpack
+import { Debug as SentryDebug } from "@sentry/integrations";
 import * as envConfig from "@/env-config";
 
 const { isProd, sentry } = envConfig;
@@ -17,13 +16,16 @@ const sentryOptions = {
 
 // If developing locally
 if (!isProd) {
-	// Don't actually send the errors to Sentry -- console.log them instead.
-	// Tried to use SentryDebug in @sentry/integrations, but kept getting an error "Can't resolve 'console'"
-	sentryOptions.beforeSend = (event) => {
-		// console.log(JSON.stringify(event, null, 2));
-		console.log(event);
-		return null;
-	};
+	// Don't actually send the errors to Sentry
+	sentryOptions.beforeSend = () => null;
+
+	// Instead, dump the errors to the console
+	sentryOptions.integrations = [
+		new SentryDebug({
+			// Trigger DevTools debugger instead of using console.log
+			debugger: false
+		})
+	];
 }
 
 if (sentry.dsn) {

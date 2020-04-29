@@ -4,14 +4,15 @@ const {
 	PHASE_DEVELOPMENT_SERVER
 } = require("next/constants");
 const dotenv = require("dotenv");
-const webpack = require("webpack");
 const SentryWebpackPlugin = require("@sentry/webpack-plugin");
+const { alias } = require("./config/alias");
+const pkg = require("./package.json");
 
 const secretEnvPrefix = "SH_";
 
 const dotenvResult = dotenv.config();
 
-const nextConfig = (phase) => {
+module.exports = (phase) => {
 	// Hide the secret env variables to be used only on server.
 	const env = Object.entries(dotenvResult.parsed).reduce(
 		(result, [key, value]) => {
@@ -30,18 +31,23 @@ const nextConfig = (phase) => {
 		{}
 	);
 
-	return {
+	const nextConfig = {
 		env,
-		webpack(config, { isServer, buildId }) {
+		webpack: (config, { isServer, webpack }) => {
 			config.externals = config.externals || {};
 			config.externals["styletron-server"] = "styletron-server";
 
 			// Sentry release
 			config.plugins.push(
 				new webpack.DefinePlugin({
-					"process.env.SENTRY_RELEASE": JSON.stringify(buildId)
+					"process.env.SENTRY_RELEASE": JSON.stringify(pkg.version)
 				})
 			);
+
+			// Add alias to Webpack
+			Object.entries(alias).forEach(([key, value]) => {
+				config.resolve.alias[key] = value;
+			});
 
 			// Sentry alias
 			if (!isServer) {
@@ -65,8 +71,10 @@ const nextConfig = (phase) => {
 
 			return config;
 		},
+		target: "serverless",
 		poweredByHeader: false
 	};
-};
 
-module.exports = withSourceMaps(nextConfig);
+	// Next plugins expect a config object and respond with an object.
+	return withSourceMaps(nextConfig);
+};
