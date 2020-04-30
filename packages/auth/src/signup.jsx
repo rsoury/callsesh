@@ -1,13 +1,12 @@
-import { useState, useCallback } from "react";
+import React, { useState, useCallback } from "react";
 import { useStyletron } from "baseui";
 import { H1 as Heading, Paragraph3 as Paragraph } from "baseui/typography";
 import { Grid, Cell } from "baseui/layout-grid";
 import FormikWizard from "formik-wizard";
 import * as yup from "yup";
-import Helmet from "react-helmet";
+import { Helmet } from "react-helmet";
 
 import AuthForm from "@/components/AuthForm";
-import Header from "@/components/Header";
 import TextField from "@/components/Fields/Text";
 import PhoneField from "@/components/Fields/Phone";
 import VerifyField from "@/components/Fields/Verify";
@@ -77,7 +76,7 @@ const formSteps = [
 
 const Signup = () => {
 	const [isSubmitting, setSubmitting] = useState(false);
-	const [css, theme] = useStyletron();
+	const [css] = useStyletron();
 
 	const handleSubmit = useCallback(async (values) => {
 		// Post data to passwordless verification check endpoint
@@ -122,18 +121,11 @@ const Signup = () => {
 	});
 
 	return (
-		<main>
+		<>
 			<Helmet>
 				<title>Sign up to Wagecall</title>
 			</Helmet>
-			<Header />
-			<div
-				className={css({
-					width: "100%",
-					maxWidth: `${theme.breakpoints.large}px`,
-					margin: "0 auto"
-				})}
-			>
+			<div>
 				<Grid>
 					<Cell span={12}>
 						<Heading marginTop="0px">Sign Up</Heading>
@@ -154,7 +146,7 @@ const Signup = () => {
 					</Cell>
 				</Grid>
 			</div>
-		</main>
+		</>
 	);
 };
 

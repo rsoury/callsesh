@@ -1,4 +1,4 @@
-const useSWR = require("swr");
+const useSWR = require("swr").default;
 const axios = require("axios");
 
 module.exports = function useRequest(request, { initialData, ...config } = {}) {

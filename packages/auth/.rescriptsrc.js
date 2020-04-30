@@ -1,4 +1,6 @@
 const path = require("path");
+const get = require("lodash/get");
+const set = require("lodash/set");
 const { alias, jestAlias } = require("./config/alias");
 
 const mw = (fn) => Object.assign(fn, { isMiddleware: true });

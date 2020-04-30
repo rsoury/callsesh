@@ -4,7 +4,7 @@ import { HashRouter as Router } from "react-router-dom"; // Using HashRouter to 
 import { BaseProvider, LightTheme } from "baseui";
 import { Client as Styletron } from "styletron-engine-atomic";
 import { Provider as StyletronProvider } from "styletron-react";
-import Helmet from "react-helmet";
+import { Helmet } from "react-helmet";
 import App from "./App";
 import * as serviceWorker from "./service-worker";
 import "modern-normalize";

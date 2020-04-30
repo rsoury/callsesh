@@ -3,16 +3,15 @@
  * If authenticated, redirect to return_url, otherwise to home page.
  */
 
-import { useState, useCallback } from "react";
+import React, { useState, useCallback } from "react";
 import { useStyletron } from "baseui";
 import { H1 as Heading, Paragraph3 as Paragraph } from "baseui/typography";
 import { Grid, Cell } from "baseui/layout-grid";
 import FormikWizard from "formik-wizard";
 import * as yup from "yup";
-import Helmet from "react-helmet";
+import { Helmet } from "react-helmet";
 
 import AuthForm from "@/components/AuthForm";
-import Header from "@/components/Header";
 import PhoneField from "@/components/Fields/Phone";
 import VerifyField from "@/components/Fields/Verify";
 import Link from "@/components/Link";
@@ -26,7 +25,7 @@ const formSteps = [
 				<Cell span={12}>
 					<PhoneField
 						name="phoneNumber"
-						label="phoneNumber"
+						label="Phone Number"
 						caption="You will receive an SMS message to confirm your phone number."
 						placeholder="400 200 300"
 						ipLookup
@@ -65,26 +64,19 @@ const formSteps = [
 
 const Login = () => {
 	const [isSubmitting, setSubmitting] = useState(false);
-	const [css, theme] = useStyletron();
+	const [css] = useStyletron();
 
 	const handleSubmit = useCallback((values) => {
 		setSubmitting(true);
 		console.log(values);
-	});
+	}, []);
 
 	return (
-		<main>
+		<>
 			<Helmet>
 				<title>Log in to Wagecall</title>
 			</Helmet>
-			<Header />
-			<div
-				className={css({
-					width: "100%",
-					maxWidth: `${theme.breakpoints.large}px`,
-					margin: "0 auto"
-				})}
-			>
+			<div>
 				<Grid>
 					<Cell span={12}>
 						<Heading marginTop="0px">Log In</Heading>
@@ -105,7 +97,7 @@ const Login = () => {
 					</Cell>
 				</Grid>
 			</div>
-		</main>
+		</>
 	);
 };
 

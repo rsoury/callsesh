@@ -15,27 +15,29 @@ import ChevronLeft from "baseui/icon/chevron-left";
 
 const returnUrl = "#";
 
-const BackHeader = () => (
-	<HeaderNavigation
-		overrides={{
-			Root: {
-				style: { borderBottomColor: `transparent` }
-			}
-		}}
-	>
-		<NavigationList $align={ALIGN.left}>
-			<NavigationItem>
-				<StyledLink
-					$as={Button}
-					kind={BUTTON_KIND.tertiary}
-					startEnhancer={() => <ChevronLeft size={24} />}
-					href={returnUrl}
-				>
-					Back
-				</StyledLink>
-			</NavigationItem>
-		</NavigationList>
-	</HeaderNavigation>
+const Header = () => (
+	<header>
+		<HeaderNavigation
+			overrides={{
+				Root: {
+					style: { borderBottomColor: `transparent` }
+				}
+			}}
+		>
+			<NavigationList $align={ALIGN.left}>
+				<NavigationItem>
+					<StyledLink
+						$as={Button}
+						kind={BUTTON_KIND.tertiary}
+						startEnhancer={() => <ChevronLeft size={24} />}
+						href={returnUrl}
+					>
+						Back
+					</StyledLink>
+				</NavigationItem>
+			</NavigationList>
+		</HeaderNavigation>
+	</header>
 );
 
-export default BackHeader;
+export default Header;

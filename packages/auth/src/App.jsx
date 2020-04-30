@@ -3,6 +3,8 @@ import { Route, Switch, Redirect } from "react-router-dom";
 import { useStyletron } from "baseui";
 import { ToasterContainer, PLACEMENT } from "baseui/toast";
 
+import Header from "@/components/Header";
+
 import Signup from "./Signup";
 import Login from "./Login";
 
@@ -29,23 +31,25 @@ const App = () => {
 					alignItems: "center",
 					minHeight: "100%",
 					width: "100%",
-					maxWidth: "1280px",
+					maxWidth: `640px`,
 					margin: "0 auto",
-					padding: "20px",
 					position: "relative"
 				})}
 			>
-				<Switch>
-					<Route exact path="/signup">
-						<Signup />
-					</Route>
-					<Route exact path="/">
-						<Login />
-					</Route>
-					<Route path="*">
-						<Redirect to="/" />
-					</Route>
-				</Switch>
+				<div className={css({ width: "100%" })}>
+					<Header />
+					<Switch>
+						<Route exact path="/signup">
+							<Signup />
+						</Route>
+						<Route exact path="/">
+							<Login />
+						</Route>
+						<Route path="*">
+							<Redirect to="/" />
+						</Route>
+					</Switch>
+				</div>
 			</main>
 		</ToasterContainer>
 	);

@@ -13,6 +13,7 @@ import examplePhoneNumbers from "libphonenumber-js/examples.mobile.json";
 import isEmpty from "is-empty";
 import snakeCase from "lodash/snakeCase";
 import { useRequest } from "@wagecall/utils";
+import { authConfig } from "@/env-config";
 
 import getSpinner from "@/components/getSpinner";
 import onChangeIsNumber from "@/utils/on-change-is-number";
@@ -32,8 +33,7 @@ const PhoneInputField = ({
 	meta,
 	label,
 	caption,
-	placeholder: placeholderProp,
-	ipLookup
+	placeholder: placeholderProp
 }) => {
 	if (!isEmpty(value)) {
 		const phoneNumber = parsePhoneNumberFromString(value);
@@ -45,33 +45,25 @@ const PhoneInputField = ({
 	const [country, setCountry] = useState(COUNTRIES.AU);
 	const [placeholder, setPlaceholder] = useState(placeholderProp);
 
-	// Lookup IP to localise phone number input.
-	let lookupData = [];
-	let isLoadingLookup = true;
-	if (ipLookup) {
-		const { data, isValidating } = useRequest({
-			url: "http://ip-api.com/json",
-			method: "GET"
-		});
-		lookupData = data;
-		isLoadingLookup = isValidating;
-	}
+	// Use Auth0 native lookup
+	const { data: lookupData, isValidating: isLoadingLookup } = useRequest({
+		url: `https://${authConfig.auth0Domain}/user/geoloc/country`,
+		method: "GET"
+	});
 
 	useEffect(() => {
-		if (lookupData?.countryCode) {
-			const exampleNumber = getExampleNumber(
-				lookupData.countryCode,
-				examplePhoneNumbers
-			);
+		const { country_code: countryCode } = lookupData || {};
+		if (countryCode) {
+			const exampleNumber = getExampleNumber(countryCode, examplePhoneNumbers);
 			const newPlaceholder = exampleNumber
 				.formatInternational()
 				.replace(country.dialCode, "")
 				.trim();
 			setPlaceholder(newPlaceholder);
 
-			setCountry(COUNTRIES[lookupData.countryCode.toUpperCase()]);
+			setCountry(COUNTRIES[countryCode.toUpperCase()]);
 		}
-	}, [lookupData]);
+	}, [lookupData, country]);
 
 	return (
 		<FormControl

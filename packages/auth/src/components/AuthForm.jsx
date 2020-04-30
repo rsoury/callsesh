@@ -42,7 +42,7 @@ const AuthForm = ({
 				window.addEventListener("beforeunload", () => message, false);
 			}
 		}
-	}, []);
+	}, [stepIndex]);
 
 	return (
 		<div
