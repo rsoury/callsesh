@@ -1,9 +1,7 @@
 import { toaster } from "baseui/toast";
 import * as Sentry from "@sentry/node"; // will be replaced by @sentry/browser by webpack
 import { Debug as SentryDebug } from "@sentry/integrations";
-import * as envConfig from "@/env-config";
-
-const { isProd, sentry } = envConfig;
+import { isProd, sentry } from "@/env-config";
 
 const sentryOptions = {
 	dsn: sentry.dsn,

@@ -11,12 +11,16 @@
 		"analyse": "source-map-explorer build/main.*"
 	},
 	"dependencies": {
+		"@sentry/browser": "^5.15.5",
+		"@sentry/integrations": "^5.15.5",
 		"@wagecall/utils": "^1.0.0",
 		"auth0-js": "^9.13.2",
 		"axios": "^0.19.2",
 		"baseui": "^9.73.1",
+		"formik": "^2.1.4",
 		"formik-wizard": "^3.1.2",
 		"is-empty": "^1.2.0",
+		"is-number": "^7.0.0",
 		"libphonenumber-js": "^1.7.51",
 		"lodash": "^4.17.15",
 		"modern-normalize": "^0.6.0",
@@ -28,7 +32,10 @@
 		"react-router-dom": "^5.1.2",
 		"react-router-prop-types": "^1.0.4",
 		"react-scripts": "3.4.1",
-		"swr": "^0.2.0"
+		"styletron-engine-atomic": "^1.4.6",
+		"styletron-react": "^5.2.7",
+		"swr": "^0.2.0",
+		"yup": "^0.28.5"
 	},
 	"devDependencies": {
 		"@rescripts/cli": "^0.0.13",

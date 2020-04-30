@@ -1,5 +1,10 @@
 export const isProd = process.env.NODE_ENV === "production";
 
+export const sentry = {
+	dsn: process.env.REACT_APP_SENTRY_DSN || "",
+	release: process.env.REACT_APP_SENTRY_RELEASE || ""
+};
+
 export const authConfig = isProd
 	? window.config || {}
 	: {

@@ -4,20 +4,18 @@ import { useStyletron } from "baseui";
 import { Button, KIND as BUTTON_KIND } from "baseui/button";
 import { Grid, Cell } from "baseui/layout-grid";
 import ChevronLeft from "baseui/icon/chevron-left";
-import Skeleton from "react-loading-skeleton";
 
 import { ChildrenProps } from "@/utils/common-prop-types";
 import { isProd } from "@/env-config";
 
-const AuthForm = ({
+const FormLayout = ({
 	children,
 	goToPreviousStep,
 	canGoBack,
 	actionLabel,
 	currentStep,
 	steps,
-	isSubmitting,
-	isLoading
+	isSubmitting
 }) => {
 	const [css] = useStyletron();
 	const stepIndex = steps.indexOf(currentStep);
@@ -66,23 +64,7 @@ const AuthForm = ({
 					paddingBottom: "20px"
 				})}
 			>
-				{isLoading ? (
-					<Grid>
-						<Cell span={[12, 4, 6]}>
-							<Skeleton height={50} />
-						</Cell>
-						<Cell span={[12, 4, 6]}>
-							<Skeleton height={50} />
-						</Cell>
-						<Cell span={12}>
-							<div className={css({ paddingTop: "20px" })}>
-								<Skeleton height={50} />
-							</div>
-						</Cell>
-					</Grid>
-				) : (
-					children
-				)}
+				{children}
 			</div>
 			<Grid
 				overrides={{
@@ -96,13 +78,9 @@ const AuthForm = ({
 				<Cell span={12}>
 					<div className={css({ textAlign: "center" })}>
 						<div className={css({ padding: "5px" })}>
-							{isLoading ? (
-								<Skeleton height={45} />
-							) : (
-								<Button {...buttonProps} type="submit" isLoading={isSubmitting}>
-									{actionLabel || "Continue"}
-								</Button>
-							)}
+							<Button {...buttonProps} type="submit" isLoading={isSubmitting}>
+								{actionLabel || "Continue"}
+							</Button>
 						</div>
 						{canGoBack && (
 							<div className={css({ padding: "5px" })}>
@@ -125,22 +103,19 @@ const AuthForm = ({
 };
 
 // Prop types form an object provided by Formik Wizard
-AuthForm.propTypes = {
+FormLayout.propTypes = {
 	children: ChildrenProps.isRequired,
-	// isLastStep: PropTypes.bool.isRequired,
 	goToPreviousStep: PropTypes.func.isRequired,
 	canGoBack: PropTypes.bool.isRequired,
 	actionLabel: PropTypes.string,
 	currentStep: PropTypes.string.isRequired,
 	steps: PropTypes.arrayOf(PropTypes.string).isRequired,
-	isSubmitting: PropTypes.bool,
-	isLoading: PropTypes.bool
+	isSubmitting: PropTypes.bool
 };
 
-AuthForm.defaultProps = {
+FormLayout.defaultProps = {
 	isSubmitting: false,
-	isLoading: false,
 	actionLabel: ""
 };
 
-export default AuthForm;
+export default FormLayout;

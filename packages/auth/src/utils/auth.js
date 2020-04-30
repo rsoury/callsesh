@@ -1,19 +1,13 @@
 import isEmpty from "is-empty";
 import auth0 from "auth0-js";
-// import appendReturnUrl from "@/utils/append-return-url";
-
-// TODO: Get config from hosted page window object.
-const config = {
-	clientId: "",
-	domain: ""
-};
+import { authConfig as config } from "@/env-config";
 
 const auth = new auth0.WebAuth({
-	clientID: config.clientId,
-	domain: config.domain,
-	// redirectUri: appendReturnUrl(`${publicUrl}/auth`),
-	audience: "https://wagecall.auth0.com/api/v2/",
-	responseType: "token id_token"
+	clientID: config.clientID,
+	domain: config.auth0Domain,
+	redirectUri: config.callbackURL,
+	responseType: "code",
+	...config.internalOptions
 });
 
 export const start = (phoneNumber) => {
@@ -25,10 +19,7 @@ export const start = (phoneNumber) => {
 			{
 				connection: "sms",
 				send: "code",
-				phoneNumber,
-				authParams: {
-					prompt: "none"
-				}
+				phoneNumber
 			},
 			(err, res) => {
 				if (err) {
@@ -41,7 +32,7 @@ export const start = (phoneNumber) => {
 	});
 };
 
-export const verify = (phoneNumber, verificationCode) => {
+export const verify = (phoneNumber, verificationCode, additionalData = {}) => {
 	if (isEmpty(phoneNumber)) {
 		throw new Error(`Start requires Phone Number`);
 	}
@@ -49,11 +40,12 @@ export const verify = (phoneNumber, verificationCode) => {
 		throw new Error(`Verify requires verification code`);
 	}
 	return new Promise((resolve, reject) => {
-		auth.passwordlessVerify(
+		auth.passwordlessLogin(
 			{
 				connection: "sms",
 				verificationCode,
-				phoneNumber
+				phoneNumber,
+				appState: additionalData
 			},
 			(err, res) => {
 				if (err) {

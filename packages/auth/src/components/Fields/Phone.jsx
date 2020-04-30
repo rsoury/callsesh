@@ -12,12 +12,11 @@ import {
 import examplePhoneNumbers from "libphonenumber-js/examples.mobile.json";
 import isEmpty from "is-empty";
 import snakeCase from "lodash/snakeCase";
-import { useRequest } from "@wagecall/utils";
+import { useRequest, format } from "@wagecall/utils";
 import { authConfig } from "@/env-config";
 
 import getSpinner from "@/components/getSpinner";
 import onChangeIsNumber from "@/utils/on-change-is-number";
-import * as format from "@/utils/format";
 
 const Spinner = getSpinner({
 	width: "22px",

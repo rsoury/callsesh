@@ -1,3 +1,4 @@
+const path = require("path");
 const { alias: appAlias } = require("./packages/app/config/alias");
 const { alias: authAlias } = require("./packages/auth/config/alias");
 
@@ -20,6 +21,11 @@ module.exports = {
 		react: {
 			pragma: "React",
 			version: "detect"
+		},
+		"import/resolver": {
+			alias: {
+				extensions: [".js", ".jsx", ".json", ".ts", ".tsx"]
+			}
 		}
 	},
 	overrides: [
@@ -28,8 +34,7 @@ module.exports = {
 			settings: {
 				"import/resolver": {
 					alias: {
-						map: Object.entries(appAlias),
-						extensions: [".js", ".jsx", ".json", ".ts", ".tsx"]
+						map: Object.entries(appAlias)
 					}
 				}
 			}
@@ -39,8 +44,7 @@ module.exports = {
 			settings: {
 				"import/resolver": {
 					alias: {
-						map: Object.entries(authAlias),
-						extensions: [".js", ".jsx", ".json", ".ts", ".tsx"]
+						map: Object.entries(authAlias)
 					}
 				}
 			}
@@ -48,7 +52,8 @@ module.exports = {
 	],
 	rules: {
 		// See: https://github.com/benmosher/eslint-plugin-import/issues/496
-		"import/no-extraneous-dependencies": 0,
+		// https://stackoverflow.com/questions/44939304/eslint-should-be-listed-in-the-projects-dependencies-not-devdependencies
+		"import/no-extraneous-dependencies": ["error", { devDependencies: true }],
 		"import/prefer-default-export": 0,
 		"no-console": ["warn"],
 		"no-unused-vars": ["error", { ignoreRestSiblings: true }],
