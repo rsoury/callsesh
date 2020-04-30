@@ -23,6 +23,7 @@ import isEmpty from "is-empty";
 import Skeleton from "react-loading-skeleton";
 import routes from "@/routes";
 // import useUser from "@/hooks/use-user";
+import appendReturnUrl from "@/utils/append-return-url";
 
 const logoUrl = "/static/logo/wagecall-logo@300.png";
 
@@ -42,14 +43,14 @@ const Header = () => {
 	} else if (isEmpty(user)) {
 		menuItems = Object.entries({
 			login: (props) => (
-				<Link href={routes.login}>
+				<Link href={appendReturnUrl(routes.login, true)}>
 					<Button kind={BUTTON_KIND.tertiary} {...props}>
 						Log in
 					</Button>
 				</Link>
 			),
 			signup: (props) => (
-				<Link href={routes.signup}>
+				<Link href={appendReturnUrl(routes.signup, true)}>
 					<Button {...props}>Sign up</Button>
 				</Link>
 			)

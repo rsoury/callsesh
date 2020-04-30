@@ -1,13 +1,19 @@
 import Url from "url-parse";
 
-export default (sourceUrl) => {
+export default (sourceUrl, returnObject = false) => {
 	if (typeof window !== "undefined") {
-		const url = new Url(window.location.href, true);
-		const { return_url: returnUrl } = url.query;
+		if (returnObject) {
+			return {
+				pathname: sourceUrl,
+				query: {
+					return_url: window.location.href
+				}
+			};
+		}
 		const destUrl = new Url(sourceUrl, true);
 		destUrl.set("query", {
 			...destUrl.query,
-			return_url: returnUrl
+			return_url: window.location.href
 		});
 		return destUrl.toString();
 	}

@@ -18,7 +18,8 @@ export async function getServerSideProps({ req, res }) {
 			Location: "/api/auth/logout"
 		});
 	}
-	return res.end();
+	res.end();
+	return {};
 }
 
 export default Logout;

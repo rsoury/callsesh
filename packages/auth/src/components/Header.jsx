@@ -13,7 +13,9 @@ import {
 import { StyledLink } from "baseui/link";
 import ChevronLeft from "baseui/icon/chevron-left";
 
-const returnUrl = "#";
+import { authConfig } from "@/env-config";
+
+const returnUrl = authConfig.callbackURL;
 
 const Header = () => (
 	<header>
@@ -30,7 +32,16 @@ const Header = () => (
 						$as={Button}
 						kind={BUTTON_KIND.tertiary}
 						startEnhancer={() => <ChevronLeft size={24} />}
-						href={returnUrl}
+						{...(() =>
+							returnUrl
+								? {
+										href: returnUrl
+								  }
+								: {
+										onClick() {
+											window.history.back();
+										}
+								  })()}
 					>
 						Back
 					</StyledLink>

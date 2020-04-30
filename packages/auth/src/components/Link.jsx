@@ -16,6 +16,9 @@ const Link = (props) => {
 				":hover": {
 					color: theme.colors.accent600,
 					textDecoration: "underline"
+				},
+				":visited": {
+					color: theme.colors.accent
 				}
 			})}
 		/>

@@ -22,7 +22,8 @@ export async function getServerSideProps({
 			Location: "/"
 		});
 	}
-	return res.end();
+	res.end();
+	return {};
 }
 
 export default Signup;

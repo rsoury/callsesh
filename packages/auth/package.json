@@ -3,7 +3,7 @@
 	"version": "1.0.0",
 	"private": true,
 	"scripts": {
-		"start": "rescripts start",
+		"start": "cross-env PORT=3001 rescripts start",
 		"build": "rescripts build",
 		"test": "rescripts test",
 		"eject": "rescripts eject",
@@ -38,6 +38,7 @@
 		"@testing-library/react": "^9.3.2",
 		"@testing-library/user-event": "^7.1.2",
 		"babel-jest": "24.9.0",
+		"cross-env": "^7.0.2",
 		"is-ci-cli": "^2.0.0",
 		"jest": "24.9.0",
 		"rimraf": "^3.0.2",
