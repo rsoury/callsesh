@@ -10,7 +10,7 @@ module.exports = {
 	testMatch: ["**/*.test.js"],
 	verbose: true,
 	rootDir: "test",
-	setupFiles: ["<rootDir>/setup.js", "dotenv/config"],
+	setupFiles: ["<rootDir>/jest.setup.js", "dotenv/config"],
 	testPathIgnorePatterns: ["<rootDir>/.next/", "<rootDir>/node_modules/"],
 	moduleNameMapper: jestAlias,
 	transform: {

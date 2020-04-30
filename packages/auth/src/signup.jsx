@@ -2,16 +2,16 @@ import { useState, useCallback } from "react";
 import { useStyletron } from "baseui";
 import { H1 as Heading, Paragraph3 as Paragraph } from "baseui/typography";
 import { Grid, Cell } from "baseui/layout-grid";
-import { StyledLink as Link } from "baseui/link";
 import FormikWizard from "formik-wizard";
 import * as yup from "yup";
-// import { toaster } from "baseui/toast";
+import Helmet from "react-helmet";
 
 import AuthForm from "@/components/AuthForm";
 import Header from "@/components/Header";
 import TextField from "@/components/Fields/Text";
 import PhoneField from "@/components/Fields/Phone";
 import VerifyField from "@/components/Fields/Verify";
+import Link from "@/components/Link";
 import * as validations from "@/utils/validate";
 import * as auth from "@/utils/auth";
 
@@ -78,10 +78,6 @@ const formSteps = [
 const Signup = () => {
 	const [isSubmitting, setSubmitting] = useState(false);
 	const [css, theme] = useStyletron();
-	// const [user, { loading: isLoading }] = useUser();
-	// const user = {};
-	const isLoading = false;
-	const loginUrl = "";
 
 	const handleSubmit = useCallback(async (values) => {
 		// Post data to passwordless verification check endpoint
@@ -127,6 +123,9 @@ const Signup = () => {
 
 	return (
 		<main>
+			<Helmet>
+				<title>Sign up to Wagecall</title>
+			</Helmet>
 			<Header />
 			<div
 				className={css({
@@ -144,22 +143,16 @@ const Signup = () => {
 					steps={steps}
 					onSubmit={handleSubmit}
 					render={(props) => (
-						<AuthForm
-							{...props}
-							isSubmitting={isSubmitting}
-							isLoading={isLoading}
-						/>
+						<AuthForm {...props} isSubmitting={isSubmitting} />
 					)}
 				/>
-				{!isLoading && (
-					<Grid>
-						<Cell span={12}>
-							<Paragraph className={css({ textAlign: "center" })}>
-								Already have an account? <Link href={loginUrl}>Log in</Link>
-							</Paragraph>
-						</Cell>
-					</Grid>
-				)}
+				<Grid>
+					<Cell span={12}>
+						<Paragraph className={css({ textAlign: "center" })}>
+							Already have an account? <Link to="/">Log in</Link>
+						</Paragraph>
+					</Cell>
+				</Grid>
 			</div>
 		</main>
 	);

@@ -7,14 +7,15 @@ import { useState, useCallback } from "react";
 import { useStyletron } from "baseui";
 import { H1 as Heading, Paragraph3 as Paragraph } from "baseui/typography";
 import { Grid, Cell } from "baseui/layout-grid";
-import { StyledLink as Link } from "baseui/link";
 import FormikWizard from "formik-wizard";
 import * as yup from "yup";
+import Helmet from "react-helmet";
 
 import AuthForm from "@/components/AuthForm";
 import Header from "@/components/Header";
 import PhoneField from "@/components/Fields/Phone";
 import VerifyField from "@/components/Fields/Verify";
+import Link from "@/components/Link";
 import * as validations from "@/utils/validate";
 
 const formSteps = [
@@ -66,8 +67,6 @@ const Login = () => {
 	const [isSubmitting, setSubmitting] = useState(false);
 	const [css, theme] = useStyletron();
 
-	const signupUrl = ""; // TODO: Get from Auth0 page.
-
 	const handleSubmit = useCallback((values) => {
 		setSubmitting(true);
 		console.log(values);
@@ -75,6 +74,9 @@ const Login = () => {
 
 	return (
 		<main>
+			<Helmet>
+				<title>Log in to Wagecall</title>
+			</Helmet>
 			<Header />
 			<div
 				className={css({
@@ -98,7 +100,7 @@ const Login = () => {
 				<Grid>
 					<Cell span={12}>
 						<Paragraph className={css({ textAlign: "center" })}>
-							Don&apos;t have an acount? <Link href={signupUrl}>Sign up</Link>
+							Don&apos;t have an acount? <Link to="/signup">Sign up</Link>
 						</Paragraph>
 					</Cell>
 				</Grid>
