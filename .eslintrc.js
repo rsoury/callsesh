@@ -1,4 +1,5 @@
-const { alias } = require("./config/alias");
+const { alias: appAlias } = require("./packages/app/config/alias");
+const { alias: authAlias } = require("./packages/auth/config/alias");
 
 module.exports = {
 	extends: [
@@ -16,17 +17,35 @@ module.exports = {
 		jest: true
 	},
 	settings: {
-		"import/resolver": {
-			alias: {
-				map: Object.entries(alias),
-				extensions: [".js", ".jsx", ".json"]
-			}
-		},
 		react: {
 			pragma: "React",
 			version: "detect"
 		}
 	},
+	overrides: [
+		{
+			files: ["packages/app/**/*"],
+			settings: {
+				"import/resolver": {
+					alias: {
+						map: Object.entries(appAlias),
+						extensions: [".js", ".jsx", ".json", ".ts", ".tsx"]
+					}
+				}
+			}
+		},
+		{
+			files: ["packages/auth/**/*"],
+			settings: {
+				"import/resolver": {
+					alias: {
+						map: Object.entries(authAlias),
+						extensions: [".js", ".jsx", ".json", ".ts", ".tsx"]
+					}
+				}
+			}
+		}
+	],
 	rules: {
 		// See: https://github.com/benmosher/eslint-plugin-import/issues/496
 		"import/no-extraneous-dependencies": 0,

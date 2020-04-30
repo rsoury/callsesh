@@ -1,0 +1,11 @@
+{
+	"name": "@wagecall/utils",
+	"version": "1.0.0",
+	"private": true,
+	"peerDependencies": {
+		"axios": "^0.19.2",
+		"swr": "^0.2.0"
+	},
+	"dependencies": {},
+	"scripts": {}
+}
