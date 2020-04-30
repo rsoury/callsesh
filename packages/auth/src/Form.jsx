@@ -56,16 +56,11 @@ const formSteps = [
 const Form = () => {
 	const [isSubmitting, setSubmitting] = useState(false);
 
-	const handleSubmit = useCallback(async (values) => {
-		// Post data to passwordless verification check endpoint
-		// Successful request may require a refresh, or will automatically refresh due to isAuth prop
+	const handleAction = async (fn) => {
 		setSubmitting(true);
 		try {
-			const result = await auth.verify(
-				values.info.phoneNumber,
-				values.verify.code
-			);
-			console.log(result);
+			const result = await fn();
+			return result;
 		} catch (e) {
 			handleException(e);
 			alerts.error();
@@ -73,25 +68,23 @@ const Form = () => {
 		} finally {
 			setSubmitting(false);
 		}
+	};
+
+	const handleSubmit = useCallback((values) => {
+		// Post data to passwordless verification check endpoint
+		// Successful request may require a refresh, or will automatically refresh due to isAuth prop
+		return handleAction(() =>
+			auth.verify(values.info.phoneNumber, values.verify.code)
+		);
 	}, []);
 
 	// Attach onAction handlers to steps.
 	const steps = formSteps.map((step) => {
 		switch (step.id) {
 			case "info":
-				step.onAction = async ({ phoneNumber }) => {
+				step.onAction = ({ phoneNumber }) => {
 					// Setup user verification for phoneNumber
-					setSubmitting(true);
-					try {
-						const result = await auth.start(phoneNumber);
-						console.log(result);
-					} catch (e) {
-						handleException(e);
-						alerts.error();
-						throw e;
-					} finally {
-						setSubmitting(false);
-					}
+					return handleAction(() => auth.start(phoneNumber));
 				};
 				break;
 			default:
