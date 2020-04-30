@@ -39,4 +39,6 @@ if (config.clientSecret) {
 	};
 }
 
-export default initAuth0(settings);
+const auth = initAuth0(settings);
+
+export default auth;

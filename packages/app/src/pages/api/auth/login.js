@@ -8,7 +8,8 @@ import auth from "@/middleware/auth";
 const handler = getHandler();
 
 handler.get(async (req, res) => {
-	await auth.handleLogin(req, res);
+	const { return_url: returnUrl = "/" } = req.query;
+	await auth.handleLogin(req, res, { redirectTo: returnUrl });
 });
 
 export default handler;
