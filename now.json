@@ -1,5 +1,14 @@
 {
 	"version": 2,
 	"alias": ["wagecall.com", "wagecall"],
-	"env": {}
+	"env": {
+		"REACT_APP_SENTRY_DSN": "@sentry-dsn",
+		"SENTRY_DSN": "@sentry-dsn"
+	},
+	"builds": [
+		{ "src": "packages/auth/package.json", "use": "@now/static-build" }
+	],
+	"routes": [{ "src": "/static/auth/(.*)", "dest": "/packages/auth/build/$1" }],
+	"cleanUrls": true,
+	"trailingSlash": true
 }
