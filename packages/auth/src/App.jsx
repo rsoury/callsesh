@@ -26,7 +26,7 @@ const App = ({ location }) => {
 				setRedirect("/signup");
 			}
 		}
-	}, []);
+	}, [location.pathname]);
 
 	if (redirect) {
 		return <Redirect to={redirect} />;

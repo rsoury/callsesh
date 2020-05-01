@@ -2,16 +2,9 @@
 	"name": "@wagecall/auth",
 	"version": "1.0.0",
 	"private": true,
-	"per-env": {
-		"production": {
-			"PUBLIC_URL": "https://wagecall.com/"
-		}
-	},
 	"scripts": {
 		"start": "cross-env PORT=3001 rescripts start",
-		"build": "per-env",
-		"build:development": "rescripts build",
-		"build:production": "rescripts build",
+		"build": "cross-env PUBLIC_URL=$AUTH_PUBLIC_URL rescripts build",
 		"test": "rescripts test",
 		"eject": "rescripts eject",
 		"clean": "rimraf ./build ./dist",
@@ -56,7 +49,6 @@
 		"cross-env": "^7.0.2",
 		"is-ci-cli": "^2.0.0",
 		"jest": "24.9.0",
-		"per-env": "^1.0.2",
 		"rimraf": "^3.0.2",
 		"source-map-explorer": "^2.2.1"
 	},
