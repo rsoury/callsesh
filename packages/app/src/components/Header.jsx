@@ -25,7 +25,7 @@ import routes from "@/routes";
 // import useUser from "@/hooks/use-user";
 import appendReturnUrl from "@/utils/append-return-url";
 
-const logoUrl = "/static/logo/wagecall-logo@300.png";
+const logoUrl = "/static/logo/wagecall-logo-text@300.png";
 
 const Header = () => {
 	const [css, theme] = useStyletron();
