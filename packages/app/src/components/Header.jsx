@@ -120,7 +120,7 @@ const Header = () => {
 								src={logoUrl}
 								alt="Wagecall logo"
 								title="Wagecall"
-								className={css({ width: "100%", maxWidth: "150px" })}
+								className={css({ width: "100%", maxWidth: "120px" })}
 							/>
 						</div>
 					</NavigationItem>

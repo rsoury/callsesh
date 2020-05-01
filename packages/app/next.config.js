@@ -1,50 +1,40 @@
+require("dotenv").config();
 const withSourceMaps = require("@zeit/next-source-maps")();
 const {
 	PHASE_PRODUCTION_SERVER,
 	PHASE_DEVELOPMENT_SERVER
 } = require("next/constants");
-const dotenv = require("dotenv");
 const SentryWebpackPlugin = require("@sentry/webpack-plugin");
+const filenamify = require("filenamify");
 const { alias } = require("./config/alias");
 const pkg = require("./package.json");
 
-const secretEnvPrefix = "SH_";
-
-const dotenvResult = dotenv.config();
-
-console.log({
-	PUBLIC_URL: process.env.PUBLIC_URL,
-	AUTH_PUBLIC_URL: process.env.AUTH_PUBLIC_URL,
-	SH_SESSION_SECRET: process.env.SH_SESSION_SECRET,
-	SH_TWILIO_ACCOUNT_SID: process.env.SH_TWILIO_ACCOUNT_SID,
-	SH_TWILIO_AUTH_TOKEN: process.env.SH_TWILIO_AUTH_TOKEN,
-	SH_TWILIO_PROXY_SERVICE_SID: process.env.SH_TWILIO_PROXY_SERVICE_SID,
-	AUTH0_DOMAIN: process.env.AUTH0_DOMAIN,
-	AUTH0_CLIENT_ID: process.env.AUTH0_CLIENT_ID,
-	SH_AUTH0_CLIENT_SECRET: process.env.SH_AUTH0_CLIENT_SECRET,
-	SENTRY_DSN: process.env.SENTRY_DSN,
-	STRIPE_PUBLIC_KEY: process.env.STRIPE_PUBLIC_KEY,
-	SH_STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY
-});
-
 module.exports = (phase) => {
-	// Hide the secret env variables to be used only on server.
-	const env = Object.entries(dotenvResult.parsed).reduce(
-		(result, [key, value]) => {
-			if (key.indexOf(secretEnvPrefix) === 0) {
-				if (
-					phase === PHASE_DEVELOPMENT_SERVER ||
-					phase === PHASE_PRODUCTION_SERVER
-				) {
-					result[key] = value;
-				}
-				return result;
-			}
-			result[key] = value;
-			return result;
-		},
-		{}
-	);
+	// Explicitly define environment variables to be used at build time for both frontend and server
+	// dotenv.config should automatically configure process.env for local development
+	const frontendEnv = {
+		PUBLIC_URL: process.env.PUBLIC_URL || "",
+		AUTH0_DOMAIN: process.env.AUTH0_DOMAIN || "",
+		AUTH0_CLIENT_ID: process.env.AUTH0_CLIENT_ID || "",
+		STRIPE_PUBLIC_KEY: process.env.STRIPE_PUBLIC_KEY || "",
+		SENTRY_DSN: process.env.SENTRY_DSN || ""
+	};
+	const serverEnv = {
+		SESSION_SECRET: process.env.SESSION_SECRET || "",
+		TWILIO_ACCOUNT_SID: process.env.TWILIO_ACCOUNT_SID || "",
+		TWILIO_AUTH_TOKEN: process.env.TWILIO_AUTH_TOKEN || "",
+		TWILIO_PROXY_SERVICE_SID: process.env.TWILIO_PROXY_SERVICE_SID || "",
+		AUTH0_CLIENT_SECRET: process.env.AUTH0_CLIENT_SECRET || "",
+		STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY || ""
+	};
+
+	let env = frontendEnv;
+	if (phase === PHASE_DEVELOPMENT_SERVER || phase === PHASE_PRODUCTION_SERVER) {
+		env = {
+			...frontendEnv,
+			...serverEnv
+		};
+	}
 
 	const nextConfig = {
 		// Explicitly define environment variables to be used at build time.
@@ -54,9 +44,12 @@ module.exports = (phase) => {
 			config.externals["styletron-server"] = "styletron-server";
 
 			// Sentry release
+			const sentryRelease = filenamify(`${pkg.name}@${pkg.version}`, {
+				replacement: "-"
+			});
 			config.plugins.push(
 				new webpack.DefinePlugin({
-					"process.env.SENTRY_RELEASE": JSON.stringify(pkg.version)
+					"process.env.SENTRY_RELEASE": JSON.stringify(sentryRelease)
 				})
 			);
 
@@ -75,9 +68,15 @@ module.exports = (phase) => {
 			// and upload the source maps to sentry.
 			// This is an alternative to manually uploading the source maps
 			// See: https://github.com/zeit/next.js/blob/canary/examples/with-sentry-simple/next.config.js
-			if (process.env.SENTRY_DSN) {
+			if (
+				process.env.SENTRY_DSN &&
+				process.env.SENTRY_ORG &&
+				process.env.SENTRY_PROJECT &&
+				process.env.SENTRY_AUTH_TOKEN
+			) {
 				config.plugins.push(
 					new SentryWebpackPlugin({
+						release: sentryRelease,
 						include: ".next",
 						ignore: ["node_modules"],
 						urlPrefix: "~/_next"

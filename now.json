@@ -5,17 +5,20 @@
 		"env": {
 			"PUBLIC_URL": "https://wagecall.com",
 			"AUTH_PUBLIC_URL": "/static/auth",
-			"SH_SESSION_SECRET": "@app-session-secret",
-			"SH_TWILIO_ACCOUNT_SID": "@twilio-account-sid",
-			"SH_TWILIO_AUTH_TOKEN": "@twilio-auth-token",
-			"SH_TWILIO_PROXY_SERVICE_SID": "@twilio-proxy-service-sid",
+			"SESSION_SECRET": "@app-session-secret",
+			"TWILIO_ACCOUNT_SID": "@twilio-account-sid",
+			"TWILIO_AUTH_TOKEN": "@twilio-auth-token",
+			"TWILIO_PROXY_SERVICE_SID": "@twilio-proxy-service-sid",
 			"AUTH0_DOMAIN": "@auth0-domain",
 			"AUTH0_CLIENT_ID": "@auth0-client-id",
-			"SH_AUTH0_CLIENT_SECRET": "@auth0-client-secret",
-			"REACT_APP_SENTRY_DSN": "@sentry-dsn",
-			"SENTRY_DSN": "@sentry-dsn",
+			"AUTH0_CLIENT_SECRET": "@auth0-client-secret",
 			"STRIPE_PUBLIC_KEY": "",
-			"STRIPE_SECRET_KEY": ""
+			"STRIPE_SECRET_KEY": "",
+			"SENTRY_DSN": "@sentry-dsn",
+			"SENTRY_ORG": "web-doodle",
+			"SENTRY_PROJECT": "wagecall",
+			"SENTRY_AUTH_TOKEN": "@sentry-auth-token",
+			"REACT_APP_SENTRY_DSN": "@sentry-dsn"
 		}
 	},
 	"builds": [
