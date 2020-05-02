@@ -3,8 +3,7 @@
 	"alias": ["wagecall.com"],
 	"build": {
 		"env": {
-			"PUBLIC_URL": "https://wagecall.com",
-			"AUTH_PUBLIC_URL": "https://wagecall.com/static/auth",
+			"PUBLIC_URL": "https://wagecall.now.sh",
 			"SESSION_SECRET": "@app-session-secret",
 			"TWILIO_ACCOUNT_SID": "@twilio-account-sid",
 			"TWILIO_AUTH_TOKEN": "@twilio-auth-token",
@@ -12,34 +11,31 @@
 			"AUTH0_DOMAIN": "wagecall.auth0.com",
 			"AUTH0_CLIENT_ID": "@auth0-client-id",
 			"AUTH0_CLIENT_SECRET": "@auth0-client-secret",
-			"AUTH0_DEPLOY_CLIENT_ID": "@auth0-deploy-client-id",
-			"AUTH0_DEPLOY_CLIENT_SECRET": "@auth0-deploy-client-secret",
 			"STRIPE_PUBLIC_KEY": "",
 			"STRIPE_SECRET_KEY": "",
 			"SENTRY_DSN": "@sentry-dsn",
 			"SENTRY_ORG": "web-doodle",
 			"SENTRY_PROJECT": "wagecall",
-			"SENTRY_AUTH_TOKEN": "@sentry-auth-token",
-			"REACT_APP_SENTRY_DSN": "@sentry-dsn"
+			"SENTRY_AUTH_TOKEN": "@sentry-auth-token"
 		}
 	},
 	"builds": [
 		{
 			"src": "packages/app/next.config.js",
 			"use": "@now/next"
-		},
-		{
-			"src": "packages/auth/package.json",
-			"use": "@now/static-build",
-			"config": { "distDir": "build" }
 		}
 	],
 	"routes": [
-		{ "src": "/static/auth/(.*)", "dest": "/packages/auth/$1" },
 		{ "src": "(.*)", "dest": "/packages/app/$1", "continue": true },
 		{
 			"src": "^/favicon.ico",
-			"dest": "/packages/app/static/favicon.ico"
+			"dest": "/packages/app/static/favicon/favicon.ico"
+		}
+	],
+	"rewrites": [
+		{
+			"source": "/static/auth/(.*)",
+			"destination": "http://wagecall-auth.s3-website.us-east-2.amazonaws.com/$1"
 		}
 	]
 }

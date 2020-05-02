@@ -4,13 +4,12 @@
 	"private": true,
 	"scripts": {
 		"start": "cross-env PORT=3001 rescripts start",
-		"build": "if-env NODE_ENV=production && yarn build:app && yarn deploy || yarn build:app",
-		"build:app": "cross-env PUBLIC_URL=$AUTH_PUBLIC_URL rescripts build",
+		"build": "rescripts build",
 		"test": "rescripts test",
 		"eject": "rescripts eject",
 		"clean": "rimraf ./build ./dist",
 		"analyse": "source-map-explorer build/main.*",
-		"deploy": "gulp deploy"
+		"deploy": "s3-deploy './build/**' --cwd './build/' --region us-east-2 --bucket wagecall-auth --deleteRemoved && gulp deploy"
 	},
 	"dependencies": {
 		"@sentry/browser": "^5.15.5",
@@ -53,10 +52,10 @@
 		"dotenv": "^8.2.0",
 		"gulp": "^4.0.2",
 		"gulp-rename": "^2.0.0",
-		"if-env": "^1.0.4",
 		"is-ci-cli": "^2.0.0",
 		"jest": "24.9.0",
 		"rimraf": "^3.0.2",
+		"s3-deploy": "^1.4.0",
 		"source-map-explorer": "^2.2.1"
 	},
 	"browserslist": {
