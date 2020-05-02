@@ -4,14 +4,13 @@
 	"private": true,
 	"scripts": {
 		"start": "cross-env PORT=3001 rescripts start",
-		"build": "if-env NODE_ENV=production && yarn build-and-deploy || yarn build:app",
+		"build": "if-env NODE_ENV=production && yarn build:app && yarn deploy || yarn build:app",
 		"build:app": "cross-env PUBLIC_URL=$AUTH_PUBLIC_URL rescripts build",
 		"test": "rescripts test",
 		"eject": "rescripts eject",
 		"clean": "rimraf ./build ./dist",
 		"analyse": "source-map-explorer build/main.*",
-		"deploy": "gulp deploy",
-		"build-and-deploy": "yarn build:app && yarn deploy"
+		"deploy": "gulp deploy"
 	},
 	"dependencies": {
 		"@sentry/browser": "^5.15.5",
