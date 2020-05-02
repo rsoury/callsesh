@@ -1,6 +1,6 @@
 {
 	"version": 2,
-	"alias": ["wagecall.com", "wagecall"],
+	"alias": ["wagecall.com"],
 	"build": {
 		"env": {
 			"PUBLIC_URL": "https://wagecall.com",
