@@ -42,3 +42,6 @@ yarn-error.log*
 .env.production.local
 
 .now
+
+# Auth0 deployment
+.auth0

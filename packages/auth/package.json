@@ -8,7 +8,8 @@
 		"test": "rescripts test",
 		"eject": "rescripts eject",
 		"clean": "rimraf ./build ./dist",
-		"analyse": "source-map-explorer build/main.*"
+		"analyse": "source-map-explorer build/main.*",
+		"deploy": "gulp deploy"
 	},
 	"dependencies": {
 		"@sentry/browser": "^5.15.5",
@@ -45,8 +46,12 @@
 		"@testing-library/jest-dom": "^4.2.4",
 		"@testing-library/react": "^9.3.2",
 		"@testing-library/user-event": "^7.1.2",
+		"auth0-deploy-cli": "^4.2.1",
 		"babel-jest": "24.9.0",
 		"cross-env": "^7.0.2",
+		"dotenv": "^8.2.0",
+		"gulp": "^4.0.2",
+		"gulp-rename": "^2.0.0",
 		"is-ci-cli": "^2.0.0",
 		"jest": "24.9.0",
 		"rimraf": "^3.0.2",

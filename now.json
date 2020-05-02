@@ -4,14 +4,16 @@
 	"build": {
 		"env": {
 			"PUBLIC_URL": "https://wagecall.com",
-			"AUTH_PUBLIC_URL": "/static/auth",
+			"AUTH_PUBLIC_URL": "https://wagecall.com/static/auth",
 			"SESSION_SECRET": "@app-session-secret",
 			"TWILIO_ACCOUNT_SID": "@twilio-account-sid",
 			"TWILIO_AUTH_TOKEN": "@twilio-auth-token",
 			"TWILIO_PROXY_SERVICE_SID": "@twilio-proxy-service-sid",
-			"AUTH0_DOMAIN": "@auth0-domain",
+			"AUTH0_DOMAIN": "wagecall.auth0.com",
 			"AUTH0_CLIENT_ID": "@auth0-client-id",
 			"AUTH0_CLIENT_SECRET": "@auth0-client-secret",
+			"AUTH0_DEPLOY_CLIENT_ID": "@auth0-deploy-client-id",
+			"AUTH0_DEPLOY_CLIENT_SECRET": "@auth0-deploy-client-secret",
 			"STRIPE_PUBLIC_KEY": "",
 			"STRIPE_SECRET_KEY": "",
 			"SENTRY_DSN": "@sentry-dsn",
