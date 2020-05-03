@@ -25,7 +25,7 @@ import routes from "@/routes";
 // import useUser from "@/hooks/use-user";
 import appendReturnUrl from "@/utils/append-return-url";
 
-const logoUrl = "/static/logo/wagecall-logo-text@300.png";
+const logoUrl = "/static/logo/callsesh-logo-text@300.png";
 
 const Header = () => {
 	const [css, theme] = useStyletron();
@@ -118,8 +118,8 @@ const Header = () => {
 						>
 							<img
 								src={logoUrl}
-								alt="Wagecall logo"
-								title="Wagecall"
+								alt="callsesh logo"
+								title="callsesh"
 								className={css({ width: "100%", maxWidth: "120px" })}
 							/>
 						</div>

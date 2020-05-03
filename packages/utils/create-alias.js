@@ -12,8 +12,8 @@ module.exports = (mapToFolders = {}, pathSegments) => ({
 	/**
 	 * eg.
 	 * {
-	 *  '@': '/Users/ryansoury/dev/wagecall',
-	 *  '@tests': '/Users/ryansoury/dev/wagecall/tests'
+	 *  '@': '/Users/ryansoury/dev/callsesh',
+	 *  '@tests': '/Users/ryansoury/dev/callsesh/tests'
 	 * }
 	 */
 	alias: Object.entries(mapToFolders).reduce((result, [map, target]) => {

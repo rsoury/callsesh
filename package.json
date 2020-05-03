@@ -1,29 +1,29 @@
 {
-	"name": "wagecall",
+	"name": "callsesh",
 	"version": "1.0.0",
-	"description": "Wagecall project monorepo",
-	"repository": "git@gitlab.com:web-doodle/wagecall.git",
+	"description": "Callsesh project monorepo",
+	"repository": "git@gitlab.com:web-doodle/callsesh.git",
 	"author": "Ryan Soury <ryan@webdoodle.com.au>",
 	"private": true,
 	"workspaces": [
 		"packages/*"
 	],
-	"homepage": "https://www.wagecall.com/",
+	"homepage": "https://www.callsesh.com/",
 	"engines": {
 		"node": ">= 12.14.0"
 	},
 	"scripts": {
 		"clean": "lerna run --parallel clean",
 		"build": "lerna run --parallel build",
-		"dev:app": "lerna run --scope @wagecall/app --parallel dev",
-		"dev:auth": "lerna run --scope @wagecall/auth --parallel start",
-		"start:app": "lerna run --scope @wagecall/app --parallel start",
-		"build:app": "lerna run --scope @wagecall/app build",
-		"build:auth": "lerna run --scope @wagecall/auth build",
-		"test:app": "lerna run --scope @wagecall/app test",
-		"test:auth": "lerna run --scope @wagecall/auth test",
-		"clean:app": "lerna run --scope @wagecall/app clean",
-		"clean:auth": "lerna run --scope @wagecall/auth clean && rimraf ./pages/*",
+		"dev": "lerna run --scope @callsesh/app --parallel dev",
+		"start:app": "lerna run --scope @callsesh/app --parallel start",
+		"start:auth": "lerna run --scope @callsesh/auth --parallel start",
+		"build:app": "lerna run --scope @callsesh/app build",
+		"build:auth": "lerna run --scope @callsesh/auth build",
+		"test:app": "lerna run --scope @callsesh/app test",
+		"test:auth": "lerna run --scope @callsesh/auth test",
+		"clean:app": "lerna run --scope @callsesh/app clean",
+		"clean:auth": "lerna run --scope @callsesh/auth clean && rimraf ./pages/*",
 		"lint": "eslint -c ./.eslintrc.js \"./**/*.{js,jsx,ts,tsx,mjs}\"",
 		"format": "prettier --write \"./**/*.{js,jsx,mjs,ts,tsx,json,css,scss,md}\""
 	},

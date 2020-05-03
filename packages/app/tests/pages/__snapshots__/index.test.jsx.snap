@@ -17,10 +17,10 @@ exports[`With Snapshot Testing App shows matches snapshot 1`] = `
           className=""
         >
           <img
-            alt="Wagecall logo"
+            alt="callsesh logo"
             className=""
-            src="/logo/wagecall-logo@300.png"
-            title="Wagecall"
+            src="/logo/callsesh-logo@300.png"
+            title="callsesh"
           />
         </div>
       </li>

@@ -53,7 +53,7 @@ export const setUser = (user) => {
 
 export const alerts = {
 	error() {
-		const msg = `Oops! Something went wrong. We've noted this error. Please contact Wagecall support, or refresh and try again.`;
+		const msg = `Oops! Something went wrong. We've noted this error. Please contact Callsesh support, or refresh and try again.`;
 		toaster.negative(msg);
 	}
 };

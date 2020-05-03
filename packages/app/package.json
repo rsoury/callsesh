@@ -1,14 +1,14 @@
 {
-	"name": "@wagecall/app",
+	"name": "@callsesh/app",
 	"version": "1.0.0",
-	"description": "Wagecall Web App",
+	"description": "Callsesh Web App",
 	"private": true,
 	"author": "Ryan Soury <ryan@webdoodle.com.au>",
 	"repository": {
 		"type": "git",
-		"url": "git@https://gitlab.com/web-doodle/wagecall.git"
+		"url": "git@https://gitlab.com/web-doodle/callsesh.git"
 	},
-	"homepage": "https://www.wagecall.com/",
+	"homepage": "https://www.callsesh.com/",
 	"scripts": {
 		"dev": "next",
 		"build": "next build",
@@ -22,7 +22,7 @@
 		"@sentry/browser": "^5.15.5",
 		"@sentry/integrations": "^5.15.5",
 		"@sentry/node": "^5.15.5",
-		"@wagecall/utils": "^1.0.0",
+		"@callsesh/utils": "^1.0.0",
 		"axios": "^0.19.2",
 		"axios-retry": "^3.1.7",
 		"baseui": "^9.71.0",

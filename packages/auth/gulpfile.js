@@ -1,8 +1,13 @@
-/* eslint-disable no-console */
+/* eslint-disable no-console, no-unused-vars */
 
 require("dotenv").config();
 const gulp = require("gulp");
 const rename = require("gulp-rename");
+const replace = require("gulp-string-replace");
+const gulpif = require("gulp-if");
+const isEmpty = require("is-empty");
+const log = require("fancy-log");
+const chalk = require("chalk");
 const { deploy, dump } = require("auth0-deploy-cli");
 const path = require("path");
 const rimraf = require("rimraf");
@@ -16,6 +21,12 @@ const config = {
 	AUTH0_API_MAX_RETRIES: 10
 };
 
+log.info(chalk.yellow(`Public URL: ${process.env.PUBLIC_URL}`));
+log.info(chalk.yellow(`Auth Public URL: ${process.env.AUTH_PUBLIC_URL}`));
+
+const shouldReplace =
+	!isEmpty(process.env.AUTH_PUBLIC_URL) && !isEmpty(process.env.PUBLIC_URL);
+
 /**
  * Deploy authentication login page to Auth0
  * 1. Export Auth0 config
@@ -25,6 +36,12 @@ const config = {
  */
 const folder = path.resolve(__dirname, "./.auth0");
 const deployAuth = gulp.series(
+	(cb) => {
+		rimraf(folder, () => {
+			log.info(chalk.yellow(`Starting deployment...`));
+			cb();
+		});
+	},
 	async () => {
 		await dump({
 			output_folder: folder,
@@ -42,6 +59,25 @@ const deployAuth = gulp.series(
 					return p;
 				})
 			)
+			.pipe(
+				gulpif(
+					shouldReplace,
+					replace(
+						new RegExp(process.env.PUBLIC_URL, "g"),
+						process.env.AUTH_PUBLIC_URL
+					)
+				)
+			)
+			.on(
+				"end",
+				() =>
+					shouldReplace &&
+					log.info(
+						chalk.blue(
+							`Replaced "${process.env.PUBLIC_URL}" with "${process.env.AUTH_PUBLIC_URL}"`
+						)
+					)
+			)
 			.pipe(gulp.dest("./.auth0/pages")),
 	async () => {
 		await deploy({
@@ -51,7 +87,7 @@ const deployAuth = gulp.series(
 	},
 	(cb) => {
 		rimraf(folder, () => {
-			console.log(`Deployed successfully!`);
+			log.info(chalk.green(`Deployed successfully!`));
 			cb();
 		});
 	}

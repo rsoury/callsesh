@@ -14,7 +14,7 @@ const Signup = () => {
 	return (
 		<>
 			<Helmet>
-				<title>Sign up to Wagecall</title>
+				<title>Sign up to Callsesh</title>
 			</Helmet>
 			<div>
 				<Grid>

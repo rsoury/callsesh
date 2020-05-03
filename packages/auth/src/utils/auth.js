@@ -2,6 +2,8 @@ import isEmpty from "is-empty";
 import auth0 from "auth0-js";
 import { authConfig as config } from "@/env-config";
 
+console.log(config);
+
 const auth = new auth0.WebAuth({
 	clientID: config.clientID,
 	domain: config.auth0Domain,

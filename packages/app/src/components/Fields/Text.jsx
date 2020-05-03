@@ -4,7 +4,7 @@ import { Field } from "formik";
 import { FormControl } from "baseui/form-control";
 import { Input } from "baseui/input";
 import snakeCase from "lodash/snakeCase";
-import { format } from "@wagecall/utils";
+import { format } from "@callsesh/utils";
 
 const TextField = ({ name, label, caption, placeholder, ...props }) => (
 	<Field name={name} id={snakeCase(name)}>

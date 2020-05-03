@@ -1,14 +1,27 @@
 const path = require("path");
-const { editWebpackPlugin } = require("@rescripts/utilities");
+const {
+	editWebpackPlugin,
+	removeWebpackPlugin
+} = require("@rescripts/utilities");
 const get = require("lodash/get");
 const set = require("lodash/set");
 const { alias, jestAlias } = require("./config/alias");
 const pkg = require("./package.json");
 
 const mw = (fn) => Object.assign(fn, { isMiddleware: true });
+const removePlugin = (name, config) => {
+	if (
+		config.plugins.filter((plugin) => plugin.constructor.name === name).length >
+		0
+	) {
+		config = removeWebpackPlugin(name, config);
+	}
+	return config;
+};
 
 const env = {
-	PUBLIC_URL: process.env.PUBLIC_URL || ""
+	PUBLIC_URL: process.env.PUBLIC_URL || "",
+	STAGE: process.env.REACT_APP_STAGE || ""
 };
 
 const addAlias = mw((config) => {
@@ -27,6 +40,21 @@ const buildApp = mw((config) => {
 		filename: "[name].js",
 		chunkFilename: `[name].[contenthash:8].js`
 	});
+
+	// Remove unused plugins
+	config = removePlugin("ManifestPlugin", config);
+
+	if (env.STAGE === "staging") {
+		// Staging: Make dev bundle for a production build command.
+
+		config.mode = "development";
+		config.optimization = {
+			...config.optimization,
+			minimize: false,
+			minimizer: []
+		};
+		config.devtool = "source-map";
+	}
 
 	// Setup env vars
 	const definitions = {

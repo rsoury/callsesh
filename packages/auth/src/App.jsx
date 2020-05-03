@@ -45,7 +45,7 @@ const App = ({ location }) => {
 			}}
 		>
 			<main
-				id="wagecall-auth"
+				id="callsesh-auth"
 				className={css({
 					display: "flex",
 					justifyContent: "center",
