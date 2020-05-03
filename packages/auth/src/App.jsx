@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { Route, Switch, Redirect } from "react-router-dom";
 import { matchPath, withRouter } from "react-router";
 import RouterPropTypes from "react-router-prop-types";
@@ -11,26 +11,26 @@ import { shouldSignup } from "@/utils/auth";
 import Signup from "./Signup";
 import Login from "./Login";
 
-const App = ({ location }) => {
-	const [redirect, setRedirect] = useState("");
+let actionConsumed = false;
+
+const App = ({ location, history }) => {
 	const [css] = useStyletron();
 
 	useEffect(() => {
 		// Redirect to signup if action signup and current route is not signup.
-		if (shouldSignup()) {
-			const match = matchPath(location.pathname, {
-				path: "/signup",
-				exact: true
-			});
-			if (!match) {
-				setRedirect("/signup");
+		if (!actionConsumed) {
+			if (shouldSignup()) {
+				const match = matchPath(location.pathname, {
+					path: "/signup",
+					exact: true
+				});
+				if (!match) {
+					history.push("/signup");
+				}
 			}
+			actionConsumed = true;
 		}
-	}, [location.pathname]);
-
-	if (redirect) {
-		return <Redirect to={redirect} />;
-	}
+	}, [location.pathname, actionConsumed]);
 
 	return (
 		<ToasterContainer
@@ -52,24 +52,32 @@ const App = ({ location }) => {
 					alignItems: "center",
 					minHeight: "100%",
 					width: "100%",
-					maxWidth: `640px`,
+					maxWidth: `800px`,
 					margin: "0 auto",
 					position: "relative"
 				})}
 			>
 				<div className={css({ width: "100%" })}>
 					<Header />
-					<Switch>
-						<Route exact path="/signup">
-							<Signup />
-						</Route>
-						<Route exact path="/">
-							<Login />
-						</Route>
-						<Route path="*">
-							<Redirect to="/" />
-						</Route>
-					</Switch>
+					<div
+						className={css({
+							maxWidth: "640px",
+							width: "100%",
+							margin: "0 auto"
+						})}
+					>
+						<Switch>
+							<Route exact path="/signup">
+								<Signup />
+							</Route>
+							<Route exact path="/">
+								<Login />
+							</Route>
+							<Route path="*">
+								<Redirect to="/" />
+							</Route>
+						</Switch>
+					</div>
 				</div>
 			</main>
 		</ToasterContainer>
@@ -77,7 +85,8 @@ const App = ({ location }) => {
 };
 
 App.propTypes = {
-	location: RouterPropTypes.location.isRequired
+	location: RouterPropTypes.location.isRequired,
+	history: RouterPropTypes.history.isRequired
 };
 
 export default withRouter(App);

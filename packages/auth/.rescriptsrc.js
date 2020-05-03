@@ -5,9 +5,12 @@ const {
 } = require("@rescripts/utilities");
 const get = require("lodash/get");
 const set = require("lodash/set");
+const { default: InjectPlugin, ENTRY_ORDER } = require("webpack-inject-plugin");
 const { alias, jestAlias } = require("./config/alias");
 const pkg = require("./package.json");
+const exampleConfig = require("./example.config.json");
 
+const isTrue = (v) => v === true || v === "true";
 const mw = (fn) => Object.assign(fn, { isMiddleware: true });
 const removePlugin = (name, config) => {
 	if (
@@ -21,7 +24,8 @@ const removePlugin = (name, config) => {
 
 const env = {
 	PUBLIC_URL: process.env.PUBLIC_URL || "",
-	STAGE: process.env.REACT_APP_STAGE || ""
+	STAGE: process.env.REACT_APP_STAGE || "",
+	DEV_CONFIG: isTrue(process.env.DEV_CONFIG)
 };
 
 const addAlias = mw((config) => {
@@ -54,6 +58,17 @@ const buildApp = mw((config) => {
 			minimizer: []
 		};
 		config.devtool = "source-map";
+	}
+
+	if (env.DEV_CONFIG) {
+		config.plugins.push(
+			new InjectPlugin(
+				() => `window.config=${JSON.stringify(exampleConfig)};`,
+				{
+					entryOrder: ENTRY_ORDER.First
+				}
+			)
+		);
 	}
 
 	// Setup env vars

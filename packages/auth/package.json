@@ -14,8 +14,8 @@
 			"REACT_APP_STAGE": "staging"
 		},
 		"development": {
-			"PUBLIC_URL": "http://callsesh-auth.s3-website.us-east-2.amazonaws.com",
-			"REACT_APP_STAGE": "development"
+			"REACT_APP_STAGE": "development",
+			"DEV_CONFIG": true
 		}
 	},
 	"scripts": {
@@ -36,9 +36,9 @@
 		"build-and-deploy": "yarn build && yarn deploy"
 	},
 	"dependencies": {
+		"@callsesh/utils": "^1.0.0",
 		"@sentry/browser": "^5.15.5",
 		"@sentry/integrations": "^5.15.5",
-		"@callsesh/utils": "^1.0.0",
 		"auth0-js": "^9.13.2",
 		"axios": "^0.19.2",
 		"baseui": "^9.73.1",
@@ -85,7 +85,8 @@
 		"per-env": "^1.0.2",
 		"rimraf": "^3.0.2",
 		"s3-deploy": "^1.4.0",
-		"source-map-explorer": "^2.2.1"
+		"source-map-explorer": "^2.2.1",
+		"webpack-inject-plugin": "^1.5.4"
 	},
 	"browserslist": {
 		"production": [
