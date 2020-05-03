@@ -3,6 +3,7 @@ import { Grid, Cell } from "baseui/layout-grid";
 import FormikWizard from "formik-wizard";
 import * as yup from "yup";
 
+import FormLayout from "@/components/FormLayout";
 import PhoneField from "@/components/Fields/Phone";
 import VerifyField from "@/components/Fields/Verify";
 import * as validations from "@/utils/validate";
@@ -97,7 +98,7 @@ const Form = () => {
 		<FormikWizard
 			steps={steps}
 			onSubmit={handleSubmit}
-			render={(props) => <Form {...props} isSubmitting={isSubmitting} />}
+			render={(props) => <FormLayout {...props} isSubmitting={isSubmitting} />}
 		/>
 	);
 };
