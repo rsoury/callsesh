@@ -1,20 +1,20 @@
 {
-	"name": "@wagecall/auth",
+	"name": "@callsesh/auth",
 	"version": "1.0.0",
 	"private": true,
 	"per-env": {
 		"production": {
-			"PUBLIC_URL": "http://wagecall-auth.s3-website.us-east-2.amazonaws.com",
-			"AUTH_PUBLIC_URL": "https://wagecall.com/auth",
+			"PUBLIC_URL": "http://callsesh-auth.s3-website.us-east-2.amazonaws.com",
+			"AUTH_PUBLIC_URL": "https://callsesh.com/auth",
 			"REACT_APP_STAGE": "production"
 		},
 		"staging": {
-			"PUBLIC_URL": "http://wagecall-auth.s3-website.us-east-2.amazonaws.com",
-			"AUTH_PUBLIC_URL": "https://wagecall.now.sh/auth",
+			"PUBLIC_URL": "http://callsesh-auth.s3-website.us-east-2.amazonaws.com",
+			"AUTH_PUBLIC_URL": "https://callsesh.now.sh/auth",
 			"REACT_APP_STAGE": "staging"
 		},
 		"development": {
-			"PUBLIC_URL": "http://wagecall-auth.s3-website.us-east-2.amazonaws.com",
+			"PUBLIC_URL": "http://callsesh-auth.s3-website.us-east-2.amazonaws.com",
 			"REACT_APP_STAGE": "development"
 		}
 	},
@@ -30,13 +30,13 @@
 		"deploy": "per-env",
 		"deploy:development": "yarn deploy:app",
 		"deploy:production": "yarn deploy:app",
-		"deploy:app": "s3-deploy './build/**' --cwd './build/' --region us-east-2 --bucket wagecall-auth --deleteRemoved && gulp deploy",
+		"deploy:app": "s3-deploy './build/**' --cwd './build/' --region us-east-2 --bucket callsesh-auth --deleteRemoved && gulp deploy",
 		"build-and-deploy": "yarn build && yarn deploy"
 	},
 	"dependencies": {
 		"@sentry/browser": "^5.15.5",
 		"@sentry/integrations": "^5.15.5",
-		"@wagecall/utils": "^1.0.0",
+		"@callsesh/utils": "^1.0.0",
 		"auth0-js": "^9.13.2",
 		"axios": "^0.19.2",
 		"baseui": "^9.73.1",

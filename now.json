@@ -10,19 +10,19 @@
 	},
 	"build": {
 		"env": {
-			"PUBLIC_URL": "https://wagecall.now.sh",
+			"PUBLIC_URL": "https://callsesh.now.sh",
 			"SESSION_SECRET": "@app-session-secret",
 			"TWILIO_ACCOUNT_SID": "@twilio-account-sid",
 			"TWILIO_AUTH_TOKEN": "@twilio-auth-token",
 			"TWILIO_PROXY_SERVICE_SID": "@twilio-proxy-service-sid",
-			"AUTH0_DOMAIN": "wagecall.auth0.com",
+			"AUTH0_DOMAIN": "callsesh.auth0.com",
 			"AUTH0_CLIENT_ID": "@auth0-client-id",
 			"AUTH0_CLIENT_SECRET": "@auth0-client-secret",
 			"STRIPE_PUBLIC_KEY": "",
 			"STRIPE_SECRET_KEY": "",
 			"SENTRY_DSN": "@sentry-dsn",
 			"SENTRY_ORG": "web-doodle",
-			"SENTRY_PROJECT": "wagecall",
+			"SENTRY_PROJECT": "callsesh",
 			"SENTRY_AUTH_TOKEN": "@sentry-auth-token"
 		}
 	},
@@ -35,7 +35,7 @@
 	"rewrites": [
 		{
 			"source": "/auth/(.*)",
-			"destination": "http://wagecall-auth.s3-website.us-east-2.amazonaws.com/$1"
+			"destination": "http://callsesh-auth.s3-website.us-east-2.amazonaws.com/$1"
 		},
 		{
 			"source": "^/favicon.ico",

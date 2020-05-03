@@ -1,6 +1,6 @@
 /* eslint-disable no-underscore-dangle */
 
-import { useRequest } from "@wagecall/utils";
+import { useRequest } from "@callsesh/utils";
 
 export default function useUser() {
 	const { data, mutate, isValidating: loading } = useRequest({

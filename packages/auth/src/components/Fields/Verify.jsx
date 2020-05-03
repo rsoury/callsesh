@@ -4,7 +4,7 @@ import { Field } from "formik";
 import { FormControl } from "baseui/form-control";
 import { PinCode, SIZE as PIN_SIZE } from "baseui/pin-code";
 import snakeCase from "lodash/snakeCase";
-import { format } from "@wagecall/utils";
+import { format } from "@callsesh/utils";
 
 const VerifyField = ({ name, label, caption, ...props }) => (
 	<Field name={name} id={snakeCase(name)} type="text">

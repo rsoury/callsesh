@@ -18,7 +18,7 @@ const Login = () => {
 	return (
 		<>
 			<Helmet>
-				<title>Log in to Wagecall</title>
+				<title>Log in to Callsesh</title>
 			</Helmet>
 			<div>
 				<Grid>

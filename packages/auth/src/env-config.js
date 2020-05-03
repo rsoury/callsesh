@@ -9,8 +9,8 @@ export const authConfig = isProd
 	? window.config || {}
 	: {
 			assetsUrl: "",
-			auth0Domain: "wagecall.auth0.com",
-			auth0Tenant: "wagecall",
+			auth0Domain: "callsesh.auth0.com",
+			auth0Tenant: "callsesh",
 			clientConfigurationBaseUrl: "https://cdn.auth0.com/",
 			callbackOnLocationHash: false,
 			callbackURL:
@@ -22,7 +22,7 @@ export const authConfig = isProd
 				protocol: "oauth2",
 				prompt: "consent",
 				scope: "openid profile",
-				tenant: "wagecall",
+				tenant: "callsesh",
 				type: "code",
 				clientID: "fARU892qwFJFZBiTvR6BncKUkN6HtyE1",
 				redirectURI:
@@ -36,7 +36,7 @@ export const authConfig = isProd
 				protocol: "oauth2",
 				prompt: "consent",
 				scope: "openid profile",
-				tenant: "wagecall",
+				tenant: "callsesh",
 				type: "code",
 				clientID: "fARU892qwFJFZBiTvR6BncKUkN6HtyE1",
 				redirectURI:
@@ -50,8 +50,8 @@ export const authConfig = isProd
 			widgetUrl: "https://cdn.auth0.com/w2/auth0-widget-5.1.min.js",
 			isThirdPartyClient: false,
 			authorizationServer: {
-				url: "https://wagecall.auth0.com",
-				issuer: "https://wagecall.auth0.com/"
+				url: "https://callsesh.auth0.com",
+				issuer: "https://callsesh.auth0.com/"
 			},
 			colors: { page_background: "#000000", primary: "#ea5323" }
 	  };

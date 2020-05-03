@@ -1,17 +1,17 @@
 const description =
-	"Wagecall allows you to offer your customers or audience access to your expertise, advice or care through a paid phone call.";
-const url = "https://www.wagecall.com/";
+	"Callsesh allows you to make money by offering call sessions. Share your expertise, advice or care to your customers or audience.";
+const url = "https://www.callsesh.com/";
 
 module.exports = {
 	url,
-	titleTemplate: "Wagecall - %s",
-	title: "Earn a wage, offer a call!",
+	titleTemplate: "Callsesh - %s",
+	title: "Call sessions shared!",
 	description,
 	canonical: url,
 	openGraph: {
 		type: "website",
 		url,
-		site_name: "Wagecall"
+		site_name: "Callsesh"
 	},
 	twitter: {
 		handle: "@ryan_soury",

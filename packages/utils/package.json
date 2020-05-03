@@ -1,5 +1,5 @@
 {
-	"name": "@wagecall/utils",
+	"name": "@callsesh/utils",
 	"version": "1.0.0",
 	"private": true,
 	"peerDependencies": {
