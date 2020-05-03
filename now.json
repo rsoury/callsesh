@@ -1,6 +1,13 @@
 {
 	"version": 2,
-	"alias": ["wagecall.com"],
+	"env": {
+		"SESSION_SECRET": "@app-session-secret",
+		"TWILIO_ACCOUNT_SID": "@twilio-account-sid",
+		"TWILIO_AUTH_TOKEN": "@twilio-auth-token",
+		"TWILIO_PROXY_SERVICE_SID": "@twilio-proxy-service-sid",
+		"AUTH0_CLIENT_SECRET": "@auth0-client-secret",
+		"STRIPE_SECRET_KEY": ""
+	},
 	"build": {
 		"env": {
 			"PUBLIC_URL": "https://wagecall.now.sh",
@@ -25,17 +32,18 @@
 			"use": "@now/next"
 		}
 	],
-	"routes": [
-		{ "src": "(.*)", "dest": "/packages/app/$1", "continue": true },
-		{
-			"src": "^/favicon.ico",
-			"dest": "/packages/app/static/favicon/favicon.ico"
-		}
-	],
 	"rewrites": [
 		{
-			"source": "/static/auth/(.*)",
+			"source": "/auth/(.*)",
 			"destination": "http://wagecall-auth.s3-website.us-east-2.amazonaws.com/$1"
+		},
+		{
+			"source": "^/favicon.ico",
+			"destination": "/packages/app/static/favicon/favicon.ico"
+		},
+		{
+			"source": "(.*)",
+			"destination": "/packages/app/$1"
 		}
 	]
 }

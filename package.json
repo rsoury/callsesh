@@ -15,9 +15,9 @@
 	"scripts": {
 		"clean": "lerna run --parallel clean",
 		"build": "lerna run --parallel build",
-		"dev:app": "lerna run --scope @wagecall/app --parallel dev",
-		"dev:auth": "lerna run --scope @wagecall/auth --parallel start",
+		"dev": "lerna run --scope @wagecall/app --parallel dev",
 		"start:app": "lerna run --scope @wagecall/app --parallel start",
+		"start:auth": "lerna run --scope @wagecall/auth --parallel start",
 		"build:app": "lerna run --scope @wagecall/app build",
 		"build:auth": "lerna run --scope @wagecall/auth build",
 		"test:app": "lerna run --scope @wagecall/app test",
