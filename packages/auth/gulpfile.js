@@ -11,6 +11,7 @@ const chalk = require("chalk");
 const { deploy, dump } = require("auth0-deploy-cli");
 const path = require("path");
 const rimraf = require("rimraf");
+const fs = require("fs");
 
 const config = {
 	AUTH0_DOMAIN: process.env.AUTH0_DOMAIN,
@@ -79,6 +80,25 @@ const deployAuth = gulp.series(
 					)
 			)
 			.pipe(gulp.dest("./.auth0/pages")),
+	(cb) => {
+		fs.writeFile(
+			path.resolve(__dirname, "./.auth0/pages/login.json"),
+			JSON.stringify({
+				name: "login",
+				enabled: true,
+				html: "./login.html"
+			}),
+			(err) => {
+				if (err) {
+					log.error(chalk.red(`Failed to write login.json to pages directory`));
+				} else {
+					log.info(chalk.green(`login.json written to pages directory`));
+				}
+
+				cb();
+			}
+		);
+	},
 	async () => {
 		await deploy({
 			input_file: folder,
