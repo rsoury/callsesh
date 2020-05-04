@@ -5,7 +5,8 @@ const url = "https://www.callsesh.com/";
 module.exports = {
 	url,
 	titleTemplate: "Callsesh - %s",
-	title: "Call sessions shared!",
+	title:
+		"Call sessions to earn you money for sharing your expertise, advice or care",
 	description,
 	canonical: url,
 	openGraph: {

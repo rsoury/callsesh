@@ -21,26 +21,30 @@ import {
 } from "react-feather";
 import isEmpty from "is-empty";
 import Skeleton from "react-loading-skeleton";
+// import ChevronUp from "baseui/icon/chevron-up";
+// import ChevronDown from "baseui/icon/chevron-down";
 import routes from "@/routes";
 import appendReturnUrl from "@/utils/append-return-url";
 
-const logoUrl = "/static/logo/callsesh-text-logo.png";
+import Logo from "./Logo";
 
 const Header = () => {
 	const [css, theme] = useStyletron();
-	const [mobileMenu, showMobileMenu] = useState(false);
+	const [isMobileMenuOpen, showMobileMenu] = useState(false);
+	// const [isUserMenuOpen, showUserMenu] = useState(false);
 	// const [user, { loading: isLoading }] = useUser();
 	const user = {};
 	const isLoading = false;
 
-	let menuItems = [];
+	let mainMenuItems = [];
+	let userMenuItems = [];
 	if (isLoading) {
-		menuItems = Object.entries({
+		mainMenuItems = Object.entries({
 			button1: () => <Skeleton height={45} width={100} />,
 			button2: () => <Skeleton height={45} width={100} />
 		});
 	} else if (isEmpty(user)) {
-		menuItems = Object.entries({
+		mainMenuItems = Object.entries({
 			login: (props) => (
 				<Link href={appendReturnUrl(routes.login, true)}>
 					<Button kind={BUTTON_KIND.tertiary} {...props}>
@@ -55,7 +59,7 @@ const Header = () => {
 			)
 		});
 	} else {
-		menuItems = Object.entries({
+		userMenuItems = Object.entries({
 			profile: (props) => (
 				<Link href={routes.settings.profile}>
 					<Button
@@ -107,21 +111,7 @@ const Header = () => {
 			>
 				<NavigationList $align={ALIGN.left}>
 					<NavigationItem className={css({ margin: "0 0 0 -10px" })}>
-						<div
-							className={css({
-								height: "100%",
-								display: "flex",
-								alignItems: "center",
-								justifyContent: "center"
-							})}
-						>
-							<img
-								src={logoUrl}
-								alt="callsesh logo"
-								title="callsesh"
-								className={css({ width: "100%", maxWidth: "120px" })}
-							/>
-						</div>
+						<Logo />
 					</NavigationItem>
 				</NavigationList>
 				<NavigationList
@@ -134,7 +124,7 @@ const Header = () => {
 						paddingLeft: `${theme.sizing.scale400} !important`
 					})}
 				>
-					{menuItems.map(([key, Item]) => (
+					{mainMenuItems.map(([key, Item]) => (
 						<NavigationItem
 							key={key}
 							className={css({
@@ -144,6 +134,15 @@ const Header = () => {
 							<Item />
 						</NavigationItem>
 					))}
+					{!isEmpty(user) && (
+						<NavigationItem
+							className={css({
+								paddingLeft: `${theme.sizing.scale400} !important`
+							})}
+						>
+							<div>User</div>
+						</NavigationItem>
+					)}
 				</NavigationList>
 				<NavigationList
 					$align={ALIGN.right}
@@ -167,7 +166,7 @@ const Header = () => {
 			<Drawer
 				animate
 				anchor={DRAWER_ANCHOR.right}
-				isOpen={mobileMenu}
+				isOpen={isMobileMenuOpen}
 				autoFocus
 				onClose={() => showMobileMenu(false)}
 				overrides={{
@@ -178,7 +177,32 @@ const Header = () => {
 					}
 				}}
 			>
-				{menuItems.map(([key, Item]) => (
+				{!isEmpty(user) && <div>Some user information</div>}
+				{userMenuItems.map(([key, Item]) => (
+					<div key={key}>
+						<Item
+							overrides={{
+								BaseButton: {
+									style: {
+										width: "100%",
+										justifyContent: "flex-start"
+									}
+								}
+							}}
+							onClick={() => showMobileMenu(false)}
+						/>
+					</div>
+				))}
+				{!isEmpty(userMenuItems) && !isEmpty(mainMenuItems) && (
+					<div
+						className={css({
+							height: "2px",
+							backgroundColor: theme.colors.borderOpaque,
+							padding: "5px"
+						})}
+					/>
+				)}
+				{mainMenuItems.map(([key, Item]) => (
 					<div key={key}>
 						<Item
 							overrides={{

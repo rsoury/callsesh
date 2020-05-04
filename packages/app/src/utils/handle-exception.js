@@ -31,6 +31,8 @@ if (sentry.dsn) {
 
 	// Scope configured by default, subsequent calls to "configureScope" will add additional data
 	Sentry.configureScope((scope) => {
+		scope.setTag("package", "app");
+
 		// See https://www.npmjs.com/package/@sentry/node
 		scope.setTag("nodejs", process.version);
 		scope.setTag("nodejsAWS", process.env.AWS_EXECUTION_ENV || null); // Optional - Available on production environment only

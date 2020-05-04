@@ -28,8 +28,8 @@ if (!isProd) {
 
 if (sentry.dsn) {
 	Sentry.init(sentryOptions);
-	Sentry.addBreadcrumb({
-		message: "Callsesh Authentication Portal"
+	Sentry.configureScope((scope) => {
+		scope.setTag("package", "auth");
 	});
 }
 

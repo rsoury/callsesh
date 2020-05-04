@@ -39,7 +39,7 @@ module.exports = (phase) => {
 	const nextConfig = {
 		// Explicitly define environment variables to be used at build time.
 		env,
-		webpack: (config, { isServer, webpack }) => {
+		webpack: (config, { isServer, webpack, dev }) => {
 			config.externals = config.externals || {};
 			config.externals["styletron-server"] = "styletron-server";
 
@@ -69,6 +69,7 @@ module.exports = (phase) => {
 			// This is an alternative to manually uploading the source maps
 			// See: https://github.com/zeit/next.js/blob/canary/examples/with-sentry-simple/next.config.js
 			if (
+				!dev &&
 				process.env.SENTRY_DSN &&
 				process.env.SENTRY_ORG &&
 				process.env.SENTRY_PROJECT &&
