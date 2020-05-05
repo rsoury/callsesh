@@ -1,7 +1,7 @@
 /* Page used to register new users */
 
 import { useState, useEffect, useCallback } from "react";
-import { H1 as Heading, Paragraph2 as Paragraph } from "baseui/typography";
+import { H1 as Heading, H5 as Subheader } from "baseui/typography";
 import { useStyletron } from "baseui";
 import { Formik, Form } from "formik";
 import { Grid, Cell } from "baseui/layout-grid";
@@ -85,19 +85,17 @@ const Register = () => {
 								margin: "0 auto"
 							})}
 						>
-							<div className={css({ marginBottom: "20px" })}>
-								<Grid>
-									<Cell span={12}>
-										<Heading>
-											Welcome to Callsesh&nbsp;&nbsp;
-											<Emoji label="celebrate" symbol="🎉" />
-										</Heading>
-										<Paragraph>
-											Get started by providing more information about yourself
-										</Paragraph>
-									</Cell>
-								</Grid>
-							</div>
+							<Grid>
+								<Cell span={12}>
+									<Heading>
+										Welcome to Callsesh&nbsp;&nbsp;
+										<Emoji label="celebrate" symbol="🎉" />
+									</Heading>
+									<Subheader>
+										Get started by providing more information about yourself
+									</Subheader>
+								</Cell>
+							</Grid>
 							<Confetti active={confetti} config={confettiConfig} />
 							<Grid>
 								<Cell span={(12, 4, 6)}>
