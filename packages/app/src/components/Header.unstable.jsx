@@ -13,10 +13,10 @@ import Skeleton from "react-loading-skeleton";
 import { Unstable_AppNavBar as AppNavBar } from "baseui/app-nav-bar";
 import Link from "@/components/Link";
 import routes from "@/routes";
-// import useUser from "@/hooks/use-user";
+import useUser from "@/hooks/use-user";
 import appendReturnUrl from "@/utils/append-return-url";
 
-const logoUrl = "/static/logo/callsesh-text-logo.png";
+import Logo from "./Logo";
 
 const NavItem = ({ label, href, buttonKind, ...props }) => (
 	<Link href={href}>
@@ -41,9 +41,9 @@ const NavItemLabel = ({ label }) => label;
 
 const Header = () => {
 	const [css] = useStyletron();
-	// const [user, isLoading] = useUser();
-	const user = {};
-	const isLoading = false;
+	const [user, isLoading] = useUser();
+	// const user = {};
+	// const isLoading = false;
 
 	const navProps = {};
 
@@ -98,13 +98,16 @@ const Header = () => {
 			},
 			{
 				icon: PaymentMethodsIcon,
-				item: { label: "Profile", href: routes.settings.paymentMethods },
+				item: {
+					label: "Payment Methods",
+					href: routes.settings.paymentMethods
+				},
 				mapItemToNode,
 				mapItemToString: NavItemLabel
 			},
 			{
 				icon: NotificationsIcon,
-				item: { label: "Profile", href: routes.settings.notifications },
+				item: { label: "Notifications", href: routes.settings.notifications },
 				mapItemToNode,
 				mapItemToString: NavItemLabel
 			}
@@ -114,27 +117,11 @@ const Header = () => {
 	return (
 		<div
 			className={css({
-				// overflow: "hidden"
+				overflow: "hidden"
 			})}
 		>
 			<AppNavBar
-				appDisplayName={
-					<div
-						className={css({
-							height: "100%",
-							display: "flex",
-							alignItems: "center",
-							justifyContent: "center"
-						})}
-					>
-						<img
-							src={logoUrl}
-							alt="callsesh logo"
-							title="callsesh"
-							className={css({ width: "100%", maxWidth: "110px" })}
-						/>
-					</div>
-				}
+				appDisplayName={<Logo />}
 				overrides={{
 					Root: {
 						style: {

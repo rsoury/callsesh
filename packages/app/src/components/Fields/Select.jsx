@@ -2,11 +2,11 @@ import React from "react";
 import PropTypes from "prop-types";
 import { Field } from "formik";
 import { FormControl } from "baseui/form-control";
-import { Input } from "baseui/input";
+import { Select } from "baseui/select";
 import snakeCase from "lodash/snakeCase";
 import { format } from "@callsesh/utils";
 
-const TextField = ({
+const SelectField = ({
 	name,
 	label,
 	caption,
@@ -15,17 +15,29 @@ const TextField = ({
 	...props
 }) => (
 	<Field name={name} id={snakeCase(name)}>
-		{({ field, meta }) => (
+		{({
+			field: { onChange, value, ...field },
+			meta,
+			form: { setFieldValue }
+		}) => (
 			<FormControl
 				label={label || name ? () => label || name : null}
 				caption={caption ? () => caption : null}
 				error={() => (meta.touched ? format.message(meta.error) : "")}
 			>
-				<Input
+				<Select
 					{...field}
-					type="text"
+					clearable={false}
+					filterOutSelected={false}
+					searchable={false}
+					backspaceRemoves={false}
+					options={options}
 					placeholder={placeholder}
 					error={meta.touched ? !!meta.error : false}
+					onChange={({ value: newValue }) => {
+						setFieldValue(name, newValue[0]);
+					}}
+					value={value}
 					{...props}
 				/>
 			</FormControl>
@@ -33,7 +45,7 @@ const TextField = ({
 	</Field>
 );
 
-TextField.propTypes = {
+SelectField.propTypes = {
 	name: PropTypes.string.isRequired,
 	label: PropTypes.string,
 	caption: PropTypes.string,
@@ -43,11 +55,11 @@ TextField.propTypes = {
 	)
 };
 
-TextField.defaultProps = {
+SelectField.defaultProps = {
 	label: "",
 	caption: "",
 	placeholder: "",
 	options: []
 };
 
-export default TextField;
+export default SelectField;

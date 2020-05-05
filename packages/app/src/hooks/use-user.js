@@ -4,6 +4,14 @@ import { useState, useEffect } from "react";
 import Router from "next/router";
 import request from "@/utils/request";
 
+// We need to check whether user is registered. If not redirect to /register
+const ensureUserRegistered = (user) => {
+	const { isRegistered } = user;
+	if (!isRegistered) {
+		Router.push("/get-started");
+	}
+};
+
 export async function getUser(cookie = "") {
 	if (typeof window !== "undefined" && window.__user) {
 		return window.__user;
@@ -48,6 +56,7 @@ function useUser({ required } = {}) {
 	useEffect(() => {
 		// If user already exists.
 		if (!loading && user) {
+			ensureUserRegistered(user);
 			return () => {};
 		}
 		// Start user fetch
@@ -63,6 +72,7 @@ function useUser({ required } = {}) {
 						Router.replace("/login");
 						return;
 					}
+					ensureUserRegistered(newUser);
 					setUser(newUser);
 				}
 			})

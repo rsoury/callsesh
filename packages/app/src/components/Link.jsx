@@ -29,7 +29,7 @@ const Link = ({ children, href, ...props }) => {
 
 Link.propTypes = {
 	children: ChildrenProps.isRequired,
-	href: PropTypes.string.isRequired
+	href: PropTypes.oneOfType([PropTypes.string, PropTypes.object]).isRequired
 };
 
 export default Link;

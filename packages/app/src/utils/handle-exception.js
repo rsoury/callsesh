@@ -7,9 +7,7 @@ const sentryOptions = {
 	dsn: sentry.dsn,
 	enabled: process.env.NODE_ENV !== "test",
 	release: sentry.release,
-	environment: process.env.NODE_ENV,
-	maxBreadcrumbs: 50,
-	attachStacktrace: true
+	environment: process.env.NODE_ENV
 };
 
 // If developing locally
@@ -24,6 +22,9 @@ if (!isProd) {
 			debugger: false
 		})
 	];
+} else {
+	sentryOptions.maxBreadcrumbs = 50;
+	sentryOptions.attachStacktrace = true;
 }
 
 if (sentry.dsn) {

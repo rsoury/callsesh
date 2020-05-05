@@ -1,14 +1,13 @@
 import { useStyletron } from "baseui";
-import Header from "@/components/Header";
+import Layout from "@/components/Layout";
 
 const Index = () => {
 	const [css] = useStyletron();
 
 	return (
-		<main>
-			<Header />
-			<p className={css({ fontSize: "32px" })}>Styled by hook</p>
-		</main>
+		<Layout>
+			<p className={css({ fontSize: "32px" })}>Hello Callsesh!</p>
+		</Layout>
 	);
 };
 
