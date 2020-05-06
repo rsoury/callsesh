@@ -56,7 +56,7 @@ export const validationSchema = yup.object().shape({
 });
 
 const OperatorStep = ({ values }) => {
-	const [css] = useStyletron();
+	const [css, theme] = useStyletron();
 
 	return (
 		<div>
@@ -85,17 +85,40 @@ const OperatorStep = ({ values }) => {
 					</div>
 				</Cell>
 			</Grid>
-			<Grid>
-				<Card>
-					<StyledBody>
-						<CheckboxField
-							name="operator"
-							label="Want to be a phone call operator?"
-							checkmarkType={CHECKBOX_STYLE_TYPE.toggle_round}
-						/>
-					</StyledBody>
-				</Card>
-			</Grid>
+			<div className={css({ marginTop: "20px" })}>
+				<Grid>
+					<Card
+						overrides={{
+							Root: {
+								style: {
+									width: "100%",
+									transition: "border-color 0.25s",
+									...(values.operator
+										? {
+												borderColor: theme.colors.accent
+										  }
+										: {})
+								}
+							}
+						}}
+					>
+						<StyledBody>
+							<CheckboxField
+								name="operator"
+								label="Want to be a phone call operator?"
+								checkmarkType={CHECKBOX_STYLE_TYPE.toggle_round}
+								overrides={{
+									Label: {
+										style: {
+											fontWeight: "900"
+										}
+									}
+								}}
+							/>
+						</StyledBody>
+					</Card>
+				</Grid>
+			</div>
 			{values.operator && (
 				<div className={css({ marginTop: "20px" })}>
 					<Grid>

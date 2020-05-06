@@ -66,7 +66,13 @@ export const validationSchema = yup.object().shape({
 	firstName: yup.string().required(),
 	lastName: yup.string().required(),
 	username: yup.string().required(),
-	gender: yup.string().oneOf(["male", "female", "other"]).required(),
+	gender: yup
+		.object()
+		.shape({
+			label: yup.string().oneOf(["Male", "Female", "Other"]),
+			id: yup.string().oneOf(["male", "female", "other"])
+		})
+		.required(),
 	dob: yup.string()
 });
 

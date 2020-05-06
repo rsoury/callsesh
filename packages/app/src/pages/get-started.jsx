@@ -44,7 +44,8 @@ const GetStarted = () => {
 	return (
 		<main>
 			<FormikWizard
-				steps={formSteps}
+				// steps={formSteps}
+				steps={[formSteps[1]]}
 				onSubmit={handleSubmit}
 				render={(props) => (
 					<FormLayout {...props} isSubmitting={isSubmitting} />
