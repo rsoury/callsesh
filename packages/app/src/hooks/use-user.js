@@ -2,14 +2,20 @@
 
 import { useState, useEffect } from "react";
 import Router from "next/router";
+import isEmpty from "is-empty";
 import request from "@/utils/request";
 
 // We need to check whether user is registered. If not redirect to /register
 const ensureUserRegistered = (user) => {
+	if (isEmpty(user)) {
+		return null;
+	}
 	const { isRegistered } = user;
 	if (!isRegistered) {
+		// Redirect to get started if not registered
 		Router.push("/get-started");
 	}
+	return null;
 };
 
 export async function getUser(cookie = "") {

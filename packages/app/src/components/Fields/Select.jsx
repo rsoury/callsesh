@@ -21,9 +21,9 @@ const SelectField = ({
 			form: { setFieldValue }
 		}) => (
 			<FormControl
-				label={label || name ? () => label || name : null}
-				caption={caption ? () => caption : null}
-				error={() => (meta.touched ? format.message(meta.error) : "")}
+				label={() => label || name}
+				caption={() => caption}
+				error={meta.touched ? () => format.message(meta.error) : null}
 			>
 				<Select
 					{...field}

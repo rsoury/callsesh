@@ -19,7 +19,8 @@ export async function getServerSideProps({ req, res }) {
 		});
 	}
 	res.end();
-	return {};
+
+	return { props: {} };
 }
 
 export default Logout;

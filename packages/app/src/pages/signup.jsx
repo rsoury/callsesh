@@ -23,7 +23,8 @@ export async function getServerSideProps({
 		});
 	}
 	res.end();
-	return {};
+
+	return { props: {} };
 }
 
 export default Signup;
