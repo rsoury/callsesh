@@ -12,7 +12,9 @@ const DateField = ({ name, label, caption, placeholder, ...props }) => (
 			<FormControl
 				label={() => label || name}
 				caption={() => caption}
-				error={meta.touched ? () => format.message(meta.error) : null}
+				error={
+					meta.touched && meta.error ? () => format.message(meta.error) : null
+				}
 			>
 				<Datepicker
 					{...field}

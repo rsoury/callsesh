@@ -20,7 +20,9 @@ const TextField = ({
 			<FormControl
 				label={() => label || name}
 				caption={() => caption}
-				error={meta.touched ? () => format.message(meta.error) : null}
+				error={
+					meta.touched && meta.error ? () => format.message(meta.error) : null
+				}
 			>
 				<Input
 					{...field}

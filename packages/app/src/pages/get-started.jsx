@@ -17,12 +17,15 @@ import {
 import * as yup from "yup";
 import Confetti from "react-dom-confetti";
 import { Edit2 as EditIcon } from "react-feather";
-import { getUser } from "@/middleware/auth";
+import { STYLE_TYPE as CHECKBOX_STYLE_TYPE } from "baseui/checkbox";
+import { Card, StyledBody } from "baseui/card";
 
+import { getUser } from "@/middleware/auth";
 import { publicUrl } from "@/env-config";
 import TextField from "@/components/Fields/Text";
 import SelectField from "@/components/Fields/Select";
 import DateField from "@/components/Fields/Date";
+import CheckboxField from "@/components/Fields/Checkbox";
 import Emoji from "@/components/Emoji";
 import LabelControl from "@/components/LabelControl";
 
@@ -70,7 +73,7 @@ const generateUsername = (firstName, lastName) => {
 	return username;
 };
 
-const Register = () => {
+const GetStarted = () => {
 	const [css] = useStyletron();
 	const [confetti, setConfetti] = useState(false);
 	const [selfManagedUsername, setSelfManagedUsername] = useState(false);
@@ -80,7 +83,8 @@ const Register = () => {
 		lastName: "",
 		username: "",
 		gender: genderOptions[2],
-		dob: [new Date("1996/08/31")]
+		dob: [new Date("1996/08/31")],
+		operator: true // false,
 	};
 
 	useEffect(() => {
@@ -207,7 +211,28 @@ const Register = () => {
 										caption="YYYY/MM/DD"
 									/>
 								</Cell>
+								<Cell span={12}>
+									<Card>
+										<StyledBody>
+											<CheckboxField
+												name="operator"
+												label="Want to be a phone call operator?"
+												caption="Make money offering your skills or time over phone calls!"
+												checkmarkType={CHECKBOX_STYLE_TYPE.toggle_round}
+											/>
+										</StyledBody>
+									</Card>
+								</Cell>
 							</Grid>
+							{values.operator && (
+								<div className={css({ marginTop: "20px" })}>
+									<Grid>
+										<Cell span={12}>
+											<div>Hello World</div>
+										</Cell>
+									</Grid>
+								</div>
+							)}
 							<div className={css({ marginTop: "40px" })}>
 								<Grid gridGutters={16}>
 									<Cell span={12}>
@@ -255,4 +280,4 @@ export async function getServerSideProps({ req, res }) {
 	return { props: {} };
 }
 
-export default Register;
+export default GetStarted;
