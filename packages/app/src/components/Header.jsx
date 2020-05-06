@@ -23,7 +23,7 @@ import isEmpty from "is-empty";
 import Skeleton from "react-loading-skeleton";
 // import ChevronUp from "baseui/icon/chevron-up";
 // import ChevronDown from "baseui/icon/chevron-down";
-import routes from "@/routes";
+import * as routes from "@/routes";
 import appendReturnUrl from "@/utils/append-return-url";
 
 import Logo from "./Logo";
@@ -46,14 +46,14 @@ const Header = () => {
 	} else if (isEmpty(user)) {
 		mainMenuItems = Object.entries({
 			login: (props) => (
-				<Link href={appendReturnUrl(routes.login, true)}>
+				<Link href={appendReturnUrl(routes.page.login, true)}>
 					<Button kind={BUTTON_KIND.tertiary} {...props}>
 						Log in
 					</Button>
 				</Link>
 			),
 			signup: (props) => (
-				<Link href={appendReturnUrl(routes.signup, true)}>
+				<Link href={appendReturnUrl(routes.page.signup, true)}>
 					<Button {...props}>Sign up</Button>
 				</Link>
 			)
@@ -61,7 +61,7 @@ const Header = () => {
 	} else {
 		userMenuItems = Object.entries({
 			profile: (props) => (
-				<Link href={routes.settings.profile}>
+				<Link href={routes.page.settings.profile}>
 					<Button
 						kind={BUTTON_KIND.tertiary}
 						startEnhancer={() => <ProfileIcon size={20} />}
@@ -72,7 +72,7 @@ const Header = () => {
 				</Link>
 			),
 			paymentMethods: (props) => (
-				<Link href={routes.settings.paymentMethods}>
+				<Link href={routes.page.settings.paymentMethods}>
 					<Button
 						kind={BUTTON_KIND.tertiary}
 						startEnhancer={() => <PaymentMethodsIcon size={20} />}
@@ -83,7 +83,7 @@ const Header = () => {
 				</Link>
 			),
 			notifications: (props) => (
-				<Link href={routes.settings.notifications}>
+				<Link href={routes.page.settings.notifications}>
 					<Button
 						kind={BUTTON_KIND.tertiary}
 						startEnhancer={() => <NotificationsIcon size={20} />}

@@ -3,7 +3,9 @@
 import { useState, useEffect } from "react";
 import Router from "next/router";
 import isEmpty from "is-empty";
+
 import request from "@/utils/request";
+import * as routes from "@/routes";
 
 // We need to check whether user is registered. If not redirect to /register
 const ensureUserRegistered = (user) => {
@@ -13,7 +15,7 @@ const ensureUserRegistered = (user) => {
 	const { isRegistered } = user;
 	if (!isRegistered) {
 		// Redirect to get started if not registered
-		Router.push("/get-started");
+		Router.push(routes.page.register);
 	}
 	return null;
 };
@@ -26,7 +28,7 @@ export async function getUser(cookie = "") {
 	try {
 		const user = await request
 			.get(
-				"/api/user",
+				routes.api.user,
 				cookie
 					? {
 							headers: {
@@ -75,7 +77,7 @@ function useUser({ required } = {}) {
 				if (isMounted) {
 					// When the user is not logged in but login is required
 					if (required && !newUser) {
-						Router.replace("/login");
+						Router.replace(routes.page.login);
 						return;
 					}
 					ensureUserRegistered(newUser);

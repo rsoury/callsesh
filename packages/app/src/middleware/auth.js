@@ -3,15 +3,17 @@ import nextConnect from "next-connect";
 import * as yup from "yup";
 import camelCase from "lodash/camelCase";
 import mapKeys from "lodash/mapKeys";
+
 import * as authManager from "@/auth-manager";
 import { auth0 as config, publicUrl, sessionSecret } from "@/env-config";
+import { api as apiRoutes } from "@/routes";
 
 // Client Secret hidden for browser environment
 const auth = initAuth0({
 	domain: config.domain,
 	clientId: config.clientId,
 	scope: "openid profile",
-	redirectUri: `${publicUrl}/api/auth/callback`,
+	redirectUri: `${publicUrl}${apiRoutes.auth.callback}`,
 	postLogoutRedirectUri: `${publicUrl}/`,
 	clientSecret: config.clientSecret,
 	session: {

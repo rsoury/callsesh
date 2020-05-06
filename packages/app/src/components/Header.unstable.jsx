@@ -12,7 +12,7 @@ import isEmpty from "is-empty";
 import Skeleton from "react-loading-skeleton";
 import { Unstable_AppNavBar as AppNavBar } from "baseui/app-nav-bar";
 import Link from "@/components/Link";
-import routes from "@/routes";
+import * as routes from "@/routes";
 import useUser from "@/hooks/use-user";
 import appendReturnUrl from "@/utils/append-return-url";
 
@@ -71,14 +71,17 @@ const Header = () => {
 	} else if (isEmpty(user)) {
 		navProps.mainNav = [
 			{
-				item: { label: "Log In", href: appendReturnUrl(routes.login, true) },
+				item: {
+					label: "Log In",
+					href: appendReturnUrl(routes.page.login, true)
+				},
 				mapItemToNode: NavItem,
 				mapItemToString: NavItemLabel
 			},
 			{
 				item: {
 					label: "Sign Up",
-					href: appendReturnUrl(routes.signup, true),
+					href: appendReturnUrl(routes.page.signup, true),
 					buttonKind: BUTTON_KIND.primary
 				},
 				mapItemToNode: NavItem,
@@ -92,7 +95,7 @@ const Header = () => {
 		navProps.userNav = [
 			{
 				icon: ProfileIcon,
-				item: { label: "Profile", href: routes.settings.profile },
+				item: { label: "Profile", href: routes.page.settings.profile },
 				mapItemToNode,
 				mapItemToString: NavItemLabel
 			},
@@ -100,14 +103,17 @@ const Header = () => {
 				icon: PaymentMethodsIcon,
 				item: {
 					label: "Payment Methods",
-					href: routes.settings.paymentMethods
+					href: routes.page.settings.paymentMethods
 				},
 				mapItemToNode,
 				mapItemToString: NavItemLabel
 			},
 			{
 				icon: NotificationsIcon,
-				item: { label: "Notifications", href: routes.settings.notifications },
+				item: {
+					label: "Notifications",
+					href: routes.page.settings.notifications
+				},
 				mapItemToNode,
 				mapItemToString: NavItemLabel
 			}

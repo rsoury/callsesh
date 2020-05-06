@@ -58,6 +58,10 @@ module.exports = (phase) => {
 				config.resolve.alias[key] = value;
 			});
 
+			// Add react alias -- this allows us to link other projects without referencing duplicate react libraries.
+			config.resolve.alias.react = require.resolve("react");
+			config.resolve.alias.formik = require.resolve("formik");
+
 			// Sentry alias
 			if (!isServer) {
 				config.resolve.alias["@sentry/node"] = "@sentry/browser";

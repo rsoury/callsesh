@@ -12448,6 +12448,11 @@ lodash.templatesettings@^4.0.0:
   dependencies:
     lodash._reinterpolate "^3.0.0"
 
+lodash.throttle@^4.1.1:
+  version "4.1.1"
+  resolved "https://registry.yarnpkg.com/lodash.throttle/-/lodash.throttle-4.1.1.tgz#c23e91b710242ac70c37f1e1cda9274cc39bf2f4"
+  integrity sha1-wj6RtxAkKscMN/HhzaknTMOb8vQ=
+
 lodash.uniq@^4.5.0:
   version "4.5.0"
   resolved "https://registry.yarnpkg.com/lodash.uniq/-/lodash.uniq-4.5.0.tgz#d0225373aeb652adc1bc82e4945339a842754773"
@@ -15944,6 +15949,13 @@ react-feather@^2.0.4:
   dependencies:
     prop-types "^15.7.2"
 
+react-fixed-bottom@^1.0.5:
+  version "1.0.5"
+  resolved "https://registry.yarnpkg.com/react-fixed-bottom/-/react-fixed-bottom-1.0.5.tgz#3151d716e04bb14bfe0e64e1ceafe00f5445aa09"
+  integrity sha512-ksu8DQLfrBT68DmmTuOVoQ+tSM75thTxNgbn/6q0Iu0OAEmbPwc8zkB68/rvmE05cSsHEYPRcMFmPa7FGuvHTQ==
+  dependencies:
+    lodash.throttle "^4.1.1"
+
 react-focus-lock@^2.2.1:
   version "2.3.1"
   resolved "https://registry.yarnpkg.com/react-focus-lock/-/react-focus-lock-2.3.1.tgz#9d5d85899773609c7eefa4fc54fff6a0f5f2fc47"
@@ -16866,6 +16878,13 @@ rootpath@^0.1.2:
   version "0.1.2"
   resolved "https://registry.yarnpkg.com/rootpath/-/rootpath-0.1.2.tgz#5b379a87dca906e9b91d690a599439bef267ea6b"
   integrity sha1-Wzeah9ypBum5HWkKWZQ5vvJn6ms=
+
+rsoury-formik-wizard@^3.1.3:
+  version "3.1.3"
+  resolved "https://registry.yarnpkg.com/rsoury-formik-wizard/-/rsoury-formik-wizard-3.1.3.tgz#6177c794ee02c8da128dbfac2519cab1b8dd77a8"
+  integrity sha512-9i4/I4qjwNCWXUmTxepdKODGaI0jI5y831hiYH/JrGQz/lwI79rGLFirzzAOqheFVD1gmXw5tpCssawIVjPtLg==
+  dependencies:
+    immer "^3.1.3"
 
 rst-selector-parser@^2.2.3:
   version "2.2.3"
