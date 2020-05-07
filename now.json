@@ -8,7 +8,8 @@
 		"AUTH0_CLIENT_SECRET": "@auth0-client-secret",
 		"STRIPE_SECRET_KEY": "",
 		"AWS_ACCESS_KEY_ID": "@aws-access-key-id",
-		"AWS_SECRET_ACCESS_KEY": "@aws-access-secret-key"
+		"AWS_SECRET_ACCESS_KEY": "@aws-access-secret-key",
+		"UPLOADCARE_PUBLIC_KEY": "5443874db89d37f0f3fe"
 	},
 	"build": {
 		"env": {
@@ -27,7 +28,8 @@
 			"SENTRY_PROJECT": "callsesh",
 			"SENTRY_AUTH_TOKEN": "@sentry-auth-token",
 			"AWS_ACCESS_KEY_ID": "@aws-access-key-id",
-			"AWS_SECRET_ACCESS_KEY": "@aws-access-secret-key"
+			"AWS_SECRET_ACCESS_KEY": "@aws-access-secret-key",
+			"UPLOADCARE_PUBLIC_KEY": "5443874db89d37f0f3fe"
 		}
 	},
 	"builds": [

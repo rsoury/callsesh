@@ -10,9 +10,6 @@ import { engine, debug } from "@config/styletron";
 import seoConfig from "@config/seo";
 
 import "setimmediate";
-import "filepond/dist/filepond.min.css"; // For file uploads
-import "filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css";
-import "filepond-plugin-image-edit/dist/filepond-plugin-image-edit.css";
 import "modern-normalize";
 import "@/styles.css";
 

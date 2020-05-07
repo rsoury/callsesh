@@ -17,7 +17,8 @@ module.exports = (phase) => {
 		AUTH0_DOMAIN: process.env.AUTH0_DOMAIN || "",
 		AUTH0_CLIENT_ID: process.env.AUTH0_CLIENT_ID || "",
 		STRIPE_PUBLIC_KEY: process.env.STRIPE_PUBLIC_KEY || "",
-		SENTRY_DSN: process.env.SENTRY_DSN || ""
+		SENTRY_DSN: process.env.SENTRY_DSN || "",
+		UPLOADCARE_PUBLIC_KEY: process.env.UPLOADCARE_PUBLIC_KEY || ""
 	};
 	const serverEnv = {
 		SESSION_SECRET: process.env.SESSION_SECRET || "",

@@ -3447,6 +3447,20 @@
     semver "^6.3.0"
     tsutils "^3.17.1"
 
+"@uploadcare/client-suspense@^1.0.2":
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/@uploadcare/client-suspense/-/client-suspense-1.0.2.tgz#498c48610a52a4612e3aa0698c3c78e0a1e00535"
+  integrity sha512-X0zECeN7JeYxXq8+rVCf5uEmQxcnUS3YOOP5lGt50oEdCIzsa9Moz5CJaajNGGBcVgMorUhaLF3Or11NgLcsDw==
+
+"@uploadcare/react-widget@^1.2.6":
+  version "1.2.6"
+  resolved "https://registry.yarnpkg.com/@uploadcare/react-widget/-/react-widget-1.2.6.tgz#082fd5b04c59e71558673cea4d134e2f5968b2c3"
+  integrity sha512-CNeaaRZPp68PsYHoB6at4wxnOTnRTfJDyg665GffEXwzVTJBlt6hXjgPm4F8vVBegQvjK8CfnA7PeK+LGxkOzA==
+  dependencies:
+    "@uploadcare/client-suspense" "^1.0.2"
+    react-fast-compare "^3.0.0"
+    uploadcare-widget "^3.8.2"
+
 "@webassemblyjs/ast@1.8.5":
   version "1.8.5"
   resolved "https://registry.yarnpkg.com/@webassemblyjs/ast/-/ast-1.8.5.tgz#51b1c5fe6576a34953bf4b253df9f0d490d9e359"
@@ -8727,6 +8741,11 @@ filepond-plugin-image-preview@^4.6.2:
   resolved "https://registry.yarnpkg.com/filepond-plugin-image-preview/-/filepond-plugin-image-preview-4.6.2.tgz#452c31419d3f41c6476a34762ef5ff2e4170307a"
   integrity sha512-4Tc9cWVM+3iEFDeol+moz/FuWzBxlUbA89snmEyPtFqp6CWf8uyVK0L+vIOf9+bT3DgCEmfDwvQBbjsyu8J7Tg==
 
+filepond-plugin-image-transform@^3.7.3:
+  version "3.7.3"
+  resolved "https://registry.yarnpkg.com/filepond-plugin-image-transform/-/filepond-plugin-image-transform-3.7.3.tgz#dd7283daa37032d52390c4c564291e50be30954e"
+  integrity sha512-3ILmFoOKB0Ngi1vi3ymph6YWIeBp47yx3PQvGejkkIj/7GmupfhvgWwwcwVJI6ZG3v++vKNWwSg5403ngj9unA==
+
 filepond@^4.13.5:
   version "4.13.5"
   resolved "https://registry.yarnpkg.com/filepond/-/filepond-4.13.5.tgz#43b7b20fff2ccbb65611ff6fefe992225c549a97"
@@ -11728,6 +11747,11 @@ joycon@^2.2.5:
   version "2.2.5"
   resolved "https://registry.yarnpkg.com/joycon/-/joycon-2.2.5.tgz#8d4cf4cbb2544d7b7583c216fcdfec19f6be1615"
   integrity sha512-YqvUxoOcVPnCp0VU1/56f+iKSdvIRJYPznH22BdXV3xMk75SFXhWeJkZ8C9XxUWt1b5x2X1SxuFygW1U0FmkEQ==
+
+jquery@^3.4.1:
+  version "3.5.1"
+  resolved "https://registry.yarnpkg.com/jquery/-/jquery-3.5.1.tgz#d7b4d08e1bfdb86ad2f1a3d039ea17304717abb5"
+  integrity sha512-XwIBPqcMn57FxfT+Go5pzySnm4KWkT1Tv7gjrpT1srtf8Weynl6R273VJ5GjkRb51IzMp5nbaPjJXMWeju2MKg==
 
 js-cookie@^2.2.0:
   version "2.2.1"
@@ -16008,6 +16032,11 @@ react-fast-compare@^2.0.1, react-fast-compare@^2.0.4:
   resolved "https://registry.yarnpkg.com/react-fast-compare/-/react-fast-compare-2.0.4.tgz#e84b4d455b0fec113e0402c329352715196f81f9"
   integrity sha512-suNP+J1VU1MWFKcyt7RtjiSWUjvidmQSlqu+eHslq+342xCbGTYmC0mEhPCOHxlW0CywylOC1u2DFAT+bv4dBw==
 
+react-fast-compare@^3.0.0:
+  version "3.0.2"
+  resolved "https://registry.yarnpkg.com/react-fast-compare/-/react-fast-compare-3.0.2.tgz#8b0bfa93a049ec1eef9d54ab5e5c6036c317144d"
+  integrity sha512-1fBw8Efm6fb1blbRorZcO3OqzWgxYWxXzlaNeqEVXcrDdyFzeqygrPVU6qrPuqnqYMpUJVkQBdDgDJQTmCXp+Q==
+
 react-fastclick@^3.0.2:
   version "3.0.2"
   resolved "https://registry.yarnpkg.com/react-fastclick/-/react-fastclick-3.0.2.tgz#2994c60088cda90b0b2cbfac4b6e7c6bc73d6a3a"
@@ -18943,6 +18972,14 @@ upath@^1.1.1, upath@^1.2.0:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/upath/-/upath-1.2.0.tgz#8f66dbcd55a883acdae4408af8b035a5044c1894"
   integrity sha512-aZwGpamFO61g3OlfT7OQCHqhGnW43ieH9WZeP7QxN/G/jS4jfqUkZxoryvJgVPEcrl5NL/ggHsSmLMHuH64Lhg==
+
+uploadcare-widget@^3.8.2:
+  version "3.9.1"
+  resolved "https://registry.yarnpkg.com/uploadcare-widget/-/uploadcare-widget-3.9.1.tgz#d94daf5d0cc4f6de3c91bc9b004ae7de479d2cec"
+  integrity sha512-nbOejbttHA2S7BPm9U/eoXhSRNCf1qgsnUHLXFkmJjc9i/dKCWOFAEJ9Xp0ioVnxExSNMVYKdh5Ng/GHlWHt4A==
+  dependencies:
+    escape-html "^1.0.3"
+    jquery "^3.4.1"
 
 upper-case-first@^1.1.0:
   version "1.1.2"

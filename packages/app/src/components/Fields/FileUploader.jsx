@@ -3,33 +3,25 @@ import PropTypes from "prop-types";
 import { Field } from "formik";
 import snakeCase from "lodash/snakeCase";
 import { format } from "@callsesh/utils";
-import { FormControl } from "baseui/form-control";
-import { FilePond, registerPlugin } from "react-filepond";
-import FilePondPluginFileValidateType from "filepond-plugin-file-validate-type";
-import FilePondPluginFileEncode from "filepond-plugin-file-encode";
-import FilePondPluginFileValidateSize from "filepond-plugin-file-validate-size";
-import FilePondPluginImagePreview from "filepond-plugin-image-preview";
-import FilePondPluginImageEdit from "filepond-plugin-image-edit";
+import { Widget } from "@uploadcare/react-widget";
+import { uploadcare as config } from "@/env-config";
 
-registerPlugin(
-	FilePondPluginFileValidateType,
-	FilePondPluginFileEncode,
-	FilePondPluginFileValidateSize,
-	FilePondPluginImagePreview,
-	FilePondPluginImageEdit
-);
+import LabelControl from "@/components/LabelControl";
 
-const FileUploaderField = ({ name, label, caption, placeholder, ...props }) => {
-	const filepondRef = React.createRef();
+const FileUploaderField = ({ name, label, caption }) => {
+	const fileSizeLimit = (sizeInBytes) => {
+		return (fileInfo) => {
+			console.log(fileInfo);
+			console.log(sizeInBytes);
+		};
+	};
+
+	const validators = [fileSizeLimit(1024 * 1024 * 2)];
 
 	return (
 		<Field name={name} id={snakeCase(name)}>
-			{({
-				field: { onChange, value, ...field },
-				meta,
-				form: { setFieldValue }
-			}) => (
-				<FormControl
+			{({ meta, form: { setFieldValue } }) => (
+				<LabelControl
 					label={() => label || name}
 					caption={() => caption}
 					error={
@@ -37,21 +29,31 @@ const FileUploaderField = ({ name, label, caption, placeholder, ...props }) => {
 							? () => format.message(meta.error || "")
 							: null
 					}
+					noBg
 				>
-					<FilePond
-						{...field}
-						ref={filepondRef}
-						files={value}
-						onupdatefiles={(files) => {
-							setFieldValue(name, files);
-						}}
-						allowMultiple={false}
-						accept="image/png, image/jpeg, image/gif"
-						labelIdle={`Drag & Drop your picture or <span class="filepond--label-action">Browse</span>`}
-						maxFileSize="2MB"
-						{...props}
+					<Widget
+						publicKey={config.publicKey}
+						id="profile_picture"
+						name="profile_picture"
+						tabs="file camera instagram facebook url gdrive gphotos dropbox vk"
+						previewStep
+						clearable
+						imagesOnly
+						crop="1:1"
+						validators={validators}
+						// onFileSelect={(file) => {
+						// 	console.log("File changed: ", file);
+
+						// 	if (file) {
+						// 		file.progress((info) =>
+						// 			console.log("File progress: ", info.progress)
+						// 		);
+						// 		file.done((info) => setFieldValue(info));
+						// 	}
+						// }}
+						onChange={(info) => setFieldValue(info)}
 					/>
-				</FormControl>
+				</LabelControl>
 			)}
 		</Field>
 	);
@@ -60,14 +62,12 @@ const FileUploaderField = ({ name, label, caption, placeholder, ...props }) => {
 FileUploaderField.propTypes = {
 	name: PropTypes.string.isRequired,
 	label: PropTypes.string,
-	caption: PropTypes.string,
-	placeholder: PropTypes.string
+	caption: PropTypes.string
 };
 
 FileUploaderField.defaultProps = {
 	label: "",
-	caption: "",
-	placeholder: ""
+	caption: ""
 };
 
 export default FileUploaderField;

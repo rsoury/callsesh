@@ -43,7 +43,7 @@ const listItemProps = {
 export const initialValues = {
 	operator: true, // false,
 	hourlyRate: "",
-	profilePicture: "",
+	profilePicture: {},
 	purpose: "",
 	messageBroadcast: ""
 };
@@ -128,7 +128,6 @@ const OperatorStep = ({ values }) => {
 								name="profilePicture"
 								label="Profile Picture"
 								caption="Must be a JPEG or PNG with a max size of 2MB"
-								overrides={{}}
 							/>
 						</Cell>
 					</Grid>
