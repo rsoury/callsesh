@@ -136,7 +136,7 @@ const OperatorStep = ({ values }) => {
 				</Grid>
 			</div>
 			{values.operator && (
-				<div className={css({ marginTop: "20px", paddingBottom: "100px" })}>
+				<div className={css({ marginTop: "20px" })}>
 					<Grid>
 						<Cell span={12}>
 							<FileUploaderField
