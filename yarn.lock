@@ -8680,11 +8680,6 @@ file-selector@^0.1.8:
   dependencies:
     tslib "^1.9.0"
 
-file-type@^3.3.0:
-  version "3.9.0"
-  resolved "https://registry.yarnpkg.com/file-type/-/file-type-3.9.0.tgz#257a078384d1db8087bc449d107d52a52672b9e9"
-  integrity sha1-JXoHg4TR24CHvESdEH1SpSZyuek=
-
 file-uri-to-path@1, file-uri-to-path@1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/file-uri-to-path/-/file-uri-to-path-1.0.0.tgz#553a7b8446ff6f684359c445f1e37a05dacc33dd"
@@ -8710,46 +8705,6 @@ filenamify@^4.1.0:
     filename-reserved-regex "^2.0.0"
     strip-outer "^1.0.1"
     trim-repeated "^1.0.0"
-
-filepond-plugin-file-encode@^2.1.5:
-  version "2.1.5"
-  resolved "https://registry.yarnpkg.com/filepond-plugin-file-encode/-/filepond-plugin-file-encode-2.1.5.tgz#9bf6c3b868a02eb19d4a6b277f63d7ed1d705e42"
-  integrity sha512-zZE+CWjMV0GJHyy54541AjAV3tRThQgYt9IZWlnBFs8bZFFrKULQCoJ8pBwTXpt/Lwx0M55u0lMLu2otBJkc6g==
-
-filepond-plugin-file-validate-size@^2.2.1:
-  version "2.2.1"
-  resolved "https://registry.yarnpkg.com/filepond-plugin-file-validate-size/-/filepond-plugin-file-validate-size-2.2.1.tgz#7e0d879db85271d2b1ec4b18e8d4d452e3fd2007"
-  integrity sha512-u9JKJlg4Yff0ogNPb/6QK9Pwqr9DlcAnvQm2r9jHc5bXBoVhQZ+Dd4FcMdDyrSGBkYwiXVBD2It7qPOv94hVnQ==
-
-filepond-plugin-file-validate-type@^1.2.5:
-  version "1.2.5"
-  resolved "https://registry.yarnpkg.com/filepond-plugin-file-validate-type/-/filepond-plugin-file-validate-type-1.2.5.tgz#b3588088d2b0d5dbdf706d068c0ecdf28140a8e3"
-  integrity sha512-SsdYD6N+PDnetrPrBHfl13ZC9jRv5BuGdai5cORfANhuE/N32OwU/IclCNQ4qlpIa88hzqBg9dj6IINkiW+4HA==
-
-filepond-plugin-image-crop@^2.0.3:
-  version "2.0.3"
-  resolved "https://registry.yarnpkg.com/filepond-plugin-image-crop/-/filepond-plugin-image-crop-2.0.3.tgz#4be354a10a85d86946abc9ce738c6bda44e21a8c"
-  integrity sha512-+XV09yBoMHwNgww75zgMmA8imckNiOCvtAYTgtDE5sMcZ/lWTrK339SxwuLLxqV66tFAWO8pAL/nrYKKY1Ixpw==
-
-filepond-plugin-image-edit@^1.6.0:
-  version "1.6.0"
-  resolved "https://registry.yarnpkg.com/filepond-plugin-image-edit/-/filepond-plugin-image-edit-1.6.0.tgz#2f1b31f25e83d80344536fa640c8812006089e6f"
-  integrity sha512-fLhy0f3Kw696Vf8RZH7zinigMtZCeLw8HIz4FpbWKTKXT6Xv3VOBFHG3xLYY5Qe3bkd7lj2Oc+0ZGha5GOq0QQ==
-
-filepond-plugin-image-preview@^4.6.2:
-  version "4.6.2"
-  resolved "https://registry.yarnpkg.com/filepond-plugin-image-preview/-/filepond-plugin-image-preview-4.6.2.tgz#452c31419d3f41c6476a34762ef5ff2e4170307a"
-  integrity sha512-4Tc9cWVM+3iEFDeol+moz/FuWzBxlUbA89snmEyPtFqp6CWf8uyVK0L+vIOf9+bT3DgCEmfDwvQBbjsyu8J7Tg==
-
-filepond-plugin-image-transform@^3.7.3:
-  version "3.7.3"
-  resolved "https://registry.yarnpkg.com/filepond-plugin-image-transform/-/filepond-plugin-image-transform-3.7.3.tgz#dd7283daa37032d52390c4c564291e50be30954e"
-  integrity sha512-3ILmFoOKB0Ngi1vi3ymph6YWIeBp47yx3PQvGejkkIj/7GmupfhvgWwwcwVJI6ZG3v++vKNWwSg5403ngj9unA==
-
-filepond@^4.13.5:
-  version "4.13.5"
-  resolved "https://registry.yarnpkg.com/filepond/-/filepond-4.13.5.tgz#43b7b20fff2ccbb65611ff6fefe992225c549a97"
-  integrity sha512-WZi8kMGZNh6hH6qsUdvCQcQOF5uPaTV1PdPC4PiAZauRyepDxtAnkK4OHRW+UXIkA2CW2IdHFrqlKvDR4Dk24A==
 
 filesize@3.6.1:
   version "3.6.1"
@@ -10775,13 +10730,6 @@ is-subset@^0.1.1:
   version "0.1.1"
   resolved "https://registry.yarnpkg.com/is-subset/-/is-subset-0.1.1.tgz#8a59117d932de1de00f245fcdd39ce43f1e939a6"
   integrity sha1-ilkRfZMt4d4A8kX83TnOQ/HpOaY=
-
-is-svg@^2.1.0:
-  version "2.1.0"
-  resolved "https://registry.yarnpkg.com/is-svg/-/is-svg-2.1.0.tgz#cf61090da0d9efbcab8722deba6f032208dbb0e9"
-  integrity sha1-z2EJDaDZ77yrhyLeum8DIgjbsOk=
-  dependencies:
-    html-comment-regex "^1.1.0"
 
 is-svg@^3.0.0:
   version "3.0.0"
@@ -13214,15 +13162,6 @@ ms@^2.0.0, ms@^2.1.1, ms@^2.1.2:
   version "2.1.2"
   resolved "https://registry.yarnpkg.com/ms/-/ms-2.1.2.tgz#d09d1f357b443f493382a8eb3ccd183872ae6009"
   integrity sha512-sGkPx+VjMtmA6MX27oA4FBFELFCZZ4S4XqeGOXCv68tT+jb3vk/RyaKWP0PTKyWtmLSM0b+adUTEvbs1PEaH2w==
-
-multer-s3@^2.9.0:
-  version "2.9.0"
-  resolved "https://registry.yarnpkg.com/multer-s3/-/multer-s3-2.9.0.tgz#a946fd8c01c9726076f11949b84943259f8ca8c3"
-  integrity sha512-qLF8pCD5HhXLLd954q49B63x3bk6Fe0jqD3eM0FVcGtqhiSVuTrchEDAo0mnO5pc34cMuX/CVCCbPkGTjX2xUA==
-  dependencies:
-    file-type "^3.3.0"
-    is-svg "^2.1.0"
-    run-parallel "^1.1.6"
 
 multicast-dns-service-types@^1.1.0:
   version "1.1.0"
@@ -16049,11 +15988,6 @@ react-feather@^2.0.4:
   dependencies:
     prop-types "^15.7.2"
 
-react-filepond@^7.0.1:
-  version "7.0.1"
-  resolved "https://registry.yarnpkg.com/react-filepond/-/react-filepond-7.0.1.tgz#caf96526287140884a31a1476b8328d9d6ecdee2"
-  integrity sha512-PitNM44JP0K5hXnkSYV3HRlkObsWbhqaJRWizMrdHpS3pPz9/iyiOGmRpc+4T4ST3vblmiUTLRYq/+1bDcSqQw==
-
 react-fixed-bottom@^1.0.5:
   version "1.0.5"
   resolved "https://registry.yarnpkg.com/react-fixed-bottom/-/react-fixed-bottom-1.0.5.tgz#3151d716e04bb14bfe0e64e1ceafe00f5445aa09"
@@ -17008,11 +16942,6 @@ run-async@^2.2.0, run-async@^2.4.0:
   version "2.4.1"
   resolved "https://registry.yarnpkg.com/run-async/-/run-async-2.4.1.tgz#8440eccf99ea3e70bd409d49aab88e10c189a455"
   integrity sha512-tvVnVv01b8c1RrA6Ep7JkStj85Guv/YrMcwqYQnwjsAS2cTmmPGBBjAjpCW7RrSodNSoE2/qg9O4bceNvUuDgQ==
-
-run-parallel@^1.1.6:
-  version "1.1.9"
-  resolved "https://registry.yarnpkg.com/run-parallel/-/run-parallel-1.1.9.tgz#c9dd3a7cf9f4b2c4b6244e173a6ed866e61dd679"
-  integrity sha512-DEqnSRTDw/Tc3FXf49zedI638Z9onwUotBMiUFKmrO2sdFKIbXamXGQ3Axd4qgphxKB4kw/qP1w5kTxnfU1B9Q==
 
 run-queue@^1.0.0, run-queue@^1.0.3:
   version "1.0.3"
