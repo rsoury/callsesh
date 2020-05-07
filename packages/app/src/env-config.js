@@ -19,3 +19,7 @@ export const stripe = {
 	public: process.env.STRIPE_PUBLIC_KEY || "",
 	secret: process.env.STRIPE_SECRET_KEY || ""
 };
+export const awsCredentials = {
+	accessKeyId: process.env.AWS_ACCESS_KEY_ID || "",
+	secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY || ""
+};

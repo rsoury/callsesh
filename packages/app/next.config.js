@@ -25,7 +25,9 @@ module.exports = (phase) => {
 		TWILIO_AUTH_TOKEN: process.env.TWILIO_AUTH_TOKEN || "",
 		TWILIO_PROXY_SERVICE_SID: process.env.TWILIO_PROXY_SERVICE_SID || "",
 		AUTH0_CLIENT_SECRET: process.env.AUTH0_CLIENT_SECRET || "",
-		STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY || ""
+		STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY || "",
+		AWS_ACCESS_KEY_ID: process.env.AWS_ACCESS_KEY_ID || "",
+		AWS_SECRET_ACCESS_KEY: process.env.AWS_SECRET_ACCESS_KEY || ""
 	};
 
 	let env = frontendEnv;

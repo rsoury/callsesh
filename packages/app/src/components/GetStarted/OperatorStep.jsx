@@ -13,6 +13,7 @@ import {
 import * as yup from "yup";
 
 import CheckboxField from "@/components/Fields/Checkbox";
+import FileUploaderField from "@/components/Fields/FileUploader";
 import Emoji from "@/components/Emoji";
 
 const listItemProps = {
@@ -123,7 +124,12 @@ const OperatorStep = ({ values }) => {
 				<div className={css({ marginTop: "20px" })}>
 					<Grid>
 						<Cell span={12}>
-							<div>Hello World</div>
+							<FileUploaderField
+								name="profilePicture"
+								label="Profile Picture"
+								caption="Must be a JPEG or PNG with a max size of 2MB"
+								overrides={{}}
+							/>
 						</Cell>
 					</Grid>
 				</div>

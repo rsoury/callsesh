@@ -6,7 +6,9 @@
 		"TWILIO_AUTH_TOKEN": "@twilio-auth-token",
 		"TWILIO_PROXY_SERVICE_SID": "@twilio-proxy-service-sid",
 		"AUTH0_CLIENT_SECRET": "@auth0-client-secret",
-		"STRIPE_SECRET_KEY": ""
+		"STRIPE_SECRET_KEY": "",
+		"AWS_ACCESS_KEY_ID": "@aws-access-key-id",
+		"AWS_SECRET_ACCESS_KEY": "@aws-access-secret-key"
 	},
 	"build": {
 		"env": {
@@ -23,7 +25,9 @@
 			"SENTRY_DSN": "@sentry-dsn",
 			"SENTRY_ORG": "web-doodle",
 			"SENTRY_PROJECT": "callsesh",
-			"SENTRY_AUTH_TOKEN": "@sentry-auth-token"
+			"SENTRY_AUTH_TOKEN": "@sentry-auth-token",
+			"AWS_ACCESS_KEY_ID": "@aws-access-key-id",
+			"AWS_SECRET_ACCESS_KEY": "@aws-access-secret-key"
 		}
 	},
 	"builds": [

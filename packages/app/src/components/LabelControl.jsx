@@ -1,4 +1,5 @@
 import React from "react";
+import PropTypes from "prop-types";
 import { FormControl } from "baseui/form-control";
 import { useStyletron } from "baseui";
 
@@ -16,6 +17,7 @@ const LabelControl = ({
 	children,
 	startEnhancer: StartEnhancer,
 	endEnhancer: EndEnhancer,
+	noBg,
 	...props
 }) => {
 	const [css, theme] = useStyletron();
@@ -28,7 +30,9 @@ const LabelControl = ({
 						display: "flex",
 						alignItems: "center",
 						minHeight: "50px",
-						backgroundColor: theme.colors.backgroundSecondary
+						backgroundColor: noBg
+							? "transparent"
+							: theme.colors.backgroundSecondary
 					})}
 				>
 					{StartEnhancer && (
@@ -67,12 +71,14 @@ const LabelControl = ({
 LabelControl.propTypes = {
 	children: ChildrenProps.isRequired,
 	startEnhancer: ChildrenProps,
-	endEnhancer: ChildrenProps
+	endEnhancer: ChildrenProps,
+	noBg: PropTypes.bool
 };
 
 LabelControl.defaultProps = {
 	startEnhancer: null,
-	endEnhancer: null
+	endEnhancer: null,
+	noBg: false
 };
 
 export default LabelControl;
