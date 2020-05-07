@@ -57,7 +57,7 @@ export const initialValues = {
 	hourlyRate: "",
 	profilePicture: {},
 	purpose: {
-		option: {},
+		option: purposeOptions[0],
 		value: ""
 	},
 	messageBroadcast: ""
@@ -75,7 +75,7 @@ const OperatorStep = ({ values }) => {
 	const [css, theme] = useStyletron();
 
 	return (
-		<div>
+		<div className={css({ paddingBottom: "50px" })}>
 			<Grid>
 				<Cell span={12}>
 					<Heading>
@@ -136,7 +136,7 @@ const OperatorStep = ({ values }) => {
 				</Grid>
 			</div>
 			{values.operator && (
-				<div className={css({ marginTop: "20px" })}>
+				<div className={css({ marginTop: "20px", paddingBottom: "100px" })}>
 					<Grid>
 						<Cell span={12}>
 							<FileUploaderField
@@ -145,28 +145,40 @@ const OperatorStep = ({ values }) => {
 								caption="Must be a JPEG or PNG with a max size of 2MB"
 							/>
 						</Cell>
-						<Cell span={12}>
+						<Cell
+							span={values.purpose.option?.id === "other" ? [12, 4, 6] : 12}
+						>
 							<SelectField
 								name="purpose.option"
 								label="What will you be offering your callers?"
-								options={purposeOptions[0]}
+								options={purposeOptions}
 								caption="This will appear on your public operator profile"
 							/>
-							{values.purpose?.id === "other" && (
+						</Cell>
+						{values.purpose.option?.id === "other" && (
+							<Cell span={[12, 4, 6]}>
 								<TextField
 									name="purpose.value"
 									label="Other?"
 									placeholder="Medical Advice"
 									maxLength={50}
 								/>
-							)}
-						</Cell>
+							</Cell>
+						)}
 						<Cell span={12}>
 							<TextField
 								name="messageBroadcast"
 								label="Have a message for your callers? Could be your biography, or a note about your calls."
 								placeholder="Hey! One thing you should know about me is..."
 								maxLength={240}
+								area
+								overrides={{
+									Input: {
+										style: {
+											minHeight: "150px"
+										}
+									}
+								}}
 							/>
 						</Cell>
 					</Grid>

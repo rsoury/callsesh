@@ -5,6 +5,7 @@ import { FormControl } from "baseui/form-control";
 import { Input } from "baseui/input";
 import snakeCase from "lodash/snakeCase";
 import { format } from "@callsesh/utils";
+import { Textarea } from "baseui/textarea";
 
 const TextField = ({
 	name,
@@ -13,6 +14,7 @@ const TextField = ({
 	placeholder,
 	onChange: onChangeProp,
 	maxLength,
+	area,
 	...props
 }) => (
 	<Field name={name} id={snakeCase(name)}>
@@ -24,23 +26,42 @@ const TextField = ({
 					meta.touched && meta.error ? () => format.message(meta.error) : null
 				}
 			>
-				<Input
-					{...field}
-					type="text"
-					placeholder={placeholder}
-					error={meta.touched ? !!meta.error : false}
-					onChange={(e) => {
-						if (maxLength > 0) {
-							if (e.target.value.length > maxLength) {
-								return false;
+				{area ? (
+					<Textarea
+						{...field}
+						placeholder={placeholder}
+						error={meta.touched ? !!meta.error : false}
+						onChange={(e) => {
+							if (maxLength > 0) {
+								if (e.target.value.length > maxLength) {
+									return false;
+								}
 							}
-						}
-						onChange(e);
-						onChangeProp(e);
-						return true;
-					}}
-					{...props}
-				/>
+							onChange(e);
+							onChangeProp(e);
+							return true;
+						}}
+						{...props}
+					/>
+				) : (
+					<Input
+						{...field}
+						type="text"
+						placeholder={placeholder}
+						error={meta.touched ? !!meta.error : false}
+						onChange={(e) => {
+							if (maxLength > 0) {
+								if (e.target.value.length > maxLength) {
+									return false;
+								}
+							}
+							onChange(e);
+							onChangeProp(e);
+							return true;
+						}}
+						{...props}
+					/>
+				)}
 			</FormControl>
 		)}
 	</Field>
@@ -52,7 +73,8 @@ TextField.propTypes = {
 	caption: PropTypes.string,
 	placeholder: PropTypes.string,
 	maxLength: PropTypes.number,
-	onChange: PropTypes.func
+	onChange: PropTypes.func,
+	area: PropTypes.bool
 };
 
 TextField.defaultProps = {
@@ -60,7 +82,8 @@ TextField.defaultProps = {
 	caption: "",
 	placeholder: "",
 	maxLength: 0,
-	onChange() {}
+	onChange() {},
+	area: false
 };
 
 export default TextField;
