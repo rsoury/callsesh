@@ -5,14 +5,17 @@ import snakeCase from "lodash/snakeCase";
 import { format } from "@callsesh/utils";
 import { Widget } from "@uploadcare/react-widget";
 import { uploadcare as config } from "@/env-config";
+import { toaster } from "baseui/toast";
 
 import LabelControl from "@/components/LabelControl";
 
 const FileUploaderField = ({ name, label, caption }) => {
 	const fileSizeLimit = (sizeInBytes) => {
 		return (fileInfo) => {
-			console.log(fileInfo);
-			console.log(sizeInBytes);
+			if (fileInfo.size > sizeInBytes) {
+				toaster.negative(`File size too large.`);
+				throw new Error("File size too large");
+			}
 		};
 	};
 

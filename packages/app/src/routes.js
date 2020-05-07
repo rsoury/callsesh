@@ -31,6 +31,5 @@ export const api = {
 		logout: "/api/auth/logout",
 		signup: "/api/auth/signup"
 	},
-	user: "/api/user",
-	file: "/api/file"
+	user: "/api/user"
 };

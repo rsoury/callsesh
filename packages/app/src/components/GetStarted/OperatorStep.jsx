@@ -12,6 +12,8 @@ import {
 } from "react-feather";
 import * as yup from "yup";
 
+import SelectField from "@/components/Fields/Select";
+import TextField from "@/components/Fields/Text";
 import CheckboxField from "@/components/Fields/Checkbox";
 import FileUploaderField from "@/components/Fields/FileUploader";
 import Emoji from "@/components/Emoji";
@@ -40,11 +42,24 @@ const listItemProps = {
 	}
 };
 
+const purposeOptions = [
+	{ label: "Advice", id: "advice" },
+	{ label: "Expertise", id: "expertise" },
+	{ label: "Consultancy", id: "consultancy" },
+	{ label: "Guidance", id: "guidance" },
+	{ label: "Companionship", id: "companionship" },
+	{ label: "Therapy", id: "therapy" },
+	{ label: "Other", id: "other" }
+];
+
 export const initialValues = {
 	operator: true, // false,
 	hourlyRate: "",
 	profilePicture: {},
-	purpose: "",
+	purpose: {
+		option: {},
+		value: ""
+	},
 	messageBroadcast: ""
 };
 
@@ -130,6 +145,30 @@ const OperatorStep = ({ values }) => {
 								caption="Must be a JPEG or PNG with a max size of 2MB"
 							/>
 						</Cell>
+						<Cell span={12}>
+							<SelectField
+								name="purpose.option"
+								label="What will you be offering your callers?"
+								options={purposeOptions[0]}
+								caption="This will appear on your public operator profile"
+							/>
+							{values.purpose?.id === "other" && (
+								<TextField
+									name="purpose.value"
+									label="Other?"
+									placeholder="Medical Advice"
+									maxLength={50}
+								/>
+							)}
+						</Cell>
+						<Cell span={12}>
+							<TextField
+								name="messageBroadcast"
+								label="Have a message for your callers? Could be your biography, or a note about your calls."
+								placeholder="Hey! One thing you should know about me is..."
+								maxLength={240}
+							/>
+						</Cell>
 					</Grid>
 				</div>
 			)}
@@ -139,7 +178,13 @@ const OperatorStep = ({ values }) => {
 
 OperatorStep.propTypes = {
 	values: PropTypes.shape({
-		operator: PropTypes.bool
+		operator: PropTypes.bool,
+		profilePicture: PropTypes.object,
+		purpose: PropTypes.shape({
+			option: PropTypes.object,
+			value: PropTypes.string
+		}),
+		messageBroadcast: PropTypes.string
 	})
 };
 
