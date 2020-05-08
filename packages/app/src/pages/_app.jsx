@@ -2,7 +2,7 @@ import React from "react";
 import NextApp from "next/app";
 import { LightTheme, BaseProvider, styled } from "baseui";
 import { Provider as StyletronProvider } from "styletron-react";
-import { ToasterContainer, PLACEMENT } from "baseui/toast";
+import { ToasterContainer, PLACEMENT as TOOLTIP_PLACEMENT } from "baseui/toast";
 import { DefaultSeo } from "next-seo";
 import initFastclick from "react-fastclick";
 
@@ -49,7 +49,7 @@ class App extends NextApp {
 				<BaseProvider theme={theme}>
 					<DefaultSeo {...seoConfig} />
 					<ToasterContainer
-						placement={PLACEMENT.topRight}
+						placement={TOOLTIP_PLACEMENT.topRight}
 						autoHideDuration={10000}
 						overrides={{
 							Root: {

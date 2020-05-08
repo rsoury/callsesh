@@ -14,6 +14,10 @@ import OperatorStep, {
 	initialValues as operatorInitialValues,
 	validationSchema as operatorValidationSchema
 } from "@/components/GetStarted/OperatorStep";
+import CallerStep, {
+	initialValues as callerInitialValues,
+	validationSchema as callerValidationSchema
+} from "@/components/GetStarted/CallerStep";
 
 const formSteps = [
 	{
@@ -21,6 +25,12 @@ const formSteps = [
 		component: GeneralStep,
 		initialValues: generalInitialValues,
 		validationSchema: generalValidationSchema
+	},
+	{
+		id: "caller",
+		component: CallerStep,
+		initialValues: callerInitialValues,
+		validationSchema: callerValidationSchema
 	},
 	{
 		id: "operator",

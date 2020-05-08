@@ -16,8 +16,8 @@ export const twilio = {
 	proxyServiceSid: process.env.TWILIO_PROXY_SERVICE_SID || ""
 };
 export const stripe = {
-	public: process.env.STRIPE_PUBLIC_KEY || "",
-	secret: process.env.STRIPE_SECRET_KEY || ""
+	publicKey: process.env.STRIPE_PUBLIC_KEY || "",
+	secretKey: process.env.STRIPE_SECRET_KEY || ""
 };
 export const awsCredentials = {
 	accessKeyId: process.env.AWS_ACCESS_KEY_ID || "",

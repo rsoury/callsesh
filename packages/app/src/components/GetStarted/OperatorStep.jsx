@@ -110,36 +110,40 @@ const OperatorStep = ({ values }) => {
 				</Cell>
 			</Grid>
 			<div className={css({ marginTop: "20px" })}>
-				<Card
-					overrides={{
-						Root: {
-							style: {
-								width: "100%",
-								transition: "border-color 0.25s",
-								...(values.operator
-									? {
-											borderColor: theme.colors.accent
-									  }
-									: {})
-							}
-						}
-					}}
-				>
-					<StyledBody>
-						<CheckboxField
-							name="operator"
-							label="Want to be a phone call operator?"
-							checkmarkType={CHECKBOX_STYLE_TYPE.toggle_round}
+				<Grid>
+					<Cell span={12}>
+						<Card
 							overrides={{
-								Label: {
+								Root: {
 									style: {
-										fontWeight: "900"
+										width: "100%",
+										transition: "border-color 0.25s, background-color 0.25s",
+										...(values.operator
+											? {
+													borderColor: theme.colors.accent
+											  }
+											: {})
 									}
 								}
 							}}
-						/>
-					</StyledBody>
-				</Card>
+						>
+							<StyledBody>
+								<CheckboxField
+									name="operator"
+									label="Want to be a phone call operator?"
+									checkmarkType={CHECKBOX_STYLE_TYPE.toggle_round}
+									overrides={{
+										Label: {
+											style: {
+												fontWeight: "900"
+											}
+										}
+									}}
+								/>
+							</StyledBody>
+						</Card>
+					</Cell>
+				</Grid>
 			</div>
 			{values.operator && (
 				<div className={css({ marginTop: "20px" })}>
@@ -158,7 +162,7 @@ const OperatorStep = ({ values }) => {
 									label="What is your hourly rate?"
 									startEnhancer={() => <HourlyRateIcon />}
 									endEnhancer={() => <span>/hour</span>}
-									caption="Callers will be charged per second based on this rate"
+									caption="Callers will be charged per second based on this rate. Currency is in USD."
 									placeholder="30"
 									numeric
 								/>
