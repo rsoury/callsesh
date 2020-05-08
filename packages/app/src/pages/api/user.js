@@ -4,6 +4,7 @@
 
 import getHandler from "@/middleware";
 import { requireAuthentication, getUser } from "@/middleware/auth";
+// import * as authManager from '@/auth-manager';
 
 const handler = getHandler();
 
@@ -12,5 +13,8 @@ handler.use(requireAuthentication).get(async (req, res) => {
 
 	res.json(user);
 });
+// .post(async (req, res) => {
+
+// });
 
 export default handler;
