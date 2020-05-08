@@ -33,6 +33,7 @@
 		"express-pino-logger": "^4.0.0",
 		"formik": "^2.1.4",
 		"is-empty": "^1.2.0",
+		"is-number": "^7.0.0",
 		"libphonenumber-js": "^1.7.50",
 		"lodash": "^4.17.15",
 		"modern-normalize": "^0.6.0",

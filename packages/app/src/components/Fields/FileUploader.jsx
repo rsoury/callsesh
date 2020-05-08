@@ -6,10 +6,15 @@ import { format } from "@callsesh/utils";
 import { Widget } from "@uploadcare/react-widget";
 import { uploadcare as config } from "@/env-config";
 import { toaster } from "baseui/toast";
+import { Avatar } from "baseui/avatar";
+import isEmpty from "is-empty";
+import { useStyletron } from "baseui";
 
 import LabelControl from "@/components/LabelControl";
 
 const FileUploaderField = ({ name, label, caption }) => {
+	const [css] = useStyletron();
+
 	const fileSizeLimit = (sizeInBytes) => {
 		return (fileInfo) => {
 			if (fileInfo.size > sizeInBytes) {
@@ -23,7 +28,7 @@ const FileUploaderField = ({ name, label, caption }) => {
 
 	return (
 		<Field name={name} id={snakeCase(name)}>
-			{({ meta, form: { setFieldValue } }) => (
+			{({ field: { value }, meta, form: { setFieldValue } }) => (
 				<LabelControl
 					label={() => label || name}
 					caption={() => caption}
@@ -54,8 +59,13 @@ const FileUploaderField = ({ name, label, caption }) => {
 						// 		file.done((info) => setFieldValue(info));
 						// 	}
 						// }}
-						onChange={(info) => setFieldValue(info)}
+						onChange={(info) => setFieldValue(name, info)}
 					/>
+					{!isEmpty(value) && (
+						<div className={css({ padding: "10px 0 0" })}>
+							<Avatar name={name} size="scale4800" src={value.cdnUrl} />
+						</div>
+					)}
 				</LabelControl>
 			)}
 		</Field>
