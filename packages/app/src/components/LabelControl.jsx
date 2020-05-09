@@ -18,6 +18,7 @@ const LabelControl = ({
 	startEnhancer: StartEnhancer,
 	endEnhancer: EndEnhancer,
 	noBg,
+	className,
 	...props
 }) => {
 	const [css, theme] = useStyletron();
@@ -47,7 +48,12 @@ const LabelControl = ({
 							<StartEnhancer />
 						</div>
 					)}
-					<div className={css({ flex: "1", padding: "10px 14px" })}>
+					<div
+						className={`${className} ${css({
+							flex: "1",
+							padding: "10px 14px"
+						})}`}
+					>
 						{children}
 					</div>
 					{EndEnhancer && (
@@ -72,13 +78,15 @@ LabelControl.propTypes = {
 	children: ChildrenProps.isRequired,
 	startEnhancer: ChildrenProps,
 	endEnhancer: ChildrenProps,
-	noBg: PropTypes.bool
+	noBg: PropTypes.bool,
+	className: PropTypes.string
 };
 
 LabelControl.defaultProps = {
 	startEnhancer: null,
 	endEnhancer: null,
-	noBg: false
+	noBg: false,
+	className: ""
 };
 
 export default LabelControl;
