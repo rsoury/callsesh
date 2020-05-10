@@ -9,21 +9,23 @@ import { useStyletron } from "baseui";
 import { Grid, Cell } from "baseui/layout-grid";
 import { Card, StyledBody } from "baseui/card";
 import * as yup from "yup";
+import isEmpty from "is-empty";
 
 import CreditCardField from "@/components/Fields/CreditCard";
 import Emoji from "@/components/Emoji";
 
 export const initialValues = {
 	// This should be a stripe payment_source id
-	paymentMethod: ""
+	paymentMethod: {}
 };
 
 export const validationSchema = yup.object().shape({
-	paymentMethod: ""
+	paymentMethod: {}
 });
 
-const CallerStep = ({ values }) => {
-	const [css, theme] = useStyletron();
+// eslint-disable-next-line
+const CallerStep = ({ values, formValues }) => {
+	const [css] = useStyletron();
 
 	return (
 		<div className={css({ paddingBottom: "50px" })}>
@@ -47,13 +49,7 @@ const CallerStep = ({ values }) => {
 						overrides={{
 							Root: {
 								style: {
-									width: "100%",
-									transition: "border-color 0.25s",
-									...(values.operator
-										? {
-												borderColor: theme.colors.accent
-										  }
-										: {})
+									width: "100%"
 								}
 							}
 						}}
@@ -67,6 +63,13 @@ const CallerStep = ({ values }) => {
 								name="paymentMethod"
 								label="Add a card"
 								caption="We charge and instantly refund $1 to verify your card."
+								billingDetails={
+									isEmpty(formValues)
+										? {}
+										: {
+												name: `${formValues.general.firstName} ${formValues.general.lastName}`
+										  }
+								}
 							/>
 						</StyledBody>
 					</Card>
@@ -78,19 +81,19 @@ const CallerStep = ({ values }) => {
 
 CallerStep.propTypes = {
 	values: PropTypes.shape({
-		operator: PropTypes.bool,
-		hourlyRate: PropTypes.string,
-		profilePicture: PropTypes.object,
-		purpose: PropTypes.shape({
-			option: PropTypes.object,
-			value: PropTypes.string
-		}),
-		messageBroadcast: PropTypes.string
+		paymentMethod: PropTypes.object
+	}),
+	formValues: PropTypes.shape({
+		general: PropTypes.shape({
+			firstName: PropTypes.string,
+			lastName: PropTypes.string
+		})
 	})
 };
 
 CallerStep.defaultProps = {
-	values: {}
+	values: {},
+	formValues: {}
 };
 
 export default CallerStep;
