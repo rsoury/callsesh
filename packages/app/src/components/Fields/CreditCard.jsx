@@ -18,47 +18,10 @@ import { getInputContainerStyles } from "baseui/input/styled-components";
 import { SIZE as INPUT_SIZE } from "baseui/input";
 import { loadStripe } from "@stripe/stripe-js/pure";
 import isEmpty from "is-empty";
-import dynamic from "next/dynamic";
 import { alerts } from "@/utils/handle-exception";
 
 import { stripe as config } from "@/env-config";
 import LabelControl from "@/components/LabelControl";
-
-const AmexIcon = dynamic(() => import("baseui/payment-card/icons/amex.js"));
-const DinersClubIcon = dynamic(() =>
-	import("baseui/payment-card/icons/dinersclub.js")
-);
-const DiscoverIcon = dynamic(() =>
-	import("baseui/payment-card/icons/discover.js")
-);
-const EloIcon = dynamic(() => import("baseui/payment-card/icons/elo.js"));
-const GenericIcon = dynamic(() =>
-	import("baseui/payment-card/icons/generic.js")
-);
-const JcbIcon = dynamic(() => import("baseui/payment-card/icons/jcb.js"));
-const MaestroIcon = dynamic(() =>
-	import("baseui/payment-card/icons/maestro.js")
-);
-const MastercardIcon = dynamic(() =>
-	import("baseui/payment-card/icons/mastercard.js")
-);
-const UnionPayIcon = dynamic(() =>
-	import("baseui/payment-card/icons/unionpay.js")
-);
-const VisaIcon = dynamic(() => import("baseui/payment-card/icons/visa.js"));
-
-const CardTypeToComponent = {
-	visa: VisaIcon,
-	mastercard: MastercardIcon,
-	"american-express": AmexIcon,
-	"diners-club": DinersClubIcon,
-	discover: DiscoverIcon,
-	jcb: JcbIcon,
-	unionpay: UnionPayIcon,
-	maestro: MaestroIcon,
-	elo: EloIcon,
-	generic: GenericIcon
-};
 
 const Element = ({
 	name,
@@ -89,6 +52,7 @@ const Element = ({
 	});
 
 	const cardElementOptions = {
+		disabled: isVerifying || !isCardEmpty,
 		hidePostalCode: true,
 		style: {
 			base: {
@@ -119,6 +83,8 @@ const Element = ({
 
 			const cardElement = elements.getElement(CardElement);
 
+			setVerifying(true);
+
 			stripe
 				.createPaymentMethod({
 					type: "card",
@@ -130,8 +96,6 @@ const Element = ({
 						toaster.negative(error.message);
 						return {};
 					}
-
-					setVerifying(true);
 
 					console.log(paymentMethod);
 
@@ -156,9 +120,13 @@ const Element = ({
 		(event) => {
 			event.preventDefault();
 
+			const cardElement = elements.getElement(CardElement);
+
+			cardElement.clear();
+
 			setFieldValue(name, {});
 		},
-		[name]
+		[elements, name]
 	);
 
 	return (
@@ -182,7 +150,9 @@ const Element = ({
 				justifyContent="center"
 			>
 				<FlexGridItem flex="auto">
-					<div>
+					<div
+						className={css({ pointerEvents: isCardEmpty ? "auto" : "none" })} // disable input if card is not empty
+					>
 						{isLoading ? (
 							<Skeleton height={50} />
 						) : (
@@ -201,35 +171,15 @@ const Element = ({
 										width: "100%"
 									})}
 								>
-									{isCardEmpty ? (
-										<CardElement
-											options={cardElementOptions}
-											onBlur={() => {
-												setFocussed(false);
-											}}
-											onFocus={() => {
-												setFocussed(true);
-											}}
-										/>
-									) : (
-										<div
-											className={css({ display: "flex", alignItems: "center" })}
-										>
-											{(() => {
-												const CardType = CardTypeToComponent[value.card.brand];
-												return (
-													<div>
-														<CardType />
-													</div>
-												);
-											})()}
-											<div>{value.card.last4}</div>
-											<div>
-												{`${value.card.exp_month}`.padStart(2, "0")}{" "}
-												{`${value.card.exp_year}`.slice(-2)}
-											</div>
-										</div>
-									)}
+									<CardElement
+										options={cardElementOptions}
+										onBlur={() => {
+											setFocussed(false);
+										}}
+										onFocus={() => {
+											setFocussed(true);
+										}}
+									/>
 								</div>
 							</div>
 						)}

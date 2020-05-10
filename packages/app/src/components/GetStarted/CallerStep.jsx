@@ -20,7 +20,7 @@ export const initialValues = {
 };
 
 export const validationSchema = yup.object().shape({
-	paymentMethod: {}
+	paymentMethod: yup.object()
 });
 
 // eslint-disable-next-line
