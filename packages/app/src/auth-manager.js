@@ -2,6 +2,7 @@
  * Server side auth management library
  */
 
+import isEmpty from "is-empty";
 import { ManagementClient } from "auth0";
 import { auth0 as config } from "@/env-config";
 
@@ -11,8 +12,16 @@ const client = new ManagementClient({
 	clientSecret: config.clientSecret
 });
 
-export const getUser = (id) => {
-	return client.getUser({ id });
+export const getUser = async (id) => {
+	const [user, roles] = await Promise.all([
+		client.getUser({ id }),
+		client.getUserRoles({ id, page: 0, per_page: 50, sort: "date:-1" })
+	]);
+
+	return {
+		...user,
+		roles
+	};
 };
 
 export const updateUser = (

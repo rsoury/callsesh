@@ -24,7 +24,7 @@ export const validationSchema = yup.object().shape({
 });
 
 const CallerStep = ({ formValues }) => {
-	const [css] = useStyletron();
+	const [css, theme] = useStyletron();
 
 	return (
 		<div className={css({ paddingBottom: "50px" })}>
@@ -44,34 +44,31 @@ const CallerStep = ({ formValues }) => {
 			</Grid>
 			<Grid>
 				<Cell span={12}>
-					<Card
-						overrides={{
-							Root: {
-								style: {
-									width: "100%"
-								}
-							}
-						}}
+					<div
+						className={css({
+							padding: "10px 0",
+							margin: "10px 0 20px",
+							borderTop: `1px solid ${theme.colors.borderOpaque}`,
+							borderBottom: `1px solid ${theme.colors.borderOpaque}`
+						})}
 					>
-						<StyledBody>
-							<Paragraph>
-								The payment is powered by Stripe and we do not store sensitive
-								payment information on our servers.
-							</Paragraph>
-							<CreditCardField
-								name="paymentMethod"
-								label="Add a card"
-								caption="Add a card if you plan to make calls. You can do this later."
-								billingDetails={
-									isEmpty(formValues)
-										? {}
-										: {
-												name: `${formValues.general.firstName} ${formValues.general.lastName}`
-										  }
-								}
-							/>
-						</StyledBody>
-					</Card>
+						<Paragraph>
+							The payment is powered by Stripe and we do not store sensitive
+							payment information on our servers.
+						</Paragraph>
+						<CreditCardField
+							name="paymentMethod"
+							label="Add a card"
+							caption="Add a card if you plan to make calls. You can do this later."
+							billingDetails={
+								isEmpty(formValues)
+									? {}
+									: {
+											name: `${formValues.general.firstName} ${formValues.general.lastName}`
+									  }
+							}
+						/>
+					</div>
 				</Cell>
 			</Grid>
 		</div>

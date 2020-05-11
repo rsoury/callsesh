@@ -18,7 +18,6 @@ import { getInputContainerStyles } from "baseui/input/styled-components";
 import { SIZE as INPUT_SIZE } from "baseui/input";
 import { loadStripe } from "@stripe/stripe-js/pure";
 import isEmpty from "is-empty";
-import Check from "baseui/icon/check";
 
 import { api as apiRoutes } from "@/routes";
 import { alerts } from "@/utils/handle-exception";
@@ -162,7 +161,15 @@ const Element = ({
 				alignItems="center"
 				justifyContent="center"
 			>
-				<FlexGridItem flex="auto">
+				<FlexGridItem
+					flex="auto"
+					className={css({
+						[theme.mediaQuery.maxSmall]: {
+							width: "100% !important",
+							margin: "0 0 10px 0 !important"
+						}
+					})}
+				>
 					<div
 						className={css({ pointerEvents: isCardEmpty ? "auto" : "none" })} // disable input if card is not empty
 					>

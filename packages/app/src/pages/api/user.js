@@ -4,7 +4,8 @@
 
 import * as yup from "yup";
 import isEmpty from "is-empty";
-import getHandler from "@/middleware";
+import { parsePhoneNumberFromString } from "libphonenumber-js";
+import getHandler, { onError } from "@/middleware";
 import { requireAuthentication, getUser } from "@/middleware/auth";
 import * as authManager from "@/auth-manager";
 import stripe from "@/stripe";
@@ -12,7 +13,7 @@ import stripe from "@/stripe";
 const handler = getHandler();
 
 const postSchema = yup.object().shape({
-	firstName: yup.string.required(),
+	firstName: yup.string().required(),
 	lastName: yup.string().required(),
 	username: yup.string().required(),
 	gender: yup.string().required(),
@@ -44,11 +45,19 @@ handler
 			});
 		}
 
-		const user = await getUser(req);
+		const user = await getUser(req, { withContext: true });
 
 		req.log.info("Register user", { user: user.id });
 
-		const { stripeCustomerId } = user;
+		const { stripeCustomerId, phoneNumber } = user;
+
+		const parsedPhoneNumber = parsePhoneNumberFromString(phoneNumber);
+		let country = "";
+		let currency = "";
+		if (parsedPhoneNumber) {
+			country = parsedPhoneNumber.country;
+			currency = country === "AU" ? "AUD" : "USD";
+		}
 
 		const {
 			firstName,
@@ -71,11 +80,13 @@ handler
 			family_name: lastName,
 			name,
 			nickname: name,
-			username,
 			metadata: {
 				user: {
+					username,
 					gender,
-					dob
+					dob,
+					country,
+					currency
 				}
 			}
 		};
@@ -84,38 +95,51 @@ handler
 			updateParams.picture = profilePicture.cdnUrl;
 		}
 
-		if (operator) {
-			updateParams.metadata.user = {
-				...updateParams.metadata.user,
-				hourlyRate,
-				purpose,
-				messageBroadcast
-			};
+		try {
+			if (operator) {
+				updateParams.metadata.user = {
+					...updateParams.metadata.user,
+					hourlyRate,
+					purpose,
+					messageBroadcast
+				};
 
-			// Assign role to user.
-			await authManager
-				.getClient()
-				.assignRolestoUser({ id: user.id }, { roles: ["Operator"] });
-			req.log.info("Assign user to Operator role", { user: user.id });
-		}
+				// Assign role to user.
+				const allRoles = await authManager
+					.getClient()
+					.getRoles({ per_page: 50, page: 0 });
 
-		// Update update
-		await authManager.updateUser(user.id, updateParams);
-		req.log.info("Update user data", { user: user.id });
+				await authManager.getClient().assignRolestoUser(
+					{ id: user.id },
+					{
+						roles: allRoles
+							.filter((role) => role.name.toLowerCase() === "operator")
+							.map((role) => role.id)
+					}
+				);
+				req.log.info("Assign user to Operator role", { user: user.id });
+			}
 
-		// Register the same data against the stripe customer entity if it exists.
-		if (!isEmpty(stripeCustomerId)) {
-			await stripe.customers.update(stripeCustomerId, {
-				description: `Caller: ${name}`,
-				name,
-				phone: user.phoneNumber
+			// Update update
+			await authManager.updateUser(user.id, updateParams);
+			req.log.info("Update user data", { user: user.id });
+
+			// Register the same data against the stripe customer entity if it exists.
+			if (!isEmpty(stripeCustomerId)) {
+				await stripe.customers.update(stripeCustomerId, {
+					description: `Caller: ${name}`,
+					name,
+					phone: phoneNumber
+				});
+				req.log.info("Update stripe customer data", { user: user.id });
+			}
+
+			return res.json({
+				success: true
 			});
-			req.log.info("Update stripe customer data", { user: user.id });
+		} catch (e) {
+			return onError(e, req, res);
 		}
-
-		return res.json({
-			success: true
-		});
 	});
 
 export default handler;

@@ -3,6 +3,7 @@
 import { useState, useCallback } from "react";
 import { FormikWizard } from "rsoury-formik-wizard";
 import isEmpty from "is-empty";
+import { toaster } from "baseui/toast";
 
 import * as routes from "@/routes";
 import { getUser } from "@/middleware/auth";
@@ -65,6 +66,9 @@ const GetStarted = () => {
 			.then(({ data }) => data)
 			.then(() => {
 				// There should be some redirect here to the original url.
+				toaster.positive(
+					`Nice! Your account has been created. Please wait as we redirect you...`
+				);
 			})
 			.catch((error) => {
 				handleException(error);

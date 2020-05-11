@@ -50,7 +50,11 @@ const Form = ({
 				display: "flex",
 				flexDirection: "column",
 				alignContent: "center",
-				justifyContent: "center"
+				justifyContent: "center",
+				[theme.mediaQuery.maxSmall]: {
+					paddingLeft: "0px",
+					paddingRight: "0px"
+				}
 			})}
 		>
 			<ProgressBar

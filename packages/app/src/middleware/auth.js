@@ -50,6 +50,7 @@ export const requireAuthentication = nextConnect().use((req, res, next) =>
 );
 
 const registeredUserSchema = yup.object().shape({
+	id: yup.string().required(),
 	name: yup.string().required(),
 	nickname: yup.string().required(),
 	picture: yup.string().required(),
@@ -60,31 +61,41 @@ const registeredUserSchema = yup.object().shape({
 	firstName: yup.string().required(),
 	lastName: yup.string().required(),
 	gender: yup.string(),
-	dob: yup.object().shape({
-		day: yup.string(),
-		month: yup.string(),
-		year: yup.string()
-	}),
-	localCountry: yup.string()
+	dob: yup.string(),
+	country: yup.string(),
+	currency: yup.string()
 });
 
 /**
  * Get public user using Auth0 Nodejs Management API
  *
  * @param   {Object}  req  Request
+ * @param   {Object}  options
  *
  * @return  {Object}
  */
-export const getUser = async (req) => {
+export const getUser = async (req, { withContext = false } = {}) => {
 	const session = await auth.getSession(req);
 
-	const userData = await authManager.getUser(session.user.sub);
+	const {
+		user_metadata: userMetadata,
+		app_metadata: appMetadata,
+		phone_number: phoneNumber,
+		...userData
+	} = await authManager.getUser(session.user.sub);
 	let user = {
 		id: session.user.sub,
 		...session.user,
-		...userData.user_metadata,
-		...userData.app_metadata
+		...userMetadata,
+		phoneNumber
 	};
+	if (withContext) {
+		user = {
+			...user,
+			...userData,
+			...appMetadata
+		};
+	}
 	user = mapKeys(user, (value, key) => camelCase(key));
 
 	let isRegistered = false;
