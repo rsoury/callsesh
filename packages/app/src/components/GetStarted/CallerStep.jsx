@@ -23,8 +23,7 @@ export const validationSchema = yup.object().shape({
 	paymentMethod: yup.object()
 });
 
-// eslint-disable-next-line
-const CallerStep = ({ values, formValues }) => {
+const CallerStep = ({ formValues }) => {
 	const [css] = useStyletron();
 
 	return (

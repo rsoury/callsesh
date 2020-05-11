@@ -19,7 +19,8 @@ const Form = ({
 	actionLabel,
 	isSubmitting,
 	currentStep,
-	steps
+	steps,
+	values
 }) => {
 	const [css, theme] = useStyletron();
 
@@ -72,10 +73,12 @@ const Form = ({
 					flex: 1,
 					height: "100%",
 					textAlign: "left",
-					paddingBottom: "50px"
+					paddingBottom: "150px"
 				})}
 			>
-				{children}
+				{React.cloneElement(children, {
+					formValues: values
+				})}
 			</div>
 			<FixedBottom>
 				<div
@@ -160,7 +163,8 @@ Form.propTypes = {
 	actionLabel: PropTypes.string,
 	isSubmitting: PropTypes.bool.isRequired,
 	currentStep: PropTypes.string.isRequired,
-	steps: PropTypes.arrayOf(PropTypes.string).isRequired
+	steps: PropTypes.arrayOf(PropTypes.string).isRequired,
+	values: PropTypes.object.isRequired
 };
 
 Form.defaultProps = {

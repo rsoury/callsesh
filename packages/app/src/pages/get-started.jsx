@@ -2,6 +2,7 @@
 
 import { useState, useCallback } from "react";
 import { FormikWizard } from "rsoury-formik-wizard";
+import isEmpty from "is-empty";
 
 import * as routes from "@/routes";
 import { getUser } from "@/middleware/auth";
@@ -18,54 +19,66 @@ import CallerStep, {
 	initialValues as callerInitialValues,
 	validationSchema as callerValidationSchema
 } from "@/components/GetStarted/CallerStep";
+import request from "@/utils/request";
+import handleException, { alerts } from "@/utils/handle-exception";
+
+const formSteps = [
+	{
+		id: "general",
+		component: GeneralStep,
+		initialValues: generalInitialValues,
+		validationSchema: generalValidationSchema
+	},
+	{
+		id: "caller",
+		component: CallerStep,
+		initialValues: callerInitialValues,
+		validationSchema: callerValidationSchema
+	},
+	{
+		id: "operator",
+		component: OperatorStep,
+		initialValues: operatorInitialValues,
+		validationSchema: operatorValidationSchema
+	}
+];
 
 const GetStarted = () => {
 	const [isSubmitting, setSubmitting] = useState(false);
-	const [formValues, setFormValues] = useState({});
-
-	const steps = [
-		{
-			id: "general",
-			component: (props) => <GeneralStep {...props} formValues={formValues} />,
-			initialValues: generalInitialValues,
-			validationSchema: generalValidationSchema,
-			onAction(sectionValues, values) {
-				setFormValues(values);
-			}
-		},
-		{
-			id: "caller",
-			component: (props) => <CallerStep {...props} formValues={formValues} />,
-			initialValues: callerInitialValues,
-			validationSchema: callerValidationSchema,
-			onAction(sectionValues, values) {
-				setFormValues(values);
-			}
-		},
-		{
-			id: "operator",
-			component: (props) => <OperatorStep {...props} formValues={formValues} />,
-			initialValues: operatorInitialValues,
-			validationSchema: operatorValidationSchema,
-			onAction(sectionValues, values) {
-				setFormValues(values);
-			}
-		}
-	];
 
 	const handleSubmit = useCallback((values) => {
 		setSubmitting(true);
-		setTimeout(() => {
-			console.log(values);
-			setSubmitting(false);
-		}, 1000);
+		const params = {
+			...values.general,
+			gender: values.general.gender.label,
+			dob: Array.isArray(values.general.dob)
+				? values.general.dob[0]
+				: values.general.dob,
+			...values.caller,
+			...values.operator,
+			purpose: isEmpty(values.operator.purpose.value)
+				? values.operator.purpose.option.label
+				: values.operator.purpose.value
+		};
+		request
+			.post(routes.api.user, params)
+			.then(({ data }) => data)
+			.then(() => {
+				// There should be some redirect here to the original url.
+			})
+			.catch((error) => {
+				handleException(error);
+				alerts.error();
+			})
+			.finally(() => {
+				setSubmitting(false);
+			});
 	}, []);
 
 	return (
 		<main>
 			<FormikWizard
-				// steps={steps}
-				steps={[steps[1]]}
+				steps={formSteps}
 				onSubmit={handleSubmit}
 				render={(props) => (
 					<FormLayout {...props} isSubmitting={isSubmitting} />

@@ -15,10 +15,26 @@ export const getUser = (id) => {
 	return client.getUser({ id });
 };
 
-export const updateMetadata = (id, metadata, readOnly = false) => {
-	if (readOnly) {
-		return client.updateAppMetadata({ id }, metadata);
-	}
+export const updateUser = (
+	id,
+	{ metadata: { app: appMetadata = {}, user: userMetadata = {} }, ...data }
+) => {
+	const promises = [];
+	promises.push(
+		isEmpty(data) ? Promise.resolve({}) : client.updateUser({ id }, data)
+	);
+	promises.push(
+		isEmpty(appMetadata)
+			? Promise.resolve({})
+			: client.updateAppMetadata({ id }, appMetadata)
+	);
+	promises.push(
+		isEmpty(userMetadata)
+			? Promise.resolve({})
+			: client.updateUserMetadata({ id }, userMetadata)
+	);
 
-	return client.updateUserMetadata({ id }, metadata);
+	return Promise.all(promises);
 };
+
+export const getClient = () => client;

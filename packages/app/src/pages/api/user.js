@@ -2,19 +2,120 @@
  * Get / Manage the currently authenticated user
  */
 
+import * as yup from "yup";
+import isEmpty from "is-empty";
 import getHandler from "@/middleware";
 import { requireAuthentication, getUser } from "@/middleware/auth";
-// import * as authManager from '@/auth-manager';
+import * as authManager from "@/auth-manager";
+import stripe from "@/stripe";
 
 const handler = getHandler();
 
-handler.use(requireAuthentication).get(async (req, res) => {
-	const user = await getUser(req);
-
-	res.json(user);
+const postSchema = yup.object().shape({
+	firstName: yup.string.required(),
+	lastName: yup.string().required(),
+	username: yup.string().required(),
+	gender: yup.string().required(),
+	dob: yup.string(),
+	paymentMethod: yup.object(),
+	operator: yup.boolean(),
+	hourlyRate: yup.string(),
+	profilePicture: yup.object(),
+	purpose: yup.string(),
+	messageBroadcast: yup.string()
 });
-// .post(async (req, res) => {
 
-// });
+handler
+	.use(requireAuthentication)
+	.get(async (req, res) => {
+		const user = await getUser(req);
+
+		res.json(user);
+	})
+	.post(async (req, res) => {
+		// Extract and validate the values from request body
+		try {
+			await postSchema.validate(req.body);
+		} catch (e) {
+			return res.status(400).json({
+				success: false,
+				code: 400,
+				message: "Bad request. Invalid request body."
+			});
+		}
+
+		const user = await getUser(req);
+
+		req.log.info("Register user", { user: user.id });
+
+		const { stripeCustomerId } = user;
+
+		const {
+			firstName,
+			lastName,
+			username,
+			gender,
+			dob,
+			operator,
+			hourlyRate,
+			profilePicture,
+			purpose,
+			messageBroadcast
+		} = req.body;
+
+		const name = `${firstName} ${lastName}`;
+
+		// Register the data against the authenticated user.
+		const updateParams = {
+			given_name: firstName,
+			family_name: lastName,
+			name,
+			nickname: name,
+			username,
+			metadata: {
+				user: {
+					gender,
+					dob
+				}
+			}
+		};
+
+		if (!isEmpty(profilePicture)) {
+			updateParams.picture = profilePicture.cdnUrl;
+		}
+
+		if (operator) {
+			updateParams.metadata.user = {
+				...updateParams.metadata.user,
+				hourlyRate,
+				purpose,
+				messageBroadcast
+			};
+
+			// Assign role to user.
+			await authManager
+				.getClient()
+				.assignRolestoUser({ id: user.id }, { roles: ["Operator"] });
+			req.log.info("Assign user to Operator role", { user: user.id });
+		}
+
+		// Update update
+		await authManager.updateUser(user.id, updateParams);
+		req.log.info("Update user data", { user: user.id });
+
+		// Register the same data against the stripe customer entity if it exists.
+		if (!isEmpty(stripeCustomerId)) {
+			await stripe.customers.update(stripeCustomerId, {
+				description: `Caller: ${name}`,
+				name,
+				phone: user.phoneNumber
+			});
+			req.log.info("Update stripe customer data", { user: user.id });
+		}
+
+		return res.json({
+			success: true
+		});
+	});
 
 export default handler;
