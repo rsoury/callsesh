@@ -18,10 +18,13 @@ import { getInputContainerStyles } from "baseui/input/styled-components";
 import { SIZE as INPUT_SIZE } from "baseui/input";
 import { loadStripe } from "@stripe/stripe-js/pure";
 import isEmpty from "is-empty";
-import { alerts } from "@/utils/handle-exception";
+import Check from "baseui/icon/check";
 
+import { api as apiRoutes } from "@/routes";
+import { alerts } from "@/utils/handle-exception";
 import { stripe as config } from "@/env-config";
 import LabelControl from "@/components/LabelControl";
+import request from "@/utils/request";
 
 const Element = ({
 	name,
@@ -46,14 +49,14 @@ const Element = ({
 		$isFocused: isFocussed,
 		$error: null,
 		$disabled: false,
-		$positive: false,
+		$positive: !isCardEmpty,
 		$size: INPUT_SIZE.default,
 		$theme: theme
 	});
 
 	const cardElementOptions = {
 		disabled: isVerifying || !isCardEmpty,
-		hidePostalCode: true,
+		// hidePostalCode: true,
 		style: {
 			base: {
 				backgroundColor: "transparent",
@@ -97,11 +100,23 @@ const Element = ({
 						return {};
 					}
 
-					console.log(paymentMethod);
-
-					setFieldValue(name, paymentMethod);
-
 					return paymentMethod;
+				})
+				.then((paymentMethod) => {
+					// Send verfication request for card before setting as value.
+					return request
+						.post(apiRoutes.card, { paymentMethod })
+						.then(({ data }) => ({ response: data, paymentMethod }));
+				})
+				.then(({ response: { verified = false }, paymentMethod }) => {
+					if (verified) {
+						setFieldValue(name, paymentMethod);
+						toaster.positive(`Card successfully verified and added.`);
+					} else {
+						toaster.negative(
+							`Card could be verified. Please check the submitted card and try again.`
+						);
+					}
 				})
 				.catch((error) => {
 					console.error(error);
@@ -110,8 +125,6 @@ const Element = ({
 				.finally(() => {
 					setVerifying(false);
 				});
-
-			// Send verfication request for card before setting as value.
 		},
 		[elements, stripe, name]
 	);

@@ -80,8 +80,10 @@ export const getUser = async (req) => {
 
 	const userData = await authManager.getUser(session.user.sub);
 	let user = {
+		id: session.user.sub,
 		...session.user,
-		...userData.user_metadata
+		...userData.user_metadata,
+		...userData.app_metadata
 	};
 	user = mapKeys(user, (value, key) => camelCase(key));
 

@@ -14,3 +14,11 @@ const client = new ManagementClient({
 export const getUser = (id) => {
 	return client.getUser({ id });
 };
+
+export const updateMetadata = (id, metadata, readOnly = false) => {
+	if (readOnly) {
+		return client.updateAppMetadata({ id }, metadata);
+	}
+
+	return client.updateUserMetadata({ id }, metadata);
+};

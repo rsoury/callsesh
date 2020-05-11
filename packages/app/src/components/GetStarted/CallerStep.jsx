@@ -62,7 +62,7 @@ const CallerStep = ({ values, formValues }) => {
 							<CreditCardField
 								name="paymentMethod"
 								label="Add a card"
-								caption="We charge and instantly refund $1 to verify your card."
+								caption="Add a card if you plan to make calls. You can do this later."
 								billingDetails={
 									isEmpty(formValues)
 										? {}
