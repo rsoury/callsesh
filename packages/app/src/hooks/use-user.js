@@ -7,6 +7,7 @@ import isEmpty from "is-empty";
 import request from "@/utils/request";
 import * as routes from "@/routes";
 import appendReturnUrl from "@/utils/append-return-url";
+import { setUser as setErrorTrackingUser } from "@/utils/handle-exception";
 
 // We need to check whether user is registered. If not redirect to /register
 const ensureUserRegistered = (user) => {
@@ -40,6 +41,8 @@ export async function getUser(cookie = "") {
 			)
 			.then(({ data }) => data);
 
+		setErrorTrackingUser(user);
+
 		if (typeof window !== "undefined") {
 			window.__user = user;
 		}
@@ -50,11 +53,29 @@ export async function getUser(cookie = "") {
 	}
 }
 
+/**
+ * Set user onto window property.
+ * A hook helper function
+ */
+export const setUser = (user) => {
+	if (isEmpty(user)) {
+		delete window.__user;
+		return {};
+	}
+	if (typeof window !== "undefined") {
+		window.__user = user;
+	}
+
+	setErrorTrackingUser(user);
+
+	return user;
+};
+
 function useUser({ required } = {}) {
 	const [loading, setLoading] = useState(
 		() => !(typeof window !== "undefined" && window.__user)
 	);
-	const [user, setUser] = useState(() => {
+	const [user, setUserState] = useState(() => {
 		if (typeof window === "undefined") {
 			return null;
 		}
@@ -82,7 +103,7 @@ function useUser({ required } = {}) {
 						return;
 					}
 					ensureUserRegistered(newUser);
-					setUser(newUser);
+					setUserState(newUser);
 				}
 			})
 			.finally(() => setLoading(false));

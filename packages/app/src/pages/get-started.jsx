@@ -25,6 +25,8 @@ import CallerStep, {
 } from "@/components/GetStarted/CallerStep";
 import request from "@/utils/request";
 import handleException, { alerts } from "@/utils/handle-exception";
+import { setUser } from "@/hooks/use-user";
+import { UserProps } from "@/utils/common-prop-types";
 
 const formSteps = [
 	{
@@ -47,7 +49,8 @@ const formSteps = [
 	}
 ];
 
-const GetStarted = (pageProps) => {
+const GetStarted = ({ user }) => {
+	setUser(user);
 	const [isSubmitting, setSubmitting] = useState(false);
 
 	const handleSubmit = useCallback((values) => {
@@ -94,7 +97,7 @@ const GetStarted = (pageProps) => {
 				steps={formSteps}
 				onSubmit={handleSubmit}
 				render={(props) => (
-					<FormLayout {...props} isSubmitting={isSubmitting} {...pageProps} />
+					<FormLayout {...props} isSubmitting={isSubmitting} />
 				)}
 			/>
 		</main>
@@ -104,6 +107,14 @@ const GetStarted = (pageProps) => {
 export async function getServerSideProps({ req, res }) {
 	// Check if user already registered.
 	const user = await getUser(req);
+
+	if (isEmpty(user)) {
+		res.writeHead(302, {
+			Location: routes.page.index
+		});
+		res.end();
+		return { props: {} };
+	}
 
 	// If user is registered, redirect to settings/profile
 	if (user.isRegistered) {
@@ -119,5 +130,13 @@ export async function getServerSideProps({ req, res }) {
 		}
 	};
 }
+
+GetStarted.propTypes = {
+	user: UserProps
+};
+
+GetStarted.defaultProps = {
+	user: {}
+};
 
 export default GetStarted;

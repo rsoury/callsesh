@@ -62,6 +62,8 @@ const registeredUserSchema = yup.object().shape({
 	gender: yup.string().required(),
 	dob: yup.string().required(),
 	phoneNumber: yup.string().required(),
+	familyName: yup.string().required(),
+	givenName: yup.string().required(),
 	country: yup.string().required(),
 	currency: yup.string().required()
 });
@@ -77,10 +79,18 @@ const registeredUserSchema = yup.object().shape({
 export const getUser = async (req, { withContext = false } = {}) => {
 	const session = await auth.getSession(req);
 
+	// return empty object if session empty --- user not authenticated
+	if (isEmpty(session)) {
+		return {};
+	}
+
 	const {
 		user_metadata: userMetadata,
 		app_metadata: appMetadata,
 		phone_number: phoneNumber,
+		roles,
+		family_name: familyName,
+		given_name: givenName,
 		...userData
 	} = await authManager.getUser(session.user.sub);
 
@@ -101,11 +111,18 @@ export const getUser = async (req, { withContext = false } = {}) => {
 		id: sessionUser.sub,
 		...sessionUser,
 		...userMetadata,
-		phoneNumber
+		phoneNumber,
+		familyName,
+		givenName,
+		roles: roles.map((role) => ({
+			name: role.name,
+			description: role.description
+		}))
 	};
 	if (withContext) {
 		user = {
 			...user,
+			roles,
 			...userData,
 			...appMetadata
 		};

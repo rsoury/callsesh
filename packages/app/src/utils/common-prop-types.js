@@ -16,6 +16,8 @@ export const UserProps = PropTypes.shape({
 	picture: PropTypes.string,
 	updatedAt: PropTypes.string,
 	username: PropTypes.string,
+	familyName: PropTypes.string,
+	givenName: PropTypes.string,
 	country: PropTypes.string,
 	currency: PropTypes.string,
 	dob: PropTypes.string,

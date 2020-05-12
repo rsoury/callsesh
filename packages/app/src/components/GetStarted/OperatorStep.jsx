@@ -25,7 +25,7 @@ import CheckboxField from "@/components/Fields/Checkbox";
 import FileUploaderField from "@/components/Fields/FileUploader";
 import Emoji from "@/components/Emoji";
 import { FEE_MULTIPLIER } from "@/constants";
-import { UserProps } from "@/utils/common-prop-types";
+import useUser from "@/hooks/use-user";
 
 const listItemProps = {
 	artworkSize: ARTWORK_SIZES.MEDIUM,
@@ -80,8 +80,9 @@ export const validationSchema = yup.object().shape({
 	messageBroadcast: yup.string()
 });
 
-const OperatorStep = ({ values, user }) => {
+const OperatorStep = ({ values }) => {
 	const [css, theme] = useStyletron();
+	const [user] = useUser();
 
 	return (
 		<div className={css({ paddingBottom: "50px" })}>
@@ -290,13 +291,11 @@ OperatorStep.propTypes = {
 			value: PropTypes.string
 		}),
 		messageBroadcast: PropTypes.string
-	}),
-	user: UserProps
+	})
 };
 
 OperatorStep.defaultProps = {
-	values: {},
-	user: {}
+	values: {}
 };
 
 export default OperatorStep;

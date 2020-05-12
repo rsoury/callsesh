@@ -29,6 +29,10 @@ handler
 	.use(requireAuthentication)
 	.get(async (req, res) => {
 		const user = await getUser(req);
+		// const userWithContext = await getUser(req, { withContext: true });
+
+		// console.log(user);
+		// console.log(userWithContext);
 
 		res.json(user);
 	})
