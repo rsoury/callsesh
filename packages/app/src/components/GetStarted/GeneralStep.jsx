@@ -1,10 +1,6 @@
 import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
-import {
-	H1 as Heading,
-	H5 as Subheader,
-	Paragraph2 as Paragraph
-} from "baseui/typography";
+import { H1 as Heading, H5 as Subheader } from "baseui/typography";
 import {
 	Button,
 	KIND as BUTTON_KIND,
@@ -15,13 +11,15 @@ import Confetti from "react-dom-confetti";
 import { Edit2 as EditIcon } from "react-feather";
 import { useStyletron } from "baseui";
 import * as yup from "yup";
+import debounce from "lodash/debounce";
 
 import { publicUrl } from "@/env-config";
 import TextField from "@/components/Fields/Text";
 import SelectField from "@/components/Fields/Select";
 import DateField from "@/components/Fields/Date";
-import LabelControl from "@/components/LabelControl";
 import Emoji from "@/components/Emoji";
+import { api as apiRoutes } from "@/routes";
+import request from "@/utils/request";
 
 const confettiConfig = {
 	angle: "109",
@@ -54,6 +52,20 @@ const generateUsername = (firstName, lastName) => {
 	return username;
 };
 
+const checkUsernameAvailable = debounce(
+	async (value) =>
+		(
+			await request
+				.get(apiRoutes.usernameAvailable, {
+					params: {
+						username: value
+					}
+				})
+				.then(({ data }) => data)
+		).available === true,
+	500
+);
+
 export const initialValues = {
 	firstName: "",
 	lastName: "",
@@ -65,7 +77,15 @@ export const initialValues = {
 export const validationSchema = yup.object().shape({
 	firstName: yup.string().required(),
 	lastName: yup.string().required(),
-	username: yup.string().required(),
+	username: yup
+		.string()
+		.test(
+			"is-available",
+			// eslint-disable-next-line
+			"${path} is not available",
+			checkUsernameAvailable
+		)
+		.required(),
 	gender: yup
 		.object()
 		.shape({
@@ -137,35 +157,36 @@ const GeneralStep = ({ setFieldValue, values }) => {
 					/>
 				</Cell>
 				<Cell span={12}>
-					{selfManagedUsername ? (
-						<TextField
-							name="username"
-							label="Username"
-							caption={`Your link will look like ${publicUrl}/u/${
-								values.username || "..."
-							}`}
-							placeholder="ryan_soury"
-							maxLength={25}
-						/>
-					) : (
-						<LabelControl
-							label="Username"
-							caption={`Your link will look like ${publicUrl}/u/${
-								values.username || "..."
-							}`}
-							endEnhancer={() => (
-								<Button
-									onClick={() => setSelfManagedUsername(true)}
-									shape={BUTTON_SHAPE.square}
-									kind={BUTTON_KIND.minimal}
-								>
-									<EditIcon size={22} />
-								</Button>
-							)}
-						>
-							<Paragraph margin="0">{values.username}</Paragraph>
-						</LabelControl>
-					)}
+					<TextField
+						name="username"
+						label="Username"
+						caption={`Your link will look like ${publicUrl}/u/${
+							values.username || "..."
+						}`}
+						placeholder="ryan_soury"
+						maxLength={25}
+						{...(selfManagedUsername
+							? {}
+							: {
+									endEnhancer: () => (
+										<Button
+											onClick={() => setSelfManagedUsername(true)}
+											shape={BUTTON_SHAPE.square}
+											kind={BUTTON_KIND.minimal}
+											overrides={{
+												BaseButton: {
+													style: {
+														margin: "0 -16px"
+													}
+												}
+											}}
+										>
+											<EditIcon size={22} />
+										</Button>
+									),
+									disabled: true
+							  })}
+					/>
 				</Cell>
 				<Cell span={[12, 4, 6]}>
 					<SelectField name="gender" label="Gender" options={genderOptions} />

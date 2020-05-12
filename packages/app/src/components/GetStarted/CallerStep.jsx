@@ -7,7 +7,6 @@ import {
 } from "baseui/typography";
 import { useStyletron } from "baseui";
 import { Grid, Cell } from "baseui/layout-grid";
-import { Card, StyledBody } from "baseui/card";
 import * as yup from "yup";
 import isEmpty from "is-empty";
 

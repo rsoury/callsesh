@@ -32,5 +32,6 @@ export const api = {
 		signup: "/api/auth/signup"
 	},
 	user: "/api/user",
-	card: "/api/card"
+	card: "/api/card",
+	usernameAvailable: "/api/username-available"
 };
