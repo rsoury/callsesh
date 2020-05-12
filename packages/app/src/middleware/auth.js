@@ -58,14 +58,12 @@ const registeredUserSchema = yup.object().shape({
 	picture: yup.string().required(),
 	sub: yup.string().required(),
 	updatedAt: yup.string().required(),
-	roles: yup.array().of(yup.string()).default([]),
 	username: yup.string().required(),
-	firstName: yup.string().required(),
-	lastName: yup.string().required(),
-	gender: yup.string(),
-	dob: yup.string(),
-	country: yup.string(),
-	currency: yup.string()
+	gender: yup.string().required(),
+	dob: yup.string().required(),
+	phoneNumber: yup.string().required(),
+	country: yup.string().required(),
+	currency: yup.string().required()
 });
 
 /**
@@ -85,9 +83,23 @@ export const getUser = async (req, { withContext = false } = {}) => {
 		phone_number: phoneNumber,
 		...userData
 	} = await authManager.getUser(session.user.sub);
+
+	// Replace all session values with latest user data values where they exist.
+	const sessionUser = Object.entries(session.user).reduce(
+		(result, [key, value]) => {
+			if (typeof userData[key] !== "undefined") {
+				result[key] = userData[key];
+			} else {
+				result[key] = value;
+			}
+			return result;
+		},
+		{}
+	);
+
 	let user = {
-		id: session.user.sub,
-		...session.user,
+		id: sessionUser.sub,
+		...sessionUser,
 		...userMetadata,
 		phoneNumber
 	};
@@ -112,7 +124,7 @@ export const getUser = async (req, { withContext = false } = {}) => {
 		await registeredUserSchema.validate(user);
 		isRegistered = true;
 	} catch (e) {
-		// Empty catch
+		// console.error(e);
 	}
 
 	user.isRegistered = isRegistered;
