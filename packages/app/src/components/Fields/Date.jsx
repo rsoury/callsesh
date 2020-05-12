@@ -8,7 +8,11 @@ import { format } from "@callsesh/utils";
 
 const DateField = ({ name, label, caption, placeholder, ...props }) => (
 	<Field name={name} id={snakeCase(name)}>
-		{({ field: { onChange, ...field }, meta, form: { setFieldValue } }) => (
+		{({
+			field: { onChange, value, ...field },
+			meta,
+			form: { setFieldValue }
+		}) => (
 			<FormControl
 				label={() => label || name}
 				caption={() => caption}
@@ -21,9 +25,9 @@ const DateField = ({ name, label, caption, placeholder, ...props }) => (
 					placeholder={placeholder}
 					error={meta.touched ? !!meta.error : false}
 					onChange={({ date }) => {
-						const value = Array.isArray(date) ? date : [date];
-						setFieldValue(name, value);
+						setFieldValue(name, (Array.isArray(date) ? date : [date])[0]);
 					}}
+					value={[value]}
 					{...props}
 				/>
 			</FormControl>

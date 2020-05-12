@@ -6,6 +6,7 @@ import isEmpty from "is-empty";
 import { toaster } from "baseui/toast";
 import Router from "next/router";
 import Url from "url-parse";
+import ono from "@jsdevtools/ono";
 
 import * as routes from "@/routes";
 import { getUser } from "@/middleware/auth";
@@ -54,9 +55,6 @@ const GetStarted = (pageProps) => {
 		const params = {
 			...values.general,
 			gender: values.general.gender.label,
-			dob: Array.isArray(values.general.dob)
-				? values.general.dob[0]
-				: values.general.dob,
 			...values.caller,
 			...values.operator,
 			purpose: isEmpty(values.operator.purpose.value)
@@ -82,7 +80,7 @@ const GetStarted = (pageProps) => {
 				return Router.push(routes.page.index);
 			})
 			.catch((error) => {
-				handleException(error);
+				handleException(ono(error, params));
 				alerts.error();
 			})
 			.finally(() => {

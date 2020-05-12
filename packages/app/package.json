@@ -20,6 +20,7 @@
 	"dependencies": {
 		"@auth0/nextjs-auth0": "^0.11.0",
 		"@callsesh/utils": "^1.0.0",
+		"@jsdevtools/ono": "^7.1.2",
 		"@sentry/browser": "^5.15.5",
 		"@sentry/integrations": "^5.15.5",
 		"@sentry/node": "^5.15.5",

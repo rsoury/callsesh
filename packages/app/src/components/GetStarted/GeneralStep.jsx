@@ -52,26 +52,28 @@ const generateUsername = (firstName, lastName) => {
 	return username;
 };
 
-const checkUsernameAvailable = debounce(
-	async (value) =>
-		(
-			await request
-				.get(apiRoutes.usernameAvailable, {
-					params: {
-						username: value
-					}
-				})
-				.then(({ data }) => data)
-		).available === true,
-	500
-);
+const checkUsernameAvailable = debounce(async (value) => {
+	try {
+		const { available } = await request
+			.get(apiRoutes.usernameAvailable, {
+				params: {
+					username: value
+				}
+			})
+			.then(({ data }) => data);
+		return available === true;
+	} catch (e) {
+		// Empty catch
+	}
+	return false;
+}, 500);
 
 export const initialValues = {
 	firstName: "",
 	lastName: "",
 	username: "",
 	gender: genderOptions[2],
-	dob: [new Date("1996/08/31")]
+	dob: new Date("1996/08/31")
 };
 
 export const validationSchema = yup.object().shape({
@@ -176,7 +178,8 @@ const GeneralStep = ({ setFieldValue, values }) => {
 											overrides={{
 												BaseButton: {
 													style: {
-														margin: "0 -16px"
+														marginLeft: "-16px",
+														marginRight: "-16px"
 													}
 												}
 											}}

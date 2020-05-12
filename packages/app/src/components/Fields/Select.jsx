@@ -39,7 +39,7 @@ const SelectField = ({
 					onChange={({ value: newValue }) => {
 						setFieldValue(name, newValue[0]);
 					}}
-					value={value}
+					value={[value]}
 					{...props}
 				/>
 			</FormControl>

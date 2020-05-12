@@ -121,7 +121,10 @@ const OperatorStep = ({ values, user }) => {
 										transition: "border-color 0.25s, background-color 0.25s",
 										...(values.operator
 											? {
-													borderColor: theme.colors.accent
+													borderTopColor: theme.colors.accent,
+													borderBottomColor: theme.colors.accent,
+													borderRightColor: theme.colors.accent,
+													borderLeftColor: theme.colors.accent
 											  }
 											: {})
 									}
@@ -154,8 +157,12 @@ const OperatorStep = ({ values, user }) => {
 								className={css({
 									padding: "20px 0",
 									margin: "10px 0 20px",
-									borderTop: `1px solid ${theme.colors.borderOpaque}`,
-									borderBottom: `1px solid ${theme.colors.borderOpaque}`
+									borderTopWidth: "1px",
+									borderTopStyle: "solid",
+									borderTopColor: theme.colors.borderOpaque,
+									borderBottomWidth: "1px",
+									borderBottomStyle: "solid",
+									borderBottomColor: theme.colors.borderOpaque
 								})}
 							>
 								<TextField

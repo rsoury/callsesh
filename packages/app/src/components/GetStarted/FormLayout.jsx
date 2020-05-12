@@ -46,7 +46,10 @@ const Form = ({
 			className={css({
 				width: "100%",
 				maxWidth: "800px",
-				padding: "0 20px 50px",
+				paddingTop: "0px",
+				paddingRight: "20px",
+				paddingBottom: "50px",
+				paddingLeft: "20px",
 				margin: "0 auto",
 				minHeight: "100%",
 				display: "flex",
@@ -110,7 +113,9 @@ const Form = ({
 							flexDirection: "row",
 							alignItems: "center",
 							justifyContent: "space-between",
-							borderTop: `1px solid ${theme.colors.borderOpaque}`,
+							borderTopWidth: "1px",
+							borderTopStyle: "solid",
+							borderTopColor: theme.colors.borderOpaque,
 							backgroundColor: "#ffffff"
 						})}
 					>
