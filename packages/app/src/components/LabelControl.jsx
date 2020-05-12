@@ -1,6 +1,5 @@
 import React from "react";
 import PropTypes from "prop-types";
-import isEmpty from "is-empty";
 import { FormControl } from "baseui/form-control";
 import { useStyletron } from "baseui";
 

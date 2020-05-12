@@ -14,7 +14,8 @@ export const page = {
 	settings: {
 		profile: "/settings/profile",
 		paymentMethods: "/settings/payment-methods"
-	}
+	},
+	referrals: "/referrals"
 };
 
 export const build = {

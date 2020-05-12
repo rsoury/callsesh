@@ -1,6 +1,7 @@
 import React from "react";
 
 import Header from "@/components/Header.unstable";
+import Footer from "@/components/Footer";
 import { ChildrenProps } from "@/utils/common-prop-types";
 
 const Layout = ({ children }) => {
@@ -8,6 +9,7 @@ const Layout = ({ children }) => {
 		<main>
 			<Header />
 			<div>{children}</div>
+			<Footer />
 		</main>
 	);
 };

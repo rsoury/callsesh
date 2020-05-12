@@ -12,11 +12,16 @@ import {
 	Phone as PhoneIcon,
 	Users as InviteIcon,
 	User as UserIcon,
+	CreditCard as PaymentsIcon,
 	Map as MapIcon,
-	Clipboard as ClipboardIcon
+	Clipboard as ClipboardIcon,
+	Settings as SettingsIcon
 } from "react-feather";
 import CopyToClipboard from "react-copy-to-clipboard";
 import { toaster } from "baseui/toast";
+import Link from "next/link";
+import { Button, KIND as BUTTON_KIND } from "baseui/button";
+import ChevronRight from "baseui/icon/chevron-right";
 
 import Layout from "@/components/Layout";
 import Card from "@/components/Card";
@@ -41,7 +46,7 @@ const Index = ({ user }) => {
 		opacity: "1",
 		transition: "opacity 0.25s",
 		cursor: "pointer",
-		fontWeight: "700",
+		fontWeight: "700 !important",
 		color: `${theme.colors.accent} !important`,
 		":active": {
 			opacity: `0.8 !important`
@@ -58,12 +63,10 @@ const Index = ({ user }) => {
 		<Layout>
 			{isAuthenticated ? (
 				<div id="callsesh-user-screen">
-					<Grid>
+					<Grid gridGutters={16}>
 						<Cell span={12}>
 							<Heading>Welcome {user.givenName}!</Heading>
 						</Cell>
-					</Grid>
-					<Grid>
 						<Cell span={12}>
 							<Card title="Callsesh Links" icon={LinkIcon}>
 								<LabelControl
@@ -96,8 +99,32 @@ const Index = ({ user }) => {
 								</LabelControl>
 							</Card>
 						</Cell>
-					</Grid>
-					<Grid>
+						<Cell span={12}>
+							<Card title="Account Management" icon={SettingsIcon}>
+								<div>
+									<Link href={routes.page.settings.profile}>
+										<Button
+											kind={BUTTON_KIND.minimal}
+											startEnhancer={() => <UserIcon size={22} />}
+											endEnhancer={() => <ChevronRight size={22} />}
+										>
+											Manage Profile
+										</Button>
+									</Link>
+								</div>
+								<div>
+									<Link href={routes.page.settings.paymentMethods}>
+										<Button
+											kind={BUTTON_KIND.minimal}
+											startEnhancer={() => <PaymentsIcon size={22} />}
+											endEnhancer={() => <ChevronRight size={22} />}
+										>
+											Manage Payment Methods
+										</Button>
+									</Link>
+								</div>
+							</Card>
+						</Cell>
 						<Cell span={[12, 4, 6]}>
 							<Card title="Where to find Operators?" icon={MapIcon}>
 								<Paragraph>

@@ -25,5 +25,5 @@ export const UserProps = PropTypes.shape({
 	hourlyRate: PropTypes.string,
 	messageBroadcast: PropTypes.string,
 	purpose: PropTypes.string,
-	isRegistered: PropTypes.boolean
+	isRegistered: PropTypes.bool
 });
