@@ -19,7 +19,10 @@
 		}
 	},
 	"scripts": {
-		"start": "cross-env PORT=3001 rescripts start",
+		"start": "per-env",
+		"start:development": "cross-env PORT=3001 rescripts start",
+		"start:staging": "cross-env PORT=3001 rescripts start",
+		"start:production": "cross-env PORT=3001 rescripts start",
 		"build": "per-env",
 		"build:development": "rescripts build",
 		"build:staging": "rescripts build",
