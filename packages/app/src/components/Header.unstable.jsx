@@ -5,7 +5,6 @@ import { useStyletron } from "baseui";
 import { Button, KIND as BUTTON_KIND } from "baseui/button";
 import {
 	CreditCard as PaymentMethodsIcon,
-	Bell as NotificationsIcon,
 	User as ProfileIcon
 } from "react-feather";
 import isEmpty from "is-empty";
@@ -104,15 +103,6 @@ const Header = () => {
 				item: {
 					label: "Payment Methods",
 					href: routes.page.settings.paymentMethods
-				},
-				mapItemToNode,
-				mapItemToString: NavItemLabel
-			},
-			{
-				icon: NotificationsIcon,
-				item: {
-					label: "Notifications",
-					href: routes.page.settings.notifications
 				},
 				mapItemToNode,
 				mapItemToString: NavItemLabel

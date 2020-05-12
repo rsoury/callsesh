@@ -13,8 +13,7 @@ export const page = {
 	cookiePolicy: "/cookie-policy",
 	settings: {
 		profile: "/settings/profile",
-		paymentMethods: "/settings/payment-methods",
-		notifications: "/settings/notifications"
+		paymentMethods: "/settings/payment-methods"
 	}
 };
 

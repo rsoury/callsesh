@@ -16,7 +16,6 @@ import {
 import Link from "next/link";
 import {
 	CreditCard as PaymentMethodsIcon,
-	Bell as NotificationsIcon,
 	User as ProfileIcon
 } from "react-feather";
 import isEmpty from "is-empty";
@@ -79,17 +78,6 @@ const Header = () => {
 						{...props}
 					>
 						Payment Methods
-					</Button>
-				</Link>
-			),
-			notifications: (props) => (
-				<Link href={routes.page.settings.notifications}>
-					<Button
-						kind={BUTTON_KIND.tertiary}
-						startEnhancer={() => <NotificationsIcon size={20} />}
-						{...props}
-					>
-						Notifications
 					</Button>
 				</Link>
 			)
