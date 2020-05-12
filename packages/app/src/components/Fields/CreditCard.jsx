@@ -162,8 +162,8 @@ const Element = ({
 				justifyContent="center"
 			>
 				<FlexGridItem
-					flex="auto"
 					className={css({
+						flexGrow: "6 !important",
 						[theme.mediaQuery.maxSmall]: {
 							width: "100% !important",
 							margin: "0 0 10px 0 !important"
@@ -206,10 +206,12 @@ const Element = ({
 					</div>
 				</FlexGridItem>
 				<FlexGridItem
-					flex={1}
-					display="flex"
-					alignItems="center"
-					justifyContent="center"
+					className={css({
+						width: "auto !important",
+						display: "flex",
+						alignItems: "center",
+						justifyContent: "center"
+					})}
 				>
 					<Button
 						onClick={isCardEmpty ? addCard : removeCard}
@@ -219,7 +221,8 @@ const Element = ({
 							BaseButton: {
 								style: {
 									width: "100%",
-									height: "50px"
+									height: "50px",
+									minWidth: "120px"
 								}
 							}
 						}}

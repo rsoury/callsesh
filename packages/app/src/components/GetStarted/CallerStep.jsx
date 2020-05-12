@@ -60,7 +60,7 @@ const CallerStep = ({ formValues }) => {
 							label="Add a card"
 							caption="Add a card if you plan to make calls. You can do this later."
 							billingDetails={
-								isEmpty(formValues)
+								isEmpty(formValues?.general)
 									? {}
 									: {
 											name: `${formValues.general.firstName} ${formValues.general.lastName}`
