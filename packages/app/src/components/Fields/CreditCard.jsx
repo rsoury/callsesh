@@ -149,10 +149,10 @@ const Element = ({
 				meta.touched && meta.error ? () => format.message(meta.error) : null
 			}
 			noBg
-			className={css({
+			style={{
 				padding: "0 !important",
 				pointerEvents: isVerifying ? "none" : "auto"
-			})}
+			}}
 		>
 			<FlexGrid
 				flexGridColumnCount={2}

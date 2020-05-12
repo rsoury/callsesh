@@ -1,9 +1,27 @@
 import { useStyletron } from "baseui";
 import isEmpty from "is-empty";
-import { H1 as Heading, Paragraph2 as Paragraph } from "baseui/typography";
+import {
+	H1 as Heading,
+	Paragraph2 as Paragraph,
+	Label2 as Label
+} from "baseui/typography";
+import { Grid, Cell } from "baseui/layout-grid";
+import {
+	Link as LinkIcon,
+	Star as StarIcon,
+	Phone as PhoneIcon,
+	Users as InviteIcon,
+	User as UserIcon,
+	Map as MapIcon,
+	Clipboard as ClipboardIcon
+} from "react-feather";
+import CopyToClipboard from "react-copy-to-clipboard";
+import { toaster } from "baseui/toast";
 
-import { getUser } from "@/middleware/auth";
 import Layout from "@/components/Layout";
+import Card from "@/components/Card";
+import LabelControl from "@/components/LabelControl";
+import { getUser } from "@/middleware/auth";
 import isUserOperator from "@/utils/is-operator";
 import { setUser } from "@/hooks/use-user";
 import * as routes from "@/routes";
@@ -16,24 +34,96 @@ const Index = ({ user }) => {
 	const isAuthenticated = !isEmpty(user);
 	const isOperator = isUserOperator(user);
 
+	const operatorLink = `${window.location.origin}/u/${user.username}`;
+	const inviteLink = `${window.location.origin}/u/${user.username}/invite`;
+
+	const copyTextClassName = css({
+		opacity: "1",
+		transition: "opacity 0.25s",
+		cursor: "pointer",
+		fontWeight: "700",
+		color: `${theme.colors.accent} !important`,
+		":active": {
+			opacity: `0.8 !important`
+		}
+	});
+
+	const labelControlStyle = {
+		whiteSpace: "nowrap",
+		overflow: "hidden",
+		textOverflow: "ellipsis"
+	};
+
 	return (
 		<Layout>
 			{isAuthenticated ? (
 				<div id="callsesh-user-screen">
-					{isOperator ? (
-						<div>Hey operator!</div>
-					) : (
-						<div>
-							<Heading>Welcome ${user.givenName}</Heading>
-							<Paragraph>
-								Remember, keep an eye out for{" "}
-								<strong className={css({ color: theme.colors.accent })}>
-									Callsesh links
-								</strong>{" "}
-								shared by our Operators across the internet and on social media.
-							</Paragraph>
-						</div>
-					)}
+					<Grid>
+						<Cell span={12}>
+							<Heading>Welcome {user.givenName}!</Heading>
+						</Cell>
+					</Grid>
+					<Grid>
+						<Cell span={12}>
+							<Card title="Callsesh Links" icon={LinkIcon}>
+								<LabelControl
+									label="Operator Link"
+									caption="Share this link with your audience or customers. Visitors will be able to call you if you're live."
+									startEnhancer={() => <PhoneIcon size={22} />}
+									endEnhancer={() => <ClipboardIcon size={22} />}
+									style={labelControlStyle}
+								>
+									<CopyToClipboard
+										text={operatorLink}
+										onCopy={() => toaster.info(`Copied Operator Link!`)}
+									>
+										<Label className={copyTextClassName}>{operatorLink}</Label>
+									</CopyToClipboard>
+								</LabelControl>
+								<LabelControl
+									label="Invite Link"
+									caption="Invite others to become an Operator and earn a commission on their sessions."
+									startEnhancer={() => <InviteIcon size={22} />}
+									endEnhancer={() => <ClipboardIcon size={22} />}
+									style={labelControlStyle}
+								>
+									<CopyToClipboard
+										text={inviteLink}
+										onCopy={() => toaster.info(`Copied Invite Link!`)}
+									>
+										<Label className={copyTextClassName}>{inviteLink}</Label>
+									</CopyToClipboard>
+								</LabelControl>
+							</Card>
+						</Cell>
+					</Grid>
+					<Grid>
+						<Cell span={[12, 4, 6]}>
+							<Card title="Where to find Operators?" icon={MapIcon}>
+								<Paragraph>
+									Callsesh Operators will share their links around the internet,
+									and on their{" "}
+									<strong className={css({ color: theme.colors.accent })}>
+										social media
+									</strong>{" "}
+									profiles. If an Operator is live, feel free to make a call.
+								</Paragraph>
+							</Card>
+						</Cell>
+						<Cell span={[12, 4, 6]}>
+							<Card title="New to the world" icon={StarIcon}>
+								<Paragraph>
+									Callsesh is a new platform and is currently in{" "}
+									<strong className={css({ color: theme.colors.accent })}>
+										Beta
+									</strong>
+									. If you experience any odd behaviour, or would to like to
+									offer your suggestion, please feel free to contact Callsesh
+									support.
+								</Paragraph>
+							</Card>
+						</Cell>
+					</Grid>
 				</div>
 			) : (
 				<h1>Welcome to Callsesh!</h1>
@@ -57,7 +147,7 @@ export async function getServerSideProps({
 	// If user is registered, redirect to settings/profile
 	if (!user.isRegistered) {
 		res.writeHead(302, {
-			Location: `${routes.page.register}?return_url${returnUrl}`
+			Location: `${routes.page.register}?return_url=${returnUrl}`
 		});
 		res.end();
 	}

@@ -1,5 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
+import isEmpty from "is-empty";
 import { FormControl } from "baseui/form-control";
 import { useStyletron } from "baseui";
 
@@ -18,10 +19,18 @@ const LabelControl = ({
 	startEnhancer: StartEnhancer,
 	endEnhancer: EndEnhancer,
 	noBg,
-	className,
+	style,
 	...props
 }) => {
 	const [css, theme] = useStyletron();
+
+	const wrapperStyle = {};
+	if (StartEnhancer !== null) {
+		wrapperStyle.paddingLeft = "14px";
+	}
+	if (EndEnhancer !== null) {
+		wrapperStyle.paddingRight = "14px";
+	}
 
 	return (
 		<FormControl {...props}>
@@ -33,7 +42,8 @@ const LabelControl = ({
 						minHeight: "50px",
 						backgroundColor: noBg
 							? "transparent"
-							: theme.colors.backgroundSecondary
+							: theme.colors.backgroundSecondary,
+						...wrapperStyle
 					})}
 				>
 					{StartEnhancer && (
@@ -41,7 +51,9 @@ const LabelControl = ({
 							className={css({
 								...itemStyle,
 								padding: "10px",
-								margin: "-10px",
+								marginTop: "-10px",
+								marginLeft: "-10px",
+								marginBottom: "-10px",
 								marginRight: "0px"
 							})}
 						>
@@ -49,10 +61,11 @@ const LabelControl = ({
 						</div>
 					)}
 					<div
-						className={`${className} ${css({
+						className={css({
 							flex: "1",
-							padding: "10px 14px"
-						})}`}
+							padding: "10px 14px",
+							...style
+						})}
 					>
 						{children}
 					</div>
@@ -79,14 +92,14 @@ LabelControl.propTypes = {
 	startEnhancer: ChildrenProps,
 	endEnhancer: ChildrenProps,
 	noBg: PropTypes.bool,
-	className: PropTypes.string
+	style: PropTypes.object
 };
 
 LabelControl.defaultProps = {
 	startEnhancer: null,
 	endEnhancer: null,
 	noBg: false,
-	className: ""
+	style: {}
 };
 
 export default LabelControl;
