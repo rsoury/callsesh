@@ -21,7 +21,7 @@ handler.use(requireAuthentication).post(async (req, res) => {
 		});
 	}
 
-	const user = await getUser(req);
+	const user = await getUser(req, { withContext: true }); // Be sure to return user secret context data
 
 	const { stripeCustomerId } = user;
 

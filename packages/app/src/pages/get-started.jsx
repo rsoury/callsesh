@@ -4,6 +4,8 @@ import { useState, useCallback } from "react";
 import { FormikWizard } from "rsoury-formik-wizard";
 import isEmpty from "is-empty";
 import { toaster } from "baseui/toast";
+import Router from "next/router";
+import Url from "url-parse";
 
 import * as routes from "@/routes";
 import { getUser } from "@/middleware/auth";
@@ -44,7 +46,7 @@ const formSteps = [
 	}
 ];
 
-const GetStarted = () => {
+const GetStarted = (pageProps) => {
 	const [isSubmitting, setSubmitting] = useState(false);
 
 	const handleSubmit = useCallback((values) => {
@@ -69,6 +71,15 @@ const GetStarted = () => {
 				toaster.positive(
 					`Nice! Your account has been created. Please wait as we redirect you...`
 				);
+
+				// Check for return_url
+				const url = new Url(window.location.href, true);
+				const { return_url: returnUrl } = url.query;
+				if (!isEmpty(returnUrl)) {
+					return Router.push(returnUrl.replace(window.location.origin, ""));
+				}
+				// Otherwise, redirect to index.
+				return Router.push(routes.page.index);
 			})
 			.catch((error) => {
 				handleException(error);
@@ -85,7 +96,7 @@ const GetStarted = () => {
 				steps={formSteps}
 				onSubmit={handleSubmit}
 				render={(props) => (
-					<FormLayout {...props} isSubmitting={isSubmitting} />
+					<FormLayout {...props} isSubmitting={isSubmitting} {...pageProps} />
 				)}
 			/>
 		</main>
@@ -104,7 +115,11 @@ export async function getServerSideProps({ req, res }) {
 		res.end();
 	}
 
-	return { props: {} };
+	return {
+		props: {
+			user
+		}
+	};
 }
 
 export default GetStarted;

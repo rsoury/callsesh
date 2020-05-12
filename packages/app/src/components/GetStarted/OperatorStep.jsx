@@ -25,6 +25,7 @@ import CheckboxField from "@/components/Fields/Checkbox";
 import FileUploaderField from "@/components/Fields/FileUploader";
 import Emoji from "@/components/Emoji";
 import { FEE_MULTIPLIER } from "@/constants";
+import { UserProps } from "@/utils/common-prop-types";
 
 const listItemProps = {
 	artworkSize: ARTWORK_SIZES.MEDIUM,
@@ -79,7 +80,7 @@ export const validationSchema = yup.object().shape({
 	messageBroadcast: yup.string()
 });
 
-const OperatorStep = ({ values }) => {
+const OperatorStep = ({ values, user }) => {
 	const [css, theme] = useStyletron();
 
 	return (
@@ -162,7 +163,7 @@ const OperatorStep = ({ values }) => {
 									label="What is your hourly rate?"
 									startEnhancer={() => <HourlyRateIcon />}
 									endEnhancer={() => <span>/hour</span>}
-									caption="Callers will be charged per second based on this rate. Currency is in USD."
+									caption={`Callers will be charged per second based on this rate. Currency is in ${user.currency}.`}
 									placeholder="30"
 									numeric
 								/>
@@ -282,11 +283,13 @@ OperatorStep.propTypes = {
 			value: PropTypes.string
 		}),
 		messageBroadcast: PropTypes.string
-	})
+	}),
+	user: UserProps
 };
 
 OperatorStep.defaultProps = {
-	values: {}
+	values: {},
+	user: {}
 };
 
 export default OperatorStep;

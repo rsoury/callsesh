@@ -4,7 +4,6 @@
 
 import * as yup from "yup";
 import isEmpty from "is-empty";
-import { parsePhoneNumberFromString } from "libphonenumber-js";
 import getHandler, { onError } from "@/middleware";
 import { requireAuthentication, getUser } from "@/middleware/auth";
 import * as authManager from "@/auth-manager";
@@ -49,15 +48,7 @@ handler
 
 		req.log.info("Register user", { user: user.id });
 
-		const { stripeCustomerId, phoneNumber } = user;
-
-		const parsedPhoneNumber = parsePhoneNumberFromString(phoneNumber);
-		let country = "";
-		let currency = "";
-		if (parsedPhoneNumber) {
-			country = parsedPhoneNumber.country;
-			currency = country === "AU" ? "AUD" : "USD";
-		}
+		const { stripeCustomerId, phoneNumber, country, currency } = user;
 
 		const {
 			firstName,

@@ -8,6 +8,7 @@ import Check from "baseui/icon/check";
 import { ProgressBar } from "baseui/progress-bar";
 import startCase from "lodash/startCase";
 import { FixedBottom } from "react-fixed-bottom";
+import { UserProps } from "@/utils/common-prop-types";
 
 import { isProd } from "@/env-config";
 
@@ -20,7 +21,8 @@ const Form = ({
 	isSubmitting,
 	currentStep,
 	steps,
-	values
+	values,
+	user
 }) => {
 	const [css, theme] = useStyletron();
 
@@ -81,6 +83,7 @@ const Form = ({
 				})}
 			>
 				{React.cloneElement(children, {
+					user,
 					formValues: values
 				})}
 			</div>
@@ -168,7 +171,8 @@ Form.propTypes = {
 	isSubmitting: PropTypes.bool.isRequired,
 	currentStep: PropTypes.string.isRequired,
 	steps: PropTypes.arrayOf(PropTypes.string).isRequired,
-	values: PropTypes.object.isRequired
+	values: PropTypes.object.isRequired,
+	user: UserProps.isRequired
 };
 
 Form.defaultProps = {

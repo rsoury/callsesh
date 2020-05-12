@@ -3,6 +3,8 @@ import nextConnect from "next-connect";
 import * as yup from "yup";
 import camelCase from "lodash/camelCase";
 import mapKeys from "lodash/mapKeys";
+import isEmpty from "is-empty";
+import { parsePhoneNumberFromString } from "libphonenumber-js";
 
 import * as authManager from "@/auth-manager";
 import { auth0 as config, publicUrl, sessionSecret } from "@/env-config";
@@ -97,6 +99,13 @@ export const getUser = async (req, { withContext = false } = {}) => {
 		};
 	}
 	user = mapKeys(user, (value, key) => camelCase(key));
+
+	if (isEmpty(user.country)) {
+		// Default to user phone number
+		const parsedPhoneNumber = parsePhoneNumberFromString(phoneNumber);
+		user.country = parsedPhoneNumber.country;
+		user.currency = user.country === "AU" ? "AUD" : "USD";
+	}
 
 	let isRegistered = false;
 	try {
