@@ -39,7 +39,7 @@
 		"libphonenumber-js": "^1.7.50",
 		"lodash": "^4.17.15",
 		"modern-normalize": "^0.6.0",
-		"next": "latest",
+		"next": "^9.4.0",
 		"next-connect": "^0.6.4",
 		"next-seo": "^4.4.0",
 		"prop-types": "^15.7.2",
