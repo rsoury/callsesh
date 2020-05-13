@@ -15,6 +15,7 @@ export const page = {
 		profile: "/settings/profile",
 		paymentMethods: "/settings/payment-methods"
 	},
+	becomeAnOperator: "/become-an-operator",
 	referrals: "/referrals"
 };
 

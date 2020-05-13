@@ -5,7 +5,7 @@ import NextLink from "next/link";
 import { StyledLink } from "baseui/link";
 import { ChildrenProps } from "@/utils/common-prop-types";
 
-const Link = ({ children, href, highlight, ...props }) => {
+const Link = ({ children, href, highlight, standard, ...props }) => {
 	const [css, theme] = useStyletron();
 
 	const style = {
@@ -20,6 +20,14 @@ const Link = ({ children, href, highlight, ...props }) => {
 		style[":hover"].color = theme.colors.accent600;
 	}
 
+	if (standard) {
+		return (
+			<StyledLink href={href} {...props} className={css(style)}>
+				{children}
+			</StyledLink>
+		);
+	}
+
 	return (
 		<NextLink href={href}>
 			<StyledLink {...props} className={css(style)}>
@@ -32,11 +40,13 @@ const Link = ({ children, href, highlight, ...props }) => {
 Link.propTypes = {
 	children: ChildrenProps.isRequired,
 	href: PropTypes.oneOfType([PropTypes.string, PropTypes.object]).isRequired,
-	highlight: PropTypes.bool
+	highlight: PropTypes.bool,
+	standard: PropTypes.bool
 };
 
 Link.defaultProps = {
-	highlight: false
+	highlight: false,
+	standard: false
 };
 
 export default Link;

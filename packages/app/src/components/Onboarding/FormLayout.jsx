@@ -10,8 +10,48 @@ import startCase from "lodash/startCase";
 import { FixedBottom } from "react-fixed-bottom";
 
 import { isProd } from "@/env-config";
+import { ChildrenProps } from "@/utils/common-prop-types";
 
-const Form = ({
+export const FormContainer = ({ children, style }) => {
+	const [css, theme] = useStyletron();
+
+	return (
+		<div
+			className={css({
+				width: "100%",
+				maxWidth: "800px",
+				paddingTop: "0px",
+				paddingRight: "20px",
+				paddingBottom: "50px",
+				paddingLeft: "20px",
+				margin: "0 auto",
+				minHeight: "100%",
+				display: "flex",
+				flexDirection: "column",
+				alignContent: "center",
+				justifyContent: "center",
+				[theme.mediaQuery.maxSmall]: {
+					paddingLeft: "0px",
+					paddingRight: "0px"
+				},
+				...style
+			})}
+		>
+			{children}
+		</div>
+	);
+};
+
+FormContainer.propTypes = {
+	children: ChildrenProps.isRequired,
+	style: PropTypes.object
+};
+
+FormContainer.defaultProps = {
+	style: {}
+};
+
+const FormLayout = ({
 	children,
 	isLastStep,
 	goToPreviousStep,
@@ -40,26 +80,7 @@ const Form = ({
 	}, []);
 
 	return (
-		<div
-			className={css({
-				width: "100%",
-				maxWidth: "800px",
-				paddingTop: "0px",
-				paddingRight: "20px",
-				paddingBottom: "50px",
-				paddingLeft: "20px",
-				margin: "0 auto",
-				minHeight: "100%",
-				display: "flex",
-				flexDirection: "column",
-				alignContent: "center",
-				justifyContent: "center",
-				[theme.mediaQuery.maxSmall]: {
-					paddingLeft: "0px",
-					paddingRight: "0px"
-				}
-			})}
-		>
+		<FormContainer>
 			<ProgressBar
 				value={progressValue}
 				showLabel
@@ -157,11 +178,11 @@ const Form = ({
 					</div>
 				</div>
 			</FixedBottom>
-		</div>
+		</FormContainer>
 	);
 };
 
-Form.propTypes = {
+FormLayout.propTypes = {
 	children: PropTypes.oneOfType([
 		PropTypes.arrayOf(PropTypes.node),
 		PropTypes.node
@@ -176,8 +197,8 @@ Form.propTypes = {
 	values: PropTypes.object.isRequired
 };
 
-Form.defaultProps = {
+FormLayout.defaultProps = {
 	actionLabel: ""
 };
 
-export default Form;
+export default FormLayout;

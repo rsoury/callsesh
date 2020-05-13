@@ -10,19 +10,19 @@ import ono from "@jsdevtools/ono";
 
 import * as routes from "@/routes";
 import { getUser } from "@/middleware/auth";
-import FormLayout from "@/components/GetStarted/FormLayout";
+import FormLayout from "@/components/Onboarding/FormLayout";
 import GeneralStep, {
 	initialValues as generalInitialValues,
 	validationSchema as generalValidationSchema
-} from "@/components/GetStarted/GeneralStep";
+} from "@/components/Onboarding/GeneralStep";
 import OperatorStep, {
 	initialValues as operatorInitialValues,
 	validationSchema as operatorValidationSchema
-} from "@/components/GetStarted/OperatorStep";
+} from "@/components/Onboarding/OperatorStep";
 import CallerStep, {
 	initialValues as callerInitialValues,
 	validationSchema as callerValidationSchema
-} from "@/components/GetStarted/CallerStep";
+} from "@/components/Onboarding/CallerStep";
 import request from "@/utils/request";
 import handleException, { alerts } from "@/utils/handle-exception";
 import { setUser } from "@/hooks/use-user";

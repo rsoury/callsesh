@@ -214,7 +214,11 @@ const OperatorStep = ({ values }) => {
 										</Tooltip>
 									</div>
 									<div className={css({ marginBottom: "10px" })}>
-										<LabelSmall className={css({ color: theme.colors.accent })}>
+										<LabelSmall
+											className={css({
+												color: `${theme.colors.accent} !important`
+											})}
+										>
 											You will be paid{" "}
 											<strong>
 												$

@@ -1,5 +1,6 @@
 import React from "react";
 import { useStyletron } from "baseui";
+import { Paragraph4 as Paragraph } from "baseui/typography";
 
 import { page as pageRoutes } from "@/routes";
 import Link from "@/components/Link";
@@ -20,6 +21,11 @@ const nav = [
 	{
 		text: "Cookie Policy",
 		href: pageRoutes.cookiePolicy
+	},
+	{
+		text: "Callsesh Support",
+		href: "mailto:support@webdoodle.com.au",
+		standard: true
 	}
 ];
 
@@ -27,7 +33,7 @@ const Footer = () => {
 	const [css, theme] = useStyletron();
 
 	return (
-		<footer className={css({ padding: "40px 0" })}>
+		<footer className={css({ padding: "40px 0 10px 0" })}>
 			<nav>
 				<ul
 					className={css({
@@ -42,16 +48,34 @@ const Footer = () => {
 						}
 					})}
 				>
-					{nav.map(({ text, href }) => (
+					{nav.map(({ text, ...props }) => (
 						<li
 							key={text.toLowerCase()}
 							className={css({ margin: "5px 10px" })}
 						>
-							<Link href={href}>{text}</Link>
+							<Link {...props}>{text}</Link>
 						</li>
 					))}
 				</ul>
 			</nav>
+			<Paragraph
+				className={css({
+					marginTop: "20px",
+					opacity: "0.8",
+					textAlign: "center"
+				})}
+			>
+				A{" "}
+				<Link
+					href="https://webdoodle.com.au/"
+					target="_blank"
+					rel="noopener noreferrer"
+					standard
+				>
+					Web Doodle
+				</Link>{" "}
+				Project
+			</Paragraph>
 		</footer>
 	);
 };

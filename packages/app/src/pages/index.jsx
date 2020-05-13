@@ -15,7 +15,8 @@ import {
 	CreditCard as PaymentsIcon,
 	Map as MapIcon,
 	Clipboard as ClipboardIcon,
-	Settings as SettingsIcon
+	Settings as SettingsIcon,
+	PhoneCall as OperatorIcon
 } from "react-feather";
 import CopyToClipboard from "react-copy-to-clipboard";
 import { toaster } from "baseui/toast";
@@ -71,7 +72,11 @@ const Index = ({ user }) => {
 							<Card title="Callsesh Links" icon={LinkIcon}>
 								<LabelControl
 									label="Operator Link"
-									caption="Share this link with your audience or customers. Visitors will be able to call you if you're live."
+									caption={
+										isOperator
+											? `Share this link with your audience or customers. Visitors will be able to call you if you're live.`
+											: `Share this link with your audience or customers. Once you become an Operator, visitors will be able to call you.`
+									}
 									startEnhancer={() => <PhoneIcon size={22} />}
 									endEnhancer={() => <ClipboardIcon size={22} />}
 									style={labelControlStyle}
@@ -85,7 +90,15 @@ const Index = ({ user }) => {
 								</LabelControl>
 								<LabelControl
 									label="Invite Link"
-									caption="Invite others to become an Operator and earn a commission on their sessions."
+									caption={() => (
+										<span>
+											Invite others to become an Operator and earn a commission
+											on their sessions.{" "}
+											<Link href={routes.page.referrals} highlight>
+												Learn more
+											</Link>
+										</span>
+									)}
 									startEnhancer={() => <InviteIcon size={22} />}
 									endEnhancer={() => <ClipboardIcon size={22} />}
 									style={labelControlStyle}
@@ -101,6 +114,18 @@ const Index = ({ user }) => {
 						</Cell>
 						<Cell span={12}>
 							<Card title="Account Management" icon={SettingsIcon}>
+								{!isOperator && (
+									<div>
+										<Link href={routes.page.becomeAnOperator}>
+											<Button
+												startEnhancer={() => <OperatorIcon size={22} />}
+												endEnhancer={() => <ChevronRight size={22} />}
+											>
+												Become an Operator
+											</Button>
+										</Link>
+									</div>
+								)}
 								<div>
 									<Link href={routes.page.settings.profile}>
 										<Button
