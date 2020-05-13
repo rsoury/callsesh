@@ -17,7 +17,9 @@ const ensureUserRegistered = (user) => {
 	const { isRegistered } = user;
 	if (!isRegistered) {
 		// Redirect to get started if not registered
-		Router.push(appendReturnUrl(routes.page.register, true));
+		if (window.location.pathname.indexOf(routes.page.register) !== 0) {
+			Router.push(appendReturnUrl(routes.page.register, true));
+		}
 	}
 	return null;
 };

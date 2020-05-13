@@ -99,8 +99,8 @@ const OperatorStep = ({ values }) => {
 					</Subheader>
 					<div>
 						<ListItem artwork={AnonPhoneIcon} {...listItemProps}>
-							<ListItemLabel description="We create a call session between you and your caller to anonymise your personal phone number.">
-								Anonymised phone numbers
+							<ListItemLabel description="We create a call session between you and your caller to hide your personal phone number.">
+								Hidden phone numbers
 							</ListItemLabel>
 						</ListItem>
 						<ListItem artwork={PayoutsIcon} {...listItemProps}>
