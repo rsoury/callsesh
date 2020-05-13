@@ -27,7 +27,7 @@ const Footer = () => {
 	const [css] = useStyletron();
 
 	return (
-		<footer className={css({ paddingTop: "50px" })}>
+		<footer className={css({ padding: "50px 0" })}>
 			<nav>
 				<ul
 					className={css({
@@ -40,7 +40,10 @@ const Footer = () => {
 					})}
 				>
 					{nav.map(({ text, href }) => (
-						<li className={css({ margin: "0px 10px" })}>
+						<li
+							key={text.toLowerCase()}
+							className={css({ margin: "0px 10px" })}
+						>
 							<Link href={href}>{text}</Link>
 						</li>
 					))}
