@@ -15,7 +15,7 @@ import ono from "@jsdevtools/ono";
 import * as routes from "@/routes";
 import OperatorOnboarding, {
 	initialValues,
-	validationSchema
+	requiredValidationSchema
 } from "@/components/Onboarding/OperatorStep";
 import { FormContainer } from "@/components/Onboarding/FormLayout";
 import { getUser } from "@/middleware/auth";
@@ -41,10 +41,11 @@ const BecomeAnOperator = ({ user }) => {
 			gender: user.gender,
 			dob: user.dob,
 			...values,
-			purpose: isEmpty(values.operator.purpose.value)
-				? values.operator.purpose.option.label
-				: values.operator.purpose.value
+			purpose: isEmpty(values.purpose.value)
+				? values.purpose.option.label
+				: values.purpose.value
 		};
+
 		request
 			.post(routes.api.user, params)
 			.then(() => {
@@ -69,7 +70,7 @@ const BecomeAnOperator = ({ user }) => {
 	return (
 		<Formik
 			initialValues={initialValues}
-			validationSchema={validationSchema}
+			validationSchema={requiredValidationSchema}
 			onSubmit={handleSubmit}
 		>
 			{(props) => {

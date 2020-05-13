@@ -72,12 +72,31 @@ export const initialValues = {
 	messageBroadcast: ""
 };
 
-export const validationSchema = yup.object().shape({
+const schemaProperties = {
 	operator: yup.boolean(),
 	hourlyRate: yup.string(),
-	profilePicture: yup.string(),
-	purpose: yup.string(),
+	profilePicture: yup.object().shape({
+		cdnUrl: yup.string().required().label("Profile Picture")
+	}),
+	purpose: yup.object().shape({
+		option: yup.object().shape({
+			label: yup.string(),
+			id: yup.string()
+		}),
+		value: yup.string()
+	}),
 	messageBroadcast: yup.string()
+};
+
+export const validationSchema = yup.object().shape(schemaProperties);
+
+// A version of validationSchema that requires input
+export const requiredValidationSchema = yup.object().shape({
+	operator: schemaProperties.operator.required(),
+	hourlyRate: schemaProperties.hourlyRate.required(),
+	profilePicture: schemaProperties.profilePicture.required(),
+	purpose: schemaProperties.purpose.required(),
+	messageBroadcast: schemaProperties.messageBroadcast.required()
 });
 
 const OperatorStep = ({ values }) => {
@@ -240,6 +259,7 @@ const OperatorStep = ({ values }) => {
 								name="profilePicture"
 								label="Profile Picture"
 								caption="Must be a JPEG or PNG with a max size of 2MB"
+								images
 							/>
 						</Cell>
 						<Cell

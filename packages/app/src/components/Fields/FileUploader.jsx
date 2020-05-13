@@ -12,10 +12,10 @@ import { useStyletron } from "baseui";
 
 import LabelControl from "@/components/LabelControl";
 
-const FileUploaderField = ({ name, label, caption }) => {
+const FileUploaderField = ({ name, label, caption, images, fileSizeLimit }) => {
 	const [css] = useStyletron();
 
-	const fileSizeLimit = (sizeInBytes) => {
+	const getFileSizeLimit = (sizeInBytes) => {
 		return (fileInfo) => {
 			if (fileInfo.size > sizeInBytes) {
 				toaster.negative(`File size too large.`);
@@ -24,10 +24,12 @@ const FileUploaderField = ({ name, label, caption }) => {
 		};
 	};
 
-	const validators = [fileSizeLimit(1024 * 1024 * 2)];
+	const validators = [getFileSizeLimit(fileSizeLimit)];
+
+	const id = snakeCase(name);
 
 	return (
-		<Field name={name} id={snakeCase(name)}>
+		<Field name={name} id={id}>
 			{({ field: { value }, meta, form: { setFieldValue } }) => (
 				<LabelControl
 					label={() => label || name}
@@ -41,12 +43,12 @@ const FileUploaderField = ({ name, label, caption }) => {
 				>
 					<Widget
 						publicKey={config.publicKey}
-						id="profile_picture"
-						name="profile_picture"
+						id={`${id}_widget`}
+						name={`${id}_widget`}
 						tabs="file camera instagram facebook url gdrive gphotos dropbox vk"
 						previewStep
 						clearable
-						imagesOnly
+						imagesOnly={images}
 						crop="1:1"
 						validators={validators}
 						// onFileSelect={(file) => {
@@ -75,12 +77,16 @@ const FileUploaderField = ({ name, label, caption }) => {
 FileUploaderField.propTypes = {
 	name: PropTypes.string.isRequired,
 	label: PropTypes.string,
-	caption: PropTypes.string
+	caption: PropTypes.string,
+	images: PropTypes.bool,
+	fileSizeLimit: PropTypes.number
 };
 
 FileUploaderField.defaultProps = {
 	label: "",
-	caption: ""
+	caption: "",
+	images: false,
+	fileSizeLimit: 1024 * 1024 * 2
 };
 
 export default FileUploaderField;
