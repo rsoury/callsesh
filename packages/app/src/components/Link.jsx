@@ -5,14 +5,22 @@ import NextLink from "next/link";
 import { StyledLink } from "baseui/link";
 import { ChildrenProps } from "@/utils/common-prop-types";
 
-const Link = ({ children, href, highlight, standard, ...props }) => {
+const Link = ({
+	children,
+	href,
+	highlight,
+	standard,
+	style: styleProp,
+	...props
+}) => {
 	const [css, theme] = useStyletron();
 
 	const style = {
 		cursor: "pointer",
 		":hover": {
 			textDecoration: "underline"
-		}
+		},
+		...styleProp
 	};
 
 	if (highlight) {
@@ -41,12 +49,14 @@ Link.propTypes = {
 	children: ChildrenProps.isRequired,
 	href: PropTypes.oneOfType([PropTypes.string, PropTypes.object]).isRequired,
 	highlight: PropTypes.bool,
-	standard: PropTypes.bool
+	standard: PropTypes.bool,
+	style: PropTypes.object
 };
 
 Link.defaultProps = {
 	highlight: false,
-	standard: false
+	standard: false,
+	style: {}
 };
 
 export default Link;

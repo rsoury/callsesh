@@ -7,3 +7,7 @@ body {
 button span {
 	box-sizing: content-box;
 }
+
+#callsesh-header > div {
+	box-shadow: none !important;
+}

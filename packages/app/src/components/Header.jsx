@@ -1,212 +1,150 @@
-import React, { useState } from "react";
+/* eslint-disable react/prop-types */
+
+import React from "react";
 import { useStyletron } from "baseui";
-import {
-	Button,
-	KIND as BUTTON_KIND,
-	SHAPE as BUTTON_SHAPE
-} from "baseui/button";
-import { Drawer, ANCHOR as DRAWER_ANCHOR } from "baseui/drawer";
-import MobileMenuIcon from "baseui/icon/menu";
-import {
-	HeaderNavigation,
-	ALIGN,
-	StyledNavigationList as NavigationList,
-	StyledNavigationItem as NavigationItem
-} from "baseui/header-navigation";
-import Link from "next/link";
+import { Button, KIND as BUTTON_KIND } from "baseui/button";
 import {
 	CreditCard as PaymentMethodsIcon,
-	User as ProfileIcon
+	User as ProfileIcon,
+	LogOut as LogoutIcon
 } from "react-feather";
 import isEmpty from "is-empty";
 import Skeleton from "react-loading-skeleton";
-// import ChevronUp from "baseui/icon/chevron-up";
-// import ChevronDown from "baseui/icon/chevron-down";
+import { Unstable_AppNavBar as AppNavBar } from "baseui/app-nav-bar";
+import Link from "@/components/Link";
 import * as routes from "@/routes";
+import useUser from "@/hooks/use-user";
 import appendReturnUrl from "@/utils/append-return-url";
 
 import Logo from "./Logo";
 
-const Header = () => {
-	const [css, theme] = useStyletron();
-	const [isMobileMenuOpen, showMobileMenu] = useState(false);
-	// const [isUserMenuOpen, showUserMenu] = useState(false);
-	// const [user, { loading: isLoading }] = useUser();
-	const user = {};
-	const isLoading = false;
+const NavItem = ({ label, href }) => (
+	<Link href={href} style={{ textDecoration: "none" }}>
+		{label}
+	</Link>
+);
 
-	let mainMenuItems = [];
-	let userMenuItems = [];
+const NavItemButton = ({ label, href, buttonKind, ...props }) => (
+	<Link href={href} style={{ textDecoration: "none" }}>
+		<Button
+			kind={buttonKind || BUTTON_KIND.tertiary}
+			overrides={{
+				BaseButton: {
+					style: {
+						width: "100%",
+						justifyContent: "flex-start"
+					}
+				}
+			}}
+			{...props}
+		>
+			{label}
+		</Button>
+	</Link>
+);
+
+const NavItemSkeleton = () => {
+	const [css] = useStyletron();
+
+	return (
+		<div
+			className={css({
+				height: "72px",
+				display: "flex",
+				alignItems: "center",
+				justifyContent: "center"
+			})}
+		>
+			<Skeleton height={45} width={100} />
+		</div>
+	);
+};
+
+const NavItemLabel = ({ label }) => label;
+
+const Header = () => {
+	const [css] = useStyletron();
+	const [user, isLoading] = useUser();
+
+	const navProps = {};
+
 	if (isLoading) {
-		mainMenuItems = Object.entries({
-			button1: () => <Skeleton height={45} width={100} />,
-			button2: () => <Skeleton height={45} width={100} />
-		});
+		navProps.mainNav = [
+			{
+				mapItemToNode: NavItemSkeleton
+			},
+			{
+				mapItemToNode: NavItemSkeleton
+			}
+		];
 	} else if (isEmpty(user)) {
-		mainMenuItems = Object.entries({
-			login: (props) => (
-				<Link href={appendReturnUrl(routes.page.login, true)}>
-					<Button kind={BUTTON_KIND.tertiary} {...props}>
-						Log in
-					</Button>
-				</Link>
-			),
-			signup: (props) => (
-				<Link href={appendReturnUrl(routes.page.signup, true)}>
-					<Button {...props}>Sign up</Button>
-				</Link>
-			)
-		});
+		navProps.mainNav = [
+			{
+				item: {
+					label: "Log In",
+					href: appendReturnUrl(routes.page.login, true)
+				},
+				mapItemToNode: NavItemButton,
+				mapItemToString: NavItemLabel
+			},
+			{
+				item: {
+					label: "Sign Up",
+					href: appendReturnUrl(routes.page.signup, true),
+					buttonKind: BUTTON_KIND.primary
+				},
+				mapItemToNode: NavItemButton,
+				mapItemToString: NavItemLabel
+			}
+		];
 	} else {
-		userMenuItems = Object.entries({
-			profile: (props) => (
-				<Link href={routes.page.settings.profile}>
-					<Button
-						kind={BUTTON_KIND.tertiary}
-						startEnhancer={() => <ProfileIcon size={20} />}
-						{...props}
-					>
-						Profile
-					</Button>
-				</Link>
-			),
-			paymentMethods: (props) => (
-				<Link href={routes.page.settings.paymentMethods}>
-					<Button
-						kind={BUTTON_KIND.tertiary}
-						startEnhancer={() => <PaymentMethodsIcon size={20} />}
-						{...props}
-					>
-						Payment Methods
-					</Button>
-				</Link>
-			)
-		});
+		navProps.username = user.nickname;
+		navProps.usernameSubtitle = user.phoneNumber;
+		navProps.userImgUrl = user.picture;
+		navProps.userNav = [
+			{
+				icon: LogoutIcon,
+				item: {
+					label: "Logout",
+					href: routes.page.logout
+				},
+				mapItemToNode: NavItem,
+				mapItemToString: NavItemLabel
+			}
+		];
+		navProps.mainNav = [
+			{
+				icon: ProfileIcon,
+				item: { label: "Profile", href: routes.page.settings.profile },
+				mapItemToNode: NavItem,
+				mapItemToString: NavItemLabel
+			},
+			{
+				icon: PaymentMethodsIcon,
+				item: {
+					label: "Payment Methods",
+					href: routes.page.settings.paymentMethods
+				},
+				mapItemToNode: NavItem,
+				mapItemToString: NavItemLabel
+			}
+		];
 	}
 
 	return (
-		<>
-			<HeaderNavigation
-				overrides={{
-					Root: {
-						style: {
-							borderBottomColor: `transparent`,
-							justifyContent: "space-between",
-							marginBottom: "15px"
-						}
-					}
-				}}
-			>
-				<NavigationList $align={ALIGN.left}>
-					<NavigationItem className={css({ margin: "0 0 0 -10px" })}>
-						<Logo />
-					</NavigationItem>
-				</NavigationList>
-				<NavigationList
-					$align={ALIGN.right}
-					className={css({
-						[theme.mediaQuery.maxSmall]: {
-							display: "none"
-						},
-						paddingRight: `${theme.sizing.scale400} !important`,
-						paddingLeft: `${theme.sizing.scale400} !important`
-					})}
-				>
-					{mainMenuItems.map(([key, Item]) => (
-						<NavigationItem
-							key={key}
-							className={css({
-								paddingLeft: `${theme.sizing.scale400} !important`
-							})}
-						>
-							<Item />
-						</NavigationItem>
-					))}
-					{!isEmpty(user) && (
-						<NavigationItem
-							className={css({
-								paddingLeft: `${theme.sizing.scale400} !important`
-							})}
-						>
-							<div>User</div>
-						</NavigationItem>
-					)}
-				</NavigationList>
-				<NavigationList
-					$align={ALIGN.right}
-					className={css({
-						[theme.mediaQuery.medium]: {
-							display: "none"
-						}
-					})}
-				>
-					<NavigationItem>
-						<Button
-							kind={BUTTON_KIND.tertiary}
-							shape={BUTTON_SHAPE.round}
-							onClick={() => showMobileMenu(true)}
-						>
-							<MobileMenuIcon size={22} />
-						</Button>
-					</NavigationItem>
-				</NavigationList>
-			</HeaderNavigation>
-			<Drawer
-				animate
-				anchor={DRAWER_ANCHOR.right}
-				isOpen={isMobileMenuOpen}
-				autoFocus
-				onClose={() => showMobileMenu(false)}
-				overrides={{
-					DrawerContainer: {
-						style: {
-							maxWidth: "300px"
-						}
-					}
-				}}
-			>
-				{!isEmpty(user) && <div>Some user information</div>}
-				{userMenuItems.map(([key, Item]) => (
-					<div key={key}>
-						<Item
-							overrides={{
-								BaseButton: {
-									style: {
-										width: "100%",
-										justifyContent: "flex-start"
-									}
-								}
-							}}
-							onClick={() => showMobileMenu(false)}
-						/>
-					</div>
-				))}
-				{!isEmpty(userMenuItems) && !isEmpty(mainMenuItems) && (
-					<div
-						className={css({
-							height: "2px",
-							backgroundColor: theme.colors.borderOpaque,
-							padding: "5px"
-						})}
-					/>
-				)}
-				{mainMenuItems.map(([key, Item]) => (
-					<div key={key}>
-						<Item
-							overrides={{
-								BaseButton: {
-									style: {
-										width: "100%",
-										justifyContent: "flex-start"
-									}
-								}
-							}}
-							onClick={() => showMobileMenu(false)}
-						/>
-					</div>
-				))}
-			</Drawer>
-		</>
+		<header
+			id="callsesh-header"
+			className={css({
+				overflow: "hidden"
+			})}
+		>
+			<AppNavBar
+				appDisplayName={<Logo />}
+				isNavItemActive={() => {}}
+				onNavItemSelect={() => {}}
+				{...navProps}
+			/>
+		</header>
 	);
 };
 

@@ -6,6 +6,7 @@ export const page = {
 	index: "/",
 	login: "/login",
 	signup: "/signup",
+	logout: "/logout",
 	register: "/get-started",
 	user: `/user/:id`,
 	tos: "/terms-of-service",
