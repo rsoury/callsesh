@@ -24,10 +24,10 @@ const nav = [
 ];
 
 const Footer = () => {
-	const [css] = useStyletron();
+	const [css, theme] = useStyletron();
 
 	return (
-		<footer className={css({ padding: "50px 0" })}>
+		<footer className={css({ padding: "40px 0" })}>
 			<nav>
 				<ul
 					className={css({
@@ -36,13 +36,16 @@ const Footer = () => {
 						alignItems: "center",
 						justifyContent: "center",
 						margin: "0px",
-						padding: "0px"
+						padding: "0px",
+						[theme.mediaQuery.maxSmall]: {
+							flexDirection: "column"
+						}
 					})}
 				>
 					{nav.map(({ text, href }) => (
 						<li
 							key={text.toLowerCase()}
-							className={css({ margin: "0px 10px" })}
+							className={css({ margin: "5px 10px" })}
 						>
 							<Link href={href}>{text}</Link>
 						</li>
