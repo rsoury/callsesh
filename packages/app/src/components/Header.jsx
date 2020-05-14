@@ -9,8 +9,9 @@ import {
 	LogOut as LogoutIcon
 } from "react-feather";
 import isEmpty from "is-empty";
-import Skeleton from "react-loading-skeleton";
 import { Unstable_AppNavBar as AppNavBar } from "baseui/app-nav-bar";
+import Skeleton from "react-loading-skeleton";
+
 import Link from "@/components/Link";
 import * as routes from "@/routes";
 import useUser from "@/hooks/use-user";
@@ -19,13 +20,13 @@ import appendReturnUrl from "@/utils/append-return-url";
 import Logo from "./Logo";
 
 const NavItem = ({ label, href }) => (
-	<Link href={href} style={{ textDecoration: "none" }}>
+	<Link href={href} style={{ textDecoration: "none !important" }}>
 		{label}
 	</Link>
 );
 
 const NavItemButton = ({ label, href, buttonKind, ...props }) => (
-	<Link href={href} style={{ textDecoration: "none" }}>
+	<Link href={href} style={{ textDecoration: "none !important" }}>
 		<Button
 			kind={buttonKind || BUTTON_KIND.tertiary}
 			overrides={{
@@ -43,23 +44,6 @@ const NavItemButton = ({ label, href, buttonKind, ...props }) => (
 	</Link>
 );
 
-const NavItemSkeleton = () => {
-	const [css] = useStyletron();
-
-	return (
-		<div
-			className={css({
-				height: "72px",
-				display: "flex",
-				alignItems: "center",
-				justifyContent: "center"
-			})}
-		>
-			<Skeleton height={45} width={100} />
-		</div>
-	);
-};
-
 const NavItemLabel = ({ label }) => label;
 
 const Header = () => {
@@ -69,14 +53,21 @@ const Header = () => {
 	const navProps = {};
 
 	if (isLoading) {
-		navProps.mainNav = [
-			{
-				mapItemToNode: NavItemSkeleton
-			},
-			{
-				mapItemToNode: NavItemSkeleton
-			}
-		];
+		navProps.mainNav = [0, 1].map((key) => ({
+			mapItemToNode: () => (
+				<div
+					key={key}
+					className={css({
+						height: "72px",
+						display: "flex",
+						alignItems: "center",
+						justifyContent: "center"
+					})}
+				>
+					<Skeleton height={45} width={100} />
+				</div>
+			)
+		}));
 	} else if (isEmpty(user)) {
 		navProps.mainNav = [
 			{

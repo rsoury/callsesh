@@ -17,7 +17,8 @@ export const twilio = {
 };
 export const stripe = {
 	publicKey: process.env.STRIPE_PUBLIC_KEY || "",
-	secretKey: process.env.STRIPE_SECRET_KEY || ""
+	secretKey: process.env.STRIPE_SECRET_KEY || "",
+	connectId: process.env.STRIPE_CONNECT_ID || ""
 };
 export const awsCredentials = {
 	accessKeyId: process.env.AWS_ACCESS_KEY_ID || "",

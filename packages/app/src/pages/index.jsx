@@ -11,17 +11,15 @@ import {
 	Star as StarIcon,
 	Phone as PhoneIcon,
 	Users as InviteIcon,
-	User as UserIcon,
-	CreditCard as PaymentsIcon,
 	Map as MapIcon,
 	Clipboard as ClipboardIcon,
-	Settings as SettingsIcon,
-	PhoneCall as OperatorIcon
+	PhoneCall as OperatorIcon,
+	Radio as LiveIcon
 } from "react-feather";
 import CopyToClipboard from "react-copy-to-clipboard";
 import { toaster } from "baseui/toast";
 import Link from "next/link";
-import { Button, KIND as BUTTON_KIND } from "baseui/button";
+import { Button } from "baseui/button";
 import ChevronRight from "baseui/icon/chevron-right";
 
 import Layout from "@/components/Layout";
@@ -31,7 +29,20 @@ import { getUser } from "@/middleware/auth";
 import isUserOperator from "@/utils/is-operator";
 import { setUser } from "@/hooks/use-user";
 import * as routes from "@/routes";
-import { UserProps } from "@/utils/common-prop-types";
+import { UserProps, ChildrenProps } from "@/utils/common-prop-types";
+import PayoutsCard from "@/components/Cards/Payouts";
+
+const Highlight = ({ children }) => {
+	const [css, theme] = useStyletron();
+
+	return (
+		<strong className={css({ color: theme.colors.accent })}>{children}</strong>
+	);
+};
+
+Highlight.propTypes = {
+	children: ChildrenProps.isRequired
+};
 
 const Index = ({ user }) => {
 	setUser(user);
@@ -68,6 +79,31 @@ const Index = ({ user }) => {
 						<Cell span={12}>
 							<Heading>Welcome {user.givenName}!</Heading>
 						</Cell>
+						{isOperator ? (
+							<>
+								<Cell span={[12, 4, 6]}>
+									<Card title="Go Live" icon={LiveIcon}>
+										<Paragraph>Go live</Paragraph>
+									</Card>
+								</Cell>
+								<Cell span={[12, 4, 6]}>
+									<PayoutsCard />
+								</Cell>
+							</>
+						) : (
+							<Cell span={12}>
+								<div className={css({ marginBottom: "30px" })}>
+									<Link href={routes.page.becomeAnOperator}>
+										<Button
+											startEnhancer={() => <OperatorIcon size={22} />}
+											endEnhancer={() => <ChevronRight size={22} />}
+										>
+											Become an Operator
+										</Button>
+									</Link>
+								</div>
+							</Cell>
+						)}
 						<Cell span={12}>
 							<Card title="Callsesh Links" icon={LinkIcon}>
 								<LabelControl
@@ -112,53 +148,12 @@ const Index = ({ user }) => {
 								</LabelControl>
 							</Card>
 						</Cell>
-						<Cell span={12}>
-							<Card title="Account Management" icon={SettingsIcon}>
-								{!isOperator && (
-									<div>
-										<Link href={routes.page.becomeAnOperator}>
-											<Button
-												startEnhancer={() => <OperatorIcon size={22} />}
-												endEnhancer={() => <ChevronRight size={22} />}
-											>
-												Become an Operator
-											</Button>
-										</Link>
-									</div>
-								)}
-								<div>
-									<Link href={routes.page.settings.profile}>
-										<Button
-											kind={BUTTON_KIND.minimal}
-											startEnhancer={() => <UserIcon size={22} />}
-											endEnhancer={() => <ChevronRight size={22} />}
-										>
-											Manage Profile
-										</Button>
-									</Link>
-								</div>
-								<div>
-									<Link href={routes.page.settings.paymentMethods}>
-										<Button
-											kind={BUTTON_KIND.minimal}
-											startEnhancer={() => <PaymentsIcon size={22} />}
-											endEnhancer={() => <ChevronRight size={22} />}
-										>
-											Manage Payment Methods
-										</Button>
-									</Link>
-								</div>
-							</Card>
-						</Cell>
 						<Cell span={[12, 4, 6]}>
 							<Card title="Where to find Operators?" icon={MapIcon}>
 								<Paragraph>
 									Callsesh Operators will share their links around the internet,
-									and on their{" "}
-									<strong className={css({ color: theme.colors.accent })}>
-										social media
-									</strong>{" "}
-									profiles. If an Operator is live, feel free to make a call.
+									and on their <Highlight>social media</Highlight> profiles. If
+									an Operator is live, feel free to make a call.
 								</Paragraph>
 							</Card>
 						</Cell>
@@ -166,12 +161,9 @@ const Index = ({ user }) => {
 							<Card title="New to the world" icon={StarIcon}>
 								<Paragraph>
 									Callsesh is a new platform and is currently in{" "}
-									<strong className={css({ color: theme.colors.accent })}>
-										Beta
-									</strong>
-									. If you experience any odd behaviour, or would to like to
-									offer your suggestion, please feel free to contact Callsesh
-									support.
+									<Highlight>Beta</Highlight>. If you experience any odd
+									behaviour, or would to like to offer your suggestion, please
+									feel free to contact Callsesh support.
 								</Paragraph>
 							</Card>
 						</Cell>

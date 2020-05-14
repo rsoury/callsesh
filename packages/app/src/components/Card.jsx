@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import { Card as BaseCard, StyledBody } from "baseui/card";
 import { useStyletron } from "baseui";
 import { HelpCircle as HelpIcon } from "react-feather";
-import { StatefulTooltip } from "baseui/tooltip";
+import { Tooltip } from "baseui/tooltip";
 import { Button } from "baseui/button";
 
 import UppercaseLabel from "./UppercaseLabel";
@@ -63,7 +63,7 @@ const Card = ({
 								marginLeft: "10px"
 							})}
 						>
-							<StatefulTooltip
+							<Tooltip
 								content={() => (
 									<div className={css({ maxWidth: "250px" })}>{helpText}</div>
 								)}
@@ -74,7 +74,7 @@ const Card = ({
 								<div className={css({ display: "flex" })}>
 									<HelpIcon size={20} />
 								</div>
-							</StatefulTooltip>
+							</Tooltip>
 						</div>
 					)}
 				</div>

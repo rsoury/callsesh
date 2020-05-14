@@ -8,14 +8,14 @@ import { parsePhoneNumberFromString } from "libphonenumber-js";
 
 import * as authManager from "@/auth-manager";
 import { auth0 as config, publicUrl, sessionSecret } from "@/env-config";
-import { api as apiRoutes } from "@/routes";
+import * as routes from "@/routes";
 
 // Client Secret hidden for browser environment
 const auth = initAuth0({
 	domain: config.domain,
 	clientId: config.clientId,
 	scope: "openid profile",
-	redirectUri: `${publicUrl}${apiRoutes.auth.callback}`,
+	redirectUri: `${publicUrl}${routes.api.auth.callback}`,
 	postLogoutRedirectUri: `${publicUrl}/`,
 	clientSecret: config.clientSecret,
 	session: {
@@ -84,6 +84,18 @@ export const getUser = async (req, { withContext = false } = {}) => {
 		return {};
 	}
 
+	let rawUser = {};
+	try {
+		rawUser = await authManager.getUser(session.user.sub);
+		if (rawUser.blocked) {
+			throw new Error(`The user is blocked.`);
+		}
+	} catch (e) {
+		// Could not fetch user. May not exist.
+		// Log user out
+		return {};
+	}
+
 	const {
 		user_metadata: userMetadata,
 		app_metadata: appMetadata,
@@ -91,8 +103,9 @@ export const getUser = async (req, { withContext = false } = {}) => {
 		roles,
 		family_name: familyName,
 		given_name: givenName,
+		blocked,
 		...userData
-	} = await authManager.getUser(session.user.sub);
+	} = rawUser;
 
 	// Replace all session values with latest user data values where they exist.
 	const sessionUser = Object.entries(session.user).reduce(
@@ -117,7 +130,8 @@ export const getUser = async (req, { withContext = false } = {}) => {
 		roles: roles.map((role) => ({
 			name: role.name,
 			description: role.description
-		}))
+		})),
+		payoutsSetup: !isEmpty(appMetadata.stripeConnectId)
 	};
 	if (withContext) {
 		user = {

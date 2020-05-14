@@ -23,6 +23,7 @@
 			"AUTH0_CLIENT_SECRET": "@auth0-client-secret",
 			"STRIPE_PUBLIC_KEY": "",
 			"STRIPE_SECRET_KEY": "",
+			"STRIPE_CONNECT_ID": "",
 			"SENTRY_DSN": "@sentry-dsn",
 			"SENTRY_ORG": "web-doodle",
 			"SENTRY_PROJECT": "callsesh",

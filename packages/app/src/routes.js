@@ -35,5 +35,9 @@ export const api = {
 	},
 	user: "/api/user",
 	card: "/api/card",
-	usernameAvailable: "/api/username-available"
+	usernameAvailable: "/api/username-available",
+	connect: {
+		start: "/api/connect",
+		redirect: "/api/connect/oauth"
+	}
 };
