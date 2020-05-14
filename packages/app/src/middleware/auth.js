@@ -84,16 +84,9 @@ export const getUser = async (req, { withContext = false } = {}) => {
 		return {};
 	}
 
-	let rawUser = {};
-	try {
-		rawUser = await authManager.getUser(session.user.sub);
-		if (rawUser.blocked) {
-			throw new Error(`The user is blocked.`);
-		}
-	} catch (e) {
-		// Could not fetch user. May not exist.
-		// Log user out
-		return {};
+	const { blocked, ...rawUser } = await authManager.getUser(session.user.sub);
+	if (blocked) {
+		throw new Error(`The user is blocked.`);
 	}
 
 	const {
@@ -103,7 +96,6 @@ export const getUser = async (req, { withContext = false } = {}) => {
 		roles,
 		family_name: familyName,
 		given_name: givenName,
-		blocked,
 		...userData
 	} = rawUser;
 

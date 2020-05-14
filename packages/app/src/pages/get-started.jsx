@@ -9,7 +9,6 @@ import Url from "url-parse";
 import ono from "@jsdevtools/ono";
 
 import * as routes from "@/routes";
-import { getUser } from "@/middleware/auth";
 import FormLayout from "@/components/Onboarding/FormLayout";
 import GeneralStep, {
 	initialValues as generalInitialValues,
@@ -27,6 +26,7 @@ import request from "@/utils/request";
 import handleException, { alerts } from "@/utils/handle-exception";
 import { setUser } from "@/hooks/use-user";
 import { UserProps } from "@/utils/common-prop-types";
+import ssrUser from "@/utils/ssr-user";
 
 const formSteps = [
 	{
@@ -104,31 +104,30 @@ const GetStarted = ({ user }) => {
 	);
 };
 
-export async function getServerSideProps({ req, res }) {
-	// Check if user already registered.
-	const user = await getUser(req);
-
-	if (isEmpty(user)) {
-		res.writeHead(302, {
-			Location: routes.page.index
-		});
-		res.end();
-		return { props: {} };
-	}
-
-	// If user is registered, redirect to settings/profile
-	if (user.isRegistered) {
-		res.writeHead(302, {
-			Location: routes.page.settings.profile
-		});
-		res.end();
-	}
-
-	return {
-		props: {
-			user
+export function getServerSideProps({ req, res }) {
+	return ssrUser({ req, res }, (user) => {
+		if (isEmpty(user)) {
+			res.writeHead(302, {
+				Location: routes.page.index
+			});
+			res.end();
+			return { props: {} };
 		}
-	};
+
+		// If user is registered, redirect to settings/profile
+		if (user.isRegistered) {
+			res.writeHead(302, {
+				Location: routes.page.settings.profile
+			});
+			res.end();
+		}
+
+		return {
+			props: {
+				user
+			}
+		};
+	});
 }
 
 GetStarted.propTypes = {

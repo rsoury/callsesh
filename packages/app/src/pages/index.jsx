@@ -25,12 +25,12 @@ import ChevronRight from "baseui/icon/chevron-right";
 import Layout from "@/components/Layout";
 import Card from "@/components/Card";
 import LabelControl from "@/components/LabelControl";
-import { getUser } from "@/middleware/auth";
 import isUserOperator from "@/utils/is-operator";
 import { setUser } from "@/hooks/use-user";
 import * as routes from "@/routes";
 import { UserProps, ChildrenProps } from "@/utils/common-prop-types";
 import PayoutsCard from "@/components/Cards/Payouts";
+import ssrUser from "@/utils/ssr-user";
 
 const Highlight = ({ children }) => {
 	const [css, theme] = useStyletron();
@@ -176,31 +176,30 @@ const Index = ({ user }) => {
 	);
 };
 
-export async function getServerSideProps({
+export function getServerSideProps({
 	req,
 	res,
 	query: { return_url: returnUrl = "/" }
 }) {
-	// Check if user already registered.
-	const user = await getUser(req);
-
-	if (isEmpty(user)) {
-		return { props: {} };
-	}
-
-	// If user is registered, redirect to settings/profile
-	if (!user.isRegistered) {
-		res.writeHead(302, {
-			Location: `${routes.page.register}?return_url=${returnUrl}`
-		});
-		res.end();
-	}
-
-	return {
-		props: {
-			user
+	return ssrUser({ req, res }, (user) => {
+		if (isEmpty(user)) {
+			return { props: {} };
 		}
-	};
+
+		// If user is registered, redirect to settings/profile
+		if (!user.isRegistered) {
+			res.writeHead(302, {
+				Location: `${routes.page.register}?return_url=${returnUrl}`
+			});
+			res.end();
+		}
+
+		return {
+			props: {
+				user
+			}
+		};
+	});
 }
 
 Index.propTypes = {

@@ -1,5 +1,5 @@
 /**
- * Manage credit cards using Stripe.
+ * Initiate Stripe Express OAuth or Login depending on if it has been setup or not.
  */
 
 import { publicUrl, stripe as stripeConfig } from "@/env-config";

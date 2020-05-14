@@ -5,6 +5,7 @@ import { useStyletron } from "baseui";
 import { HelpCircle as HelpIcon } from "react-feather";
 import { Tooltip } from "baseui/tooltip";
 import { Button } from "baseui/button";
+import { Block } from "baseui/block";
 
 import UppercaseLabel from "./UppercaseLabel";
 
@@ -64,9 +65,7 @@ const Card = ({
 							})}
 						>
 							<Tooltip
-								content={() => (
-									<div className={css({ maxWidth: "250px" })}>{helpText}</div>
-								)}
+								content={() => <Block maxWidth="250px">{helpText}</Block>}
 								showArrow
 								renderAll
 								autoFocus

@@ -18,12 +18,12 @@ import OperatorOnboarding, {
 	requiredValidationSchema
 } from "@/components/Onboarding/OperatorStep";
 import { FormContainer } from "@/components/Onboarding/FormLayout";
-import { getUser } from "@/middleware/auth";
 import isUserOperator from "@/utils/is-operator";
 import { UserProps } from "@/utils/common-prop-types";
 import { setUser } from "@/hooks/use-user";
 import request from "@/utils/request";
 import handleException, { alerts } from "@/utils/handle-exception";
+import ssrUser from "@/utils/ssr-user";
 
 // Activate operator field by default
 initialValues.operator = true;
@@ -113,23 +113,22 @@ const BecomeAnOperator = ({ user }) => {
 	);
 };
 
-export async function getServerSideProps({ req, res }) {
-	// Check if user already registered.
-	const user = await getUser(req);
-
-	if (isEmpty(user) || isUserOperator(user)) {
-		res.writeHead(302, {
-			Location: routes.page.index
-		});
-		res.end();
-		return { props: {} };
-	}
-
-	return {
-		props: {
-			user
+export function getServerSideProps({ req, res }) {
+	return ssrUser({ req, res }, (user) => {
+		if (isEmpty(user) || isUserOperator(user)) {
+			res.writeHead(302, {
+				Location: routes.page.index
+			});
+			res.end();
+			return { props: {} };
 		}
-	};
+
+		return {
+			props: {
+				user
+			}
+		};
+	});
 }
 
 BecomeAnOperator.propTypes = {
