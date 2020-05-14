@@ -13,6 +13,7 @@ import ChevronRight from "baseui/icon/chevron-right";
 import { ParagraphXSmall } from "baseui/typography";
 import { useStyletron, withStyle } from "baseui";
 import { StyledSpinnerNext } from "baseui/spinner";
+import { Tag, VARIANT as TAG_VARIANT, KIND as TAG_KIND } from "baseui/tag";
 
 import Highlight from "@/components/Highlight";
 import Link from "@/components/Link";
@@ -33,13 +34,13 @@ const Spinner = withStyle(StyledSpinnerNext, {
 	height: "20px"
 });
 
-const PayoutsCard = () => {
+const PayoutsCard = ({ ...props }) => {
 	const [css] = useStyletron();
 	const [user, isUserLoading] = useUser();
 
 	if (isUserLoading) {
 		return (
-			<Card {...cardProps}>
+			<Card {...cardProps} {...props}>
 				<div
 					className={css({
 						display: "flex",
@@ -55,9 +56,30 @@ const PayoutsCard = () => {
 	}
 
 	return (
-		<Card {...cardProps}>
+		<Card {...cardProps} {...props}>
 			{isStripeConnectAvailable(user.country) ? (
 				<div>
+					{user.payouts.setup && (
+						<div className={css({ marginBottom: "10px" })}>
+							{user.payouts.enabled ? (
+								<Tag
+									closeable={false}
+									kind={TAG_KIND.positive}
+									variant={TAG_VARIANT.solid}
+								>
+									Connected
+								</Tag>
+							) : (
+								<Tag
+									closeable={false}
+									kind={TAG_KIND.negative}
+									variant={TAG_VARIANT.solid}
+								>
+									Requires further information
+								</Tag>
+							)}
+						</div>
+					)}
 					<Link
 						href={routes.api.connect.start}
 						style={{ textDecoration: "none !important" }}
@@ -66,7 +88,7 @@ const PayoutsCard = () => {
 							startEnhancer={() => <SecureIcon size={22} />}
 							endEnhancer={() => <ChevronRight size={22} />}
 						>
-							{user.payoutsSetup ? `Manage` : `Setup`} Payouts
+							{user.payouts.setup ? `Manage` : `Setup`} Payouts
 						</Button>
 					</Link>
 					<ParagraphXSmall>

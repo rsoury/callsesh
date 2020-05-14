@@ -5,6 +5,7 @@ import camelCase from "lodash/camelCase";
 import mapKeys from "lodash/mapKeys";
 import isEmpty from "is-empty";
 import { parsePhoneNumberFromString } from "libphonenumber-js";
+import stripe from "@/stripe";
 
 import * as authManager from "@/auth-manager";
 import { auth0 as config, publicUrl, sessionSecret } from "@/env-config";
@@ -112,6 +113,19 @@ export const getUser = async (req, { withContext = false } = {}) => {
 		{}
 	);
 
+	// Get Stripe Connect info
+	const payouts = {
+		setup: !isEmpty(appMetadata.stripeConnectId),
+		enabled: false
+	};
+	if (payouts.setup) {
+		const {
+			charges_enabled: chargesEnabled,
+			payouts_enabled: payoutsEnabled
+		} = await stripe.accounts.retrieve(appMetadata.stripeConnectId);
+		payouts.enabled = chargesEnabled && payoutsEnabled;
+	}
+
 	let user = {
 		id: sessionUser.sub,
 		...sessionUser,
@@ -123,7 +137,7 @@ export const getUser = async (req, { withContext = false } = {}) => {
 			name: role.name,
 			description: role.description
 		})),
-		payoutsSetup: !isEmpty(appMetadata.stripeConnectId)
+		payouts
 	};
 	if (withContext) {
 		user = {

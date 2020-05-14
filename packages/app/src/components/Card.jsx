@@ -3,7 +3,10 @@ import PropTypes from "prop-types";
 import { Card as BaseCard, StyledBody } from "baseui/card";
 import { useStyletron } from "baseui";
 import { HelpCircle as HelpIcon } from "react-feather";
-import { Tooltip } from "baseui/tooltip";
+import {
+	StatefulTooltip as Tooltip,
+	PLACEMENT as TOOLTIP_PLACEMENT
+} from "baseui/tooltip";
 import { Button } from "baseui/button";
 import { Block } from "baseui/block";
 
@@ -16,7 +19,8 @@ const Card = ({
 	style,
 	actionText,
 	actionProps,
-	helpText
+	helpText,
+	helpPlacement
 }) => {
 	const [css] = useStyletron();
 
@@ -69,6 +73,7 @@ const Card = ({
 								showArrow
 								renderAll
 								autoFocus
+								placement={helpPlacement}
 							>
 								<div className={css({ display: "flex" })}>
 									<HelpIcon size={20} />
@@ -90,7 +95,8 @@ Card.propTypes = {
 	icon: PropTypes.oneOfType([
 		PropTypes.node,
 		PropTypes.func,
-		PropTypes.element
+		PropTypes.element,
+		PropTypes.elementType
 	]),
 	actionText: PropTypes.string,
 	actionProps: PropTypes.object,
@@ -101,7 +107,8 @@ Card.propTypes = {
 		PropTypes.node,
 		PropTypes.arrayOf(PropTypes.node)
 	]).isRequired,
-	style: PropTypes.object
+	style: PropTypes.object,
+	helpPlacement: PropTypes.string
 };
 
 Card.defaultProps = {
@@ -110,7 +117,8 @@ Card.defaultProps = {
 	actionText: "",
 	actionProps: {},
 	helpText: "",
-	style: {}
+	style: {},
+	helpPlacement: TOOLTIP_PLACEMENT.auto
 };
 
 export default Card;

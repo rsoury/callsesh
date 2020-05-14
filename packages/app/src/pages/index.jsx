@@ -18,9 +18,9 @@ import {
 } from "react-feather";
 import CopyToClipboard from "react-copy-to-clipboard";
 import { toaster } from "baseui/toast";
-import Link from "next/link";
 import { Button } from "baseui/button";
 import ChevronRight from "baseui/icon/chevron-right";
+import { PLACEMENT as TOOLTIP_PLACEMENT } from "baseui/tooltip";
 
 import Layout from "@/components/Layout";
 import Card from "@/components/Card";
@@ -30,6 +30,7 @@ import { setUser } from "@/hooks/use-user";
 import * as routes from "@/routes";
 import { UserProps, ChildrenProps } from "@/utils/common-prop-types";
 import PayoutsCard from "@/components/Cards/Payouts";
+import Link from "@/components/Link";
 import ssrUser from "@/utils/ssr-user";
 
 const Highlight = ({ children }) => {
@@ -87,7 +88,7 @@ const Index = ({ user }) => {
 									</Card>
 								</Cell>
 								<Cell span={[12, 4, 6]}>
-									<PayoutsCard />
+									<PayoutsCard helpPlacement={TOOLTIP_PLACEMENT.left} />
 								</Cell>
 							</>
 						) : (
