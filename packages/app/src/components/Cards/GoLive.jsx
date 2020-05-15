@@ -12,6 +12,7 @@ import {
 } from "baseui/checkbox";
 import { ParagraphXSmall } from "baseui/typography";
 import { StyledSpinnerNext } from "baseui/spinner";
+import { toaster } from "baseui/toast";
 
 import Card from "@/components/Card";
 import Highlight from "@/components/Highlight";
@@ -52,6 +53,15 @@ const GoLiveCard = ({ ...props }) => {
 			.then(({ data }) => data)
 			.then(({ value }) => {
 				setLive(value);
+				if (value) {
+					toaster.info(
+						`You're now live! Copy your Operator Link and share the news to your Socials, Website, Newsletter, or anywhere you'd like.`
+					);
+				} else {
+					toaster.info(
+						`You've ended your live. No calls will be made until you're live again.`
+					);
+				}
 			})
 			.catch((err) => {
 				handleException(err);
