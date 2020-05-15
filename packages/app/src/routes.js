@@ -14,7 +14,7 @@ export const page = {
 	cookiePolicy: "/cookie-policy",
 	settings: {
 		profile: "/settings/profile",
-		payments: "/settings/payments"
+		wallet: "/settings/wallet"
 	},
 	becomeAnOperator: "/become-an-operator",
 	referrals: "/referrals"

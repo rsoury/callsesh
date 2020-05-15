@@ -19,7 +19,7 @@ const VerifyField = ({ name, label, caption, ...props }) => (
 
 			return (
 				<FormControl
-					label={label || name ? () => label || name : null}
+					label={label ? () => label : null}
 					caption={caption ? () => caption : null}
 					error={meta.touched ? format.message(meta.error) : ""}
 				>

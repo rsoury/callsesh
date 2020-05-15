@@ -39,7 +39,12 @@ const patchMap = {
 	country: "metadata.user.country",
 	currency: "metadata.user.currency",
 	hourlyRate: "metadata.user.hourlyRate",
-	profilePicture: "metadata.user.profilePicture",
+	profilePicture: (patch, value) => {
+		// Will receive profilePicture object as value.
+		set(patch, "metadata.user.profilePicture", value);
+		patch.profile = value.cdnUrl;
+		return patch;
+	},
 	purpose: "metadata.user.purpose",
 	messageBroadcast: "metadata.user.messageBroadcast"
 };
@@ -180,10 +185,11 @@ handler
 		const entries = validatedEntries.filter((entry) => Array.isArray(entry));
 
 		const patchParams = entries.reduce((patch, [property, value]) => {
-			set(patch, patchMap[property], value);
-			// Exceptions
-			if (property === "profilePicture") {
-				patch.profile = value.cdnUrl;
+			const pmap = patchMap[property];
+			if (typeof pmap === "function") {
+				patch = pmap(patch, value);
+			} else {
+				set(patch, pmap, value);
 			}
 			return patch;
 		}, {});

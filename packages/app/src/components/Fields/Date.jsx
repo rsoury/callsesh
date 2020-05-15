@@ -14,7 +14,7 @@ const DateField = ({ name, label, caption, placeholder, ...props }) => (
 			form: { setFieldValue }
 		}) => (
 			<FormControl
-				label={() => label || name}
+				label={label ? () => label : null}
 				caption={() => caption}
 				error={
 					meta.touched && meta.error ? () => format.message(meta.error) : null

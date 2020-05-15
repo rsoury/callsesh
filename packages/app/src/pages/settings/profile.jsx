@@ -18,7 +18,6 @@ import {
 	DollarSign as HourlyRateIcon,
 	Image as PictureIcon,
 	AlignLeft as PurposeIcon,
-	MessageCircle as MessageIcon,
 	Users as GenderIcon,
 	Calendar as CalendarIcon
 } from "react-feather";
@@ -64,7 +63,12 @@ const EDIT_TYPES = {
 	messageBroadcast: "messageBroadcast"
 };
 
+/* eslint-disable react/prop-types */
 const getEditConfig = (user, type) => {
+	if (isEmpty(user)) {
+		return {};
+	}
+
 	let editConfig = {
 		[EDIT_TYPES.firstName]: {
 			title: "First Name",
@@ -73,7 +77,13 @@ const getEditConfig = (user, type) => {
 			},
 			initialValue: user.givenName,
 			// Will be passing in object data as props to component
-			Component: (props) => <TextField {...props} />
+			Component: (props) => (
+				<Grid>
+					<Cell span={12}>
+						<TextField {...props} />
+					</Cell>
+				</Grid>
+			)
 		},
 		[EDIT_TYPES.lastName]: {
 			title: "Last Name",
@@ -81,7 +91,13 @@ const getEditConfig = (user, type) => {
 				return validate(generalSchemaProperties.lastName.required(), values);
 			},
 			initialValue: user.familyName,
-			Component: (props) => <TextField {...props} />
+			Component: (props) => (
+				<Grid>
+					<Cell span={12}>
+						<TextField {...props} />
+					</Cell>
+				</Grid>
+			)
 		},
 		[EDIT_TYPES.username]: {
 			title: "Username",
@@ -89,14 +105,17 @@ const getEditConfig = (user, type) => {
 				return validate(generalSchemaProperties.username.required(), values);
 			},
 			initialValue: user.username,
-			// eslint-disable-next-line
 			Component: ({ values: { username }, ...props }) => (
-				<TextField
-					{...props}
-					caption={`Your link will look like ${publicUrl}/u/${
-						username || "..."
-					}`}
-				/>
+				<Grid>
+					<Cell>
+						<TextField
+							{...props}
+							caption={`Your link will look like ${publicUrl}/u/${
+								username || "..."
+							}`}
+						/>
+					</Cell>
+				</Grid>
 			)
 		},
 		[EDIT_TYPES.gender]: {
@@ -105,15 +124,27 @@ const getEditConfig = (user, type) => {
 				return validate(generalSchemaProperties.gender.required(), values);
 			},
 			initialValue: genderOptions.find(({ label }) => label === user.gender),
-			Component: (props) => <SelectField {...props} options={genderOptions} />
+			Component: (props) => (
+				<Grid>
+					<Cell span={12}>
+						<SelectField {...props} options={genderOptions} />
+					</Cell>
+				</Grid>
+			)
 		},
 		[EDIT_TYPES.dob]: {
 			title: "Date Of Birth",
 			validate(values) {
 				return validate(generalSchemaProperties.dob.required(), values);
 			},
-			initialValue: user.dob,
-			Component: (props) => <DateField {...props} caption="YYYY/MM/DD" />
+			initialValue: new Date(user.dob),
+			Component: (props) => (
+				<Grid>
+					<Cell span={12}>
+						<DateField {...props} caption="YYYY/MM/DD" />
+					</Cell>
+				</Grid>
+			)
 		}
 	};
 	if (user.operator) {
@@ -141,18 +172,20 @@ const getEditConfig = (user, type) => {
 				initialValue: user.hourlyRate,
 				// eslint-disable-next-line
 				Component: ({ values: { hourlyRate }, ...props }) => (
-					<div>
-						<TextField
-							{...props}
-							label="What is your hourly rate?"
-							startEnhancer={() => <HourlyRateIcon />}
-							endEnhancer={() => <span>/hour</span>}
-							caption={`Callers will be charged per second based on this rate. Currency is in ${user.currency}.`}
-							placeholder="30"
-							numeric
-						/>
-						<FeeCalculator hourlyRate={hourlyRate} />
-					</div>
+					<Grid>
+						<Cell span={12}>
+							<TextField
+								{...props}
+								label="What is your hourly rate?"
+								startEnhancer={() => <HourlyRateIcon />}
+								endEnhancer={() => <span>/hour</span>}
+								caption={`Callers will be charged per second based on this rate. Currency is in ${user.currency}.`}
+								placeholder="30"
+								numeric
+							/>
+							<FeeCalculator hourlyRate={hourlyRate} />
+						</Cell>
+					</Grid>
 				)
 			},
 			[EDIT_TYPES.profilePicture]: {
@@ -163,13 +196,17 @@ const getEditConfig = (user, type) => {
 						values
 					);
 				},
-				initialValue: user.profilePicture,
+				initialValue: user.profilePicture || { cdnUrl: user.picture }, // TODO: For some reason this is returning profilePicture: undefined.
 				Component: (props) => (
-					<FileUploaderField
-						{...props}
-						caption="Must be a JPEG or PNG with a max size of 2MB"
-						images
-					/>
+					<Grid>
+						<Cell span={12}>
+							<FileUploaderField
+								{...props}
+								caption="Must be a JPEG or PNG with a max size of 2MB"
+								images
+							/>
+						</Cell>
+					</Grid>
 				)
 			},
 			[EDIT_TYPES.purpose]: {
@@ -178,14 +215,28 @@ const getEditConfig = (user, type) => {
 					return validate(operatorSchemaProperties.purpose.required(), values);
 				},
 				initialValue: purposeInitialValue,
-				Component: (props) => (
-					<SelectField
-						{...props}
-						name="purpose.option"
-						label="What will you be offering your callers?"
-						options={purposeOptions}
-						caption="This will appear on your public operator profile"
-					/>
+				Component: ({ values: { purpose }, props }) => (
+					<Grid>
+						<Cell span={purpose.option?.id === "other" ? [12, 4, 6] : 12}>
+							<SelectField
+								{...props}
+								name="purpose.option"
+								label="What will you be offering your callers?"
+								options={purposeOptions}
+								caption="This will appear on your public operator profile"
+							/>
+						</Cell>
+						{purpose.option?.id === "other" && (
+							<Cell span={[12, 4, 6]}>
+								<TextField
+									name="purpose.value"
+									label="Other?"
+									placeholder="Medical Advice"
+									maxLength={50}
+								/>
+							</Cell>
+						)}
+					</Grid>
 				)
 			},
 			[EDIT_TYPES.messageBroadcast]: {
@@ -198,20 +249,24 @@ const getEditConfig = (user, type) => {
 				},
 				initialValue: user.messageBroadcast,
 				Component: (props) => (
-					<TextField
-						{...props}
-						label="Have a message for your callers? Could be your biography, or a note about your calls."
-						placeholder="Hey! One thing you should know about me is..."
-						maxLength={240}
-						area
-						overrides={{
-							Input: {
-								style: {
-									minHeight: "150px"
-								}
-							}
-						}}
-					/>
+					<Grid>
+						<Cell span={12}>
+							<TextField
+								{...props}
+								label="Have a message for your callers? Could be your biography, or a note about your calls."
+								placeholder="Hey! One thing you should know about me is..."
+								maxLength={240}
+								area
+								overrides={{
+									Input: {
+										style: {
+											minHeight: "150px"
+										}
+									}
+								}}
+							/>
+						</Cell>
+					</Grid>
 				)
 			}
 		};
@@ -219,12 +274,18 @@ const getEditConfig = (user, type) => {
 
 	return editConfig[type] || {};
 };
+/* eslint-enable react/prop-types */
 
 const Profile = () => {
 	const [css, theme] = useStyletron();
 	const [user, isUserLoading] = useUser();
 	const [editType, setEditType] = useState("");
 
+	const {
+		Component: EditModalField = null,
+		initialValue,
+		...editConfig
+	} = getEditConfig(user, editType);
 	const editModalProps = {
 		onClose() {
 			setEditType("");
@@ -234,8 +295,17 @@ const Profile = () => {
 				.patch(routes.api.user, values)
 				.then(({ data }) => data)
 				.then(() => setEditType(""));
-		}
+		},
+		initialValues: {
+			[editType]: initialValue
+		},
+		...editConfig
 	};
+	const editModalFieldProps = {
+		name: editType
+	};
+	console.log(editModalProps);
+	console.log(editModalFieldProps);
 
 	return (
 		<Layout>
@@ -245,7 +315,11 @@ const Profile = () => {
 					width: "100%",
 					maxWidth: "1000px",
 					margin: "0 auto",
-					padding: "0 20px 50px 20px"
+					padding: "0 20px 50px 20px",
+					[theme.mediaQuery.maxSmall]: {
+						paddingLeft: "0px",
+						paddingRight: "0px"
+					}
 				})}
 			>
 				<Grid>
@@ -256,7 +330,7 @@ const Profile = () => {
 						<Heading marginTop="0px">Profile</Heading>
 					</Cell>
 				</Grid>
-				{isUserLoading ? (
+				{isUserLoading || isEmpty(user) ? (
 					<SettingsSkeleton />
 				) : (
 					<div>
@@ -415,16 +489,18 @@ const Profile = () => {
 								<Cell span={12}>
 									<LabelControl
 										label="What message would you like to leave for your page visitors?"
-										startEnhancer={() => <MessageIcon size={20} />}
 										endEnhancer={() => (
 											<EditEnhancer
 												onClick={() => setEditType(EDIT_TYPES.messageBroadcast)}
 											/>
 										)}
 									>
-										<Paragraph margin="0">
-											{nl2br(user.messageBroadcast)}
-										</Paragraph>
+										<Paragraph
+											margin="0"
+											dangerouslySetInnerHTML={{
+												__html: nl2br(user.messageBroadcast)
+											}}
+										/>
 									</LabelControl>
 								</Cell>
 							</Grid>
@@ -432,28 +508,9 @@ const Profile = () => {
 					</div>
 				)}
 			</div>
-			{(() => {
-				const isOpen = !isEmpty(editType);
-				if (!isOpen) {
-					return null;
-				}
-				const { Component, name, initialValue, ...editConfig } = getEditConfig(
-					user,
-					editType
-				);
-				return (
-					<EditModal
-						isOpen={isOpen}
-						{...editModalProps}
-						{...editConfig}
-						initialValues={{
-							[name]: initialValue
-						}}
-					>
-						<Component name={name} />
-					</EditModal>
-				);
-			})()}
+			<EditModal isOpen={!isEmpty(editType)} {...editModalProps}>
+				{EditModalField ? <EditModalField {...editModalFieldProps} /> : <div />}
+			</EditModal>
 		</Layout>
 	);
 };

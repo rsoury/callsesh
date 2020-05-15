@@ -32,7 +32,7 @@ const FileUploaderField = ({ name, label, caption, images, fileSizeLimit }) => {
 		<Field name={name} id={id}>
 			{({ field: { value }, meta, form: { setFieldValue } }) => (
 				<LabelControl
-					label={() => label || name}
+					label={label ? () => label : null}
 					caption={() => caption}
 					error={
 						meta.touched && meta.error

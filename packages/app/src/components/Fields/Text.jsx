@@ -38,7 +38,7 @@ const TextField = ({
 		<Field name={name} id={snakeCase(name)}>
 			{({ field: { onChange, ...field }, meta }) => (
 				<FormControl
-					label={() => label || name}
+					label={label ? () => label : null}
 					caption={() => caption}
 					error={
 						meta.touched && meta.error ? () => format.message(meta.error) : null
