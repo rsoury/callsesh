@@ -112,7 +112,8 @@ handler
 					...updateParams.metadata.user,
 					hourlyRate,
 					purpose,
-					messageBroadcast
+					messageBroadcast,
+					isLive: false
 				};
 
 				// Assign role to user.

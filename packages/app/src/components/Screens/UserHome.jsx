@@ -4,8 +4,7 @@ import { Grid, Cell } from "baseui/layout-grid";
 import {
 	Star as StarIcon,
 	Map as MapIcon,
-	PhoneCall as OperatorIcon,
-	Radio as LiveIcon
+	PhoneCall as OperatorIcon
 } from "react-feather";
 import { Button } from "baseui/button";
 import ChevronRight from "baseui/icon/chevron-right";
@@ -16,6 +15,7 @@ import isUserOperator from "@/utils/is-operator";
 import * as routes from "@/routes";
 import PayoutsCard from "@/components/Cards/Payouts";
 import LinksCard from "@/components/Cards/Links";
+import GoLiveCard from "@/components/Cards/GoLive";
 import Link from "@/components/Link";
 import Highlight from "@/components/Highlight";
 import useUser from "@/hooks/use-user";
@@ -35,9 +35,7 @@ const UserHomeScreen = () => {
 				{isOperator ? (
 					<>
 						<Cell span={[12, 4, 6]}>
-							<Card title="Go Live" icon={LiveIcon}>
-								<Paragraph>Go live</Paragraph>
-							</Card>
+							<GoLiveCard />
 						</Cell>
 						<Cell span={[12, 4, 6]}>
 							<PayoutsCard helpPlacement={TOOLTIP_PLACEMENT.left} />
