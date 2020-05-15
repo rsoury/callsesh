@@ -29,6 +29,23 @@ const cardProps = {
 	helpText: `Receive your payouts by connecting your bank account and appropriate information. We will hold your pending payouts until you have connected a verified payout method.`
 };
 
+const tagProps = {
+	closeable: false,
+	variant: TAG_VARIANT.solid,
+	overrides: {
+		Root: {
+			style: {
+				margin: "0px"
+			}
+		},
+		Text: {
+			style: {
+				maxWidth: "none"
+			}
+		}
+	}
+};
+
 const Spinner = withStyle(StyledSpinnerNext, {
 	width: "20px",
 	height: "20px"
@@ -62,19 +79,11 @@ const PayoutsCard = ({ ...props }) => {
 					{user.payouts.setup && (
 						<div className={css({ marginBottom: "10px" })}>
 							{user.payouts.enabled ? (
-								<Tag
-									closeable={false}
-									kind={TAG_KIND.positive}
-									variant={TAG_VARIANT.solid}
-								>
+								<Tag {...tagProps} kind={TAG_KIND.positive}>
 									Connected
 								</Tag>
 							) : (
-								<Tag
-									closeable={false}
-									kind={TAG_KIND.negative}
-									variant={TAG_VARIANT.solid}
-								>
+								<Tag {...tagProps} kind={TAG_KIND.negative}>
 									Requires further information
 								</Tag>
 							)}
