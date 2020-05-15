@@ -95,7 +95,13 @@ export const validationSchema = yup.object().shape({
 			id: yup.string().oneOf(["male", "female", "other"])
 		})
 		.required(),
-	dob: yup.string()
+	dob: yup
+		.string()
+		.test(
+			"is-over-18",
+			"Must be over 18 years of age",
+			(value) => new Date().getFullYear() - new Date(value).getFullYear() > 18
+		)
 });
 
 const GeneralStep = ({ setFieldValue, values }) => {

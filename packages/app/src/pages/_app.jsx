@@ -5,14 +5,23 @@ import { Provider as StyletronProvider } from "styletron-react";
 import { ToasterContainer, PLACEMENT as TOOLTIP_PLACEMENT } from "baseui/toast";
 import { DefaultSeo } from "next-seo";
 import initFastclick from "react-fastclick";
+import NProgress from "nprogress";
+import Router from "next/router";
 
 import { engine, debug } from "@config/styletron";
 import seoConfig from "@config/seo";
 
 import "setimmediate";
 import "modern-normalize";
+import "nprogress/nprogress.css";
 import "@/styles.css";
 
+// Add a page load progress indicator
+Router.events.on("routeChangeStart", () => NProgress.start());
+Router.events.on("routeChangeComplete", () => NProgress.done());
+Router.events.on("routeChangeError", () => NProgress.done());
+
+// Setup Baseui Theme
 const theme = {
 	...LightTheme,
 	mediaQuery: {

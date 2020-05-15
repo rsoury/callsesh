@@ -8,6 +8,16 @@ button span {
 	box-sizing: content-box;
 }
 
+/* Remove Shadow from Baseui App Nav bar... doesn't offer overrides yet... */
 #callsesh-header > div {
 	box-shadow: none !important;
+}
+
+/* Router Progress */
+#nprogress .spinner {
+	display: none !important;
+}
+#nprogress .bar {
+	background: #000000 !important;
+	z-index: 999999999;
 }
