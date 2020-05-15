@@ -39,7 +39,7 @@ const patchMap = {
 	country: "metadata.user.country",
 	currency: "metadata.user.currency",
 	hourlyRate: "metadata.user.hourlyRate",
-	profilePicture: "picture",
+	profilePicture: "metadata.user.profilePicture",
 	purpose: "metadata.user.purpose",
 	messageBroadcast: "metadata.user.messageBroadcast"
 };
@@ -104,6 +104,7 @@ handler
 
 		if (!isEmpty(profilePicture)) {
 			updateParams.picture = profilePicture.cdnUrl;
+			updateParams.metadata.user.profilePicture = profilePicture;
 		}
 
 		try {
@@ -180,6 +181,10 @@ handler
 
 		const patchParams = entries.reduce((patch, [property, value]) => {
 			set(patch, patchMap[property], value);
+			// Exceptions
+			if (property === "profilePicture") {
+				patch.profile = value.cdnUrl;
+			}
 			return patch;
 		}, {});
 

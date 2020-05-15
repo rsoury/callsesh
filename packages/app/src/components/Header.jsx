@@ -4,7 +4,7 @@ import React from "react";
 import { useStyletron } from "baseui";
 import { Button, KIND as BUTTON_KIND } from "baseui/button";
 import {
-	CreditCard as PaymentMethodsIcon,
+	CreditCard as PaymentsIcon,
 	User as ProfileIcon,
 	LogOut as LogoutIcon
 } from "react-feather";
@@ -111,10 +111,10 @@ const Header = () => {
 				mapItemToString: NavItemLabel
 			},
 			{
-				icon: PaymentMethodsIcon,
+				icon: PaymentsIcon,
 				item: {
-					label: "Payment Methods",
-					href: routes.page.settings.paymentMethods
+					label: "Payments",
+					href: routes.page.settings.payments
 				},
 				mapItemToNode: NavItem,
 				mapItemToString: NavItemLabel

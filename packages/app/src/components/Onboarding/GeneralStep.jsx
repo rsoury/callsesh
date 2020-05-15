@@ -34,7 +34,7 @@ const confettiConfig = {
 	colors: ["#a864fd", "#29cdff", "#78ff44", "#ff718d", "#fdff6a"]
 };
 
-const genderOptions = [
+export const genderOptions = [
 	{ label: "Male", id: "male" },
 	{ label: "Female", id: "female" },
 	{ label: "Other", id: "other" }
@@ -76,7 +76,7 @@ export const initialValues = {
 	dob: new Date("1996/08/31")
 };
 
-export const validationSchema = yup.object().shape({
+export const schemaProperties = {
 	firstName: yup.string().required(),
 	lastName: yup.string().required(),
 	username: yup
@@ -102,7 +102,9 @@ export const validationSchema = yup.object().shape({
 			"Must be over 18 years of age",
 			(value) => new Date().getFullYear() - new Date(value).getFullYear() > 18
 		)
-});
+};
+
+export const validationSchema = yup.object().shape(schemaProperties);
 
 const GeneralStep = ({ setFieldValue, values }) => {
 	const [css] = useStyletron();

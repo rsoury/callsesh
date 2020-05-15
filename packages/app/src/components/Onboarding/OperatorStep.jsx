@@ -1,6 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { H1 as Heading, H5 as Subheader, LabelSmall } from "baseui/typography";
+import { H1 as Heading, H5 as Subheader } from "baseui/typography";
 import { useStyletron } from "baseui";
 import { Grid, Cell } from "baseui/layout-grid";
 import { STYLE_TYPE as CHECKBOX_STYLE_TYPE } from "baseui/checkbox";
@@ -9,23 +9,18 @@ import { ListItem, ListItemLabel, ARTWORK_SIZES } from "baseui/list";
 import {
 	PhoneOff as AnonPhoneIcon,
 	Send as PayoutsIcon,
-	DollarSign as HourlyRateIcon,
-	HelpCircle as HelpIcon
+	DollarSign as HourlyRateIcon
 } from "react-feather";
 import * as yup from "yup";
-import {
-	StatefulTooltip as Tooltip,
-	PLACEMENT as TOOLTIP_PLACEMENT
-} from "baseui/tooltip";
-import isEmpty from "is-empty";
 
 import SelectField from "@/components/Fields/Select";
 import TextField from "@/components/Fields/Text";
 import CheckboxField from "@/components/Fields/Checkbox";
 import FileUploaderField from "@/components/Fields/FileUploader";
 import Emoji from "@/components/Emoji";
-import { FEE_MULTIPLIER } from "@/constants";
 import useUser from "@/hooks/use-user";
+
+import FeeCalculator from "./FeeCalculator";
 
 const listItemProps = {
 	artworkSize: ARTWORK_SIZES.MEDIUM,
@@ -51,7 +46,7 @@ const listItemProps = {
 	}
 };
 
-const purposeOptions = [
+export const purposeOptions = [
 	{ label: "Advice", id: "advice" },
 	{ label: "Expertise", id: "expertise" },
 	{ label: "Consultancy", id: "consultancy" },
@@ -72,7 +67,7 @@ export const initialValues = {
 	messageBroadcast: ""
 };
 
-const schemaProperties = {
+export const schemaProperties = {
 	operator: yup.boolean(),
 	hourlyRate: yup.string(),
 	profilePicture: yup.object().shape({
@@ -194,64 +189,7 @@ const OperatorStep = ({ values }) => {
 									placeholder="30"
 									numeric
 								/>
-								<div>
-									<div className={css({ marginBottom: "10px" })}>
-										<Tooltip
-											content={() => (
-												<div className={css({ maxWidth: "300px" })}>
-													Our fees allow us to faciliate the platform, user
-													support and future development. If you have any
-													questions, please feel free to contact Callsesh
-													Support.
-												</div>
-											)}
-											placement={TOOLTIP_PLACEMENT.topLeft}
-										>
-											<div
-												className={css({
-													display: "flex",
-													alignItems: "center",
-													justifyContent: "flex-start"
-												})}
-											>
-												<LabelSmall>
-													Callsesh fees are{" "}
-													<strong>
-														$
-														{isEmpty(values.hourlyRate)
-															? "0.00"
-															: (
-																	FEE_MULTIPLIER * parseFloat(values.hourlyRate)
-															  ).toFixed(2)}{" "}
-														/ hour
-													</strong>
-												</LabelSmall>
-												<div className={css({ marginLeft: "5px" })}>
-													<HelpIcon size={18} />
-												</div>
-											</div>
-										</Tooltip>
-									</div>
-									<div className={css({ marginBottom: "10px" })}>
-										<LabelSmall
-											className={css({
-												color: `${theme.colors.accent} !important`
-											})}
-										>
-											You will be paid{" "}
-											<strong>
-												$
-												{isEmpty(values.hourlyRate)
-													? "0.00"
-													: (
-															(1 - FEE_MULTIPLIER) *
-															parseFloat(values.hourlyRate)
-													  ).toFixed(2)}{" "}
-												/ hour
-											</strong>
-										</LabelSmall>
-									</div>
-								</div>
+								<FeeCalculator hourlyRate={values.hourlyRate} />
 							</div>
 						</Cell>
 						<Cell span={12}>

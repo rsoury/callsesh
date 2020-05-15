@@ -18,9 +18,11 @@ export const initialValues = {
 	paymentMethod: {}
 };
 
-export const validationSchema = yup.object().shape({
+export const schemaProperties = {
 	paymentMethod: yup.object()
-});
+};
+
+export const validationSchema = yup.object().shape(schemaProperties);
 
 const CallerStep = ({ formValues }) => {
 	const [css, theme] = useStyletron();

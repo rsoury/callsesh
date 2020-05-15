@@ -63,7 +63,7 @@ const FileUploaderField = ({ name, label, caption, images, fileSizeLimit }) => {
 						// }}
 						onChange={(info) => setFieldValue(name, info)}
 					/>
-					{!isEmpty(value) && (
+					{images && !isEmpty(value) && (
 						<div className={css({ padding: "10px 0 0" })}>
 							<Avatar name={name} size="scale4800" src={value.cdnUrl} />
 						</div>
