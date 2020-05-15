@@ -64,16 +64,14 @@ const EDIT_TYPES = {
 	messageBroadcast: "messageBroadcast"
 };
 
-const getEditConfig = (user) => {
+const getEditConfig = (user, type) => {
 	let editConfig = {
 		[EDIT_TYPES.firstName]: {
 			title: "First Name",
 			validate(values) {
 				return validate(generalSchemaProperties.firstName.required(), values);
 			},
-			initialValues: {
-				firstName: user.givenName
-			},
+			initialValue: user.givenName,
 			// Will be passing in object data as props to component
 			Component: (props) => <TextField {...props} />
 		},
@@ -82,9 +80,7 @@ const getEditConfig = (user) => {
 			validate(values) {
 				return validate(generalSchemaProperties.lastName.required(), values);
 			},
-			initialValues: {
-				lastName: user.familyName
-			},
+			initialValue: user.familyName,
 			Component: (props) => <TextField {...props} />
 		},
 		[EDIT_TYPES.username]: {
@@ -92,9 +88,7 @@ const getEditConfig = (user) => {
 			validate(values) {
 				return validate(generalSchemaProperties.username.required(), values);
 			},
-			initialValues: {
-				username: user.username
-			},
+			initialValue: user.username,
 			// eslint-disable-next-line
 			Component: ({ values: { username }, ...props }) => (
 				<TextField
@@ -110,9 +104,7 @@ const getEditConfig = (user) => {
 			validate(values) {
 				return validate(generalSchemaProperties.gender.required(), values);
 			},
-			initialValues: {
-				gender: genderOptions.find(({ label }) => label === user.gender)
-			},
+			initialValue: genderOptions.find(({ label }) => label === user.gender),
 			Component: (props) => <SelectField {...props} options={genderOptions} />
 		},
 		[EDIT_TYPES.dob]: {
@@ -120,9 +112,7 @@ const getEditConfig = (user) => {
 			validate(values) {
 				return validate(generalSchemaProperties.dob.required(), values);
 			},
-			initialValues: {
-				dob: user.dob
-			},
+			initialValue: user.dob,
 			Component: (props) => <DateField {...props} caption="YYYY/MM/DD" />
 		}
 	};
@@ -148,9 +138,7 @@ const getEditConfig = (user) => {
 						values
 					);
 				},
-				initialValues: {
-					hourlyRate: user.hourlyRate
-				},
+				initialValue: user.hourlyRate,
 				// eslint-disable-next-line
 				Component: ({ values: { hourlyRate }, ...props }) => (
 					<div>
@@ -175,9 +163,7 @@ const getEditConfig = (user) => {
 						values
 					);
 				},
-				initialValues: {
-					profilePicture: {}
-				},
+				initialValue: user.profilePicture,
 				Component: (props) => (
 					<FileUploaderField
 						{...props}
@@ -191,9 +177,7 @@ const getEditConfig = (user) => {
 				validate(values) {
 					return validate(operatorSchemaProperties.purpose.required(), values);
 				},
-				initialValues: {
-					purpose: purposeInitialValue
-				},
+				initialValue: purposeInitialValue,
 				Component: (props) => (
 					<SelectField
 						{...props}
@@ -212,9 +196,7 @@ const getEditConfig = (user) => {
 						values
 					);
 				},
-				initialValues: {
-					messageBroadcast: user.messageBroadcast
-				},
+				initialValue: user.messageBroadcast,
 				Component: (props) => (
 					<TextField
 						{...props}
@@ -234,11 +216,12 @@ const getEditConfig = (user) => {
 			}
 		};
 	}
-	return editConfig;
+
+	return editConfig[type] || {};
 };
 
 const Profile = () => {
-	const [css] = useStyletron();
+	const [css, theme] = useStyletron();
 	const [user, isUserLoading] = useUser();
 	const [editType, setEditType] = useState("");
 
@@ -363,10 +346,10 @@ const Profile = () => {
 										<div>
 											<Avatar
 												name="profilePicture"
-												size="scale2400"
+												size="scale4800"
 												src={user.picture}
 											/>
-											<div className={css({ padding: "10px 0" })}>
+											<div className={css({ paddingTop: "10px" })}>
 												<Button
 													onClick={() => setEditType(EDIT_TYPES.profilePicture)}
 													startEnhancer={() => <PictureIcon size={20} />}
@@ -378,30 +361,43 @@ const Profile = () => {
 									</LabelControl>
 								</Cell>
 								<Cell span={12}>
-									<LabelControl
-										label="Hourly Rate"
-										startEnhancer={() => <HourlyRateIcon size={20} />}
-										endEnhancer={() => (
-											<div
-												className={css({
-													display: "flex",
-													alignItems: "center"
-												})}
-											>
-												<span className={css({ marginRight: "10px" })}>
-													/hour
-												</span>
-												<EditEnhancer
-													onClick={() => setEditType(EDIT_TYPES.hourlyRate)}
-												/>
-											</div>
-										)}
-										caption={() => (
-											<FeeCalculator hourlyRate={user.hourlyRate} />
-										)}
+									<div
+										className={css({
+											padding: "20px 0",
+											margin: "10px 0 20px",
+											borderTopWidth: "1px",
+											borderTopStyle: "solid",
+											borderTopColor: theme.colors.borderOpaque,
+											borderBottomWidth: "1px",
+											borderBottomStyle: "solid",
+											borderBottomColor: theme.colors.borderOpaque
+										})}
 									>
-										<Paragraph margin="0">{user.hourlyRate}</Paragraph>
-									</LabelControl>
+										<LabelControl
+											label="Hourly Rate"
+											startEnhancer={() => <HourlyRateIcon size={20} />}
+											endEnhancer={() => (
+												<div
+													className={css({
+														display: "flex",
+														alignItems: "center"
+													})}
+												>
+													<span className={css({ marginRight: "10px" })}>
+														/hour
+													</span>
+													<EditEnhancer
+														onClick={() => setEditType(EDIT_TYPES.hourlyRate)}
+													/>
+												</div>
+											)}
+											caption={() => (
+												<FeeCalculator hourlyRate={user.hourlyRate} />
+											)}
+										>
+											<Paragraph margin="0">{user.hourlyRate}</Paragraph>
+										</LabelControl>
+									</div>
 								</Cell>
 								<Cell span={12}>
 									<LabelControl
@@ -436,9 +432,28 @@ const Profile = () => {
 					</div>
 				)}
 			</div>
-			{!isEmpty(editType) && (
-				<EditModal {...editModalProps} {...getEditConfig(user)[editType]} />
-			)}
+			{(() => {
+				const isOpen = !isEmpty(editType);
+				if (!isOpen) {
+					return null;
+				}
+				const { Component, name, initialValue, ...editConfig } = getEditConfig(
+					user,
+					editType
+				);
+				return (
+					<EditModal
+						isOpen={isOpen}
+						{...editModalProps}
+						{...editConfig}
+						initialValues={{
+							[name]: initialValue
+						}}
+					>
+						<Component name={name} />
+					</EditModal>
+				);
+			})()}
 		</Layout>
 	);
 };

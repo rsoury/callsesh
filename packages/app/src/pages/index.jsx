@@ -2,14 +2,11 @@ import isEmpty from "is-empty";
 
 import Layout from "@/components/Layout";
 import UserHomeScreen from "@/components/Screens/UserHome";
-import { setUser } from "@/hooks/use-user";
 import * as routes from "@/routes";
 import { UserProps } from "@/utils/common-prop-types";
 import ssrUser from "@/utils/ssr-user";
 
 const Index = ({ user }) => {
-	setUser(user);
-
 	const isAuthenticated = !isEmpty(user);
 
 	return (

@@ -55,11 +55,11 @@ const SettingsEditModal = ({
 				validateOnChange
 				validateOnBlur
 			>
-				{({ isSubmitting, submitForm }) => {
+				{({ isSubmitting, submitForm, values }) => {
 					return (
 						<>
 							<ModalBody>
-								<Form>{children}</Form>
+								<Form>{React.cloneElement(children, { values })}</Form>
 							</ModalBody>
 							<ModalFooter>
 								<ModalButton onClick={onClose} kind={BUTTON_KIND.minimal}>

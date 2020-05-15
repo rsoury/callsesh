@@ -10,6 +10,7 @@ import Router from "next/router";
 
 import { engine, debug } from "@config/styletron";
 import seoConfig from "@config/seo";
+import UserProvider from "@/components/UserProvider";
 
 import "setimmediate";
 import "modern-normalize";
@@ -56,22 +57,24 @@ class App extends NextApp {
 		return (
 			<StyletronProvider value={engine} debug={debug} debugAfterHydration>
 				<BaseProvider theme={theme}>
-					<DefaultSeo {...seoConfig} />
-					<ToasterContainer
-						placement={TOOLTIP_PLACEMENT.topRight}
-						autoHideDuration={10000}
-						overrides={{
-							Root: {
-								style: {
-									zIndex: "99999999"
+					<UserProvider>
+						<DefaultSeo {...seoConfig} />
+						<ToasterContainer
+							placement={TOOLTIP_PLACEMENT.topRight}
+							autoHideDuration={10000}
+							overrides={{
+								Root: {
+									style: {
+										zIndex: "99999999"
+									}
 								}
-							}
-						}}
-					>
-						<Container id="callsesh-app">
-							<Component {...pageProps} />
-						</Container>
-					</ToasterContainer>
+							}}
+						>
+							<Container id="callsesh-app">
+								<Component {...pageProps} />
+							</Container>
+						</ToasterContainer>
+					</UserProvider>
 				</BaseProvider>
 			</StyletronProvider>
 		);

@@ -20,7 +20,6 @@ import OperatorOnboarding, {
 import { FormContainer } from "@/components/Onboarding/FormLayout";
 import isUserOperator from "@/utils/is-operator";
 import { UserProps } from "@/utils/common-prop-types";
-import { setUser } from "@/hooks/use-user";
 import request from "@/utils/request";
 import handleException, { alerts } from "@/utils/handle-exception";
 import ssrUser from "@/utils/ssr-user";
@@ -29,7 +28,6 @@ import ssrUser from "@/utils/ssr-user";
 initialValues.operator = true;
 
 const BecomeAnOperator = ({ user }) => {
-	setUser(user);
 	const [css] = useStyletron();
 
 	const handleSubmit = useCallback((values, actions) => {

@@ -24,8 +24,6 @@ import CallerStep, {
 } from "@/components/Onboarding/CallerStep";
 import request from "@/utils/request";
 import handleException, { alerts } from "@/utils/handle-exception";
-import { setUser } from "@/hooks/use-user";
-import { UserProps } from "@/utils/common-prop-types";
 import ssrUser from "@/utils/ssr-user";
 
 const formSteps = [
@@ -49,8 +47,7 @@ const formSteps = [
 	}
 ];
 
-const GetStarted = ({ user }) => {
-	setUser(user);
+const GetStarted = () => {
 	const [isSubmitting, setSubmitting] = useState(false);
 
 	const handleSubmit = useCallback((values) => {
@@ -124,18 +121,10 @@ export function getServerSideProps({ req, res }) {
 
 		return {
 			props: {
-				user
+				user // User data retrieved by provider
 			}
 		};
 	});
 }
-
-GetStarted.propTypes = {
-	user: UserProps
-};
-
-GetStarted.defaultProps = {
-	user: {}
-};
 
 export default GetStarted;
