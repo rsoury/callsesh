@@ -11,8 +11,7 @@ import {
 } from "react-feather";
 import ChevronRight from "baseui/icon/chevron-right";
 import { ParagraphXSmall } from "baseui/typography";
-import { useStyletron, withStyle } from "baseui";
-import { StyledSpinnerNext } from "baseui/spinner";
+import { useStyletron } from "baseui";
 import { Tag, VARIANT as TAG_VARIANT, KIND as TAG_KIND } from "baseui/tag";
 
 import Highlight from "@/components/Highlight";
@@ -22,6 +21,8 @@ import * as routes from "@/routes";
 import { isStripeConnectAvailable } from "@/utils/user-support";
 import useUser from "@/hooks/use-user";
 import { PAYOUTS_SUBMISSION_FORM_URL } from "@/constants";
+
+import LoadingCard from "./Loading";
 
 const cardProps = {
 	title: "Manage Payouts",
@@ -46,30 +47,12 @@ const tagProps = {
 	}
 };
 
-const Spinner = withStyle(StyledSpinnerNext, {
-	width: "20px",
-	height: "20px"
-});
-
 const PayoutsCard = ({ ...props }) => {
 	const [css] = useStyletron();
 	const [user, isUserLoading] = useUser();
 
 	if (isUserLoading) {
-		return (
-			<Card {...cardProps} {...props}>
-				<div
-					className={css({
-						display: "flex",
-						height: "200px",
-						alignItems: "center",
-						justifyContent: "center"
-					})}
-				>
-					<Spinner />
-				</div>
-			</Card>
-		);
+		return <LoadingCard {...cardProps} {...props} />;
 	}
 
 	return (
