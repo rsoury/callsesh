@@ -73,8 +73,7 @@ const LabelControl = ({
 							className={css({
 								...itemStyle,
 								padding: "10px",
-								margin: "-10px",
-								marginLeft: "0px"
+								margin: "-10px -10px -10px 0px"
 							})}
 						>
 							<EndEnhancer />

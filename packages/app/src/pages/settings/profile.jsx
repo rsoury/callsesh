@@ -22,7 +22,7 @@ import {
 	Calendar as CalendarIcon
 } from "react-feather";
 import { Avatar } from "baseui/avatar";
-import { Button } from "baseui/button";
+import { Button, SIZE as BUTTON_SIZE } from "baseui/button";
 import nl2br from "nl2br";
 
 import Layout from "@/components/Layout";
@@ -63,6 +63,18 @@ const EDIT_TYPES = {
 	messageBroadcast: "messageBroadcast"
 };
 
+const fieldGridProps = {
+	gridGutters: 16,
+	overrides: {
+		Grid: {
+			style: {
+				padding: "0px !important",
+				margin: "0 -8px !important"
+			}
+		}
+	}
+};
+
 /* eslint-disable react/prop-types */
 const getEditConfig = (user, type) => {
 	if (isEmpty(user)) {
@@ -78,7 +90,7 @@ const getEditConfig = (user, type) => {
 			initialValue: user.givenName,
 			// Will be passing in object data as props to component
 			Component: (props) => (
-				<Grid>
+				<Grid {...fieldGridProps}>
 					<Cell span={12}>
 						<TextField {...props} />
 					</Cell>
@@ -92,7 +104,7 @@ const getEditConfig = (user, type) => {
 			},
 			initialValue: user.familyName,
 			Component: (props) => (
-				<Grid>
+				<Grid {...fieldGridProps}>
 					<Cell span={12}>
 						<TextField {...props} />
 					</Cell>
@@ -106,8 +118,8 @@ const getEditConfig = (user, type) => {
 			},
 			initialValue: user.username,
 			Component: ({ values: { username }, ...props }) => (
-				<Grid>
-					<Cell>
+				<Grid {...fieldGridProps}>
+					<Cell span={12}>
 						<TextField
 							{...props}
 							caption={`Your link will look like ${publicUrl}/u/${
@@ -125,7 +137,7 @@ const getEditConfig = (user, type) => {
 			},
 			initialValue: genderOptions.find(({ label }) => label === user.gender),
 			Component: (props) => (
-				<Grid>
+				<Grid {...fieldGridProps}>
 					<Cell span={12}>
 						<SelectField {...props} options={genderOptions} />
 					</Cell>
@@ -139,7 +151,7 @@ const getEditConfig = (user, type) => {
 			},
 			initialValue: new Date(user.dob),
 			Component: (props) => (
-				<Grid>
+				<Grid {...fieldGridProps}>
 					<Cell span={12}>
 						<DateField {...props} caption="YYYY/MM/DD" />
 					</Cell>
@@ -147,7 +159,7 @@ const getEditConfig = (user, type) => {
 			)
 		}
 	};
-	if (user.operator) {
+	if (isUserOperator(user)) {
 		// Determine purpose initial value to be compatible with Select
 		let purposeInitialValue = {
 			option: purposeOptions.find(({ label }) => label === user.purpose),
@@ -172,7 +184,7 @@ const getEditConfig = (user, type) => {
 				initialValue: user.hourlyRate,
 				// eslint-disable-next-line
 				Component: ({ values: { hourlyRate }, ...props }) => (
-					<Grid>
+					<Grid {...fieldGridProps}>
 						<Cell span={12}>
 							<TextField
 								{...props}
@@ -196,9 +208,9 @@ const getEditConfig = (user, type) => {
 						values
 					);
 				},
-				initialValue: user.profilePicture || { cdnUrl: user.picture }, // TODO: For some reason this is returning profilePicture: undefined.
+				initialValue: user.profilePicture || { cdnUrl: user.picture },
 				Component: (props) => (
-					<Grid>
+					<Grid {...fieldGridProps}>
 						<Cell span={12}>
 							<FileUploaderField
 								{...props}
@@ -216,7 +228,7 @@ const getEditConfig = (user, type) => {
 				},
 				initialValue: purposeInitialValue,
 				Component: ({ values: { purpose }, props }) => (
-					<Grid>
+					<Grid {...fieldGridProps}>
 						<Cell span={purpose.option?.id === "other" ? [12, 4, 6] : 12}>
 							<SelectField
 								{...props}
@@ -249,7 +261,7 @@ const getEditConfig = (user, type) => {
 				},
 				initialValue: user.messageBroadcast,
 				Component: (props) => (
-					<Grid>
+					<Grid {...fieldGridProps}>
 						<Cell span={12}>
 							<TextField
 								{...props}
@@ -304,8 +316,6 @@ const Profile = () => {
 	const editModalFieldProps = {
 		name: editType
 	};
-	console.log(editModalProps);
-	console.log(editModalFieldProps);
 
 	return (
 		<Layout>
@@ -427,6 +437,7 @@ const Profile = () => {
 												<Button
 													onClick={() => setEditType(EDIT_TYPES.profilePicture)}
 													startEnhancer={() => <PictureIcon size={20} />}
+													size={BUTTON_SIZE.compact}
 												>
 													Edit Profile Picture
 												</Button>

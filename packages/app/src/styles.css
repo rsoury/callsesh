@@ -21,3 +21,8 @@ button span {
 	background: #000000 !important;
 	z-index: 999999999;
 }
+
+/* Uploadcare widget */
+.uploadcare--widget__button {
+	cursor: pointer;
+}
