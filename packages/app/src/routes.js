@@ -34,7 +34,7 @@ export const api = {
 		signup: "/api/auth/signup"
 	},
 	user: "/api/user",
-	card: "/api/card",
+	cards: "/api/cards",
 	live: "/api/live",
 	usernameAvailable: "/api/username-available",
 	connect: {

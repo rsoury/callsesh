@@ -54,7 +54,7 @@ const CallerStep = ({ formValues }) => {
 						})}
 					>
 						<Paragraph>
-							The payment is powered by Stripe and we do not store sensitive
+							Payments are powered by Stripe and we do not store sensitive
 							payment information on our servers.
 						</Paragraph>
 						<CreditCardField

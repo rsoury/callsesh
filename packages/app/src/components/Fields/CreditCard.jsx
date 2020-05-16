@@ -18,21 +18,24 @@ import { getInputContainerStyles } from "baseui/input/styled-components";
 import { SIZE as INPUT_SIZE } from "baseui/input";
 import { loadStripe } from "@stripe/stripe-js/pure";
 import isEmpty from "is-empty";
+import ono from "@jsdevtools/ono";
 
 import { api as apiRoutes } from "@/routes";
-import { alerts } from "@/utils/handle-exception";
+import handleException, { alerts } from "@/utils/handle-exception";
 import { stripe as config } from "@/env-config";
 import LabelControl from "@/components/LabelControl";
 import request from "@/utils/request";
 
-const Element = ({
+export const CreditCardElement = ({
 	name,
 	label,
 	caption,
 	billingDetails,
-	field: { value },
-	meta,
-	form: { setFieldValue }
+	value,
+	error,
+	noRemove,
+	onAdd,
+	onRemove
 }) => {
 	const stripe = useStripe();
 	const elements = useElements();
@@ -41,7 +44,7 @@ const Element = ({
 	const [isVerifying, setVerifying] = useState(false);
 
 	const isLoading = !stripe;
-	const isCardEmpty = isEmpty(value);
+	const isCardEmpty = noRemove || isEmpty(value);
 
 	const inputStyles = getInputContainerStyles({
 		$adjoined: "none",
@@ -93,8 +96,8 @@ const Element = ({
 					card: cardElement,
 					billing_details: billingDetails
 				})
-				.then(({ error, paymentMethod }) => {
-					if (error) {
+				.then(({ err, paymentMethod }) => {
+					if (err) {
 						toaster.negative(error.message);
 						return {};
 					}
@@ -104,28 +107,31 @@ const Element = ({
 				.then((paymentMethod) => {
 					// Send verfication request for card before setting as value.
 					return request
-						.post(apiRoutes.card, { paymentMethod })
+						.post(apiRoutes.cards, { paymentMethod })
 						.then(({ data }) => ({ response: data, paymentMethod }));
 				})
 				.then(({ response: { verified = false }, paymentMethod }) => {
 					if (verified) {
-						setFieldValue(name, paymentMethod);
+						onAdd(paymentMethod);
 						toaster.positive(`Card successfully verified and added.`);
+						if (noRemove) {
+							cardElement.clear();
+						}
 					} else {
 						toaster.negative(
 							`Card could be verified. Please check the submitted card and try again.`
 						);
 					}
 				})
-				.catch((error) => {
-					console.error(error);
+				.catch((err) => {
+					handleException(err);
 					alerts.error();
 				})
 				.finally(() => {
 					setVerifying(false);
 				});
 		},
-		[elements, stripe, name]
+		[noRemove, elements, stripe, name]
 	);
 
 	const removeCard = useCallback(
@@ -136,18 +142,23 @@ const Element = ({
 
 			cardElement.clear();
 
-			setFieldValue(name, {});
+			if (!isEmpty(value)) {
+				const params = { id: value.id };
+				request.delete(apiRoutes.cards, { params }).catch((err) => {
+					handleException(ono(err, params));
+				});
+			}
+
+			onRemove();
 		},
-		[elements, name]
+		[value, elements, name]
 	);
 
 	return (
 		<LabelControl
 			label={label ? () => label : null}
 			caption={() => caption}
-			error={
-				meta.touched && meta.error ? () => format.message(meta.error) : null
-			}
+			error={error}
 			noBg
 			style={{
 				padding: "0 !important",
@@ -235,41 +246,51 @@ const Element = ({
 	);
 };
 
-Element.propTypes = {
+CreditCardElement.propTypes = {
 	name: PropTypes.string.isRequired,
-	meta: PropTypes.object.isRequired,
 	label: PropTypes.string,
 	caption: PropTypes.string,
 	billingDetails: PropTypes.object,
-	field: PropTypes.shape({
-		value: PropTypes.object
-	}),
-	form: PropTypes.shape({
-		setFieldValue: PropTypes.func
-	})
+	value: PropTypes.object,
+	error: PropTypes.string,
+	noRemove: PropTypes.bool,
+	onAdd: PropTypes.func,
+	onRemove: PropTypes.func
 };
 
-Element.defaultProps = {
+CreditCardElement.defaultProps = {
 	label: "",
 	caption: "",
 	billingDetails: {},
-	field: {
-		value: {}
-	},
-	form: {
-		setFieldValue() {}
-	}
+	value: {},
+	error: null,
+	noRemove: false,
+	onAdd() {},
+	onRemove() {}
 };
 
 loadStripe.setLoadParameters({ advancedFraudSignals: false });
 
+export const CreditCardInput = (props) => (
+	<Elements stripe={loadStripe(config.publicKey)}>
+		<CreditCardElement {...props} />
+	</Elements>
+);
+
 const CreditCardField = ({ name, ...props }) => {
 	return (
 		<Field name={name} id={snakeCase(name)}>
-			{(fieldProps) => (
-				<Elements stripe={loadStripe(config.publicKey)}>
-					<Element name={name} {...props} {...fieldProps} />
-				</Elements>
+			{({ field: { value }, meta, form: { setFieldValue } }) => (
+				<CreditCardInput
+					name={name}
+					{...props}
+					value={value}
+					error={
+						meta.touched && meta.error ? () => format.message(meta.error) : null
+					}
+					onAdd={(paymentMethod) => setFieldValue(name, paymentMethod)}
+					onRemove={() => setFieldValue(name, {})}
+				/>
 			)}
 		</Field>
 	);
