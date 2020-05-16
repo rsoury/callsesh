@@ -12,38 +12,26 @@ const client = new ManagementClient({
 	clientSecret: config.clientSecret
 });
 
-export const getUser = async (id) => {
-	const [user, roles] = await Promise.all([
-		client.getUser({ id }),
-		client.getUserRoles({ id, page: 0, per_page: 50, sort: "date:-1" })
-	]);
+export const getUserRoles = (id) => {
+	return client.getUserRoles({ id, page: 0, per_page: 50, sort: "date:-1" });
+};
 
-	return {
-		...user,
-		roles
-	};
+export const getUser = (id) => {
+	return client.getUser({ id });
 };
 
 export const updateUser = (
 	id,
-	{ metadata: { app: appMetadata = {}, user: userMetadata = {} }, ...data }
+	{ metadata: { app: appMetadata = {}, user: userMetadata = {} } = {}, ...data }
 ) => {
-	const promises = [];
-	promises.push(
-		isEmpty(data) ? Promise.resolve({}) : client.updateUser({ id }, data)
-	);
-	promises.push(
-		isEmpty(appMetadata)
-			? Promise.resolve({})
-			: client.updateAppMetadata({ id }, appMetadata)
-	);
-	promises.push(
-		isEmpty(userMetadata)
-			? Promise.resolve({})
-			: client.updateUserMetadata({ id }, userMetadata)
-	);
-
-	return Promise.all(promises);
+	const params = data;
+	if (!isEmpty(appMetadata)) {
+		params.app_metadata = appMetadata;
+	}
+	if (!isEmpty(userMetadata)) {
+		params.user_metadata = userMetadata;
+	}
+	return client.updateUser({ id }, params);
 };
 
 export const getClient = () => client;

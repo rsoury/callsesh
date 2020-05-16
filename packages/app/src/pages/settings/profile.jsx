@@ -24,6 +24,7 @@ import {
 import { Avatar } from "baseui/avatar";
 import { Button, SIZE as BUTTON_SIZE } from "baseui/button";
 import nl2br from "nl2br";
+import ono from "@jsdevtools/ono";
 
 import Layout from "@/components/Layout";
 import UppercaseLabel from "@/components/UppercaseLabel";
@@ -50,6 +51,7 @@ import FileUploaderField from "@/components/Fields/FileUploader";
 import DateField from "@/components/Fields/Date";
 import FeeCalculator from "@/components/Onboarding/FeeCalculator";
 import isUserOperator from "@/utils/is-operator";
+import handleException, { alerts } from "@/utils/handle-exception";
 
 const EDIT_TYPES = {
 	firstName: "firstName",
@@ -85,14 +87,19 @@ const getEditConfig = (user, type) => {
 		[EDIT_TYPES.firstName]: {
 			title: "First Name",
 			validate(values) {
-				return validate(generalSchemaProperties.firstName.required(), values);
+				return validate(
+					{
+						[EDIT_TYPES.firstName]: generalSchemaProperties.firstName.required()
+					},
+					values
+				);
 			},
 			initialValue: user.givenName,
 			// Will be passing in object data as props to component
 			Component: (props) => (
 				<Grid {...fieldGridProps}>
 					<Cell span={12}>
-						<TextField {...props} />
+						<TextField {...props} name={EDIT_TYPES.firstName} />
 					</Cell>
 				</Grid>
 			)
@@ -100,13 +107,18 @@ const getEditConfig = (user, type) => {
 		[EDIT_TYPES.lastName]: {
 			title: "Last Name",
 			validate(values) {
-				return validate(generalSchemaProperties.lastName.required(), values);
+				return validate(
+					{
+						[EDIT_TYPES.lastName]: generalSchemaProperties.lastName.required()
+					},
+					values
+				);
 			},
 			initialValue: user.familyName,
 			Component: (props) => (
 				<Grid {...fieldGridProps}>
 					<Cell span={12}>
-						<TextField {...props} />
+						<TextField {...props} name={EDIT_TYPES.lastName} />
 					</Cell>
 				</Grid>
 			)
@@ -114,7 +126,12 @@ const getEditConfig = (user, type) => {
 		[EDIT_TYPES.username]: {
 			title: "Username",
 			validate(values) {
-				return validate(generalSchemaProperties.username.required(), values);
+				return validate(
+					{
+						[EDIT_TYPES.username]: generalSchemaProperties.username.required()
+					},
+					values
+				);
 			},
 			initialValue: user.username,
 			Component: ({ values: { username }, ...props }) => (
@@ -125,6 +142,7 @@ const getEditConfig = (user, type) => {
 							caption={`Your link will look like ${publicUrl}/u/${
 								username || "..."
 							}`}
+							name={EDIT_TYPES.username}
 						/>
 					</Cell>
 				</Grid>
@@ -133,13 +151,20 @@ const getEditConfig = (user, type) => {
 		[EDIT_TYPES.gender]: {
 			title: "Gender",
 			validate(values) {
-				return validate(generalSchemaProperties.gender.required(), values);
+				return validate(
+					{ [EDIT_TYPES.gender]: generalSchemaProperties.gender.required() },
+					values
+				);
 			},
 			initialValue: genderOptions.find(({ label }) => label === user.gender),
 			Component: (props) => (
 				<Grid {...fieldGridProps}>
 					<Cell span={12}>
-						<SelectField {...props} options={genderOptions} />
+						<SelectField
+							{...props}
+							options={genderOptions}
+							name={EDIT_TYPES.gender}
+						/>
 					</Cell>
 				</Grid>
 			)
@@ -147,13 +172,16 @@ const getEditConfig = (user, type) => {
 		[EDIT_TYPES.dob]: {
 			title: "Date Of Birth",
 			validate(values) {
-				return validate(generalSchemaProperties.dob.required(), values);
+				return validate(
+					{ [EDIT_TYPES.dob]: generalSchemaProperties.dob.required() },
+					values
+				);
 			},
 			initialValue: new Date(user.dob),
 			Component: (props) => (
 				<Grid {...fieldGridProps}>
 					<Cell span={12}>
-						<DateField {...props} caption="YYYY/MM/DD" />
+						<DateField {...props} caption="YYYY/MM/DD" name={EDIT_TYPES.dob} />
 					</Cell>
 				</Grid>
 			)
@@ -177,7 +205,9 @@ const getEditConfig = (user, type) => {
 				title: "Hourly Rate",
 				validate(values) {
 					return validate(
-						operatorSchemaProperties.hourlyRate.required(),
+						{
+							[EDIT_TYPES.hourlyRate]: operatorSchemaProperties.hourlyRate.required()
+						},
 						values
 					);
 				},
@@ -194,6 +224,7 @@ const getEditConfig = (user, type) => {
 								caption={`Callers will be charged per second based on this rate. Currency is in ${user.currency}.`}
 								placeholder="30"
 								numeric
+								name={EDIT_TYPES.hourlyRate}
 							/>
 							<FeeCalculator hourlyRate={hourlyRate} />
 						</Cell>
@@ -204,7 +235,9 @@ const getEditConfig = (user, type) => {
 				title: "Profile Picture",
 				validate(values) {
 					return validate(
-						operatorSchemaProperties.profilePicture.required(),
+						{
+							[EDIT_TYPES.profilePicture]: operatorSchemaProperties.profilePicture.required()
+						},
 						values
 					);
 				},
@@ -216,6 +249,7 @@ const getEditConfig = (user, type) => {
 								{...props}
 								caption="Must be a JPEG or PNG with a max size of 2MB"
 								images
+								name={EDIT_TYPES.profilePicture}
 							/>
 						</Cell>
 					</Grid>
@@ -224,7 +258,12 @@ const getEditConfig = (user, type) => {
 			[EDIT_TYPES.purpose]: {
 				title: "Purpose",
 				validate(values) {
-					return validate(operatorSchemaProperties.purpose.required(), values);
+					return validate(
+						{
+							[EDIT_TYPES.purpose]: operatorSchemaProperties.purpose.required()
+						},
+						values
+					);
 				},
 				initialValue: purposeInitialValue,
 				Component: ({ values: { purpose }, props }) => (
@@ -232,7 +271,7 @@ const getEditConfig = (user, type) => {
 						<Cell span={purpose.option?.id === "other" ? [12, 4, 6] : 12}>
 							<SelectField
 								{...props}
-								name="purpose.option"
+								name={`${EDIT_TYPES.purpose}.option`}
 								label="What will you be offering your callers?"
 								options={purposeOptions}
 								caption="This will appear on your public operator profile"
@@ -241,7 +280,7 @@ const getEditConfig = (user, type) => {
 						{purpose.option?.id === "other" && (
 							<Cell span={[12, 4, 6]}>
 								<TextField
-									name="purpose.value"
+									name={`${EDIT_TYPES.purpose}.value`}
 									label="Other?"
 									placeholder="Medical Advice"
 									maxLength={50}
@@ -255,7 +294,9 @@ const getEditConfig = (user, type) => {
 				title: "Message To Visitors",
 				validate(values) {
 					return validate(
-						operatorSchemaProperties.messageBroadcast.required(),
+						{
+							[EDIT_TYPES.messageBroadcast]: operatorSchemaProperties.messageBroadcast.required()
+						},
 						values
 					);
 				},
@@ -276,6 +317,7 @@ const getEditConfig = (user, type) => {
 										}
 									}
 								}}
+								name={EDIT_TYPES.messageBroadcast}
 							/>
 						</Cell>
 					</Grid>
@@ -290,7 +332,7 @@ const getEditConfig = (user, type) => {
 
 const Profile = () => {
 	const [css, theme] = useStyletron();
-	const [user, isUserLoading] = useUser();
+	const [user, isUserLoading, { setUser }] = useUser();
 	const [editType, setEditType] = useState("");
 
 	const {
@@ -303,18 +345,30 @@ const Profile = () => {
 			setEditType("");
 		},
 		onSave(values) {
+			if (typeof values.purpose !== "undefined") {
+				values.purpose = isEmpty(values.purpose.value)
+					? values.purpose.option.label
+					: values.purpose.value;
+			}
+			if (typeof values.gender !== "undefined") {
+				values.gender = values.gender.label;
+			}
 			return request
 				.patch(routes.api.user, values)
 				.then(({ data }) => data)
-				.then(() => setEditType(""));
+				.then(({ user: newUser }) => {
+					setEditType("");
+					setUser(newUser);
+				})
+				.catch((err) => {
+					handleException(ono(err, values));
+					alerts.error();
+				});
 		},
 		initialValues: {
 			[editType]: initialValue
 		},
 		...editConfig
-	};
-	const editModalFieldProps = {
-		name: editType
 	};
 
 	return (
@@ -520,7 +574,7 @@ const Profile = () => {
 				)}
 			</div>
 			<EditModal isOpen={!isEmpty(editType)} {...editModalProps}>
-				{EditModalField ? <EditModalField {...editModalFieldProps} /> : <div />}
+				{EditModalField ? <EditModalField /> : <div />}
 			</EditModal>
 		</Layout>
 	);

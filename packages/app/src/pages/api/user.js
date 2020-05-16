@@ -7,7 +7,11 @@ import isEmpty from "is-empty";
 import set from "lodash/set";
 
 import getHandler, { onError } from "@/middleware";
-import { requireAuthentication, getUser } from "@/middleware/auth";
+import {
+	requireAuthentication,
+	getUser,
+	updateAndGetUser
+} from "@/middleware/auth";
 import * as authManager from "@/auth-manager";
 import stripe from "@/stripe";
 
@@ -42,7 +46,7 @@ const patchMap = {
 	profilePicture: (patch, value) => {
 		// Will receive profilePicture object as value.
 		set(patch, "metadata.user.profilePicture", value);
-		patch.profile = value.cdnUrl;
+		patch.picture = value.cdnUrl;
 		return patch;
 	},
 	purpose: "metadata.user.purpose",
@@ -194,11 +198,6 @@ handler
 			return patch;
 		}, {});
 
-		req.log.info("Patch params created", {
-			user: user.id,
-			params: patchParams
-		});
-
 		// Set name if changed.
 		let name;
 		if (patchParams.given_name && patchParams.family_name) {
@@ -213,11 +212,16 @@ handler
 			patchParams.nickname = name;
 		}
 
+		req.log.info("Patch params created", {
+			user: user.id,
+			params: patchParams
+		});
+
 		// Used to update the existing user
 		// Works by constructing a patchParams object by iterating over the request body
 		try {
 			// Update update
-			await authManager.updateUser(user.id, patchParams);
+			const newUser = await updateAndGetUser(req, patchParams);
 			req.log.info("Patch user data", { user: user.id });
 
 			// Register the same data against the stripe customer entity if it exists.
@@ -231,7 +235,8 @@ handler
 			}
 
 			return res.json({
-				success: true
+				success: true,
+				user: newUser
 			});
 		} catch (e) {
 			return onError(e, req, res);

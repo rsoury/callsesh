@@ -70,26 +70,19 @@ const registeredUserSchema = yup.object().shape({
 });
 
 /**
- * Get public user using Auth0 Nodejs Management API
+ * Takes raw Auth0 user data and the current session to construct user output.
  *
- * @param   {Object}  req  Request
- * @param   {Object}  options
+ * @param   {Object}  session      Current user session
+ * @param   {Object}  rawUser      Auth0 raw user data
+ * @param   {boolean} withContext  Option: with or without context
  *
- * @return  {Object}
+ * @return  {Object}               User object
  */
-export const getUser = async (req, { withContext = false } = {}) => {
-	const session = await auth.getSession(req);
-
-	// return empty object if session empty --- user not authenticated
-	if (isEmpty(session)) {
-		return {};
-	}
-
-	const { blocked, ...rawUser } = await authManager.getUser(session.user.sub);
-	if (blocked) {
-		throw new Error(`The user is blocked.`);
-	}
-
+const constructUser = async (
+	session,
+	rawUser,
+	{ withContext = false } = {}
+) => {
 	const {
 		user_metadata: userMetadata,
 		app_metadata: appMetadata,
@@ -167,6 +160,76 @@ export const getUser = async (req, { withContext = false } = {}) => {
 	user.isRegistered = isRegistered;
 
 	return user;
+};
+
+/**
+ * Get public user using Auth0 Nodejs Management API
+ *
+ * @param   {Object}  req  Request
+ * @param   {Object}  options
+ *
+ * @return  {Object}
+ */
+export const getUser = async (req, options) => {
+	const session = await auth.getSession(req);
+
+	// return empty object if session empty --- user not authenticated
+	if (isEmpty(session)) {
+		return {};
+	}
+
+	const [{ blocked, ...rawUser }, roles] = await Promise.all([
+		authManager.getUser(session.user.sub),
+		authManager.getUserRoles(session.user.sub)
+	]);
+	if (blocked) {
+		throw new Error(`The user is blocked.`);
+	}
+
+	return constructUser(
+		session,
+		{
+			...rawUser,
+			roles
+		},
+		options
+	);
+};
+
+/**
+ * Update user data and return constructed user value
+ * Use when you want to update and construct the user.
+ *
+ * @param   {Object}  req      Request
+ * @param   {Object}  params  Update parameters
+ * @param   {Object}  options  construct options
+ *
+ * @return  {Object}           User
+ */
+export const updateAndGetUser = async (req, params, options) => {
+	const session = await auth.getSession(req);
+
+	// return empty object if session empty --- user not authenticated
+	if (isEmpty(session)) {
+		return {};
+	}
+
+	const [{ blocked, ...rawUser }, roles] = await Promise.all([
+		authManager.updateUser(session.user.sub, params),
+		authManager.getUserRoles(session.user.sub)
+	]);
+	if (blocked) {
+		throw new Error(`The user is blocked.`);
+	}
+
+	return constructUser(
+		session,
+		{
+			...rawUser,
+			roles
+		},
+		options
+	);
 };
 
 export default auth;

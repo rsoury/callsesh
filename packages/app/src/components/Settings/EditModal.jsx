@@ -62,7 +62,11 @@ const SettingsEditModal = ({
 								<Form>{React.cloneElement(children, { values })}</Form>
 							</ModalBody>
 							<ModalFooter>
-								<ModalButton onClick={onClose} kind={BUTTON_KIND.minimal}>
+								<ModalButton
+									onClick={onClose}
+									kind={BUTTON_KIND.minimal}
+									disabled={isSubmitting}
+								>
 									Cancel
 								</ModalButton>
 								<ModalButton
