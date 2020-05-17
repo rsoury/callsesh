@@ -64,7 +64,7 @@ const Wallet = () => {
 	const [isLoading, setLoading] = useState(false);
 
 	const listItemProps = {
-		artworkSize: ARTWORK_SIZES.MEDIUM,
+		artworkSize: ARTWORK_SIZES.LARGE,
 		overrides: {
 			Root: {
 				style: {
@@ -97,45 +97,52 @@ const Wallet = () => {
 	};
 
 	// Whether to alert that a default payment method is required.
-	const showDefaultError = cards.reduce((result, card) => {
-		if (card.isDefault) {
-			return true;
-		}
-		return result;
-	}, false);
+	const showDefaultError =
+		!isLoading &&
+		cards.reduce((result, card) => {
+			if (card.isDefault) {
+				return false;
+			}
+			return result;
+		}, true);
 
 	// Remove card
-	const removeCard = useCallback((id) => {
-		// eslint-disable-next-line
-		const resp = window.confirm(`Are you sure you want to remove this card?`);
-		if (resp) {
-			setCards(cards.filter((card) => card.id !== id));
-			const params = { id };
-			request
-				.delete(routes.api.cards, params)
-				.then(() => {
-					toaster.positive(`Successfully removed payment method.`);
-				})
-				.catch((err) => ono(err, params));
-		}
-	}, []);
+	const removeCard = useCallback(
+		(id) => {
+			// eslint-disable-next-line
+			const resp = window.confirm(`Are you sure you want to remove this card?`);
+			if (resp) {
+				setCards(cards.filter((card) => card.id !== id));
+				const params = { id };
+				request
+					.delete(routes.api.cards, { params })
+					.then(() => {
+						toaster.positive(`Successfully removed payment method.`);
+					})
+					.catch((err) => ono(err, params));
+			}
+		},
+		[cards]
+	);
 
 	// Set card as default
-	const setDefaultCard = useCallback((id) => {
-		setCards(
-			cards.map((card) => {
-				card.isDefault = card === id;
+	const setDefaultCard = useCallback(
+		(id) => {
+			const newCards = [...cards].map((card) => {
+				card.isDefault = card.id === id;
 				return card;
-			})
-		);
-		const params = { id };
-		request
-			.patch(routes.api.cards, params)
-			.then(() => {
-				toaster.positive(`Successfully set new default payment method.`);
-			})
-			.catch((err) => ono(err, params));
-	}, []);
+			});
+			setCards(newCards);
+			const params = { id };
+			request
+				.patch(routes.api.cards, params)
+				.then(() => {
+					toaster.positive(`Successfully set new default payment method.`);
+				})
+				.catch((err) => ono(err, params));
+		},
+		[cards]
+	);
 
 	// Handle card submission
 	const onAddCard = useCallback((paymentMethod) => {
@@ -175,7 +182,6 @@ const Wallet = () => {
 			.get(routes.api.cards)
 			.then(({ data }) => data)
 			.then(({ cards: responseCards }) => {
-				console.log(responseCards);
 				setCards(responseCards);
 			})
 			.catch((err) => {
@@ -220,7 +226,17 @@ const Wallet = () => {
 								Configure your payment methods
 							</SmallHeading>
 							{showDefaultError && (
-								<Notification kind={NOTIFICATION_KIND.negative}>
+								<Notification
+									kind={NOTIFICATION_KIND.negative}
+									overrides={{
+										Body: {
+											style: {
+												width: "100%",
+												marginBottom: "40px"
+											}
+										}
+									}}
+								>
 									{() => (
 										<div
 											className={css({ display: "flex", alignItems: "center" })}
@@ -240,7 +256,7 @@ const Wallet = () => {
 							<div className={css({ marginBottom: "10px" })}>
 								{isLoading ? (
 									<ListItem
-										artwork={() => <Skeleton height={22} width={22} />}
+										artwork={() => <Skeleton height={22} width={30} />}
 										{...listItemProps}
 									>
 										<ListItemLabel>
