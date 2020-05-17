@@ -157,7 +157,7 @@ const constructUser = async (
 		// console.error(e);
 	}
 
-	user.isRegistered = false; // isRegistered;
+	user.isRegistered = isRegistered;
 
 	return user;
 };

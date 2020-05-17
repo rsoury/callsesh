@@ -20,9 +20,10 @@ handler
 			return [];
 		}
 
-		const cards = await stripe.paymentMethods.list({
+		const { data: cards } = await stripe.paymentMethods.list({
 			customer: user.stripeCustomerId,
-			type: "card"
+			type: "card",
+			limit: 20
 		});
 
 		console.log(cards);
@@ -146,31 +147,7 @@ handler
 			});
 		}
 
-		const user = await getUser(req, { withContext: true });
-
-		// Remove payment method
 		await stripe.paymentMethods.detach(id);
-
-		// Use most recently added as default
-		const cards = await stripe.paymentMethods.list({
-			customer: user.stripeCustomerId,
-			type: "card"
-		});
-		if (!isEmpty(cards)) {
-			let mostRecentCard = cards[0];
-			if (cards.length > 1) {
-				for (let i = 1; i < cards.length; i += 1) {
-					if (cards[i].created > mostRecentCard.created) {
-						mostRecentCard = cards[i];
-					}
-				}
-			}
-			await stripe.customers.update(user.stripeCustomerId, {
-				invoice_settings: {
-					default_payment_method: mostRecentCard.id
-				}
-			});
-		}
 
 		return res.json({
 			success: true
