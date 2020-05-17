@@ -26,8 +26,6 @@ handler
 			limit: 20
 		});
 
-		console.log(cards);
-
 		// Get Stripe customer - to determine default payment method
 		const customer = await stripe.customers.retrieve(user.stripeCustomerId);
 		const defaultPaymentMethodId =

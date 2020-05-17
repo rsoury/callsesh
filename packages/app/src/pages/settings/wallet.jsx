@@ -48,6 +48,7 @@ const CardTypeToComponent = {
 	visa: VisaIcon,
 	mastercard: MastercardIcon,
 	"american-express": AmexIcon,
+	amex: AmexIcon,
 	"diners-club": DinersClubIcon,
 	discover: DiscoverIcon,
 	jcb: JcbIcon,
@@ -152,26 +153,25 @@ const Wallet = () => {
 			card,
 			created
 		} = paymentMethod;
-		// Remove default from existing cards
-		const newCards = [...cards].map((c) => {
-			c.isDefault = false;
-			return c;
-		});
-		// Make new card default
-		newCards.unshift({
-			id,
-			billingDetails,
-			brand: card.brand,
-			checks: card.check,
-			country: card.country,
-			expMonth: card.exp_month,
-			expYear: card.exp_year,
-			last4: card.last4,
-			created,
-			isDefault: true
-		});
 
-		setCards(newCards);
+		setCards((existingCards) => [
+			{
+				id,
+				billingDetails,
+				brand: card.brand,
+				checks: card.check,
+				country: card.country,
+				expMonth: card.exp_month,
+				expYear: card.exp_year,
+				last4: card.last4,
+				created,
+				isDefault: true
+			},
+			...existingCards.map((c) => {
+				c.isDefault = false;
+				return c;
+			})
+		]);
 	}, []);
 
 	// In mount, load in cards
@@ -273,6 +273,7 @@ const Wallet = () => {
 
 												return (
 													<ListItem
+														key={id}
 														artwork={CardIcon}
 														{...listItemProps}
 														endEnhancer={() => (

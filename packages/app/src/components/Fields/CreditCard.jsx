@@ -27,7 +27,6 @@ import LabelControl from "@/components/LabelControl";
 import request from "@/utils/request";
 
 export const CreditCardElement = ({
-	name,
 	label,
 	caption,
 	billingDetails,
@@ -96,9 +95,12 @@ export const CreditCardElement = ({
 					card: cardElement,
 					billing_details: billingDetails
 				})
-				.then(({ err, paymentMethod }) => {
+				.then(({ error: err, paymentMethod }) => {
 					if (err) {
-						toaster.negative(error.message);
+						throw err;
+					}
+					if (isEmpty(paymentMethod)) {
+						toaster.negative(`Could not create payment method.`);
 						return {};
 					}
 
@@ -124,6 +126,16 @@ export const CreditCardElement = ({
 					}
 				})
 				.catch((err) => {
+					console.log(err);
+					console.log(err.code);
+					console.log(err.type);
+					console.log(err.message);
+					if (err.code === "card_declined" || err.type === "validation_error") {
+						toaster.negative(
+							`${err.message} Please try a different card or check your submission.`
+						);
+						return;
+					}
 					handleException(err);
 					alerts.error();
 				})
@@ -131,7 +143,7 @@ export const CreditCardElement = ({
 					setVerifying(false);
 				});
 		},
-		[noRemove, elements, stripe, name]
+		[noRemove, elements, stripe]
 	);
 
 	const removeCard = useCallback(
@@ -151,7 +163,7 @@ export const CreditCardElement = ({
 
 			onRemove();
 		},
-		[value, elements, name]
+		[value, elements]
 	);
 
 	return (
@@ -247,7 +259,6 @@ export const CreditCardElement = ({
 };
 
 CreditCardElement.propTypes = {
-	name: PropTypes.string.isRequired,
 	label: PropTypes.string,
 	caption: PropTypes.string,
 	billingDetails: PropTypes.object,
@@ -282,7 +293,6 @@ const CreditCardField = ({ name, ...props }) => {
 		<Field name={name} id={snakeCase(name)}>
 			{({ field: { value }, meta, form: { setFieldValue } }) => (
 				<CreditCardInput
-					name={name}
 					{...props}
 					value={value}
 					error={
