@@ -26,13 +26,15 @@ export function getServerSideProps({
 			return { props: {} };
 		}
 
-		// If user is registered, redirect to settings/profile
+		// If user is not registered, redirect to register page
 		if (!user.isRegistered) {
 			res.writeHead(302, {
 				Location: `${routes.page.register}?return_url=${returnUrl}`
 			});
 			res.end();
 		}
+
+		console.log(user);
 
 		return {
 			props: {
