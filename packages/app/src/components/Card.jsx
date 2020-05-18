@@ -1,6 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { Card as BaseCard, StyledBody } from "baseui/card";
+import { Card as BaseCard, StyledBody, StyledAction } from "baseui/card";
 import { useStyletron } from "baseui";
 import { HelpCircle as HelpIcon } from "react-feather";
 import {
@@ -10,7 +10,8 @@ import {
 import { Button } from "baseui/button";
 import { Block } from "baseui/block";
 
-import UppercaseLabel from "./UppercaseLabel";
+import { ChildrenProps } from "@/utils/common-prop-types";
+import UppercaseLabel from "@/components/UppercaseLabel";
 
 const Card = ({
 	title,
@@ -21,6 +22,7 @@ const Card = ({
 	actionProps,
 	helpText,
 	helpPlacement,
+	actionEnhancer: ActionEnhancer,
 	...props
 }) => {
 	const [css] = useStyletron();
@@ -86,6 +88,11 @@ const Card = ({
 			</div>
 			<BaseCard {...props}>
 				<StyledBody>{children}</StyledBody>
+				{ActionEnhancer && (
+					<StyledAction>
+						<ActionEnhancer />
+					</StyledAction>
+				)}
 			</BaseCard>
 		</div>
 	);
@@ -102,14 +109,10 @@ Card.propTypes = {
 	actionText: PropTypes.string,
 	actionProps: PropTypes.object,
 	helpText: PropTypes.string,
-	children: PropTypes.oneOfType([
-		PropTypes.string,
-		PropTypes.func,
-		PropTypes.node,
-		PropTypes.arrayOf(PropTypes.node)
-	]).isRequired,
+	children: ChildrenProps.isRequired,
 	style: PropTypes.object,
-	helpPlacement: PropTypes.string
+	helpPlacement: PropTypes.string,
+	actionEnhancer: ChildrenProps
 };
 
 Card.defaultProps = {
@@ -119,7 +122,8 @@ Card.defaultProps = {
 	actionProps: {},
 	helpText: "",
 	style: {},
-	helpPlacement: TOOLTIP_PLACEMENT.auto
+	helpPlacement: TOOLTIP_PLACEMENT.auto,
+	actionEnhancer: null
 };
 
 export default Card;

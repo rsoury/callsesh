@@ -12,7 +12,7 @@ const validate = async (schema, values) => {
 	try {
 		await yup.object().shape(schema).validate(values);
 	} catch (err) {
-		console.log(err);
+		console.error(err); // eslint-disable-line
 		errors[err.path] = format.message(err.errors[0]);
 	}
 	return errors;

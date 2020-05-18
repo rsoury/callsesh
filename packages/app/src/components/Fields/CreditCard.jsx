@@ -126,10 +126,6 @@ export const CreditCardElement = ({
 					}
 				})
 				.catch((err) => {
-					console.log(err);
-					console.log(err.code);
-					console.log(err.type);
-					console.log(err.message);
 					if (err.code === "card_declined" || err.type === "validation_error") {
 						toaster.negative(
 							`${err.message} Please try a different card or check your submission.`

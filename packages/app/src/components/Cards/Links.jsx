@@ -8,11 +8,6 @@ import {
 } from "react-feather";
 import CopyToClipboard from "react-copy-to-clipboard";
 import { toaster } from "baseui/toast";
-import {
-	Button,
-	SHAPE as BUTTON_SHAPE,
-	SIZE as BUTTON_SIZE
-} from "baseui/button";
 import ArrowRight from "baseui/icon/arrow-right";
 
 import LabelControl from "@/components/LabelControl";

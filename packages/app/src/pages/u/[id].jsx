@@ -7,19 +7,15 @@ import { useCallback } from "react";
 import PropTypes from "prop-types";
 import { useStyletron } from "baseui";
 import isEmpty from "is-empty";
-import ono from "@jsdevtools/ono";
 import { Button, KIND as BUTTON_KIND } from "baseui/button";
 import Link from "next/link";
 import { Grid, Cell } from "baseui/layout-grid";
-import * as yup from "yup";
-import mapKeys from "lodash/mapKeys";
-import camelCase from "lodash/camelCase";
 import { Avatar } from "baseui/avatar";
 import {
 	H1 as Heading,
 	ParagraphMedium as Paragraph,
-	// ParagraphXSmall,
-	Label1 as Label
+	Label1 as Label,
+	ParagraphXSmall
 } from "baseui/typography";
 import ArrowLeft from "baseui/icon/arrow-left";
 import ArrowRight from "baseui/icon/arrow-right";
@@ -34,6 +30,8 @@ import {
 import nl2br from "nl2br";
 import { ListItem, ListItemLabel, ARTWORK_SIZES } from "baseui/list";
 import { getName } from "country-list";
+import { FixedBottom } from "react-fixed-bottom";
+import { Card as BaseCard, StyledBody, StyledAction } from "baseui/card";
 
 import Layout from "@/components/Layout";
 import InlineErrorPage from "@/components/InlineErrorPage";
@@ -42,11 +40,9 @@ import Highlight from "@/components/Highlight";
 import Card from "@/components/Card";
 import * as routes from "@/routes";
 // import request from "@/utils/request";
-import handleException from "@/utils/handle-exception";
-import ssrUser from "@/utils/ssr-user";
-import * as authManager from "@/auth-manager";
 import { UserProps } from "@/utils/common-prop-types";
 import isUserOperator from "@/utils/is-operator";
+import getServerSideProps from "./_[id]-ssr";
 
 const listItemProps = {
 	artworkSize: ARTWORK_SIZES.MEDIUM,
@@ -60,7 +56,8 @@ const listItemProps = {
 		},
 		ArtworkContainer: {
 			style: {
-				paddingBottom: "10px"
+				paddingBottom: "10px",
+				paddingLeft: "0px !important"
 			}
 		},
 		Content: {
@@ -91,12 +88,10 @@ const ViewUser = ({ user, viewUser, error }) => {
 	}
 
 	const minuteRate = (parseFloat(viewUser.hourlyRate) / 60).toFixed(2);
-	console.log(viewUser.createdAt);
 	const memberSince = new Intl.DateTimeFormat("en-US", {
 		month: "long",
 		year: "numeric"
 	}).format(new Date(viewUser.createdAt));
-	console.log(memberSince);
 
 	const startCallSession = useCallback(() => {
 		// Start Call Session between user and viewUser
@@ -117,7 +112,8 @@ const ViewUser = ({ user, viewUser, error }) => {
 										marginBottom: "10px",
 										[theme.mediaQuery.maxSmall]: {
 											flexDirection: "column",
-											alignItems: "flex-start"
+											alignItems: "flex-start",
+											marginBottom: "50px"
 										}
 									})}
 								>
@@ -129,12 +125,12 @@ const ViewUser = ({ user, viewUser, error }) => {
 										})}
 									>
 										<Avatar
-											name={user.nickname}
+											name={viewUser.nickname}
 											size="scale4800"
 											src={
-												user.picture.indexOf("auth0.com") > -1
+												viewUser.picture.indexOf("auth0.com") > -1
 													? null
-													: user.picture
+													: viewUser.picture
 											}
 										/>
 									</div>
@@ -160,8 +156,8 @@ const ViewUser = ({ user, viewUser, error }) => {
 							</Cell>
 						</Grid>
 						{isOperator ? (
-							<div className={css({ display: "flex" })}>
-								<div className={css({ width: "calc(100% - 400px)" })}>
+							<Grid gridGutters="0px">
+								<Cell span={[12, 5, 8]}>
 									<div className={css({ marginBottom: "20px" })}>
 										<Card
 											title="About me"
@@ -169,9 +165,9 @@ const ViewUser = ({ user, viewUser, error }) => {
 											overrides={{
 												Root: {
 													style: {
-														borderRight: "0px",
-														borderLeft: "0px",
-														borderBottom: "0px"
+														borderRightWidth: "0px",
+														borderLeftWidth: "0px",
+														borderBottomWidth: "0px"
 													}
 												}
 											}}
@@ -186,7 +182,7 @@ const ViewUser = ({ user, viewUser, error }) => {
 											<ListItem artwork={MapIcon} {...listItemProps}>
 												<ListItemLabel>
 													<Paragraph margin="0px">
-														Based in {getName(user.country)}
+														Based in {getName(viewUser.country)}
 													</Paragraph>
 												</ListItemLabel>
 											</ListItem>
@@ -199,9 +195,9 @@ const ViewUser = ({ user, viewUser, error }) => {
 											overrides={{
 												Root: {
 													style: {
-														borderRight: "0px",
-														borderLeft: "0px",
-														borderBottom: "0px"
+														borderRightWidth: "0px",
+														borderLeftWidth: "0px",
+														borderBottomWidth: "0px"
 													}
 												}
 											}}
@@ -214,49 +210,89 @@ const ViewUser = ({ user, viewUser, error }) => {
 											/>
 										</Card>
 									</div>
-								</div>
-								<div className={css({ width: "400px" })}>
-									<Card>
-										<div className={css({ marginBotton: "10px" })}>
-											<Label>
-												{user.isLive ? (
-													<span>
-														<strong>{user.givenName} is live!</strong>
-													</span>
-												) : (
-													<span>
-														<strong>{user.givenName} is not available.</strong>{" "}
-														Check back another time or follow their socials for
-														an announcement on when they will be live.
-													</span>
-												)}
-											</Label>
+								</Cell>
+								<Cell span={[12, 3, 4]}>
+									<FixedBottom>
+										<div
+											className={css({
+												position: "relative !important",
+												[theme.mediaQuery.maxSmall]: {
+													position: "fixed !important",
+													left: "0",
+													right: "0",
+													bottom: "0",
+													zIndex: "100",
+													borderRight: "0",
+													borderBottom: "0",
+													borderLeft: "0",
+													backgroundColor: "#fff"
+												}
+											})}
+										>
+											<BaseCard
+												overrides={{
+													Root: {
+														style: {
+															[theme.mediaQuery.maxSmall]: {
+																borderRightWidth: "0px",
+																borderLeftWidth: "0px",
+																borderBottomWidth: "0px"
+															}
+														}
+													}
+												}}
+											>
+												<StyledBody>
+													{viewUser.isLive ? (
+														<Label>
+															<strong>{viewUser.givenName} is live!</strong>
+														</Label>
+													) : (
+														<div>
+															<Label>
+																<strong>
+																	{viewUser.givenName} is not available.
+																</strong>
+															</Label>
+															<ParagraphXSmall
+																marginTop="5px"
+																marginBottom="0px"
+															>
+																Check back another time or follow their socials
+																for an announcement on when they will be live.
+															</ParagraphXSmall>
+														</div>
+													)}
+												</StyledBody>
+												<StyledAction>
+													{!isAuthenticated && (
+														<Link
+															href={routes.page.signup}
+															style={{ textDecoration: "none" }}
+														>
+															<Button
+																startEnhancer={() => <LockIcon size={22} />}
+																endEnhancer={() => <ArrowRight size={22} />}
+															>
+																Sign in to call {viewUser.givenName}
+															</Button>
+														</Link>
+													)}
+													{isAuthenticated && viewUser.isLive && (
+														<Button
+															startEnhancer={() => <PhoneIcon size={22} />}
+															disabled={isSameUser}
+															onClick={startCallSession}
+														>
+															Call {viewUser.givenName} for ${minuteRate}/minute
+														</Button>
+													)}
+												</StyledAction>
+											</BaseCard>
 										</div>
-										{!isAuthenticated && (
-											<Link
-												href={routes.page.signup}
-												style={{ textDecoration: "none" }}
-											>
-												<Button
-													startEnhancer={() => <LockIcon size={22} />}
-													endEnhancer={() => <ArrowRight size={22} />}
-												>
-													Sign in to call {user.givenName}
-												</Button>
-											</Link>
-										)}
-										{isAuthenticated && user.isLive && (
-											<Button
-												startEnhancer={() => <PhoneIcon size={22} />}
-												disabled={isSameUser}
-												onClick={startCallSession}
-											>
-												Call {user.givenName} for ${minuteRate}/minute
-											</Button>
-										)}
-									</Card>
-								</div>
-							</div>
+									</FixedBottom>
+								</Cell>
+							</Grid>
 						) : (
 							<Grid>
 								<Cell span={12}>
@@ -337,124 +373,6 @@ ViewUser.defaultProps = {
 	}
 };
 
-const viewUserSchema = yup.object().shape({
-	createdAt: yup.string().required(),
-	givenName: yup.string().required(),
-	familyName: yup.string().required(),
-	nickname: yup.string().required(),
-	name: yup.string().required(),
-	picture: yup.string().required(),
-	username: yup.string().required(),
-	country: yup.string().required(),
-	currency: yup.string().required(),
-	dob: yup.string().required(),
-	gender: yup.string(),
-	hourlyRate: yup.string(),
-	messageBroadcast: yup.string(),
-	purpose: yup.string(),
-	isLive: yup.boolean(),
-	profilePicture: yup.object()
-});
-
-export async function getServerSideProps({
-	req,
-	res,
-	query: { return_url: returnUrl = "/", id: username }
-}) {
-	// Get view user data.
-	if (isEmpty(username)) {
-		// See: https://github.com/zeit/next.js/issues/3362 for managing error pages.
-		// Defalts props, so you can just return an empty object
-		return {
-			props: {}
-		};
-	}
-	// Search users by username in user_metadata
-	const users = await authManager.getClient().getUsers({
-		search_engine: "v3",
-		page: 0,
-		per_page: 10,
-		q: `user_metadata.username:"${username}"`,
-		fields: [
-			"created_at",
-			"user_id",
-			"given_name",
-			"family_name",
-			"nickname",
-			"name",
-			"user_metadata",
-			"picture"
-		].join(",")
-	});
-	if (isEmpty(users)) {
-		return {
-			props: {}
-		};
-	}
-	if (users.length > 1) {
-		// There are multiple responses for the same username
-		const err = new Error("Multiple users for username");
-		handleException(ono(err, { username }));
-		return {
-			props: {
-				error: {
-					code: 500,
-					message:
-						"Oops! Something has gone wrong. We have been notified and will look into it"
-				}
-			}
-		};
-	}
-
-	// Now that we have a user, validate them. Make sure the view user is registered
-	const {
-		user_id: viewUserId,
-		user_metadata: userMetadata,
-		...userData
-	} = users[0];
-	const viewUser = mapKeys(
-		{
-			...userData,
-			...userMetadata
-		},
-		(value, key) => camelCase(key)
-	);
-	try {
-		await viewUserSchema.validate(viewUser);
-	} catch (e) {
-		console.error(e); // eslint-disable-line
-		return {
-			props: {}
-		};
-	}
-
-	// Get view user roles
-	const roles = await authManager.getUserRoles(viewUserId);
-	viewUser.roles = roles.map((role) => ({
-		name: role.name,
-		description: role.description
-	}));
-
-	return ssrUser({ req, res }, async (user) => {
-		// If user does exist...
-		if (!isEmpty(user)) {
-			// If user is not registered, redirect to register page
-			if (!user.isRegistered) {
-				res.writeHead(302, {
-					Location: `${routes.page.register}?return_url=${returnUrl}`
-				});
-				res.end();
-			}
-		}
-
-		return {
-			props: {
-				user,
-				viewUser,
-				error: {}
-			}
-		};
-	});
-}
+export { getServerSideProps };
 
 export default ViewUser;
