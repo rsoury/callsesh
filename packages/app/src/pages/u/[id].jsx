@@ -98,7 +98,13 @@ const ViewUser = ({ user, viewUser, error }) => {
 	}, [user, viewUser]);
 
 	return (
-		<Layout>
+		<Layout
+			style={{
+				[theme.mediaQuery.maxSmall]: {
+					paddingBottom: "200px"
+				}
+			}}
+		>
 			<ScreenContainer id="callsesh-view-user">
 				{isEmpty(error) ? (
 					<div>
@@ -157,7 +163,7 @@ const ViewUser = ({ user, viewUser, error }) => {
 						</Grid>
 						{isOperator ? (
 							<Grid gridGutters="0px">
-								<Cell span={[12, 5, 8]}>
+								<Cell span={[12, 5, 7]}>
 									<div className={css({ marginBottom: "20px" })}>
 										<Card
 											title="About me"
@@ -211,7 +217,7 @@ const ViewUser = ({ user, viewUser, error }) => {
 										</Card>
 									</div>
 								</Cell>
-								<Cell span={[12, 3, 4]}>
+								<Cell span={[12, 3, 5]}>
 									<FixedBottom>
 										<div
 											className={css({
@@ -244,9 +250,13 @@ const ViewUser = ({ user, viewUser, error }) => {
 											>
 												<StyledBody>
 													{viewUser.isLive ? (
-														<Label>
-															<strong>{viewUser.givenName} is live!</strong>
-														</Label>
+														<div>
+															<Label>
+																<Highlight>
+																	{viewUser.givenName} is live!
+																</Highlight>
+															</Label>
+														</div>
 													) : (
 														<div>
 															<Label>
@@ -271,21 +281,46 @@ const ViewUser = ({ user, viewUser, error }) => {
 															style={{ textDecoration: "none" }}
 														>
 															<Button
-																startEnhancer={() => <LockIcon size={22} />}
-																endEnhancer={() => <ArrowRight size={22} />}
+																startEnhancer={() => <LockIcon size={20} />}
+																endEnhancer={() => <ArrowRight size={20} />}
+																overrides={{
+																	BaseButton: {
+																		style: {
+																			width: "100%"
+																		}
+																	}
+																}}
 															>
-																Sign in to call {viewUser.givenName}
+																Sign up to call {viewUser.givenName}
 															</Button>
 														</Link>
 													)}
 													{isAuthenticated && viewUser.isLive && (
-														<Button
-															startEnhancer={() => <PhoneIcon size={22} />}
-															disabled={isSameUser}
-															onClick={startCallSession}
-														>
-															Call {viewUser.givenName} for ${minuteRate}/minute
-														</Button>
+														<div>
+															<Button
+																startEnhancer={() => <PhoneIcon size={20} />}
+																disabled={isSameUser}
+																onClick={startCallSession}
+																overrides={{
+																	BaseButton: {
+																		style: {
+																			width: "100%"
+																		}
+																	}
+																}}
+															>
+																Call {viewUser.givenName} for ${minuteRate}
+																/minute
+															</Button>
+															<ParagraphXSmall
+																marginTop="5px"
+																marginBottom="0px"
+															>
+																A service fee of $2.50 will be charged upon
+																initiating the call. Currency is in{" "}
+																{viewUser.currency}.
+															</ParagraphXSmall>
+														</div>
 													)}
 												</StyledAction>
 											</BaseCard>
