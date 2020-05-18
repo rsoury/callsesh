@@ -4,27 +4,37 @@
  */
 
 // import { useState, useEffect, useCallback } from "react";
+import PropTypes from "prop-types";
 import { useStyletron } from "baseui";
 import isEmpty from "is-empty";
 import ono from "@jsdevtools/ono";
+import { Button, KIND as BUTTON_KIND } from "baseui/button";
+import ArrowLeft from "baseui/icon/arrow-left";
+import Link from "next/link";
 
 import Layout from "@/components/Layout";
-// import UppercaseLabel from "@/components/UppercaseLabel";
+import InlineErrorPage from "@/components/InlineErrorPage";
 import * as routes from "@/routes";
 // import request from "@/utils/request";
 import handleException from "@/utils/handle-exception";
 import ssrUser from "@/utils/ssr-user";
 import * as authManager from "@/auth-manager";
+import { UserProps } from "@/utils/common-prop-types";
+import ScreenContainer from "@/components/ScreenContainer";
 
 // We're referring to the currently viewed user, as the viewUser
-const ViewUser = () => {
+const ViewUser = ({ user, view, error }) => {
 	const [css, theme] = useStyletron();
-	// const [user, isUserLoading] = useUser();
-	// const [isLoading, setLoading] = useState(false);
-	// const [viewUser, setViewUser] = useState();
 
 	return (
-		<Layout>
+		<Layout
+			style={{
+				minHeight: "100vh",
+				display: "flex",
+				flexDirection: "column",
+				justifyContent: "space-between"
+			}}
+		>
 			<div
 				id="callsesh-view-user"
 				className={css({
@@ -38,17 +48,87 @@ const ViewUser = () => {
 					}
 				})}
 			>
-				<div>Hello World</div>
+				{isEmpty(error) ? (
+					<div>Hello World</div>
+				) : (
+					<div>
+						<InlineErrorPage statusCode={error.code} title={error.message} />
+						<div className={css({ textAlign: "center", marginTop: "30px" })}>
+							<Link href={routes.page.index}>
+								<Button
+									startEnhancer={() => <ArrowLeft size={22} />}
+									kind={BUTTON_KIND.secondary}
+								>
+									Back to Callsesh
+								</Button>
+							</Link>
+						</div>
+					</div>
+				)}
 			</div>
 		</Layout>
 	);
 };
 
-export function getServerSideProps({
+ViewUser.propTypes = {
+	user: UserProps,
+	view: PropTypes.shape({}),
+	error: PropTypes.shape({
+		code: PropTypes.number,
+		message: PropTypes.string
+	})
+};
+
+ViewUser.defaultProps = {
+	user: {},
+	view: {},
+	error: {
+		code: 404,
+		message: "This user cannot be found"
+	}
+};
+
+export async function getServerSideProps({
 	req,
 	res,
 	query: { return_url: returnUrl = "/", id: username }
 }) {
+	// Get view user data.
+	if (isEmpty(username)) {
+		// See: https://github.com/zeit/next.js/issues/3362 for managing error pages.
+		// Defalts props, so you can just return an empty object
+		return {
+			props: {}
+		};
+	}
+	// Search users by username in user_metadata
+	const users = await authManager.getClient().getUsers({
+		search_engine: "v3",
+		page: 0,
+		per_page: 10,
+		q: `user_metadata.username:"${username}"`,
+		fields: ["created_at"].join(",")
+	});
+	if (isEmpty(users)) {
+		return {
+			props: {}
+		};
+	}
+	if (users.length > 1) {
+		// There are multiple responses for the same username
+		const err = new Error("Multiple users for username");
+		handleException(ono(err, { username }));
+		return {
+			props: {
+				error: {
+					code: 500,
+					message:
+						"Oops! Something has gone wrong. We have been notified and will look into it"
+				}
+			}
+		};
+	}
+
 	return ssrUser({ req, res }, async (user) => {
 		// If user does exist...
 		if (!isEmpty(user)) {
@@ -59,57 +139,6 @@ export function getServerSideProps({
 				});
 				res.end();
 			}
-		}
-
-		// Get view user data.
-		if (isEmpty(username)) {
-			// See: https://github.com/zeit/next.js/issues/3362 for managing error pages.
-			return {
-				props: {
-					user,
-					view: {},
-					error: {
-						code: 404,
-						message: "Not Found"
-					}
-				}
-			};
-		}
-		// Search users by username in user_metadata
-		const users = await authManager.getClient().getUsers({
-			search_engine: "v3",
-			page: 0,
-			per_page: 10,
-			q: `user_metadata.username:"${username}"`,
-			fields: ["created_at"].join(",")
-		});
-		if (isEmpty(users)) {
-			return {
-				props: {
-					user,
-					view: {},
-					error: {
-						code: 404,
-						message: "Not Found"
-					}
-				}
-			};
-		}
-		if (users.length > 1) {
-			// There are multiple responses for the same username
-			const errMessage = "Multiple users for username";
-			const err = new Error(errMessage);
-			handleException(ono(err, { username }));
-			return {
-				props: {
-					user,
-					view: {},
-					error: {
-						code: 500,
-						message: errMessage
-					}
-				}
-			};
 		}
 
 		console.log(users);

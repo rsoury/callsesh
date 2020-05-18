@@ -24,17 +24,7 @@ import { Notification, KIND as NOTIFICATION_KIND } from "baseui/notification";
 import Skeleton from "react-loading-skeleton";
 import { ListItem, ListItemLabel, ARTWORK_SIZES } from "baseui/list";
 
-import AmexIcon from "baseui/payment-card/icons/amex";
-import DinersClubIcon from "baseui/payment-card/icons/dinersclub";
-import DiscoverIcon from "baseui/payment-card/icons/discover";
-import EloIcon from "baseui/payment-card/icons/elo";
-import GenericIcon from "baseui/payment-card/icons/generic";
-import JcbIcon from "baseui/payment-card/icons/jcb";
-import MaestroIcon from "baseui/payment-card/icons/maestro";
-import MastercardIcon from "baseui/payment-card/icons/mastercard";
-import UnionPayIcon from "baseui/payment-card/icons/unionpay";
-import VisaIcon from "baseui/payment-card/icons/visa";
-
+import PaymentCardIcon from "@/components/PaymentCardIcon";
 import Layout from "@/components/Layout";
 import UppercaseLabel from "@/components/UppercaseLabel";
 import useUser from "@/hooks/use-user";
@@ -43,20 +33,7 @@ import * as routes from "@/routes";
 import request from "@/utils/request";
 import { CreditCardInput } from "@/components/Fields/CreditCard";
 import handleException, { alerts } from "@/utils/handle-exception";
-
-const CardTypeToComponent = {
-	visa: VisaIcon,
-	mastercard: MastercardIcon,
-	"american-express": AmexIcon,
-	amex: AmexIcon,
-	"diners-club": DinersClubIcon,
-	discover: DiscoverIcon,
-	jcb: JcbIcon,
-	unionpay: UnionPayIcon,
-	maestro: MaestroIcon,
-	elo: EloIcon,
-	generic: GenericIcon
-};
+import ScreenContainer from "@/components/ScreenContainer";
 
 const Wallet = () => {
 	const [css, theme] = useStyletron();
@@ -196,19 +173,7 @@ const Wallet = () => {
 
 	return (
 		<Layout>
-			<div
-				id="callsesh-wallet-settings"
-				className={css({
-					width: "100%",
-					maxWidth: "1000px",
-					margin: "0 auto",
-					padding: "0 20px 50px 20px",
-					[theme.mediaQuery.maxSmall]: {
-						paddingLeft: "0px",
-						paddingRight: "0px"
-					}
-				})}
-			>
+			<ScreenContainer id="callsesh-wallet-settings">
 				<Grid>
 					<Cell span={12}>
 						<UppercaseLabel style={{ marginBottom: "10px", marginTop: "20px" }}>
@@ -267,14 +232,12 @@ const Wallet = () => {
 									<div>
 										{cards.map(
 											({ id, brand, last4, expMonth, expYear, isDefault }) => {
-												const CardIcon =
-													CardTypeToComponent[brand] ||
-													CardTypeToComponent.generic;
-
 												return (
 													<ListItem
 														key={id}
-														artwork={CardIcon}
+														artwork={(props) => (
+															<PaymentCardIcon type={brand} {...props} />
+														)}
 														{...listItemProps}
 														endEnhancer={() => (
 															<div
@@ -360,7 +323,7 @@ const Wallet = () => {
 						</Cell>
 					</Grid>
 				)}
-			</div>
+			</ScreenContainer>
 		</Layout>
 	);
 };

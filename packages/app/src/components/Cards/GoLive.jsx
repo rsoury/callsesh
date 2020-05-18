@@ -111,7 +111,10 @@ const GoLiveCard = ({ ...props }) => {
 								style: {
 									height: "30px",
 									width: "50px",
-									borderRadius: "100px"
+									borderTopLeftRadius: "100px",
+									borderTopRightRadius: "100px",
+									borderBottomLeftRadius: "100px",
+									borderBottomRightRadius: "100px"
 								}
 							},
 							Toggle: {

@@ -36,7 +36,10 @@ const tagProps = {
 	overrides: {
 		Root: {
 			style: {
-				margin: "0px"
+				marginTop: "0px",
+				marginLeft: "0px",
+				marginRight: "0px",
+				marginBottom: "0px"
 			}
 		},
 		Text: {

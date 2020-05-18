@@ -26,3 +26,8 @@ button span {
 .uploadcare--widget__button {
 	cursor: pointer;
 }
+
+/* Error pages */
+.callsesh-error-container > div{
+	height: auto !important;
+}

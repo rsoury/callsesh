@@ -34,8 +34,6 @@ export function getServerSideProps({
 			res.end();
 		}
 
-		console.log(user);
-
 		return {
 			props: {
 				user

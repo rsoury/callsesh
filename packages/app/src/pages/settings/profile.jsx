@@ -52,6 +52,7 @@ import DateField from "@/components/Fields/Date";
 import FeeCalculator from "@/components/Onboarding/FeeCalculator";
 import isUserOperator from "@/utils/is-operator";
 import handleException, { alerts } from "@/utils/handle-exception";
+import ScreenContainer from "@/components/ScreenContainer";
 
 const EDIT_TYPES = {
 	firstName: "firstName",
@@ -373,19 +374,7 @@ const Profile = () => {
 
 	return (
 		<Layout>
-			<div
-				id="callsesh-profile-settings"
-				className={css({
-					width: "100%",
-					maxWidth: "1000px",
-					margin: "0 auto",
-					padding: "0 20px 50px 20px",
-					[theme.mediaQuery.maxSmall]: {
-						paddingLeft: "0px",
-						paddingRight: "0px"
-					}
-				})}
-			>
+			<ScreenContainer id="callsesh-profile-settings">
 				<Grid>
 					<Cell span={12}>
 						<UppercaseLabel style={{ marginBottom: "10px", marginTop: "20px" }}>
@@ -572,7 +561,7 @@ const Profile = () => {
 						)}
 					</div>
 				)}
-			</div>
+			</ScreenContainer>
 			<EditModal isOpen={!isEmpty(editType)} {...editModalProps}>
 				{EditModalField ? <EditModalField /> : <div />}
 			</EditModal>
