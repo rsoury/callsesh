@@ -3,7 +3,7 @@ import ErrorPage from "next/error";
 
 const InlineErrorPage = (props) => {
 	return (
-		<div className="callsesh-error-container">
+		<div className="callsesh-error-container" id="callsesh-error">
 			<ErrorPage {...props} />
 		</div>
 	);

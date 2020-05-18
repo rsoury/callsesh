@@ -11,6 +11,7 @@ const Link = ({
 	highlight,
 	standard,
 	style: styleProp,
+	pass,
 	...props
 }) => {
 	const [css, theme] = useStyletron();
@@ -37,7 +38,7 @@ const Link = ({
 	}
 
 	return (
-		<NextLink href={href}>
+		<NextLink href={href} passHref={pass}>
 			<StyledLink {...props} className={css(style)}>
 				{children}
 			</StyledLink>
@@ -50,13 +51,15 @@ Link.propTypes = {
 	href: PropTypes.oneOfType([PropTypes.string, PropTypes.object]).isRequired,
 	highlight: PropTypes.bool,
 	standard: PropTypes.bool,
-	style: PropTypes.object
+	style: PropTypes.object,
+	pass: PropTypes.bool // Pass Href to child -- only for next link
 };
 
 Link.defaultProps = {
 	highlight: false,
 	standard: false,
-	style: {}
+	style: {},
+	pass: false
 };
 
 export default Link;

@@ -10,9 +10,17 @@ const Layout = ({ children, style }) => {
 	const [css] = useStyletron();
 
 	return (
-		<main className={css(style)}>
+		<main
+			className={css({
+				minHeight: "100vh",
+				display: "flex",
+				flexDirection: "column",
+				justifyContent: "space-between",
+				...style
+			})}
+		>
 			<Header />
-			<div>{children}</div>
+			<div className={css({ flexGrow: 1 })}>{children}</div>
 			<Footer />
 		</main>
 	);

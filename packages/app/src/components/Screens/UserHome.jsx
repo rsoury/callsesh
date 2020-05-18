@@ -44,7 +44,10 @@ const UserHomeScreen = () => {
 				) : (
 					<Cell span={12}>
 						<div className={css({ marginBottom: "30px" })}>
-							<Link href={routes.page.becomeAnOperator}>
+							<Link
+								href={routes.page.becomeAnOperator}
+								style={{ textDecoration: "none !important" }}
+							>
 								<Button
 									startEnhancer={() => <OperatorIcon size={22} />}
 									endEnhancer={() => <ChevronRight size={22} />}

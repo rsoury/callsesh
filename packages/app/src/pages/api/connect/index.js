@@ -18,14 +18,11 @@ handler.use(requireAuthentication).get(async (req, res) => {
 
 	if (user.payouts.setup) {
 		// Get Login Link from stripe Api.
-		const loginUrl = await stripe.accounts.createLoginLink(
-			user.stripeConnectId,
-			{
-				redirect_url: `${publicUrl}${routes.page.index}`
-			}
-		);
+		const login = await stripe.accounts.createLoginLink(user.stripeConnectId, {
+			redirect_url: `${publicUrl}${routes.page.index}`
+		});
 		res.writeHead(302, {
-			Location: loginUrl
+			Location: login.url
 		});
 	} else {
 		// Redirect to Express OAuth Flow.

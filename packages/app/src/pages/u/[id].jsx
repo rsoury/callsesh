@@ -15,16 +15,20 @@ import { Grid, Cell } from "baseui/layout-grid";
 import * as yup from "yup";
 import mapKeys from "lodash/mapKeys";
 import camelCase from "lodash/camelCase";
+import { Avatar } from "baseui/avatar";
+import { H1 as Heading, Paragraph2 as Paragraph } from "baseui/typography";
+import { ArrowRight } from "react-feather";
 
 import Layout from "@/components/Layout";
 import InlineErrorPage from "@/components/InlineErrorPage";
+import Highlight from "@/components/Highlight";
 import * as routes from "@/routes";
 // import request from "@/utils/request";
 import handleException from "@/utils/handle-exception";
 import ssrUser from "@/utils/ssr-user";
 import * as authManager from "@/auth-manager";
 import { UserProps } from "@/utils/common-prop-types";
-import ScreenContainer from "@/components/ScreenContainer";
+import isUserOperator from "@/utils/is-operator";
 
 // We're referring to the currently viewed user, as the viewUser
 const ViewUser = ({ user, viewUser, error }) => {
@@ -34,25 +38,70 @@ const ViewUser = ({ user, viewUser, error }) => {
 		? user.username === viewUser.username
 		: false;
 
+	const isOperator = isUserOperator(viewUser);
+
+	let ownerPronoun = "They're";
+	if (viewUser.gender.toLowerCase() === "male") {
+		ownerPronoun = "He's";
+	} else if (viewUser.gender.toLowerCase() === "female") {
+		ownerPronoun = "She's";
+	}
+
+	const minuteRate = (parseFloat(viewUser.hourlyRate) / 60).toFixed(2);
+
 	return (
-		<Layout
-			style={{
-				minHeight: "100vh",
-				display: "flex",
-				flexDirection: "column",
-				justifyContent: "space-between"
-			}}
-		>
-			<ScreenContainer id="callsesh-view-user">
+		<Layout>
+			<div id="callsesh-view-user">
 				{isEmpty(error) ? (
-					<div className={css({ flexGrow: 1 })}>
-						<div className={css({ maxWidth: "calc(100% - 300px)" })}>
-							<Grid>
-								<Cell span={12}>
-									<div>{viewUser.username}</div>
-								</Cell>
-							</Grid>
-						</div>
+					<div>
+						<Grid>
+							<Cell span={12}>
+								<div className={css({ display: "flex", alignItems: "center" })}>
+									<div className={css({ marginRight: "20px" })}>
+										<Avatar
+											name={user.nickname}
+											size="scale4800"
+											src={
+												user.picture.indexOf("auth0.com") > -1
+													? null
+													: user.picture
+											}
+										/>
+									</div>
+									<div className={css({})}>
+										<Heading>
+											<strong className={css({ fontWeight: "900" })}>
+												Meet {viewUser.givenName}!
+											</strong>{" "}
+											{ownerPronoun}{" "}
+											{isOperator ? (
+												<span>
+													offering{" "}
+													<Highlight noBreak>{viewUser.purpose}</Highlight> over
+													a phone call for{" "}
+													<Highlight noBreak>${minuteRate}/minute</Highlight>
+												</span>
+											) : (
+												<span>making calls on Callsesh. You can too!</span>
+											)}
+										</Heading>
+									</div>
+								</div>
+								<div>
+									{isOperator ? (
+										<div></div>
+									) : (
+										<div>
+											<Link href={routes.page.signup}>
+												<Button endEnhancer={() => <ArrowRight size={22} />}>
+													Get Started
+												</Button>
+											</Link>
+										</div>
+									)}
+								</div>
+							</Cell>
+						</Grid>
 					</div>
 				) : (
 					<div>
@@ -69,7 +118,7 @@ const ViewUser = ({ user, viewUser, error }) => {
 						</div>
 					</div>
 				)}
-			</ScreenContainer>
+			</div>
 		</Layout>
 	);
 };
@@ -77,10 +126,22 @@ const ViewUser = ({ user, viewUser, error }) => {
 ViewUser.propTypes = {
 	user: UserProps,
 	viewUser: PropTypes.shape({
+		createdAt: PropTypes.string,
 		picture: PropTypes.string,
 		givenName: PropTypes.string,
 		familyName: PropTypes.string,
 		username: PropTypes.string,
+		nickname: PropTypes.string,
+		name: PropTypes.string,
+		country: PropTypes.string,
+		currency: PropTypes.string,
+		dob: PropTypes.string,
+		gender: PropTypes.string,
+		hourlyRate: PropTypes.string,
+		messageBroadcast: PropTypes.string,
+		purpose: PropTypes.string,
+		isLive: PropTypes.bool,
+		profilePicture: PropTypes.object,
 		roles: PropTypes.arrayOf(
 			PropTypes.shape({ name: PropTypes.string, description: PropTypes.string })
 		)

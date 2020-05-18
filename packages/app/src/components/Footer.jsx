@@ -53,7 +53,9 @@ const Footer = () => {
 							key={text.toLowerCase()}
 							className={css({ margin: "5px 10px" })}
 						>
-							<Link {...props}>{text}</Link>
+							<Link {...props} pass>
+								{text}
+							</Link>
 						</li>
 					))}
 				</ul>
