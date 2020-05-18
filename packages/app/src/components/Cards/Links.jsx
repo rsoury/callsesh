@@ -8,6 +8,12 @@ import {
 } from "react-feather";
 import CopyToClipboard from "react-copy-to-clipboard";
 import { toaster } from "baseui/toast";
+import {
+	Button,
+	SHAPE as BUTTON_SHAPE,
+	SIZE as BUTTON_SIZE
+} from "baseui/button";
+import ArrowRight from "baseui/icon/arrow-right";
 
 import LabelControl from "@/components/LabelControl";
 import Card from "@/components/Card";
@@ -33,7 +39,8 @@ const LinksCard = ({ ...props }) => {
 
 	const isOperator = isUserOperator(user);
 
-	const operatorLink = `${window.location.origin}/u/${user.username}`;
+	const operatorPathname = `/u/${user.username}`;
+	const operatorLink = `${window.location.origin}${operatorPathname}`;
 	const inviteLink = `${window.location.origin}/u/${user.username}/invite`;
 
 	const copyTextClassName = css({
@@ -56,7 +63,31 @@ const LinksCard = ({ ...props }) => {
 	return (
 		<Card {...cardProps} {...props}>
 			<LabelControl
-				label="Operator Link"
+				label={() => (
+					<div className={css({ display: "flex", alignItems: "center" })}>
+						<span className={css({ marginRight: "10px" })}>Operator Link</span>
+						<span
+							className={css({
+								height: "2px",
+								width: "10px",
+								backgroundColor: theme.colors.accent,
+								marginRight: "5px"
+							})}
+						/>
+						<Link
+							href={operatorPathname}
+							style={{
+								display: "inline-flex",
+								alignItems: "center",
+								justifyContent: "center",
+								color: `${theme.colors.accent} !important`
+							}}
+						>
+							<span>Visit</span>
+							<ArrowRight size={22} />
+						</Link>
+					</div>
+				)}
 				caption={
 					isOperator
 						? `Share this link with your audience or customers. Visitors will be able to call you if you're live.`

@@ -131,6 +131,7 @@ const Header = () => {
 		>
 			<AppNavBar
 				appDisplayName={<Logo />}
+				appDisplayNameLink={routes.page.index}
 				isNavItemActive={() => {}}
 				onNavItemSelect={() => {}}
 				{...navProps}

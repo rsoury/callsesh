@@ -72,7 +72,8 @@ const ViewUser = ({ user, viewUser, error }) => {
 										<Heading>
 											<strong className={css({ fontWeight: "900" })}>
 												Meet {viewUser.givenName}!
-											</strong>{" "}
+											</strong>
+											<br />
 											{ownerPronoun}{" "}
 											{isOperator ? (
 												<span>
