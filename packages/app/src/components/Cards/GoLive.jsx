@@ -126,13 +126,18 @@ const GoLiveCard = ({ ...props }) => {
 						}}
 					>
 						{isLive ? (
-							<span>
-								<span className={css({ position: "relative", zIndex: "5" })}>
+							<div className={css({ display: "flex", alignItems: "center" })}>
+								<span
+									className={css({
+										position: "relative",
+										zIndex: "5",
+										marginRight: "10px"
+									})}
+								>
 									Live!
 								</span>
-								&nbsp;&nbsp;
-								{!isLoading && <Pulse width="20px" height="20px" />}
-							</span>
+								{!isLoading && <Pulse width="15px" height="15px" />}
+							</div>
 						) : (
 							<span>Go Live</span>
 						)}

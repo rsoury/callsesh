@@ -12,6 +12,7 @@ const Link = ({
 	standard,
 	style: styleProp,
 	pass,
+	button,
 	...props
 }) => {
 	const [css, theme] = useStyletron();
@@ -27,6 +28,10 @@ const Link = ({
 	if (highlight) {
 		style.color = theme.colors.accent;
 		style[":hover"].color = theme.colors.accent600;
+	}
+
+	if (button) {
+		style.textDecoration = "none !important";
 	}
 
 	if (standard) {
@@ -52,14 +57,16 @@ Link.propTypes = {
 	highlight: PropTypes.bool,
 	standard: PropTypes.bool,
 	style: PropTypes.object,
-	pass: PropTypes.bool // Pass Href to child -- only for next link
+	pass: PropTypes.bool, // Pass Href to child -- only for next link
+	button: PropTypes.bool // Whether or not to treat children like a button
 };
 
 Link.defaultProps = {
 	highlight: false,
 	standard: false,
 	style: {},
-	pass: false
+	pass: false,
+	button: false
 };
 
 export default Link;

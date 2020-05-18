@@ -8,7 +8,6 @@ import PropTypes from "prop-types";
 import { useStyletron } from "baseui";
 import isEmpty from "is-empty";
 import { Button, KIND as BUTTON_KIND } from "baseui/button";
-import Link from "next/link";
 import { Grid, Cell } from "baseui/layout-grid";
 import { Avatar } from "baseui/avatar";
 import {
@@ -38,6 +37,7 @@ import InlineErrorPage from "@/components/InlineErrorPage";
 import ScreenContainer from "@/components/ScreenContainer";
 import Highlight from "@/components/Highlight";
 import Card from "@/components/Card";
+import Link from "@/components/Link";
 import * as routes from "@/routes";
 // import request from "@/utils/request";
 import { UserProps } from "@/utils/common-prop-types";
@@ -276,10 +276,7 @@ const ViewUser = ({ user, viewUser, error }) => {
 												</StyledBody>
 												<StyledAction>
 													{!isAuthenticated && (
-														<Link
-															href={routes.page.signup}
-															style={{ textDecoration: "none" }}
-														>
+														<Link href={routes.page.signup} button>
 															<Button
 																startEnhancer={() => <LockIcon size={20} />}
 																endEnhancer={() => <ArrowRight size={20} />}
@@ -337,7 +334,7 @@ const ViewUser = ({ user, viewUser, error }) => {
 										money offering the world your unique take.
 									</Paragraph>
 									<div>
-										<Link href={routes.page.signup}>
+										<Link href={routes.page.signup} pass button>
 											<Button
 												endEnhancer={() => <ArrowRight size={22} />}
 												disabled={isSameUser}
@@ -354,7 +351,7 @@ const ViewUser = ({ user, viewUser, error }) => {
 					<div>
 						<InlineErrorPage statusCode={error.code} title={error.message} />
 						<div className={css({ textAlign: "center", marginTop: "30px" })}>
-							<Link href={routes.page.index}>
+							<Link href={routes.page.index} button>
 								<Button
 									startEnhancer={() => <ArrowLeft size={22} />}
 									kind={BUTTON_KIND.secondary}

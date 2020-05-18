@@ -75,10 +75,7 @@ const PayoutsCard = ({ ...props }) => {
 							)}
 						</div>
 					)}
-					<Link
-						href={routes.api.connect.start}
-						style={{ textDecoration: "none !important" }}
-					>
+					<Link href={routes.api.connect.start} button>
 						<Button
 							startEnhancer={() => <SecureIcon size={22} />}
 							endEnhancer={() => <ChevronRight size={22} />}

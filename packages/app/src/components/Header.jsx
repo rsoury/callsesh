@@ -20,13 +20,13 @@ import appendReturnUrl from "@/utils/append-return-url";
 import Logo from "./Logo";
 
 const NavItem = ({ label, href }) => (
-	<Link href={href} style={{ textDecoration: "none !important" }}>
+	<Link href={href} button>
 		{label}
 	</Link>
 );
 
 const NavItemButton = ({ label, href, buttonKind, ...props }) => (
-	<Link href={href} style={{ textDecoration: "none !important" }}>
+	<Link href={href} button>
 		<Button
 			kind={buttonKind || BUTTON_KIND.tertiary}
 			overrides={{
