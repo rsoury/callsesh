@@ -20,7 +20,8 @@ const Card = ({
 	actionText,
 	actionProps,
 	helpText,
-	helpPlacement
+	helpPlacement,
+	...props
 }) => {
 	const [css] = useStyletron();
 
@@ -83,7 +84,7 @@ const Card = ({
 					)}
 				</div>
 			</div>
-			<BaseCard>
+			<BaseCard {...props}>
 				<StyledBody>{children}</StyledBody>
 			</BaseCard>
 		</div>

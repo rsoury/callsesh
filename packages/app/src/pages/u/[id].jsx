@@ -3,25 +3,43 @@
  * Includes operator settings if user is an operator.
  */
 
-// import { useState, useEffect, useCallback } from "react";
+import { useCallback } from "react";
 import PropTypes from "prop-types";
 import { useStyletron } from "baseui";
 import isEmpty from "is-empty";
 import ono from "@jsdevtools/ono";
 import { Button, KIND as BUTTON_KIND } from "baseui/button";
-import ArrowLeft from "baseui/icon/arrow-left";
 import Link from "next/link";
 import { Grid, Cell } from "baseui/layout-grid";
 import * as yup from "yup";
 import mapKeys from "lodash/mapKeys";
 import camelCase from "lodash/camelCase";
 import { Avatar } from "baseui/avatar";
-import { H1 as Heading, Paragraph2 as Paragraph } from "baseui/typography";
-import { ArrowRight } from "react-feather";
+import {
+	H1 as Heading,
+	ParagraphMedium as Paragraph,
+	// ParagraphXSmall,
+	Label1 as Label
+} from "baseui/typography";
+import ArrowLeft from "baseui/icon/arrow-left";
+import ArrowRight from "baseui/icon/arrow-right";
+import {
+	MessageCircle as MessageIcon,
+	PhoneCall as PhoneIcon,
+	User as UserIcon,
+	Calendar as CalendarIcon,
+	Map as MapIcon,
+	Lock as LockIcon
+} from "react-feather";
+import nl2br from "nl2br";
+import { ListItem, ListItemLabel, ARTWORK_SIZES } from "baseui/list";
+import { getName } from "country-list";
 
 import Layout from "@/components/Layout";
 import InlineErrorPage from "@/components/InlineErrorPage";
+import ScreenContainer from "@/components/ScreenContainer";
 import Highlight from "@/components/Highlight";
+import Card from "@/components/Card";
 import * as routes from "@/routes";
 // import request from "@/utils/request";
 import handleException from "@/utils/handle-exception";
@@ -30,9 +48,34 @@ import * as authManager from "@/auth-manager";
 import { UserProps } from "@/utils/common-prop-types";
 import isUserOperator from "@/utils/is-operator";
 
+const listItemProps = {
+	artworkSize: ARTWORK_SIZES.MEDIUM,
+	overrides: {
+		Root: {
+			style: {
+				backgroundColor: "transparent",
+				marginTop: "10px",
+				marginBottom: "10px"
+			}
+		},
+		ArtworkContainer: {
+			style: {
+				paddingBottom: "10px"
+			}
+		},
+		Content: {
+			style: {
+				height: "auto",
+				paddingBottom: "10px",
+				flexWrap: "wrap"
+			}
+		}
+	}
+};
+
 // We're referring to the currently viewed user, as the viewUser
 const ViewUser = ({ user, viewUser, error }) => {
-	const [css] = useStyletron();
+	const [css, theme] = useStyletron();
 	const isAuthenticated = !isEmpty(user);
 	const isSameUser = isAuthenticated
 		? user.username === viewUser.username
@@ -48,16 +91,43 @@ const ViewUser = ({ user, viewUser, error }) => {
 	}
 
 	const minuteRate = (parseFloat(viewUser.hourlyRate) / 60).toFixed(2);
+	console.log(viewUser.createdAt);
+	const memberSince = new Intl.DateTimeFormat("en-US", {
+		month: "long",
+		year: "numeric"
+	}).format(new Date(viewUser.createdAt));
+	console.log(memberSince);
+
+	const startCallSession = useCallback(() => {
+		// Start Call Session between user and viewUser
+	}, [user, viewUser]);
 
 	return (
 		<Layout>
-			<div id="callsesh-view-user">
+			<ScreenContainer id="callsesh-view-user">
 				{isEmpty(error) ? (
 					<div>
 						<Grid>
 							<Cell span={12}>
-								<div className={css({ display: "flex", alignItems: "center" })}>
-									<div className={css({ marginRight: "20px" })}>
+								<div
+									className={css({
+										display: "flex",
+										alignItems: "center",
+										marginTop: "10px",
+										marginBottom: "10px",
+										[theme.mediaQuery.maxSmall]: {
+											flexDirection: "column",
+											alignItems: "flex-start"
+										}
+									})}
+								>
+									<div
+										className={css({
+											marginTop: "10px",
+											marginBottom: "10px",
+											marginRight: "30px"
+										})}
+									>
 										<Avatar
 											name={user.nickname}
 											size="scale4800"
@@ -68,8 +138,8 @@ const ViewUser = ({ user, viewUser, error }) => {
 											}
 										/>
 									</div>
-									<div className={css({})}>
-										<Heading>
+									<div>
+										<Heading marginTop="0px" marginBottom="10px">
 											<strong className={css({ fontWeight: "900" })}>
 												Meet {viewUser.givenName}!
 											</strong>
@@ -77,9 +147,8 @@ const ViewUser = ({ user, viewUser, error }) => {
 											{ownerPronoun}{" "}
 											{isOperator ? (
 												<span>
-													offering{" "}
-													<Highlight noBreak>{viewUser.purpose}</Highlight> over
-													a phone call for{" "}
+													offering <Highlight>{viewUser.purpose}</Highlight>{" "}
+													over a phone call for{" "}
 													<Highlight noBreak>${minuteRate}/minute</Highlight>
 												</span>
 											) : (
@@ -88,21 +157,127 @@ const ViewUser = ({ user, viewUser, error }) => {
 										</Heading>
 									</div>
 								</div>
-								<div>
-									{isOperator ? (
-										<div></div>
-									) : (
-										<div>
-											<Link href={routes.page.signup}>
-												<Button endEnhancer={() => <ArrowRight size={22} />}>
-													Get Started
-												</Button>
-											</Link>
-										</div>
-									)}
-								</div>
 							</Cell>
 						</Grid>
+						{isOperator ? (
+							<div className={css({ display: "flex" })}>
+								<div className={css({ width: "calc(100% - 400px)" })}>
+									<div className={css({ marginBottom: "20px" })}>
+										<Card
+											title="About me"
+											icon={UserIcon}
+											overrides={{
+												Root: {
+													style: {
+														borderRight: "0px",
+														borderLeft: "0px",
+														borderBottom: "0px"
+													}
+												}
+											}}
+										>
+											<ListItem artwork={CalendarIcon} {...listItemProps}>
+												<ListItemLabel>
+													<Paragraph margin="0px">
+														Member since {memberSince}
+													</Paragraph>
+												</ListItemLabel>
+											</ListItem>
+											<ListItem artwork={MapIcon} {...listItemProps}>
+												<ListItemLabel>
+													<Paragraph margin="0px">
+														Based in {getName(user.country)}
+													</Paragraph>
+												</ListItemLabel>
+											</ListItem>
+										</Card>
+									</div>
+									<div>
+										<Card
+											title="A message from me"
+											icon={MessageIcon}
+											overrides={{
+												Root: {
+													style: {
+														borderRight: "0px",
+														borderLeft: "0px",
+														borderBottom: "0px"
+													}
+												}
+											}}
+										>
+											<Paragraph
+												margin="0"
+												dangerouslySetInnerHTML={{
+													__html: nl2br(viewUser.messageBroadcast)
+												}}
+											/>
+										</Card>
+									</div>
+								</div>
+								<div className={css({ width: "400px" })}>
+									<Card>
+										<div className={css({ marginBotton: "10px" })}>
+											<Label>
+												{user.isLive ? (
+													<span>
+														<strong>{user.givenName} is live!</strong>
+													</span>
+												) : (
+													<span>
+														<strong>{user.givenName} is not available.</strong>{" "}
+														Check back another time or follow their socials for
+														an announcement on when they will be live.
+													</span>
+												)}
+											</Label>
+										</div>
+										{!isAuthenticated && (
+											<Link
+												href={routes.page.signup}
+												style={{ textDecoration: "none" }}
+											>
+												<Button
+													startEnhancer={() => <LockIcon size={22} />}
+													endEnhancer={() => <ArrowRight size={22} />}
+												>
+													Sign in to call {user.givenName}
+												</Button>
+											</Link>
+										)}
+										{isAuthenticated && user.isLive && (
+											<Button
+												startEnhancer={() => <PhoneIcon size={22} />}
+												disabled={isSameUser}
+												onClick={startCallSession}
+											>
+												Call {user.givenName} for ${minuteRate}/minute
+											</Button>
+										)}
+									</Card>
+								</div>
+							</div>
+						) : (
+							<Grid>
+								<Cell span={12}>
+									<Paragraph>
+										Get expertise, advice, guidance, or companionship over a
+										phone call using Callsesh, or become an operator and make
+										money offering the world your unique take.
+									</Paragraph>
+									<div>
+										<Link href={routes.page.signup}>
+											<Button
+												endEnhancer={() => <ArrowRight size={22} />}
+												disabled={isSameUser}
+											>
+												Get Started
+											</Button>
+										</Link>
+									</div>
+								</Cell>
+							</Grid>
+						)}
 					</div>
 				) : (
 					<div>
@@ -119,7 +294,7 @@ const ViewUser = ({ user, viewUser, error }) => {
 						</div>
 					</div>
 				)}
-			</div>
+			</ScreenContainer>
 		</Layout>
 	);
 };
