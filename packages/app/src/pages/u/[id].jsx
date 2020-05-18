@@ -11,6 +11,10 @@ import ono from "@jsdevtools/ono";
 import { Button, KIND as BUTTON_KIND } from "baseui/button";
 import ArrowLeft from "baseui/icon/arrow-left";
 import Link from "next/link";
+import { Grid, Cell } from "baseui/layout-grid";
+import * as yup from "yup";
+import mapKeys from "lodash/mapKeys";
+import camelCase from "lodash/camelCase";
 
 import Layout from "@/components/Layout";
 import InlineErrorPage from "@/components/InlineErrorPage";
@@ -23,8 +27,12 @@ import { UserProps } from "@/utils/common-prop-types";
 import ScreenContainer from "@/components/ScreenContainer";
 
 // We're referring to the currently viewed user, as the viewUser
-const ViewUser = ({ user, view, error }) => {
-	const [css, theme] = useStyletron();
+const ViewUser = ({ user, viewUser, error }) => {
+	const [css] = useStyletron();
+	const isAuthenticated = !isEmpty(user);
+	const isSameUser = isAuthenticated
+		? user.username === viewUser.username
+		: false;
 
 	return (
 		<Layout
@@ -35,21 +43,17 @@ const ViewUser = ({ user, view, error }) => {
 				justifyContent: "space-between"
 			}}
 		>
-			<div
-				id="callsesh-view-user"
-				className={css({
-					width: "100%",
-					maxWidth: "1000px",
-					margin: "0 auto",
-					padding: "0 20px 50px 20px",
-					[theme.mediaQuery.maxSmall]: {
-						paddingLeft: "0px",
-						paddingRight: "0px"
-					}
-				})}
-			>
+			<ScreenContainer id="callsesh-view-user">
 				{isEmpty(error) ? (
-					<div>Hello World</div>
+					<div className={css({ flexGrow: 1 })}>
+						<div className={css({ maxWidth: "calc(100% - 300px)" })}>
+							<Grid>
+								<Cell span={12}>
+									<div>{viewUser.username}</div>
+								</Cell>
+							</Grid>
+						</div>
+					</div>
 				) : (
 					<div>
 						<InlineErrorPage statusCode={error.code} title={error.message} />
@@ -65,14 +69,22 @@ const ViewUser = ({ user, view, error }) => {
 						</div>
 					</div>
 				)}
-			</div>
+			</ScreenContainer>
 		</Layout>
 	);
 };
 
 ViewUser.propTypes = {
 	user: UserProps,
-	view: PropTypes.shape({}),
+	viewUser: PropTypes.shape({
+		picture: PropTypes.string,
+		givenName: PropTypes.string,
+		familyName: PropTypes.string,
+		username: PropTypes.string,
+		roles: PropTypes.arrayOf(
+			PropTypes.shape({ name: PropTypes.string, description: PropTypes.string })
+		)
+	}),
 	error: PropTypes.shape({
 		code: PropTypes.number,
 		message: PropTypes.string
@@ -81,12 +93,31 @@ ViewUser.propTypes = {
 
 ViewUser.defaultProps = {
 	user: {},
-	view: {},
+	viewUser: {},
 	error: {
 		code: 404,
 		message: "This user cannot be found"
 	}
 };
+
+const viewUserSchema = yup.object().shape({
+	createdAt: yup.string().required(),
+	givenName: yup.string().required(),
+	familyName: yup.string().required(),
+	nickname: yup.string().required(),
+	name: yup.string().required(),
+	picture: yup.string().required(),
+	username: yup.string().required(),
+	country: yup.string().required(),
+	currency: yup.string().required(),
+	dob: yup.string().required(),
+	gender: yup.string(),
+	hourlyRate: yup.string(),
+	messageBroadcast: yup.string(),
+	purpose: yup.string(),
+	isLive: yup.boolean(),
+	profilePicture: yup.object()
+});
 
 export async function getServerSideProps({
 	req,
@@ -107,7 +138,16 @@ export async function getServerSideProps({
 		page: 0,
 		per_page: 10,
 		q: `user_metadata.username:"${username}"`,
-		fields: ["created_at"].join(",")
+		fields: [
+			"created_at",
+			"user_id",
+			"given_name",
+			"family_name",
+			"nickname",
+			"name",
+			"user_metadata",
+			"picture"
+		].join(",")
 	});
 	if (isEmpty(users)) {
 		return {
@@ -129,6 +169,35 @@ export async function getServerSideProps({
 		};
 	}
 
+	// Now that we have a user, validate them. Make sure the view user is registered
+	const {
+		user_id: viewUserId,
+		user_metadata: userMetadata,
+		...userData
+	} = users[0];
+	const viewUser = mapKeys(
+		{
+			...userData,
+			...userMetadata
+		},
+		(value, key) => camelCase(key)
+	);
+	try {
+		await viewUserSchema.validate(viewUser);
+	} catch (e) {
+		console.error(e); // eslint-disable-line
+		return {
+			props: {}
+		};
+	}
+
+	// Get view user roles
+	const roles = await authManager.getUserRoles(viewUserId);
+	viewUser.roles = roles.map((role) => ({
+		name: role.name,
+		description: role.description
+	}));
+
 	return ssrUser({ req, res }, async (user) => {
 		// If user does exist...
 		if (!isEmpty(user)) {
@@ -141,26 +210,10 @@ export async function getServerSideProps({
 			}
 		}
 
-		console.log(users);
-		// const [viewUser] = user;
-
-		// const [{ user_metadata: userMetadata,
-		// 	app_metadata: appMetadata, ...userData }, roles] = await Promise.all([authManager.getUser(viewUserId), authManager.getUserRoles(viewUserId)]);
-
-		// const view = {
-		// 	...pickBy(mapKeys(userData, (value, key) => camelCase(key)), (value, key) => ),
-		// 	roles: roles.map((role) => ({
-		// 		name: role.name,
-		// 		description: role.description
-		// 	}))
-		// }
-
-		// If user not found, redirect to 404.
-
 		return {
 			props: {
 				user,
-				view: {},
+				viewUser,
 				error: {}
 			}
 		};
