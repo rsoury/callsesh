@@ -71,8 +71,14 @@ const fieldGridProps = {
 	overrides: {
 		Grid: {
 			style: {
-				padding: "0px !important",
-				margin: "0 -8px !important"
+				paddingTop: "0px !important",
+				paddingLeft: "0px !important",
+				paddingRight: "0px !important",
+				paddingBottom: "0px !important",
+				marginTop: "0px !important",
+				marginBottom: "0px !important",
+				marginRight: "-8px !important",
+				marginLeft: "-8px !important"
 			}
 		}
 	}

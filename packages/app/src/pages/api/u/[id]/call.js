@@ -111,8 +111,8 @@ handler.use(requireAuthentication).post(async (req, res) => {
 		},
 		{
 			uniqueName: `Call session - Caller: ${truncate(user.nickname, {
-				length: 73
-			})} and Operator: ${truncate(viewUser.nickname, { length: 73 })}`
+				length: 74
+			})} and Operator: ${truncate(viewUser.nickname, { length: 74 })}`
 		}
 	);
 
@@ -147,6 +147,10 @@ handler.use(requireAuthentication).post(async (req, res) => {
 	]);
 
 	// Notify operator of an incoming caller.
+	await comms.sms(
+		viewUser.phoneNumber,
+		`You have a caller! You should receive a call within a minute. If you do not, this means the caller has abandoned the session.`
+	);
 
 	// Response should be the proxy phone number
 	return res.json({

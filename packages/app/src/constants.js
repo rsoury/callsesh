@@ -11,6 +11,9 @@ export const CALL_SESSION_USER_TYPE = {
 	operator: "operator"
 };
 
+// SMS Sender Id
+export const SMS_SENDER_ID = "Callsesh";
+
 // Error Types -- Shared between frontend and backend.
 export const ERROR_TYPES = {
 	// Call session

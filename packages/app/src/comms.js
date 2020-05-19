@@ -1,5 +1,6 @@
 import Twilio from "twilio";
 import { twilio as config } from "@/env-config";
+import { SMS_SENDER_ID } from "@/constants";
 
 const client = Twilio(config.accountSid, config.authToken);
 const proxyService = client.proxy.services(config.proxyServiceSid);
@@ -40,4 +41,12 @@ export const createSession = async (caller, operator, sessionParams = {}) => {
 		caller: callerParticipant,
 		operator: operatorParticipant
 	};
+};
+
+export const sms = (phoneNumber, messageBody) => {
+	return client.messages.create({
+		body: messageBody,
+		from: SMS_SENDER_ID,
+		to: phoneNumber
+	});
 };
