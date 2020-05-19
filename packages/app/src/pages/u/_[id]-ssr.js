@@ -11,35 +11,29 @@ export default async function getServerSideProps({
 	res,
 	query: { return_url: returnUrl = "/", id: username }
 }) {
-	// Get view user data.
-	if (isEmpty(username)) {
-		// See: https://github.com/zeit/next.js/issues/3362 for managing error pages.
-		// Defalts props, so you can just return an empty object
-		return {
-			props: {}
-		};
-	}
-	// Search users by username in user_metadata
-	try {
-		const viewUser = await authManager.getViewUserByUsername(username);
-
-		// Return empty if no view user exists.
-		if (isEmpty(viewUser)) {
-			return {
-				props: {}
-			};
+	return ssrUser({ req, res }, async (user) => {
+		// If user does exist...
+		if (!isEmpty(user)) {
+			// If user is not registered, redirect to register page
+			if (!user.isRegistered) {
+				res.writeHead(302, {
+					Location: `${routes.page.register}?return_url=${returnUrl}`
+				});
+				res.end();
+			}
 		}
 
-		return ssrUser({ req, res }, async (user) => {
-			// If user does exist...
-			if (!isEmpty(user)) {
-				// If user is not registered, redirect to register page
-				if (!user.isRegistered) {
-					res.writeHead(302, {
-						Location: `${routes.page.register}?return_url=${returnUrl}`
-					});
-					res.end();
-				}
+		try {
+			const viewUser = await authManager.getViewUserByUsername(username);
+
+			if (isEmpty(viewUser)) {
+				// See: https://github.com/zeit/next.js/issues/3362 for managing error pages.
+				// Defalts props, so you can just return an empty object
+				return {
+					props: {
+						user
+					}
+				};
 			}
 
 			return {
@@ -49,17 +43,18 @@ export default async function getServerSideProps({
 					error: {}
 				}
 			};
-		});
-	} catch (err) {
-		handleException(ono(err, { username }));
-		return {
-			props: {
-				error: {
-					code: 500,
-					message:
-						"Oops! Something has gone wrong. We have been notified and will look into it"
+		} catch (err) {
+			handleException(ono(err, { username }));
+			return {
+				props: {
+					user,
+					error: {
+						code: 500,
+						message:
+							"Oops! Something has gone wrong. We have been notified and will look into it"
+					}
 				}
-			}
-		};
-	}
+			};
+		}
+	});
 }

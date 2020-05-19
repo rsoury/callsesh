@@ -20,7 +20,7 @@ const Layout = ({ children, style }) => {
 			})}
 		>
 			<Header />
-			<div className={css({ flexGrow: 1 })}>{children}</div>
+			<div className={css({ flexGrow: 1, display: "flex" })}>{children}</div>
 			<Footer />
 		</main>
 	);

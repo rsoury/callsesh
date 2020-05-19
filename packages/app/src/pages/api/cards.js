@@ -17,7 +17,10 @@ handler
 		const user = await getUser(req, { withContext: true }); // Be sure to return user secret context data
 
 		if (isEmpty(user.stripeCustomerId)) {
-			return [];
+			return res.json({
+				success: true,
+				cards: []
+			});
 		}
 
 		const { data: cards } = await stripe.paymentMethods.list({
