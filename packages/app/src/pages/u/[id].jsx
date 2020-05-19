@@ -133,11 +133,7 @@ const ViewUser = ({ user, viewUser, error }) => {
 										<Avatar
 											name={viewUser.nickname}
 											size="scale4800"
-											src={
-												viewUser.picture.indexOf("auth0.com") > -1
-													? null
-													: viewUser.picture
-											}
+											src={viewUser.picture}
 										/>
 									</div>
 									<div>

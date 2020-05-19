@@ -118,7 +118,11 @@ handler
 			}
 		};
 
-		if (!isEmpty(profilePicture)) {
+		if (isEmpty(profilePicture)) {
+			updateParams.picture = `https://api.adorable.io/avatars/285/${new Date(
+				user.createdAt
+			).getTime()}@adorable.io.png`;
+		} else {
 			updateParams.picture = profilePicture.cdnUrl;
 			updateParams.metadata.user.profilePicture = profilePicture;
 		}
@@ -151,7 +155,7 @@ handler
 
 			// Update update
 			await authManager.updateUser(user.id, updateParams);
-			req.log.info("Update user data", { user: user.id });
+			req.log.info("Update user data", { user: user.id, params: updateParams });
 
 			// Register the same data against the stripe customer entity if it exists.
 			if (!isEmpty(stripeCustomerId)) {

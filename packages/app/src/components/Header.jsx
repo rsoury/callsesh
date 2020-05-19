@@ -16,6 +16,7 @@ import Link from "@/components/Link";
 import * as routes from "@/routes";
 import useUser from "@/hooks/use-user";
 import appendReturnUrl from "@/utils/append-return-url";
+import isAuth0Avatar from "@/utils/is-auth0-avatar";
 
 import Logo from "./Logo";
 
