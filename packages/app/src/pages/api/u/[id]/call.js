@@ -1,18 +1,21 @@
 /**
  * Create a Twilio Proxy Session where participants are the currently authed user and the operator in url param
  * 1. Check if both users exist and are active
- * 2. Check if operator is live
- * 3. Initiate session
+ * 2. Check if operator is live and available
+ * 3. Check if caller is a valid customer
+ * 4. Initiate session
  */
 
 import isEmpty from "is-empty";
+import truncate from "lodash/truncate";
+
 import * as comms from "@/comms";
 import getHandler, { onNoMatch } from "@/middleware";
 import { requireAuthentication, getUser } from "@/middleware/auth";
 import * as authManager from "@/auth-manager";
 import isUserOperator from "@/utils/is-operator";
 import stripe from "@/stripe";
-import { ERROR_TYPES } from "@/constants";
+import { ERROR_TYPES, CALL_SESSION_USER_TYPE } from "@/constants";
 
 const handler = getHandler();
 
@@ -94,9 +97,63 @@ handler.use(requireAuthentication).post(async (req, res) => {
 	}
 
 	// Create the call session
+	const {
+		session: callSession,
+		caller: { proxy_identifier: proxyPhoneNumber }
+	} = await comms.createSession(
+		{
+			name: user.nickname,
+			phoneNumber: user.phoneNumber
+		},
+		{
+			name: viewUser.nickname,
+			phoneNumber: viewUser.phoneNumber
+		},
+		{
+			uniqueName: `Call session - Caller: ${truncate(user.nickname, {
+				length: 73
+			})} and Operator: ${truncate(viewUser.nickname, { length: 73 })}`
+		}
+	);
+
+	// Call session to return to authed user.
+	const newUserCallSession = {
+		with: viewUser.username,
+		as: CALL_SESSION_USER_TYPE.caller
+	};
+	// Store sessions against each use
+	await Promise.all([
+		authManager.updateUser(viewUser.id, {
+			metadata: {
+				app: {
+					callSession: {
+						id: callSession.sid,
+						with: user.username,
+						as: CALL_SESSION_USER_TYPE.operator
+					}
+				}
+			}
+		}),
+		authManager.updateUser(req, {
+			metadata: {
+				app: {
+					callSession: {
+						id: callSession.sid,
+						...newUserCallSession
+					}
+				}
+			}
+		})
+	]);
+
+	// Notify operator of an incoming caller.
 
 	// Response should be the proxy phone number
-	return res.json({ success: true });
+	return res.json({
+		success: true,
+		proxyPhoneNumber,
+		callSession: newUserCallSession
+	});
 });
 
 export default handler;

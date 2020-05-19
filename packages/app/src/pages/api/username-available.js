@@ -20,14 +20,9 @@ handler.use(requireAuthentication).get(async (req, res) => {
 		});
 	}
 
-	const users = await authManager.getClient().getUsers({
-		search_engine: "v3",
-		q: `user_metadata.username:"${username}"`,
-		per_page: 10,
-		page: 0
-	});
+	const usernameAvailable = await authManager.isUsernameAvailable(username);
 
-	if (isEmpty(users)) {
+	if (usernameAvailable) {
 		return res.json({
 			success: true,
 			available: true

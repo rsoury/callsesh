@@ -142,4 +142,15 @@ export const getViewUserByUsername = async (
 	return viewUser;
 };
 
+export const isUsernameAvailable = async (username) => {
+	const users = await client.getUsers({
+		search_engine: "v3",
+		q: `user_metadata.username:"${username}"`,
+		per_page: 10,
+		page: 0
+	});
+
+	return isEmpty(users);
+};
+
 export const getClient = () => client;

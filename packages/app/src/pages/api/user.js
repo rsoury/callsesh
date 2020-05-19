@@ -92,6 +92,13 @@ handler
 			messageBroadcast
 		} = req.body;
 
+		// Check if username already exists.
+		const usernameAvailable = await authManager.isUsernameAvailable(username);
+		if (!usernameAvailable) {
+			throw new Error("Username is not available");
+		}
+
+		// Create full name
 		const name = `${firstName} ${lastName}`;
 
 		// Register the data against the authenticated user.
@@ -211,6 +218,8 @@ handler
 			patchParams.name = name;
 			patchParams.nickname = name;
 		}
+
+		// Check if username is set, and if so, does it already exist.
 
 		req.log.info("Patch params created", {
 			user: user.id,
