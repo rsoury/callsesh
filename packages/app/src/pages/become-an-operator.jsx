@@ -15,7 +15,7 @@ import ono from "@jsdevtools/ono";
 import * as routes from "@/routes";
 import OperatorOnboarding, {
 	initialValues,
-	requiredValidationSchema
+	validationSchema
 } from "@/components/Onboarding/OperatorStep";
 import { FormContainer } from "@/components/Onboarding/FormLayout";
 import isUserOperator from "@/utils/is-operator";
@@ -68,7 +68,7 @@ const BecomeAnOperator = ({ user }) => {
 	return (
 		<Formik
 			initialValues={initialValues}
-			validationSchema={requiredValidationSchema}
+			validationSchema={validationSchema}
 			onSubmit={handleSubmit}
 		>
 			{(props) => {

@@ -90,8 +90,8 @@ const constructUser = async (
 		app_metadata: appMetadata = {},
 		phone_number: phoneNumber,
 		roles,
-		family_name: familyName,
-		given_name: givenName,
+		family_name: familyName = "",
+		given_name: givenName = "",
 		...userData
 	} = rawUser;
 

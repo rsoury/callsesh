@@ -68,31 +68,33 @@ export const initialValues = {
 };
 
 export const schemaProperties = {
-	operator: yup.boolean(),
-	hourlyRate: yup.string(),
-	profilePicture: yup.object().shape({
-		cdnUrl: yup.string().required().label("Profile Picture")
+	operator: yup.boolean().required(),
+	hourlyRate: yup
+		.string()
+		.when("operator", { is: true, then: (s) => s.required() }),
+	profilePicture: yup.object().when("operator", {
+		is: true,
+		then: (s) =>
+			s.shape({
+				cdnUrl: yup.string().required().label("Profile Picture")
+			})
 	}),
 	purpose: yup.object().shape({
-		option: yup.object().shape({
-			label: yup.string(),
-			id: yup.string()
-		}),
+		option: yup
+			.object()
+			.shape({
+				label: yup.string(),
+				id: yup.string()
+			})
+			.when("operator", { is: true, then: (s) => s.required() }),
 		value: yup.string()
 	}),
-	messageBroadcast: yup.string()
+	messageBroadcast: yup
+		.string()
+		.when("operator", { is: true, then: (s) => s.required() })
 };
 
 export const validationSchema = yup.object().shape(schemaProperties);
-
-// A version of validationSchema that requires input
-export const requiredValidationSchema = yup.object().shape({
-	operator: schemaProperties.operator.required(),
-	hourlyRate: schemaProperties.hourlyRate.required(),
-	profilePicture: schemaProperties.profilePicture.required(),
-	purpose: schemaProperties.purpose.required(),
-	messageBroadcast: schemaProperties.messageBroadcast.required()
-});
 
 const OperatorStep = ({ values }) => {
 	const [css, theme] = useStyletron();
