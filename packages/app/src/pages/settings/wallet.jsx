@@ -37,7 +37,7 @@ import ScreenContainer from "@/components/ScreenContainer";
 
 const Wallet = () => {
 	const [css, theme] = useStyletron();
-	const [user, isUserLoading] = useUser();
+	const [user, isUserLoading] = useUser({ required: true });
 	const [cards, setCards] = useState([]);
 	const [isLoading, setLoading] = useState(false);
 

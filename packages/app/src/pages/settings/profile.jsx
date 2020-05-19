@@ -339,7 +339,7 @@ const getEditConfig = (user, type) => {
 
 const Profile = () => {
 	const [css, theme] = useStyletron();
-	const [user, isUserLoading, { setUser }] = useUser();
+	const [user, isUserLoading, { setUser }] = useUser({ required: true });
 	const [editType, setEditType] = useState("");
 
 	const {

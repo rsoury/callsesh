@@ -99,8 +99,8 @@ export const getViewUserByUsername = async (
 	// Now that we have a user, validate. Make sure the view user is registered
 	const {
 		user_id: viewUserId,
-		user_metadata: userMetadata,
-		app_metadata: appMetadata,
+		user_metadata: userMetadata = {},
+		app_metadata: appMetadata = {},
 		...userData
 	} = users[0];
 	// Get publicly viewable call session data

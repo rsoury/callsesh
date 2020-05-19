@@ -118,7 +118,6 @@ export function getServerSideProps({ req, res }) {
 				Location: routes.page.index
 			});
 			res.end();
-			return { props: {} };
 		}
 
 		return {
@@ -130,11 +129,7 @@ export function getServerSideProps({ req, res }) {
 }
 
 BecomeAnOperator.propTypes = {
-	user: UserProps
-};
-
-BecomeAnOperator.defaultProps = {
-	user: {}
+	user: UserProps.isRequired
 };
 
 export default BecomeAnOperator;

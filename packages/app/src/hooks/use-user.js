@@ -50,10 +50,13 @@ function useUser({ required } = {}) {
 	} = useContext(UserContext);
 
 	useEffect(() => {
-		// If user already exists or is currently being fetched.
+		// If user already fetched
 		if (!loading && user) {
-			ensureUserRegistered(user);
-			setErrorTrackingUser(user);
+			if (!isEmpty(user)) {
+				// If user object has data...  then -- SSR can pass an empty user object to indicate no user.
+				ensureUserRegistered(user);
+				setErrorTrackingUser(user);
+			}
 			return () => {};
 		}
 		// Start user fetch

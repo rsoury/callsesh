@@ -108,11 +108,8 @@ export function getServerSideProps({ req, res }) {
 				Location: routes.page.index
 			});
 			res.end();
-			return { props: {} };
-		}
-
-		// If user is registered, redirect to settings/profile
-		if (user.isRegistered) {
+		} else if (user.isRegistered) {
+			// If user is registered, redirect to settings/profile
 			res.writeHead(302, {
 				Location: routes.page.settings.profile
 			});

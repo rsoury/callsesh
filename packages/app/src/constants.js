@@ -16,6 +16,8 @@ export const SMS_SENDER_ID = "Callsesh";
 
 // Error Types -- Shared between frontend and backend.
 export const ERROR_TYPES = {
+	// Auth
+	userBlocked: "UserBlocked",
 	// Call session
 	paymentMethodRequired: "PaymentMethodRequired",
 	// Operator

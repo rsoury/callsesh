@@ -5,8 +5,10 @@ import camelCase from "lodash/camelCase";
 import mapKeys from "lodash/mapKeys";
 import isEmpty from "is-empty";
 import { parsePhoneNumberFromString } from "libphonenumber-js";
-import stripe from "@/stripe";
+import ono from "@jsdevtools/ono";
 
+import stripe from "@/stripe";
+import { ERROR_TYPES } from "@/constants";
 import * as authManager from "@/auth-manager";
 import { auth0 as config, publicUrl, sessionSecret } from "@/env-config";
 import * as routes from "@/routes";
@@ -84,8 +86,8 @@ const constructUser = async (
 	{ withContext = false } = {}
 ) => {
 	const {
-		user_metadata: userMetadata,
-		app_metadata: appMetadata,
+		user_metadata: userMetadata = {},
+		app_metadata: appMetadata = {},
 		phone_number: phoneNumber,
 		roles,
 		family_name: familyName,
@@ -189,7 +191,7 @@ export const getUser = async (req, options) => {
 		authManager.getUserRoles(session.user.sub)
 	]);
 	if (blocked) {
-		throw new Error(`The user is blocked.`);
+		throw ono({ type: ERROR_TYPES.userBlocked }, `The user is blocked.`);
 	}
 
 	return constructUser(
@@ -225,7 +227,7 @@ export const updateAndGetUser = async (req, params, options) => {
 		authManager.getUserRoles(session.user.sub)
 	]);
 	if (blocked) {
-		throw new Error(`The user is blocked.`);
+		throw ono({ type: ERROR_TYPES.userBlocked }, `The user is blocked.`);
 	}
 
 	return constructUser(

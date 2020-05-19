@@ -146,16 +146,22 @@ const ViewUser = ({ user, viewUser, error }) => {
 												Meet {viewUser.givenName}!
 											</strong>
 											<br />
-											{ownerPronoun}{" "}
-											{isOperator ? (
-												<span>
-													offering <Highlight>{viewUser.purpose}</Highlight>{" "}
-													over a phone call for{" "}
-													<Highlight noBreak>${minuteRate}/minute</Highlight>
-												</span>
-											) : (
-												<span>making calls on Callsesh. You can too!</span>
-											)}
+											<span
+												className={css({
+													...theme.typography.HeadingXLarge
+												})}
+											>
+												{ownerPronoun}{" "}
+												{isOperator ? (
+													<span>
+														offering <Highlight>{viewUser.purpose}</Highlight>{" "}
+														over a phone call for{" "}
+														<Highlight noBreak>${minuteRate}/minute</Highlight>
+													</span>
+												) : (
+													<span>making calls on Callsesh. You can too!</span>
+												)}
+											</span>
 										</Heading>
 									</div>
 								</div>
