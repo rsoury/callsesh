@@ -119,10 +119,16 @@ const constructUser = async (
 		payouts.enabled = chargesEnabled && payoutsEnabled;
 	}
 
+	// Get publicly viewable call session data
+	const {
+		callSession: { id: callSessionId, ...callSession } = {}
+	} = appMetadata;
+
 	let user = {
 		id: sessionUser.sub,
 		...sessionUser,
 		...userMetadata,
+		callSession,
 		phoneNumber,
 		familyName,
 		givenName,
@@ -137,7 +143,7 @@ const constructUser = async (
 			...user,
 			roles,
 			...userData,
-			...appMetadata
+			...appMetadata // will include call session related data by default.
 		};
 	}
 	user = mapKeys(user, (value, key) => camelCase(key));
