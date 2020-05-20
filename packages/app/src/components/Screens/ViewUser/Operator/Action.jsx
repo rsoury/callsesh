@@ -76,8 +76,11 @@ const ViewUserOperatorAction = ({ viewUser, onStart, isStarting }) => {
 							<div>
 								<Label>
 									<Highlight type="positive">
-										You&apos;re currently in call with {viewUser.givenName}
+										You&apos;re in call session with {viewUser.givenName}
 									</Highlight>
+									<ParagraphXSmall marginTop="5px" marginBottom="0px">
+										The call session will end a minute after you hangup.
+									</ParagraphXSmall>
 								</Label>
 							</div>
 						)}
@@ -156,6 +159,7 @@ const ViewUserOperatorAction = ({ viewUser, onStart, isStarting }) => {
 								</Button>
 								<ParagraphXSmall marginTop="5px" marginBottom="0px">
 									A service fee of $2.50 will be charged upon initiating the
+									call. Additional charges will apply only for time spent in the
 									call. Currency is in {viewUser.currency}.
 								</ParagraphXSmall>
 							</div>

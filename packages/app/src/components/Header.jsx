@@ -83,7 +83,7 @@ const InCallTopBar = () => {
 				}}
 			>
 				<span className={css({ display: "flex", alignItems: "center" })}>
-					You are currently in a call
+					You are currently in a call session
 					{!onViewUserPage && (
 						<span className={css({ display: "flex", alignItems: "center" })}>
 							<span
@@ -198,7 +198,7 @@ const Header = () => {
 				overflow: "hidden"
 			})}
 		>
-			{!isEmpty(user.callSession) && <InCallTopBar />}
+			{!isEmpty((user || {}).callSession) && <InCallTopBar />}
 			<AppNavBar
 				appDisplayName={<Logo />}
 				appDisplayNameLink={routes.page.index}

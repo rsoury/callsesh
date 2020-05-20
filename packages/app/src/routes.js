@@ -25,7 +25,7 @@ export const build = {
 		return `/u/${username}`;
 	},
 	callUser(username) {
-		return `/u/${username}/call`;
+		return `/api/u/${username}/call`;
 	}
 };
 
@@ -44,5 +44,5 @@ export const api = {
 		start: "/api/connect",
 		redirect: "/api/connect/oauth"
 	},
-	callUser: `/u/:id/call`
+	callUser: `/api/u/:id/call`
 };

@@ -48,6 +48,14 @@ export const createSession = async (caller, operator, sessionParams = {}) => {
  */
 export const getProxyService = () => proxyService;
 
+/**
+ * SMS Helper
+ *
+ * @param   {string}  phoneNumber
+ * @param   {string}  messageBody
+ *
+ * @return  {Promise}
+ */
 export const sms = (phoneNumber, messageBody) => {
 	return client.messages.create({
 		body: messageBody,

@@ -33,6 +33,9 @@ const logParams = (viewUser = {}, user = {}) => ({
 	user: { id: user.id || "", username: user.username || "" }
 });
 
+const getUserSMSMessage = (proxyPhoneNumber) =>
+	`Call your operator using this number: ${proxyPhoneNumber}. If no action is taken, this number will be unavailable in 40 seconds.`;
+
 handler.use(requireAuthentication).post(async (req, res) => {
 	// Get username from query.
 	const {
@@ -102,6 +105,10 @@ handler.use(requireAuthentication).post(async (req, res) => {
 					callSessionId: userCallSessionId,
 					proxyPhoneNumber
 				});
+
+				// Notify caller with proxy phone number
+				await comms.sms(user.phoneNumber, getUserSMSMessage(proxyPhoneNumber));
+
 				return res.json({
 					success: true,
 					proxyPhoneNumber,
@@ -213,11 +220,15 @@ handler.use(requireAuthentication).post(async (req, res) => {
 		})
 	]);
 
-	// Notify operator of an incoming caller.
-	await comms.sms(
-		viewUser.phoneNumber,
-		`You have a caller! You should receive a call within a minute. If you do not, this means the caller has abandoned the session.`
-	);
+	await Promise.all([
+		// Notify operator of an incoming caller.
+		comms.sms(
+			viewUser.phoneNumber,
+			`You have a caller! You should receive a call within a minute. If you do not, this means the caller has abandoned the session.`
+		),
+		// Notify caller with proxy phone number
+		comms.sms(user.phoneNumber, getUserSMSMessage(proxyPhoneNumber))
+	]);
 
 	// Response should be the proxy phone number
 	return res.json({
