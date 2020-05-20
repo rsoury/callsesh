@@ -10,32 +10,37 @@ import {
 import ChevronLeft from "baseui/icon/chevron-left";
 import { H1 as Heading } from "baseui/typography";
 
+import { publicUrl } from "@/env-config";
 import Link from "@/components/Link";
 import UppercaseLabel from "@/components/UppercaseLabel";
 
 const SettingsHeader = ({ title }) => {
 	const [, theme] = useStyletron();
 
+	const referrerPathname =
+		window.location.origin.indexOf(publicUrl) === 0
+			? document.referrer.replace(window.location.origin, "")
+			: "";
+
 	return (
 		<Grid>
 			<Cell span={12}>
-				{document.referrer
-					.replace(window.location.origin, "")
-					.indexOf("/u/") === 0 && (
-					<Link href={document.referrer} button>
+				{referrerPathname.indexOf("/u/") === 0 && (
+					<Link
+						href={referrerPathname}
+						button
+						style={{
+							marginLeft: "-20px !important",
+							display: "none",
+							[theme.mediaQuery.maxSmall]: {
+								display: "block"
+							}
+						}}
+					>
 						<Button
 							startEnhancer={() => <ChevronLeft size={22} />}
 							kind={BUTTON_KIND.secondary}
 							size={BUTTON_SIZE.compact}
-							overrides={{
-								BaseButton: {
-									marginLeft: "-20px",
-									display: "none",
-									[theme.mediaQuery.maxSmall]: {
-										display: "block"
-									}
-								}
-							}}
 						>
 							Back to User
 						</Button>
