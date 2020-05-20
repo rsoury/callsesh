@@ -8,13 +8,13 @@ import { useStyletron } from "baseui";
 
 import { ChildrenProps } from "@/utils/common-prop-types";
 
-const Highlight = ({ children, noBreak }) => {
+const Highlight = ({ children, type, noBreak }) => {
 	const [css, theme] = useStyletron();
 
 	return (
 		<strong
 			className={css({
-				color: theme.colors.accent,
+				color: theme.colors[type],
 				whiteSpace: noBreak ? "nowrap" : "normal"
 			})}
 		>
@@ -25,10 +25,12 @@ const Highlight = ({ children, noBreak }) => {
 
 Highlight.propTypes = {
 	children: ChildrenProps.isRequired,
+	type: PropTypes.string,
 	noBreak: PropTypes.bool
 };
 
 Highlight.defaultProps = {
+	type: "accent",
 	noBreak: false
 };
 

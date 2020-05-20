@@ -33,11 +33,10 @@ const ensureUserRegistered = (user) => {
 /**
  * Helper function to set user state
  */
-export const setUser = (user) => {
+export const useSetUser = () => {
 	const { setUser: setUserState } = useContext(UserContext);
-	setUserState(user);
 
-	return user;
+	return setUserState;
 };
 
 function useUser({ required } = {}) {

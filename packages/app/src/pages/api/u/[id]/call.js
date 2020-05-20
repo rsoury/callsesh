@@ -4,6 +4,8 @@
  * 2. Check if operator is live and available
  * 3. Check if caller is a valid customer
  * 4. Initiate session
+ *
+ * If both parties are not available, check if they're already in a session together.
  */
 
 import isEmpty from "is-empty";
@@ -26,6 +28,11 @@ const customerErrResponse = {
 	message: "Payment method required"
 };
 
+const logParams = (viewUser = {}, user = {}) => ({
+	viewUser: { id: viewUser.id || "", username: viewUser.username || "" },
+	user: { id: user.id || "", username: user.username || "" }
+});
+
 handler.use(requireAuthentication).post(async (req, res) => {
 	// Get username from query.
 	const {
@@ -42,6 +49,8 @@ handler.use(requireAuthentication).post(async (req, res) => {
 		return onNoMatch(req, res);
 	}
 
+	req.log.info(`View user found`, logParams(viewUser));
+
 	// Make sure view user is an operator
 	if (!isUserOperator(viewUser)) {
 		return res.status(400).json({
@@ -49,6 +58,68 @@ handler.use(requireAuthentication).post(async (req, res) => {
 			code: 400,
 			type: ERROR_TYPES.operatorRequired,
 			message: "An operator user is required to start a call session"
+		});
+	}
+
+	req.log.info(`View user is operator`, logParams(viewUser));
+
+	// Now that we have the viewUser...
+	// Get the authed user
+	const user = await getUser(req, { withContext: true });
+
+	// Make sure authed user is not already in a session
+	// If they are, check if they're already in a session with the viewUser
+	if (!isEmpty(user.callSession)) {
+		if (!isEmpty(viewUser.callSession)) {
+			if (
+				user.callSession.with === viewUser.username &&
+				viewUser.callSession.with === user.username &&
+				user.callSession.type === CALL_SESSION_USER_TYPE.caller &&
+				viewUser.callSession.type === CALL_SESSION_USER_TYPE.operator &&
+				user.callSession.id === viewUser.callSession.id
+			) {
+				// Both users are already in a session together.
+				// Return the params for successful session creation.
+				const proxyPhoneNumber = await comms
+					.getProxyService()
+					.sessions(user.callSession.id)
+					.participants.list({ limit: 20 })
+					.then(
+						({ participants }) =>
+							(
+								participants.find(
+									({ identifier }) => identifier === user.phoneNumber
+								) || {}
+							).proxy_identifier
+					);
+				const { id: userCallSessionId, ...userCallSession } = user.callSession;
+				const {
+					id: viewUserCallSessionId,
+					...viewUserCallSession
+				} = viewUser.callSession;
+				req.log.info(`User already in call session with view user`, {
+					...logParams(viewUser, user),
+					callSessionId: userCallSessionId,
+					proxyPhoneNumber
+				});
+				return res.json({
+					success: true,
+					proxyPhoneNumber,
+					callSession: {
+						caller: userCallSession,
+						operator: viewUserCallSession
+					}
+				});
+			}
+		}
+
+		req.log.info(`User already in call session`, logParams(viewUser, user));
+
+		return res.status(400).json({
+			success: false,
+			code: 400,
+			type: ERROR_TYPES.callSessionExists,
+			message: "Caller user already in session"
 		});
 	}
 
@@ -62,8 +133,10 @@ handler.use(requireAuthentication).post(async (req, res) => {
 		});
 	}
 
+	req.log.info(`View user is live`, logParams(viewUser, user));
+
 	// Make sure viewUser is not in session
-	if (!isEmpty(viewUser.session)) {
+	if (!isEmpty(viewUser.callSession)) {
 		return res.status(400).json({
 			success: false,
 			code: 400,
@@ -72,8 +145,7 @@ handler.use(requireAuthentication).post(async (req, res) => {
 		});
 	}
 
-	// Get user
-	const user = await getUser(req, { withContext: true });
+	req.log.info(`View user is available for a call`, logParams(viewUser, user));
 
 	// Make sure authed user is a stripe customer
 	if (isEmpty(user.stripeCustomerId)) {
@@ -86,15 +158,7 @@ handler.use(requireAuthentication).post(async (req, res) => {
 		return res.status(customerErrResponse.code).json(customerErrResponse);
 	}
 
-	// Make sure authed user is not already in a session
-	if (!isEmpty(user.callSession)) {
-		return res.status(400).json({
-			success: false,
-			code: 400,
-			type: ERROR_TYPES.callSessionExists,
-			message: "Caller user already in session"
-		});
-	}
+	req.log.info(`User is a customer`, logParams(viewUser, user));
 
 	// Create the call session
 	const {
@@ -117,9 +181,13 @@ handler.use(requireAuthentication).post(async (req, res) => {
 	);
 
 	// Call session to return to authed user.
-	const newUserCallSession = {
+	const callerCallSession = {
 		with: viewUser.username,
 		as: CALL_SESSION_USER_TYPE.caller
+	};
+	const operatorCallSession = {
+		with: user.username,
+		as: CALL_SESSION_USER_TYPE.operator
 	};
 	// Store sessions against each use
 	await Promise.all([
@@ -128,8 +196,7 @@ handler.use(requireAuthentication).post(async (req, res) => {
 				app: {
 					callSession: {
 						id: callSession.sid,
-						with: user.username,
-						as: CALL_SESSION_USER_TYPE.operator
+						...operatorCallSession
 					}
 				}
 			}
@@ -139,7 +206,7 @@ handler.use(requireAuthentication).post(async (req, res) => {
 				app: {
 					callSession: {
 						id: callSession.sid,
-						...newUserCallSession
+						...callerCallSession
 					}
 				}
 			}
@@ -156,7 +223,10 @@ handler.use(requireAuthentication).post(async (req, res) => {
 	return res.json({
 		success: true,
 		proxyPhoneNumber,
-		callSession: newUserCallSession
+		callSession: {
+			caller: callerCallSession,
+			operator: operatorCallSession
+		}
 	});
 });
 

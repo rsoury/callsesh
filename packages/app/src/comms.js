@@ -43,6 +43,11 @@ export const createSession = async (caller, operator, sessionParams = {}) => {
 	};
 };
 
+/**
+ * Get proxy service helper
+ */
+export const getProxyService = () => proxyService;
+
 export const sms = (phoneNumber, messageBody) => {
 	return client.messages.create({
 		body: messageBody,
