@@ -21,7 +21,7 @@ const handler = getHandler();
 
 const customerErrResponse = {
 	success: false,
-	code: 400,
+	code: 402,
 	type: ERROR_TYPES.paymentMethodRequired,
 	message: "Payment method required"
 };

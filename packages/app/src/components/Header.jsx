@@ -19,14 +19,14 @@ import appendReturnUrl from "@/utils/append-return-url";
 
 import Logo from "./Logo";
 
-const NavItem = ({ label, href }) => (
-	<Link href={href} button>
+const NavItem = ({ label, href, ...props }) => (
+	<Link href={href} button {...props}>
 		{label}
 	</Link>
 );
 
 const NavItemButton = ({ label, href, buttonKind, ...props }) => (
-	<Link href={href} button>
+	<Link href={href} button {...props}>
 		<Button
 			kind={buttonKind || BUTTON_KIND.tertiary}
 			overrides={{
@@ -37,7 +37,6 @@ const NavItemButton = ({ label, href, buttonKind, ...props }) => (
 					}
 				}
 			}}
-			{...props}
 		>
 			{label}
 		</Button>
@@ -73,7 +72,8 @@ const Header = () => {
 			{
 				item: {
 					label: "Log In",
-					href: appendReturnUrl(routes.page.login, true)
+					href: appendReturnUrl(routes.page.login, true),
+					pass: true
 				},
 				mapItemToNode: NavItemButton,
 				mapItemToString: NavItemLabel
@@ -82,7 +82,8 @@ const Header = () => {
 				item: {
 					label: "Sign Up",
 					href: appendReturnUrl(routes.page.signup, true),
-					buttonKind: BUTTON_KIND.primary
+					buttonKind: BUTTON_KIND.primary,
+					pass: true
 				},
 				mapItemToNode: NavItemButton,
 				mapItemToString: NavItemLabel
@@ -97,7 +98,8 @@ const Header = () => {
 				icon: LogoutIcon,
 				item: {
 					label: "Logout",
-					href: routes.page.logout
+					href: routes.page.logout,
+					pass: true
 				},
 				mapItemToNode: NavItem,
 				mapItemToString: NavItemLabel
