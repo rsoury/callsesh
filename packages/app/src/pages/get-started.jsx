@@ -101,6 +101,7 @@ const GetStarted = () => {
 	);
 };
 
+// TODO: Solve this error where there redirects in this function are running post router.push
 export function getServerSideProps({ req, res }) {
 	return ssrUser({ req, res }, (user) => {
 		if (isEmpty(user)) {

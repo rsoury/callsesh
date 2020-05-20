@@ -11,6 +11,7 @@ import debounce from "lodash/debounce";
 import { toaster } from "baseui/toast";
 import Router from "next/router";
 import MobileDetect from "mobile-detect";
+import ono from "@jsdevtools/ono";
 
 import Layout from "@/components/Layout";
 import ScreenContainer from "@/components/ScreenContainer";
@@ -26,8 +27,8 @@ import * as routes from "@/routes";
 import { useSetUser } from "@/hooks/use-user";
 import { ERROR_TYPES } from "@/constants";
 import handleException, { alerts } from "@/utils/handle-exception";
-
-import getServerSideProps from "./_[id]-ssr";
+import ssrUser from "@/utils/ssr-user";
+import * as authManager from "@/auth-manager";
 
 // We're referring to the currently viewed user, as the viewUser
 const ViewUser = ({ user, viewUser: viewUserBase, error }) => {
@@ -167,6 +168,57 @@ ViewUser.defaultProps = {
 	}
 };
 
-export { getServerSideProps };
+export async function getServerSideProps({
+	req,
+	res,
+	query: { return_url: returnUrl = "/", id: username }
+}) {
+	return ssrUser({ req, res }, async (user) => {
+		// If user does exist...
+		if (!isEmpty(user)) {
+			// If user is not registered, redirect to register page
+			if (!user.isRegistered) {
+				res.writeHead(302, {
+					Location: `${routes.page.register}?return_url=${returnUrl}`
+				});
+				res.end();
+			}
+		}
+
+		try {
+			const viewUser = await authManager.getViewUserByUsername(username);
+
+			if (isEmpty(viewUser)) {
+				// See: https://github.com/zeit/next.js/issues/3362 for managing error pages.
+				// Defalts props, so you can just return an empty object
+				return {
+					props: {
+						user
+					}
+				};
+			}
+
+			return {
+				props: {
+					user,
+					viewUser,
+					error: {}
+				}
+			};
+		} catch (err) {
+			handleException(ono(err, { username }));
+			return {
+				props: {
+					user,
+					error: {
+						code: 500,
+						message:
+							"Oops! Something has gone wrong. We have been notified and will look into it"
+					}
+				}
+			};
+		}
+	});
+}
 
 export default ViewUser;

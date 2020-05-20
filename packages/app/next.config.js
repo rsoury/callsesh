@@ -66,9 +66,17 @@ module.exports = (phase) => {
 			config.resolve.alias.react = require.resolve("react");
 			config.resolve.alias.formik = require.resolve("formik");
 
-			// Sentry alias
 			if (!isServer) {
+				// Sentry alias
 				config.resolve.alias["@sentry/node"] = "@sentry/browser";
+
+				// Resolve node related dependencies.
+				config.node = {
+					dns: "empty",
+					fs: "empty",
+					net: "empty",
+					tls: "empty"
+				};
 			}
 
 			// When all the Sentry configuration env variables are available/configured
