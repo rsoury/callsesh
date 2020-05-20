@@ -92,6 +92,7 @@ const constructUser = async (
 		roles,
 		family_name: familyName = "",
 		given_name: givenName = "",
+		picture, // Use picture from user data as session picture will be old
 		...userData
 	} = rawUser;
 
@@ -134,6 +135,7 @@ const constructUser = async (
 		phoneNumber,
 		familyName,
 		givenName,
+		picture,
 		roles: roles.map((role) => ({
 			name: role.name,
 			description: role.description
