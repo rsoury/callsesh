@@ -6,11 +6,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { useStyletron } from "baseui";
 import { Grid, Cell } from "baseui/layout-grid";
-import {
-	H1 as Heading,
-	H5 as SmallHeading,
-	Label1 as Label
-} from "baseui/typography";
+import { H5 as SmallHeading, Label1 as Label } from "baseui/typography";
 import isEmpty from "is-empty";
 import {
 	Button,
@@ -26,7 +22,6 @@ import { ListItem, ListItemLabel, ARTWORK_SIZES } from "baseui/list";
 
 import PaymentCardIcon from "@/components/PaymentCardIcon";
 import Layout from "@/components/Layout";
-import UppercaseLabel from "@/components/UppercaseLabel";
 import useUser from "@/hooks/use-user";
 import SettingsSkeleton from "@/components/Settings/Skeleton";
 import * as routes from "@/routes";
@@ -34,6 +29,7 @@ import request from "@/utils/request";
 import { CreditCardInput } from "@/components/Fields/CreditCard";
 import handleException, { alerts } from "@/utils/handle-exception";
 import ScreenContainer from "@/components/ScreenContainer";
+import Header from "@/components/Settings/Header";
 
 const Wallet = () => {
 	const [css, theme] = useStyletron();
@@ -174,14 +170,7 @@ const Wallet = () => {
 	return (
 		<Layout>
 			<ScreenContainer id="callsesh-wallet-settings">
-				<Grid>
-					<Cell span={12}>
-						<UppercaseLabel style={{ marginBottom: "10px", marginTop: "20px" }}>
-							Account Settings
-						</UppercaseLabel>
-						<Heading marginTop="0px">Wallet</Heading>
-					</Cell>
-				</Grid>
+				<Header title="Wallet" />
 				{isUserLoading || isEmpty(user) ? (
 					<SettingsSkeleton />
 				) : (

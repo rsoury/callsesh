@@ -21,8 +21,11 @@ export const page = {
 };
 
 export const build = {
-	user(userId) {
-		return `/u/${userId}`;
+	user(username) {
+		return `/u/${username}`;
+	},
+	callUser(username) {
+		return `/u/${username}/call`;
 	}
 };
 
@@ -40,5 +43,6 @@ export const api = {
 	connect: {
 		start: "/api/connect",
 		redirect: "/api/connect/oauth"
-	}
+	},
+	callUser: `/u/:id/call`
 };

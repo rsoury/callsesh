@@ -57,7 +57,7 @@ const listItemProps = {
 	}
 };
 
-const ViewUserOperator = ({ viewUser, onStart }) => {
+const ViewUserOperator = ({ viewUser, onStart, isStarting }) => {
 	const [css, theme] = useStyletron();
 	const [user] = useUser();
 
@@ -207,6 +207,7 @@ const ViewUserOperator = ({ viewUser, onStart }) => {
 													}
 												}
 											}}
+											isLoading={isStarting}
 										>
 											Call {viewUser.givenName} for ${minuteRate}
 											/minute
@@ -228,11 +229,13 @@ const ViewUserOperator = ({ viewUser, onStart }) => {
 
 ViewUserOperator.propTypes = {
 	viewUser: ViewUserProps.isRequired,
-	onStart: PropTypes.func
+	onStart: PropTypes.func,
+	isStarting: PropTypes.bool
 };
 
 ViewUserOperator.defaultProps = {
-	onStart() {}
+	onStart() {},
+	isStarting: false
 };
 
 export default ViewUserOperator;

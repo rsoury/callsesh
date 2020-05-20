@@ -53,6 +53,7 @@ import FeeCalculator from "@/components/Onboarding/FeeCalculator";
 import isUserOperator from "@/utils/is-operator";
 import handleException, { alerts } from "@/utils/handle-exception";
 import ScreenContainer from "@/components/ScreenContainer";
+import Header from "@/components/Settings/Header";
 
 const EDIT_TYPES = {
 	firstName: "firstName",
@@ -381,14 +382,7 @@ const Profile = () => {
 	return (
 		<Layout>
 			<ScreenContainer id="callsesh-profile-settings">
-				<Grid>
-					<Cell span={12}>
-						<UppercaseLabel style={{ marginBottom: "10px", marginTop: "20px" }}>
-							Account Settings
-						</UppercaseLabel>
-						<Heading marginTop="0px">Profile</Heading>
-					</Cell>
-				</Grid>
+				<Header title="Profile" />
 				{isUserLoading || isEmpty(user) ? (
 					<SettingsSkeleton />
 				) : (
