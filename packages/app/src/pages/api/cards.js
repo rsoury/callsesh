@@ -65,13 +65,19 @@ handler
 
 		const user = await getUser(req, { withContext: true }); // Be sure to return user secret context data
 
-		const { stripeCustomerId } = user;
+		const { stripeCustomerId, nickname: name, phoneNumber } = user;
 
 		try {
 			if (isEmpty(stripeCustomerId)) {
 				// Create Stripe customer with phone number and user id
 				const customer = await stripe.customers.create({
-					payment_method: paymentMethod.id
+					payment_method: paymentMethod.id,
+					invoice_settings: {
+						default_payment_method: paymentMethod.id
+					},
+					description: `Caller: ${name}`,
+					name,
+					phone: phoneNumber
 				});
 				// Store Stripe customer id against user is app_metadata
 				await authManager.updateUser(user.id, {
@@ -81,6 +87,7 @@ handler
 						}
 					}
 				});
+				req.log.info("Create stripe customer", { user: user.id });
 			} else {
 				// If stripe customer id exits, attach payment method to customer and make it default
 				const {
@@ -93,6 +100,7 @@ handler
 						default_payment_method: attachedPaymentMethodId
 					}
 				});
+				req.log.info("Update stripe customer", { user: user.id });
 			}
 		} catch (e) {
 			if (`${e.code}` === "card_declined") {

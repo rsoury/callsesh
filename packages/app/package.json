@@ -43,6 +43,7 @@
 		"lodash": "^4.17.15",
 		"mobile-detect": "^1.4.4",
 		"modern-normalize": "^0.6.0",
+		"nanoid": "^3.1.9",
 		"next": "^9.4.0",
 		"next-connect": "^0.6.4",
 		"next-seo": "^4.4.0",
@@ -66,6 +67,7 @@
 		"swr": "^0.2.0",
 		"twilio": "^3.42.2",
 		"url-parse": "^1.4.7",
+		"visibilityjs": "^2.0.2",
 		"yup": "^0.28.4"
 	},
 	"devDependencies": {

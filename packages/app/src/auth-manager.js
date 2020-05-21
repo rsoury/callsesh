@@ -46,9 +46,11 @@ export const getUser = (id) => {
 
 export const updateUser = (
 	id,
-	{ metadata: { app: appMetadata = {}, user: userMetadata = {} } = {}, ...data }
+	{
+		metadata: { app: appMetadata = {}, user: userMetadata = {} } = {},
+		...params
+	} = {}
 ) => {
-	const params = data;
 	if (!isEmpty(appMetadata)) {
 		params.app_metadata = appMetadata;
 	}

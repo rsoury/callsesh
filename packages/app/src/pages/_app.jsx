@@ -10,8 +10,8 @@ import Router from "next/router";
 
 import { engine, debug } from "@config/styletron";
 import seoConfig from "@config/seo";
-import UserProvider from "@/components/UserProvider";
-import RouteReferrerProvider from "@/components/RouteReferrerProvider";
+import UserProvider from "@/components/Providers/UserProvider";
+import RouteReferrerProvider from "@/components/Providers/RouteReferrerProvider";
 
 import "setimmediate";
 import "modern-normalize";

@@ -25,5 +25,6 @@ export const ERROR_TYPES = {
 	operatorUnavailable: "OperatorUnavailable",
 	operatorBusy: "OperatorBusy",
 	// Caller
-	callSessionExists: "CallSessionExists"
+	callSessionExists: "CallSessionExists",
+	proxyPhoneNumberRequired: "ProxyPhoneNumberRequired"
 };

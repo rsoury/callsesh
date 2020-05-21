@@ -1,7 +1,7 @@
 import { useEffect, useContext } from "react";
 import isEmpty from "is-empty";
 
-import { RouteReferrerContext } from "@/components/RouteReferrerProvider";
+import { RouteReferrerContext } from "@/components/Providers/RouteReferrerProvider";
 
 export const useUserRouteReferrer = () => {
 	const { userRouteReferrer, setUserRouteReferrer } = useContext(

@@ -1,5 +1,3 @@
-/* eslint-disable no-underscore-dangle */
-
 /**
  * Hook to manage state in context.
  * Manage router here.
@@ -8,11 +6,15 @@
 import { useEffect, useContext } from "react";
 import Router from "next/router";
 import isEmpty from "is-empty";
+import debounce from "lodash/debounce";
 
 import * as routes from "@/routes";
 import appendReturnUrl from "@/utils/append-return-url";
-import { UserContext } from "@/components/UserProvider";
-import { setUser as setErrorTrackingUser } from "@/utils/handle-exception";
+import { UserContext } from "@/components/Providers/UserProvider";
+import handleException, {
+	setUser as setErrorTrackingUser
+} from "@/utils/handle-exception";
+import request from "@/utils/request";
 
 // We need to check whether user is registered. If not redirect to /register
 const ensureUserRegistered = (user) => {
@@ -39,6 +41,49 @@ export const useSetUser = () => {
 	return setUserState;
 };
 
+/**
+ * Function that is debounced to prevent simultaneous execution
+ * Poll call session against a username for currently authed user.
+ * Dynamically import Visiblity, as it requires window
+ */
+let poll = -1;
+const pollCallSession = debounce(
+	(username, done, { duration = 30 * 1000 } = {}) => {
+		if (poll < 0) {
+			console.log("START POLLING");
+			import("visibilityjs")
+				.then((m) => m.default || m)
+				.then((Visibility) => {
+					// Responds with index of poll. ie. 0
+					poll = Visibility.every(duration, () => {
+						console.log("REQUEST CALL SESSION");
+						request
+							.get(routes.build.callUser(username))
+							.then(({ data }) => data)
+							.then(({ callSession }) => {
+								done(callSession.caller);
+								if (isEmpty(callSession.caller)) {
+									Visibility.stop(poll);
+									poll = -1;
+								}
+							})
+							.catch((err) => {
+								handleException(err);
+								done({});
+								Visibility.stop(poll);
+								poll = -1;
+							});
+					});
+				});
+		}
+	},
+	5000,
+	{
+		leading: true,
+		trailing: false
+	}
+);
+
 function useUser({ required } = {}) {
 	const {
 		user,
@@ -48,6 +93,7 @@ function useUser({ required } = {}) {
 		setUser: setUserState
 	} = useContext(UserContext);
 
+	// Manage user tracking, guidance and fetching
 	useEffect(() => {
 		// If user already fetched
 		if (!loading && user) {
@@ -78,6 +124,18 @@ function useUser({ required } = {}) {
 			isMounted = false;
 		};
 	}, []);
+
+	// On user change, manage all session updates
+	useEffect(() => {
+		if (!isEmpty(user.callSession)) {
+			pollCallSession(user.callSession.with, (callSession) => {
+				setUserState({
+					...user,
+					callSession
+				});
+			});
+		}
+	}, [user]);
 
 	return [user, loading, { removeUser, getUser, setUser: setUserState }];
 }

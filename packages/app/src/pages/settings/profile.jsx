@@ -6,11 +6,7 @@
 import { useState } from "react";
 import { useStyletron } from "baseui";
 import { Grid, Cell } from "baseui/layout-grid";
-import {
-	H1 as Heading,
-	Paragraph2 as Paragraph,
-	H4 as SmallHeading
-} from "baseui/typography";
+import { Paragraph2 as Paragraph, H4 as SmallHeading } from "baseui/typography";
 import isEmpty from "is-empty";
 import {
 	Phone as PhoneIcon,
@@ -27,7 +23,6 @@ import nl2br from "nl2br";
 import ono from "@jsdevtools/ono";
 
 import Layout from "@/components/Layout";
-import UppercaseLabel from "@/components/UppercaseLabel";
 import LabelControl from "@/components/LabelControl";
 import EditEnhancer from "@/components/Settings/EditEnhancer";
 import EditModal from "@/components/Settings/EditModal";
