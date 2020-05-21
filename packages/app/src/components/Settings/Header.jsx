@@ -1,6 +1,5 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { useStyletron } from "baseui";
 import { Grid, Cell } from "baseui/layout-grid";
 import {
 	Button,
@@ -10,31 +9,22 @@ import {
 import ChevronLeft from "baseui/icon/chevron-left";
 import { H1 as Heading } from "baseui/typography";
 
-import { publicUrl } from "@/env-config";
 import Link from "@/components/Link";
 import UppercaseLabel from "@/components/UppercaseLabel";
+import { useUserRouteReferrer } from "@/hooks/use-route-referrer";
 
 const SettingsHeader = ({ title }) => {
-	const [, theme] = useStyletron();
-
-	const referrerPathname =
-		window.location.origin.indexOf(publicUrl) === 0
-			? document.referrer.replace(window.location.origin, "")
-			: "";
+	const [userRouteReferrer] = useUserRouteReferrer();
 
 	return (
 		<Grid>
 			<Cell span={12}>
-				{referrerPathname.indexOf("/u/") === 0 && (
+				{userRouteReferrer && (
 					<Link
-						href={referrerPathname}
+						href={userRouteReferrer}
 						button
 						style={{
-							marginLeft: "-20px !important",
-							display: "none",
-							[theme.mediaQuery.maxSmall]: {
-								display: "block"
-							}
+							marginLeft: "-20px !important"
 						}}
 					>
 						<Button

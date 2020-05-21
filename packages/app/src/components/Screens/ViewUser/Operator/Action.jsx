@@ -130,7 +130,7 @@ const ViewUserOperatorAction = ({ viewUser, onStart, isStarting }) => {
 											: () => <PhoneIcon size={20} />
 									}
 									disabled={
-										// Disabled when use looking at their own profile
+										// Disabled when user looking at their own profile
 										// User in session, but new with view user
 										// View user in session but not with user.
 										// Means, if user and viewuser are in a session, together, this button is available.
@@ -142,7 +142,8 @@ const ViewUserOperatorAction = ({ viewUser, onStart, isStarting }) => {
 									overrides={{
 										BaseButton: {
 											style: {
-												width: "100%"
+												width: "100%",
+												pointerEvents: isStarting ? "none" : "auto"
 											}
 										}
 									}}
