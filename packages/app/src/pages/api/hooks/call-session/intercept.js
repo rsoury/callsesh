@@ -27,10 +27,10 @@ handler.post(async (req, res) => {
 		.fetch();
 	const { identifier: phoneNumber } = participant;
 
-	const logParams = { phoneNumber, participant };
+	const logParams = { participant, requestBody: { ...req.body } };
 
-	const handleErr = (errMessage) => {
-		req.log.error(errMessage, logParams);
+	const handleErr = (errMessage, additionalParams = {}) => {
+		req.log.error(errMessage, { ...logParams, ...additionalParams });
 		handleException(ono(new Error(errMessage), logParams));
 	};
 
@@ -59,7 +59,10 @@ handler.post(async (req, res) => {
 	// Check this user is in this call session
 	const callSession = get(user, "app_metadata.callSession", {});
 	if (callSession.id !== interactionSessionSid) {
-		handleErr("Application user call session does not match inbound session");
+		handleErr("Application user call session does not match inbound session", {
+			callSession,
+			interactionSessionSid
+		});
 		return res.status(403).end();
 	}
 

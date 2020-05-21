@@ -36,7 +36,7 @@ const logParams = (viewUser = {}, user = {}) => ({
 });
 
 const getUserSMSMessage = (proxyPhoneNumber) =>
-	`Call your operator using this number: ${proxyPhoneNumber}. If no action is taken, this number will be unavailable in a minute.`;
+	`Call your operator using this number: ${proxyPhoneNumber}. This number will be unavailable in a minute.`;
 
 const checkSessionWithViewUser = async (user, viewUser) => {
 	// Check if user and viewUser share session data
