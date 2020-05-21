@@ -13,10 +13,9 @@ const proxyService = client.proxy.services(config.proxyServiceSid);
  * @var  {Object} sessionParams { name, phoneNumber }
  */
 export const createSession = async (caller, operator, sessionParams = {}) => {
-	// Create a session for voice only with a ttl of 45 seconds -- means if goes unused, the session will expire
+	// Create a session for voice only
 	const session = await proxyService.sessions.create({
 		mode: "voice-only",
-		ttl: 45,
 		...sessionParams
 	});
 
