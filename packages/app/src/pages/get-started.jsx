@@ -4,7 +4,6 @@ import { useState, useCallback } from "react";
 import { FormikWizard } from "rsoury-formik-wizard";
 import isEmpty from "is-empty";
 import { toaster } from "baseui/toast";
-import Router from "next/router";
 import Url from "url-parse";
 import ono from "@jsdevtools/ono";
 
@@ -73,11 +72,13 @@ const GetStarted = () => {
 				// Check for return_url
 				const url = new Url(window.location.href, true);
 				const { return_url: returnUrl } = url.query;
+
+				// Use window.location.href to prevent rerunning SSR on this page.
 				if (!isEmpty(returnUrl)) {
-					return Router.push(returnUrl.replace(window.location.origin, ""));
+					window.location.href = returnUrl;
 				}
 				// Otherwise, redirect to index.
-				return Router.push(routes.page.index);
+				window.location.href = routes.page.index;
 			})
 			.catch((error) => {
 				handleException(ono(error, params));
@@ -101,7 +102,6 @@ const GetStarted = () => {
 	);
 };
 
-// TODO: Solve this error where there redirects in this function are running post router.push
 export function getServerSideProps({ req, res }) {
 	return ssrUser({ req, res }, (user) => {
 		if (isEmpty(user)) {
