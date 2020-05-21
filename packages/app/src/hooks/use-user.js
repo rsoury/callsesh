@@ -61,7 +61,7 @@ function useUser({ required } = {}) {
 			initialData: {},
 			refreshInterval: 60 * 1000, // 60 seconds
 			refreshWhenHidden: false,
-			onSuccess({ callSession }) {
+			onSuccess({ data: { callSession } }) {
 				setUserState({
 					...user,
 					callSession: callSession.caller
