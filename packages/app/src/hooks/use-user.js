@@ -7,6 +7,8 @@ import { useEffect, useContext } from "react";
 import Router from "next/router";
 import isEmpty from "is-empty";
 import debounce from "lodash/debounce";
+import Queue from "better-queue";
+import MemoryStore from "better-queue-memory";
 
 import * as routes from "@/routes";
 import appendReturnUrl from "@/utils/append-return-url";
@@ -33,6 +35,67 @@ const ensureUserRegistered = (user) => {
 };
 
 /**
+ * Create a queue for polling.
+ * Poll call session against a username for currently authed user.
+ * Dynamically import Visiblity, as it requires window
+ */
+const getCallSesssionPollQueue = () => {
+	console.log("INSTANTIATE QUEUE");
+	const q = new Queue(
+		(username, done) => {
+			console.log("REQUEST CALL SESSION");
+			request
+				.get(routes.build.callUser(username))
+				.then(({ data }) => data)
+				.then(({ callSession }) => {
+					done(null, callSession.caller);
+				})
+				.catch((err) => {
+					done(err, {});
+				});
+		},
+		{
+			batchSize: 1,
+			concurrent: 1, // 1 item at a time
+			batchDelay: 30 * 1000, // 30 seconds
+			store: new MemoryStore()
+		}
+	);
+
+	// Use Visibility in browser
+	if (typeof window !== "undefined") {
+		import("visibilityjs")
+			.then((m) => m.default || m)
+			.then((Visibility) => {
+				const listener = Visibility.change(() => {
+					if (Visibility.hidden()) {
+						console.log("PAUSE POLL QUEUE");
+						q.pause();
+					} else {
+						console.log("RESUME POLL QUEUE");
+						q.resume();
+					}
+				});
+				q.on("empty", () => {
+					q.resume();
+					console.log("UNBIND VISIBILITY LISTENER");
+					Visibility.unbind(listener);
+				});
+			});
+	}
+
+	return q;
+};
+
+// On user change, manage all session updates
+let queue = getCallSesssionPollQueue();
+const pushQueue = debounce((...params) => queue.push(...params), 500);
+const resetQueue = debounce((q) => {
+	q.destroy();
+	return getCallSesssionPollQueue();
+}, 500);
+
+/**
  * Helper function to set user state
  */
 export const useSetUser = () => {
@@ -40,49 +103,6 @@ export const useSetUser = () => {
 
 	return setUserState;
 };
-
-/**
- * Function that is debounced to prevent simultaneous execution
- * Poll call session against a username for currently authed user.
- * Dynamically import Visiblity, as it requires window
- */
-let poll = -1;
-const pollCallSession = debounce(
-	(username, done, { duration = 30 * 1000 } = {}) => {
-		if (poll < 0) {
-			console.log("START POLLING");
-			import("visibilityjs")
-				.then((m) => m.default || m)
-				.then((Visibility) => {
-					// Responds with index of poll. ie. 0
-					poll = Visibility.every(duration, () => {
-						console.log("REQUEST CALL SESSION");
-						request
-							.get(routes.build.callUser(username))
-							.then(({ data }) => data)
-							.then(({ callSession }) => {
-								done(callSession.caller);
-								if (isEmpty(callSession.caller)) {
-									Visibility.stop(poll);
-									poll = -1;
-								}
-							})
-							.catch((err) => {
-								handleException(err);
-								done({});
-								Visibility.stop(poll);
-								poll = -1;
-							});
-					});
-				});
-		}
-	},
-	5000,
-	{
-		leading: true,
-		trailing: false
-	}
-);
 
 function useUser({ required } = {}) {
 	const {
@@ -125,17 +145,30 @@ function useUser({ required } = {}) {
 		};
 	}, []);
 
-	// On user change, manage all session updates
 	useEffect(() => {
-		if (!isEmpty(user.callSession)) {
-			pollCallSession(user.callSession.with, (callSession) => {
-				setUserState({
-					...user,
-					callSession
-				});
+		// On task finish set state
+		queue.on("task_finish", (taskId, callSession) => {
+			setUserState({
+				...user,
+				callSession
 			});
+			if (isEmpty(callSession)) {
+				queue = resetQueue(queue);
+			}
+		});
+		queue.on("task_failed", (taskId, err) => {
+			handleException(err);
+			setUserState({
+				...user,
+				callSession: {}
+			});
+			queue = resetQueue(queue);
+		});
+
+		if (!isEmpty(user.callSession)) {
+			pushQueue(user.callSession.with);
 		}
-	}, [user]);
+	}, [user, queue]);
 
 	return [user, loading, { removeUser, getUser, setUser: setUserState }];
 }
