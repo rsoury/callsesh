@@ -12,6 +12,7 @@ import isEmpty from "is-empty";
 import truncate from "lodash/truncate";
 import { nanoid } from "nanoid";
 import ono from "@jsdevtools/ono";
+import pick from "lodash/pick";
 
 import * as comms from "@/comms";
 import getHandler, { onNoMatch } from "@/middleware";
@@ -70,7 +71,7 @@ handler
 		} = req;
 
 		// Get view user
-		const viewUser = await authManager.getViewUserByUsername(viewUsername, {
+		const viewUser = await authManager.getUserByUsername(viewUsername, {
 			withContext: true
 		});
 
@@ -91,25 +92,16 @@ handler
 				);
 				if (isInSessionWithViewUser) {
 					// Get session details to find if status is still open.
-					const {
-						id: userCallSessionId,
-						...userCallSession
-					} = user.callSession;
-					const {
-						id: viewUserCallSessionId,
-						...viewUserCallSession
-					} = viewUser.callSession;
-
 					req.log.info(`User in call session with view user`, {
 						...logParams(viewUser, user),
-						callSessionId: userCallSessionId
+						callSessionId: user.callSession.id
 					});
 
 					return res.json({
 						success: true,
 						callSession: {
-							caller: userCallSession,
-							operator: viewUserCallSession
+							caller: pick(user.callSession, ["as", "with"]),
+							operator: pick(viewUser.callSession, ["as", "with"])
 						}
 					});
 				}
@@ -131,7 +123,7 @@ handler
 		} = req;
 
 		// Get view user
-		const viewUser = await authManager.getViewUserByUsername(viewUsername, {
+		const viewUser = await authManager.getUserByUsername(viewUsername, {
 			withContext: true
 		});
 
@@ -193,18 +185,9 @@ handler
 						});
 					}
 
-					const {
-						id: userCallSessionId,
-						...userCallSession
-					} = user.callSession;
-					const {
-						id: viewUserCallSessionId,
-						...viewUserCallSession
-					} = viewUser.callSession;
-
 					req.log.info(`User already in call session with view user`, {
 						...logParams(viewUser, user),
-						callSessionId: userCallSessionId,
+						callSessionId: user.callSession.id,
 						proxyPhoneNumber
 					});
 
@@ -218,8 +201,8 @@ handler
 						success: true,
 						proxyPhoneNumber,
 						callSession: {
-							caller: userCallSession,
-							operator: viewUserCallSession
+							caller: pick(user.callSession, ["as", "with"]),
+							operator: pick(viewUser.callSession, ["as", "with"])
 						}
 					});
 				}

@@ -6,6 +6,7 @@ import mapKeys from "lodash/mapKeys";
 import isEmpty from "is-empty";
 import { parsePhoneNumberFromString } from "libphonenumber-js";
 import ono from "@jsdevtools/ono";
+import pick from "lodash/pick";
 
 import stripe from "@/stripe";
 import { ERROR_TYPES } from "@/constants";
@@ -123,15 +124,13 @@ const constructUser = async (
 	}
 
 	// Get publicly viewable call session data
-	const {
-		callSession: { id: callSessionId, ...callSession } = {}
-	} = appMetadata;
+	const { callSession = {} } = appMetadata;
 
 	let user = {
 		id: sessionUser.sub,
 		...sessionUser,
 		...userMetadata,
-		callSession,
+		callSession: pick(callSession, ["as", "with"]),
 		phoneNumber,
 		familyName,
 		givenName,
@@ -147,7 +146,8 @@ const constructUser = async (
 			...user,
 			roles,
 			...userData,
-			...appMetadata // will include call session related data by default.
+			...appMetadata, // will include call session related data by default.
+			callSession
 		};
 	}
 	user = mapKeys(user, (value, key) => camelCase(key));

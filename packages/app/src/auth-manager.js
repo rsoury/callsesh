@@ -7,6 +7,8 @@ import { ManagementClient } from "auth0";
 import * as yup from "yup";
 import mapKeys from "lodash/mapKeys";
 import camelCase from "lodash/camelCase";
+import pick from "lodash/pick";
+import ono from "@jsdevtools/ono";
 
 import { auth0 as config } from "@/env-config";
 
@@ -60,17 +62,8 @@ export const updateUser = (
 	return client.updateUser({ id }, params);
 };
 
-export const getViewUserByUsername = async (
-	username,
-	{ withContext = false } = {}
-) => {
-	const params = {
-		search_engine: "v3",
-		page: 0,
-		per_page: 10,
-		q: `user_metadata.username:"${username}"`
-	};
-
+// Accepts auth0 getUsers parameters with options
+export const findUser = async (params, { withContext = false } = {}) => {
 	// If withContext is false, restrict retrieved fields.
 	if (!withContext) {
 		params.fields = [
@@ -95,53 +88,76 @@ export const getViewUserByUsername = async (
 
 	// Throw if multiple users for one username
 	if (users.length > 1) {
-		throw new Error("Multiple users for username");
+		throw ono(new Error("Multiple users found"), { params });
 	}
 
 	// Now that we have a user, validate. Make sure the view user is registered
 	const {
-		user_id: viewUserId,
+		user_id: userId,
 		user_metadata: userMetadata = {},
 		app_metadata: appMetadata = {},
 		...userData
 	} = users[0];
 	// Get publicly viewable call session data
-	const {
-		callSession: { id: callSessionId, ...callSession } = {}
-	} = appMetadata;
+	const { callSession = {} } = appMetadata;
 
-	const unformattedViewUser = withContext
+	const unformattedUser = withContext
 		? {
-				id: viewUserId,
+				id: userId,
 				...userData,
 				...userMetadata,
-				...appMetadata
+				...appMetadata,
+				callSession
 		  }
 		: {
 				...userData,
 				...userMetadata,
-				callSession
+				callSession: pick(callSession, ["as", "with"])
 		  };
 
-	const viewUser = mapKeys(unformattedViewUser, (value, key) => camelCase(key));
+	const user = mapKeys(unformattedUser, (value, key) => camelCase(key));
 
 	try {
-		await viewUserSchema.validate(viewUser);
+		await viewUserSchema.validate(user);
 	} catch (e) {
 		console.error(e); // eslint-disable-line
 		return {};
 	}
 
 	// Get view user roles
-	const roles = await getUserRoles(viewUserId);
-	viewUser.roles = withContext
+	const roles = await getUserRoles(userId);
+	user.roles = withContext
 		? roles
 		: roles.map((role) => ({
 				name: role.name,
 				description: role.description
 		  }));
 
-	return viewUser;
+	return user;
+};
+
+export const getUserByUsername = (username, options) => {
+	return findUser(
+		{
+			search_engine: "v3",
+			page: 0,
+			per_page: 10,
+			q: `user_metadata.username:"${username}"`
+		},
+		options
+	);
+};
+
+export const getUserByPhoneNumber = (phoneNumber, options) => {
+	return findUser(
+		{
+			search_engine: "v3",
+			page: 0,
+			per_page: 10,
+			q: `phone_number:"${phoneNumber}"`
+		},
+		options
+	);
 };
 
 export const isUsernameAvailable = async (username) => {

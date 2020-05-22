@@ -186,7 +186,7 @@ export async function getServerSideProps({
 		}
 
 		try {
-			const viewUser = await authManager.getViewUserByUsername(username);
+			const viewUser = await authManager.getUserByUsername(username);
 
 			if (isEmpty(viewUser)) {
 				// See: https://github.com/zeit/next.js/issues/3362 for managing error pages.
