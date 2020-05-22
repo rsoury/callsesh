@@ -73,14 +73,28 @@ handler.post(async (req, res) => {
 			}
 
 			// If not, authorise amount
-			const preAuthCharge = await stripe.charges.create({
-				amount: SERVICE_FEE,
-				currency: operatorUser.currency,
-				customer: stripeCustomerId,
-				description: "Call session pre-authorisation",
-				statement_descriptor_suffix: truncate(operatorUser.givenName, 22),
-				capture: false
-			});
+			const customer = await stripe.customers.retrieve(stripeCustomerId);
+			const paymentMethodId = customer.invoice_settings.default_payment_method;
+			const preAuth = await stripe.paymentIntents
+				.create({
+					amount: SERVICE_FEE,
+					currency: operatorUser.currency,
+					customer: stripeCustomerId,
+					payment_method: paymentMethodId,
+					description: "Call session pre-authorisation",
+					metadata: {
+						callSessionId: callSession.id
+					},
+					statement_descriptor_suffix: truncate(operatorUser.givenName, 22),
+					off_session: true,
+					confirm: true,
+					capture_method: "manual"
+				})
+				.catch((err) => {
+					// The payment intent can error if authentication is required
+					// You may need to send the customer an SMS here with a link to confirm payment.
+					throw err;
+				});
 
 			// Add pre auth charge id to application user data
 			await authManager.updateUser(user.id, {
@@ -88,7 +102,7 @@ handler.post(async (req, res) => {
 					app: {
 						callSession: {
 							...callSession,
-							preAuthorisation: preAuthCharge.id
+							preAuthorisation: preAuth.id
 						}
 					}
 				}
