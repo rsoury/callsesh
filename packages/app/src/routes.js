@@ -14,7 +14,8 @@ export const page = {
 	cookiePolicy: "/cookie-policy",
 	settings: {
 		profile: "/settings/profile",
-		wallet: "/settings/wallet"
+		wallet: "/settings/wallet",
+		threeDSecure: "/settings/3d-secure"
 	},
 	becomeAnOperator: "/become-an-operator",
 	referrals: "/referrals"

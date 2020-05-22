@@ -268,7 +268,7 @@ const Wallet = () => {
 																})}
 															>
 																<div>
-																	<Label>{last4}</Label>
+																	<Label>{last4.padStart(16, "*")}</Label>
 																</div>
 																<div
 																	className={css({

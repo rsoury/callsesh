@@ -75,6 +75,15 @@ export const CreditCardElement = ({
 		}
 	};
 
+	const listenFor3DSAuthentication = useCallback((url) => {
+		if (isEmpty(url)) {
+			throw ono(new Error("3DS Authentication URL required"), {
+				code: "3ds_url_required"
+			});
+		}
+		// Load url in modal iframe by setting url to state and returning a promise on data
+	});
+
 	const addCard = useCallback(
 		(event) => {
 			event.preventDefault();
@@ -112,20 +121,46 @@ export const CreditCardElement = ({
 						.post(apiRoutes.cards, { paymentMethod })
 						.then(({ data }) => ({ response: data, paymentMethod }));
 				})
-				.then(({ response: { verified = false }, paymentMethod }) => {
-					if (verified) {
-						onAdd(paymentMethod);
-						toaster.positive(`Card successfully verified and added.`);
-						if (noRemove) {
-							cardElement.clear();
+				.then(
+					({ response: { verified = false, secret = "" }, paymentMethod }) => {
+						if (verified) {
+							return stripe
+								.retrieveSetupIntent(secret)
+								.then((setupIntent) => ({ setupIntent, paymentMethod }));
 						}
-					} else {
-						toaster.negative(
-							`Card could be verified. Please check the submitted card and try again.`
-						);
+						throw ono({ code: "failed_verification" });
+					}
+				)
+				.then(({ setupIntent, paymentMethod }) => {
+					// Handle 3d Secure Payments
+					if (isEmpty(setupIntent.error)) {
+						if (
+							isEmpty(setupIntent.next_action) &&
+							setupIntent.status === "succeeded"
+						) {
+							return paymentMethod;
+						} else {
+							return listenFor3DSAuthentication(
+								setupIntent.next_action.redirect_to_url.url
+							);
+						}
+					}
+					throw setupIntent.error;
+				})
+				.then((paymentMethod) => {
+					onAdd(paymentMethod);
+					toaster.positive(`Card successfully verified and added.`);
+					if (noRemove) {
+						cardElement.clear();
 					}
 				})
 				.catch((err) => {
+					if (err.code === "failed_verification") {
+						toaster.negative(
+							`Card could be verified. Please check the submitted card and try again.`
+						);
+						return;
+					}
 					if (err.code === "card_declined" || err.type === "validation_error") {
 						toaster.negative(
 							`${err.message} Please try a different card or check your submission.`
