@@ -28,3 +28,9 @@ export const ERROR_TYPES = {
 	callSessionExists: "CallSessionExists",
 	proxyPhoneNumberRequired: "ProxyPhoneNumberRequired"
 };
+
+// 3DS Frame Messaging
+export const THREE_D_SECURE_MESSAGE_TYPES = {
+	complete: "3DS-authentication-complete",
+	failed: "3DS-authentication-failed"
+};

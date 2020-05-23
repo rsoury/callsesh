@@ -6,7 +6,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { useStyletron } from "baseui";
 import { Grid, Cell } from "baseui/layout-grid";
-import { H5 as SmallHeading, Label1 as Label } from "baseui/typography";
+import { H5 as SmallHeading, Label2 as Label } from "baseui/typography";
 import isEmpty from "is-empty";
 import {
 	Button,
@@ -15,10 +15,15 @@ import {
 } from "baseui/button";
 import ono from "@jsdevtools/ono";
 import { toaster } from "baseui/toast";
-import { Trash2 as DeleteIcon, AlertCircle as AlertIcon } from "react-feather";
+import {
+	Trash2 as DeleteIcon,
+	AlertCircle as AlertIcon,
+	CheckCircle as DefaultCardIcon
+} from "react-feather";
 import { Notification, KIND as NOTIFICATION_KIND } from "baseui/notification";
 import Skeleton from "react-loading-skeleton";
 import { ListItem, ListItemLabel, ARTWORK_SIZES } from "baseui/list";
+import { Block } from "baseui/block";
 
 import PaymentCardIcon from "@/components/PaymentCardIcon";
 import Layout from "@/components/Layout";
@@ -26,7 +31,7 @@ import useUser from "@/hooks/use-user";
 import SettingsSkeleton from "@/components/Settings/Skeleton";
 import * as routes from "@/routes";
 import request from "@/utils/request";
-import { CreditCardInput } from "@/components/Fields/CreditCard";
+import CreditCard from "@/components/CreditCard";
 import handleException, { alerts } from "@/utils/handle-exception";
 import ScreenContainer from "@/components/ScreenContainer";
 import Header from "@/components/Settings/Header";
@@ -267,18 +272,29 @@ const Wallet = () => {
 																	alignItems: "center"
 																})}
 															>
-																<div>
+																<Block>
 																	<Label>{last4.padStart(16, "*")}</Label>
-																</div>
-																<div
-																	className={css({
-																		marginLeft: "20px"
-																	})}
-																>
+																</Block>
+																<Block marginLeft="10px">
 																	<Label>
 																		{expMonth}/{expYear}
 																	</Label>
-																</div>
+																</Block>
+																{isDefault && (
+																	<Block
+																		marginLeft="10px"
+																		display="flex"
+																		alignItems="center"
+																	>
+																		<DefaultCardIcon
+																			size={20}
+																			className={css({
+																				strokeWidth: "3px",
+																				color: theme.colors.positive
+																			})}
+																		/>
+																	</Block>
+																)}
 															</div>
 														</ListItemLabel>
 													</ListItem>
@@ -299,7 +315,7 @@ const Wallet = () => {
 									borderTopColor: theme.colors.borderOpaque
 								})}
 							>
-								<CreditCardInput
+								<CreditCard
 									label="Add a card"
 									caption="Payments are powered by Stripe and we do not store sensitive payment information on our servers."
 									billingDetails={{
