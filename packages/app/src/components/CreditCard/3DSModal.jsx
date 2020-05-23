@@ -57,6 +57,11 @@ const ThreeDSecureModal = ({ url, onClose }) => {
 			size={MODAL_SIZE.full}
 			role={MODAL_ROLE.dialog}
 			overrides={{
+				Root: {
+					style: {
+						zIndex: "9999999"
+					}
+				},
 				Dialog: {
 					style: {
 						width: "100%",
