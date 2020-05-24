@@ -1,6 +1,14 @@
 const slsw = require("serverless-webpack");
 const nodeExternals = require("webpack-node-externals");
+const filenamify = require("filenamify");
+const webpack = require("webpack");
+
 const { alias } = require("./config/alias");
+const pkg = require("./package.json");
+
+const sentryRelease = filenamify(`${pkg.name}@${pkg.version}`, {
+	replacement: "-"
+});
 
 module.exports = {
 	entry: slsw.lib.entries,
@@ -22,6 +30,11 @@ module.exports = {
 	//   // Turn off size warnings for entry points
 	//   hints: false,
 	// },
+	plugins: [
+		new webpack.DefinePlugin({
+			"process.env.SENTRY_RELEASE": JSON.stringify(sentryRelease)
+		})
+	],
 	module: {
 		rules: [
 			{

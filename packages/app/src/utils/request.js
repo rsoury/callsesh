@@ -1,11 +1,5 @@
-import axios from "axios";
-import axiosRetry from "axios-retry";
+import { getRequest } from "@callsesh/utils";
 
-const request = axios.create({
-	timeout: 60000,
-	withCredentials: true
-});
-
-axiosRetry(request);
+const request = getRequest();
 
 export default request;

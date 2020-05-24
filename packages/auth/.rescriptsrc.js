@@ -7,6 +7,7 @@ const {
 const get = require("lodash/get");
 const set = require("lodash/set");
 const { default: InjectPlugin, ENTRY_ORDER } = require("webpack-inject-plugin");
+const filenamify = require("filenamify");
 const { alias, jestAlias } = require("./config/alias");
 const pkg = require("./package.json");
 const exampleConfig = require("./example.config.json");
@@ -74,9 +75,12 @@ const buildApp = mw((config) => {
 	}
 
 	// Setup env vars
+	const sentryRelease = filenamify(`${pkg.name}@${pkg.version}`, {
+		replacement: "-"
+	});
 	const definitions = {
 		"process.env.REACT_APP_PUBLIC_URL": JSON.stringify(env.PUBLIC_URL),
-		"process.env.REACT_APP_SENTRY_RELEASE": JSON.stringify(pkg.version)
+		"process.env.REACT_APP_SENTRY_RELEASE": JSON.stringify(sentryRelease)
 	};
 
 	// Consolidate SENTRY_DSN env var.

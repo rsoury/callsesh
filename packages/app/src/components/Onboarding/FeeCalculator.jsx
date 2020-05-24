@@ -5,11 +5,9 @@ import {
 	StatefulTooltip as Tooltip,
 	PLACEMENT as TOOLTIP_PLACEMENT
 } from "baseui/tooltip";
-import isEmpty from "is-empty";
 import { HelpCircle as HelpIcon } from "react-feather";
 import { LabelSmall } from "baseui/typography";
-
-import { FEE_MULTIPLIER } from "@/constants";
+import * as fees from "@callsesh/utils/fees";
 
 const FeeCalculator = ({ hourlyRate }) => {
 	const [css, theme] = useStyletron();
@@ -36,13 +34,7 @@ const FeeCalculator = ({ hourlyRate }) => {
 					>
 						<LabelSmall>
 							Callsesh fees are{" "}
-							<strong>
-								$
-								{isEmpty(hourlyRate)
-									? "0.00"
-									: (FEE_MULTIPLIER * parseFloat(hourlyRate)).toFixed(2)}{" "}
-								/ hour
-							</strong>
+							<strong>${fees.applicationRate(hourlyRate)} / hour</strong>
 						</LabelSmall>
 						<div className={css({ marginLeft: "5px" })}>
 							<HelpIcon size={18} />
@@ -57,13 +49,7 @@ const FeeCalculator = ({ hourlyRate }) => {
 					})}
 				>
 					You will be paid{" "}
-					<strong>
-						$
-						{isEmpty(hourlyRate)
-							? "0.00"
-							: ((1 - FEE_MULTIPLIER) * parseFloat(hourlyRate)).toFixed(2)}{" "}
-						/ hour
-					</strong>
+					<strong>${fees.payoutRate(hourlyRate)} / hour</strong>
 				</LabelSmall>
 			</div>
 		</div>

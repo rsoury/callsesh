@@ -13,7 +13,8 @@ import getHandler from "@/middleware";
 import * as authManager from "@callsesh/utils/auth-manager";
 import handleException from "@/utils/handle-exception";
 import stripe from "@callsesh/utils/stripe";
-import { CALL_SESSION_USER_TYPE, SERVICE_FEE } from "@/constants";
+import * as fees from "@callsesh/utils/fees";
+import { CALL_SESSION_USER_TYPE } from "@/constants";
 
 const handler = getHandler();
 
@@ -79,7 +80,7 @@ handler.post(async (req, res) => {
 			const customer = await stripe.customers.retrieve(stripeCustomerId);
 			const paymentMethodId = customer.invoice_settings.default_payment_method;
 			const preAuth = await stripe.paymentIntents.create({
-				amount: SERVICE_FEE,
+				amount: fees.preAuthAmount(),
 				currency: operatorUser.currency,
 				customer: stripeCustomerId,
 				payment_method: paymentMethodId,

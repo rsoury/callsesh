@@ -21,6 +21,11 @@
 		"deploy": ""
 	},
 	"dependencies": {
+		"@jsdevtools/ono": "^7.1.2",
+		"@sentry/integrations": "^5.15.5",
+		"@sentry/node": "^5.15.5",
+		"is-empty": "^1.2.0",
+		"pino": "^6.2.1",
 		"source-map-support": "^0.5.19"
 	},
 	"devDependencies": {
@@ -28,6 +33,8 @@
 		"@babel/preset-env": "^7.9.6",
 		"babel-loader": "^8.1.0",
 		"babel-plugin-source-map-support": "^2.1.1",
+		"filenamify": "^4.1.0",
+		"pino-pretty": "^4.0.0",
 		"serverless": "^1.71.3",
 		"serverless-offline": "^6.1.7",
 		"serverless-plugin-common-excludes": "^3.0.0",

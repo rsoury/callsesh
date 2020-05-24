@@ -49,7 +49,7 @@ handler.post(async (req, res) => {
 	}
 
 	if (outboundResourceStatus === "completed") {
-		// Trigger Call Sesson Manager
+		// Trigger Call Session Manager
 		await request.post(callSessionManagerUrl, {
 			...req.body
 		});

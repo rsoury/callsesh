@@ -12,6 +12,7 @@ import {
 	Lock as LockIcon
 } from "react-feather";
 import isEmpty from "is-empty";
+import * as fees from "@callsesh/utils/fees";
 
 import useUser from "@/hooks/use-user";
 import Link from "@/components/Link";
@@ -38,7 +39,7 @@ const ViewUserOperatorAction = ({ viewUser, onStart, isStarting }) => {
 		viewUser.callSession.as === CALL_SESSION_USER_TYPE.operator &&
 		user.callSession.as === CALL_SESSION_USER_TYPE.caller;
 
-	const minuteRate = (parseFloat(viewUser.hourlyRate) / 60).toFixed(2);
+	const minuteRate = fees.getMinuteRate(viewUser.hourlyRate);
 
 	return (
 		<FixedBottom>
@@ -159,9 +160,10 @@ const ViewUserOperatorAction = ({ viewUser, onStart, isStarting }) => {
 									)}
 								</Button>
 								<ParagraphXSmall marginTop="5px" marginBottom="0px">
-									A service fee of $2.50 will be charged upon initiating the
-									call. Additional charges will apply only for time spent in the
-									call. Currency is in {viewUser.currency}.
+									A service fee of {fees.preAuthAmountText()} will be charged
+									upon initiating the call. Additional charges will apply only
+									for time spent in the call. Currency is in {viewUser.currency}
+									.
 								</ParagraphXSmall>
 							</div>
 						)}

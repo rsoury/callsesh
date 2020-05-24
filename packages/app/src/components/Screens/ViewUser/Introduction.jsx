@@ -7,6 +7,7 @@ import { H1 as Heading } from "baseui/typography";
 import Highlight from "@/components/Highlight";
 import { ViewUserProps } from "@/utils/common-prop-types";
 import isUserOperator from "@/utils/is-operator";
+import * as fees from "@callsesh/utils/fees";
 
 const ViewUserIntroduction = ({ viewUser }) => {
 	const [css, theme] = useStyletron();
@@ -18,7 +19,7 @@ const ViewUserIntroduction = ({ viewUser }) => {
 		ownerPronoun = "She's";
 	}
 
-	const minuteRate = (parseFloat(viewUser.hourlyRate) / 60).toFixed(2);
+	const minuteRate = fees.getMinuteRate(viewUser.hourlyRate);
 
 	const isOperator = isUserOperator(viewUser);
 
