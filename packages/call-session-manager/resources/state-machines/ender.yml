@@ -1,0 +1,29 @@
+id: CallSessionEnder
+events:
+  - http:
+      path: "/"
+      method: "POST"
+notifications:
+  ABORTED:
+    - sns: ${self:resources.Outputs.NotificationsTopic.Value}
+  FAILED:
+    - sns: ${self:resources.Outputs.NotificationsTopic.Value}
+  TIMED_OUT:
+    - sns: ${self:resources.Outputs.NotificationsTopic.Value}
+  SUCCEEDED:
+    - sns: ${self:resources.Outputs.NotificationsTopic.Value}
+role:
+  Fn::GetAtt: [StateMachinePassRole, Arn]
+definition:
+  Comment: "Callsesh Call Session Ender"
+  StartAt: EnsureExpiry
+  States:
+    EnsureExpiry:
+      Type: Wait
+      Seconds: 60 # Should take 60 seconds to expire
+      Next: End
+    End:
+      Type: Task
+      Resource:
+        Fn::GetAtt: [end, Arn]
+      End: true

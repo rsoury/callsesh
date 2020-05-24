@@ -27,3 +27,4 @@ export const awsCredentials = {
 export const uploadcare = {
 	publicKey: process.env.UPLOADCARE_PUBLIC_KEY || ""
 };
+export const callSessionManagerUrl = process.env.CALL_SESSION_MANAGER_URL || "";

@@ -1,0 +1,9 @@
+Resources:
+  CSMNotificationsTopic:
+    Type: AWS::SNS::Topic
+    Properties:
+      DisplayName: "Callsesh Call Session Manager Notifications"
+      TopicName: CallseshCSMNotifications
+      Subscription:
+        - Endpoint: "ryan@webdoodle.com.au"
+          Protocol: email

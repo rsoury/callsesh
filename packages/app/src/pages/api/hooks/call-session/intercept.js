@@ -73,28 +73,25 @@ handler.post(async (req, res) => {
 			}
 
 			// If not, authorise amount
+			// The payment intent can error if authentication is required
+			// -- setup intent is in use to prevent this, but not guaranteed
+			// You may need to send the customer an SMS here with a link to confirm payment.
 			const customer = await stripe.customers.retrieve(stripeCustomerId);
 			const paymentMethodId = customer.invoice_settings.default_payment_method;
-			const preAuth = await stripe.paymentIntents
-				.create({
-					amount: SERVICE_FEE,
-					currency: operatorUser.currency,
-					customer: stripeCustomerId,
-					payment_method: paymentMethodId,
-					description: "Call session pre-authorisation",
-					metadata: {
-						callSessionId: callSession.id
-					},
-					statement_descriptor_suffix: truncate(operatorUser.givenName, 22),
-					off_session: true,
-					confirm: true,
-					capture_method: "manual"
-				})
-				.catch((err) => {
-					// The payment intent can error if authentication is required
-					// You may need to send the customer an SMS here with a link to confirm payment.
-					throw err;
-				});
+			const preAuth = await stripe.paymentIntents.create({
+				amount: SERVICE_FEE,
+				currency: operatorUser.currency,
+				customer: stripeCustomerId,
+				payment_method: paymentMethodId,
+				description: "Call session pre-authorisation",
+				metadata: {
+					callSessionId: callSession.id
+				},
+				statement_descriptor_suffix: truncate(operatorUser.givenName, 22),
+				off_session: true,
+				confirm: true,
+				capture_method: "manual"
+			});
 
 			// Add pre auth charge id to application user data
 			await authManager.updateUser(user.id, {

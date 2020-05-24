@@ -5,6 +5,9 @@
  */
 
 import getHandler from "@/middleware";
+import * as comms from "@/comms";
+import request from "@/utils/request";
+import { callSessionManagerUrl } from "@/env-config";
 
 const handler = getHandler();
 
@@ -24,17 +27,32 @@ handler.post(async (req, res) => {
 	// Call initiated
 	if (outboundResourceStatus === "initiated") {
 		// Remove TTL and dateExpiry from session -- ie. prolong the session
+		// dateExpiry may be set when call ended, but then re-initiated.
+		await comms.getProxyService().sessions(interactionSessionSid).update({
+			dateExpiry: null,
+			ttl: 0
+		});
 	}
+
 	if (
 		outboundResourceStatus === "completed" ||
 		outboundResourceStatus === "no-answer"
 	) {
 		// Add expiry in 60 seconds -- end session in 60 seconds.
 		// Behaves as a window to reinitiate the call.
+		const t = new Date();
+		t.setSeconds(t.getSeconds() + 60);
+		await comms.getProxyService().sessions(interactionSessionSid).update({
+			dateExpiry: t.toISOString(),
+			ttl: 0
+		});
 	}
+
 	if (outboundResourceStatus === "completed") {
-		// Check to see if an initiation fee has been applied. If not, apply it.
-		// Consilidate all fees.
+		// Trigger Call Sesson Manager
+		await request.post(callSessionManagerUrl, {
+			...req.body
+		});
 	}
 
 	return res.end();
