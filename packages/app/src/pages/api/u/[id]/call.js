@@ -14,12 +14,12 @@ import { nanoid } from "nanoid";
 import ono from "@jsdevtools/ono";
 import pick from "lodash/pick";
 
-import * as comms from "@/comms";
+import * as comms from "@callsesh/utils/comms";
 import getHandler, { onNoMatch } from "@/middleware";
 import { requireAuthentication, getUser } from "@/middleware/auth";
-import * as authManager from "@/auth-manager";
+import * as authManager from "@callsesh/utils/auth-manager";
 import isUserOperator from "@/utils/is-operator";
-import stripe from "@/stripe";
+import stripe from "@callsesh/utils/stripe";
 import { ERROR_TYPES, CALL_SESSION_USER_TYPE } from "@/constants";
 
 const handler = getHandler();

@@ -4,7 +4,7 @@
 
 import getHandler from "@/middleware";
 import { requireAuthentication, getUser } from "@/middleware/auth";
-import * as authManager from "@/auth-manager";
+import * as authManager from "@callsesh/utils/auth-manager";
 import isUserOperator from "@/utils/is-operator";
 
 const handler = getHandler();

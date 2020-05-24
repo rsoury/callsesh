@@ -3,7 +3,7 @@
  */
 
 import isEmpty from "is-empty";
-import * as comms from "@/comms";
+import * as comms from "@callsesh/utils/comms";
 import getHandler from "@/middleware";
 import { requireAuthentication, getUser } from "@/middleware/auth";
 

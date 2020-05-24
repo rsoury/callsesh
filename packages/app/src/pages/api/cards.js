@@ -5,8 +5,8 @@
 import isEmpty from "is-empty";
 import getHandler from "@/middleware";
 import { requireAuthentication, getUser } from "@/middleware/auth";
-import * as authManager from "@/auth-manager";
-import stripe from "@/stripe";
+import * as authManager from "@callsesh/utils/auth-manager";
+import stripe from "@callsesh/utils/stripe";
 import { publicUrl } from "@/env-config";
 import { page as pageRoutes } from "@/routes";
 

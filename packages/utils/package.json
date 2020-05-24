@@ -2,11 +2,29 @@
 	"name": "@callsesh/utils",
 	"version": "1.0.0",
 	"private": true,
+	"main": "dist/index.js",
+	"scripts": {
+		"build": "babel ./src/* --out-dir dist --copy-files",
+		"watch": "yarn build --watch",
+		"clean": "rimraf ./dist"
+	},
 	"peerDependencies": {
 		"axios": "^0.19.2",
-		"lodash": "^4.17.15",
 		"swr": "^0.2.0"
 	},
-	"dependencies": {},
-	"scripts": {}
+	"dependencies": {
+		"@jsdevtools/ono": "^7.1.2",
+		"auth0": "^2.25.1",
+		"is-empty": "^1.2.0",
+		"lodash": "^4.17.15",
+		"stripe": "^8.55.0",
+		"twilio": "^3.43.1",
+		"yup": "^0.29.0"
+	},
+	"devDependencies": {
+		"@babel/cli": "^7.8.4",
+		"@babel/core": "^7.9.6",
+		"@babel/preset-env": "^7.9.6",
+		"rimraf": "^3.0.2"
+	}
 }

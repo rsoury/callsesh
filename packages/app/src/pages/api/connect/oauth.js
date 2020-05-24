@@ -5,8 +5,8 @@
 import getHandler from "@/middleware";
 import { requireAuthentication, getUser } from "@/middleware/auth";
 import * as routes from "@/routes";
-import stripe from "@/stripe";
-import * as authManager from "@/auth-manager";
+import stripe from "@callsesh/utils/stripe";
+import * as authManager from "@callsesh/utils/auth-manager";
 
 const handler = getHandler();
 

@@ -8,9 +8,9 @@ import { parsePhoneNumberFromString } from "libphonenumber-js";
 import ono from "@jsdevtools/ono";
 import pick from "lodash/pick";
 
-import stripe from "@/stripe";
 import { ERROR_TYPES } from "@/constants";
-import * as authManager from "@/auth-manager";
+import stripe from "@callsesh/utils/stripe";
+import * as authManager from "@callsesh/utils/auth-manager";
 import { auth0 as config, publicUrl, sessionSecret } from "@/env-config";
 import * as routes from "@/routes";
 

@@ -28,7 +28,7 @@ import { useSetUser } from "@/hooks/use-user";
 import { ERROR_TYPES } from "@/constants";
 import handleException, { alerts } from "@/utils/handle-exception";
 import ssrUser from "@/utils/ssr-user";
-import * as authManager from "@/auth-manager";
+import * as authManager from "@callsesh/utils/auth-manager";
 
 // We're referring to the currently viewed user, as the viewUser
 const ViewUser = ({ user, viewUser: viewUserBase, error }) => {

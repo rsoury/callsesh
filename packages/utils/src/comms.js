@@ -1,6 +1,6 @@
 import Twilio from "twilio";
-import { twilio as config } from "@/env-config";
-import { SMS_SENDER_ID } from "@/constants";
+import { twilio as config } from "./env-config";
+import { SMS_SENDER_ID } from "./constants";
 
 const client = Twilio(config.accountSid, config.authToken);
 const proxyService = client.proxy.services(config.proxyServiceSid);

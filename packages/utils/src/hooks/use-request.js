@@ -1,7 +1,7 @@
-const useSWR = require("swr").default;
-const axios = require("axios");
+import useSWR from "swr";
+import axios from "axios";
 
-module.exports = function useRequest(request, { initialData, ...config } = {}) {
+export default function useRequest(request, { initialData, ...config } = {}) {
 	const { data: response, error, isValidating, mutate } = useSWR(
 		request && JSON.stringify(request),
 		() => axios(request || {}),
@@ -24,4 +24,4 @@ module.exports = function useRequest(request, { initialData, ...config } = {}) {
 		isValidating,
 		mutate
 	};
-};
+}

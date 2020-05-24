@@ -10,7 +10,7 @@ import camelCase from "lodash/camelCase";
 import pick from "lodash/pick";
 import ono from "@jsdevtools/ono";
 
-import { auth0 as config } from "@/env-config";
+import { auth0 as config } from "./env-config";
 
 const client = new ManagementClient({
 	domain: config.domain,

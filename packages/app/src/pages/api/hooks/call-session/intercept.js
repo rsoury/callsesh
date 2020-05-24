@@ -8,11 +8,11 @@ import isEmpty from "is-empty";
 import ono from "@jsdevtools/ono";
 import truncate from "lodash/truncate";
 
-import * as comms from "@/comms";
+import * as comms from "@callsesh/utils/comms";
 import getHandler from "@/middleware";
-import * as authManager from "@/auth-manager";
+import * as authManager from "@callsesh/utils/auth-manager";
 import handleException from "@/utils/handle-exception";
-import stripe from "@/stripe";
+import stripe from "@callsesh/utils/stripe";
 import { CALL_SESSION_USER_TYPE, SERVICE_FEE } from "@/constants";
 
 const handler = getHandler();

@@ -20,6 +20,7 @@ export const stripe = {
 	secretKey: process.env.STRIPE_SECRET_KEY || "",
 	connectId: process.env.STRIPE_CONNECT_ID || ""
 };
+// TODO: Remove AWS Credentials -- no in use.
 export const awsCredentials = {
 	accessKeyId: process.env.AWS_ACCESS_KEY_ID || "",
 	secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY || ""

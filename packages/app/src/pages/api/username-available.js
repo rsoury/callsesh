@@ -5,7 +5,7 @@
 import isEmpty from "is-empty";
 import getHandler from "@/middleware";
 import { requireAuthentication } from "@/middleware/auth";
-import * as authManager from "@/auth-manager";
+import * as authManager from "@callsesh/utils/auth-manager";
 
 const handler = getHandler();
 

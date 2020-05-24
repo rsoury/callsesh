@@ -1,6 +1,6 @@
 const startCase = require("lodash/startCase");
 
-const message = (msg) => {
+export const message = (msg) => {
 	if (!msg) {
 		return "";
 	}
@@ -20,8 +20,4 @@ const message = (msg) => {
 	].join(" ");
 
 	return formatted;
-};
-
-module.exports = {
-	message
 };
