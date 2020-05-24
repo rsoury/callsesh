@@ -53,16 +53,6 @@ module.exports = {
 			}
 		},
 		{
-			files: ["packages/utils/**/*"],
-			settings: {
-				"import/resolver": {
-					alias: {
-						map: Object.entries(csmAlias)
-					}
-				}
-			}
-		},
-		{
 			files: ["packages/call-session-manager/**/*"],
 			settings: {
 				"import/resolver": {

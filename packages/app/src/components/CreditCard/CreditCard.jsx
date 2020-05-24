@@ -168,10 +168,6 @@ export const CreditCardElement = ({
 				})
 				.catch((err) => {
 					// Handle error on adding payment method
-					console.error(err);
-					console.error(err.code);
-					console.error(err.message);
-
 					if (err.code === "3ds_abort") {
 						return toaster.negative(`Could not authenticate payment method.`);
 					}
