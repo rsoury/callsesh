@@ -4,8 +4,6 @@ import * as format from "./format";
 import * as comms from "./comms";
 import * as constants from "./constants";
 
-export * from "../create-alias";
-
 export { default as stripe } from "./stripe";
 export { default as useRequest } from "./hooks/use-request";
 

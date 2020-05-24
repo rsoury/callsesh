@@ -2,7 +2,7 @@
  * Alias config file
  */
 
-const { createAlias } = require("@callsesh/utils");
+const createAlias = require("@callsesh/utils/create-alias");
 
 const mapToFolders = {
 	"@": "src",

@@ -1,3 +1,4 @@
+require("dotenv").config({ path: require("find-config")(".env") });
 const path = require("path");
 const {
 	editWebpackPlugin,
@@ -25,7 +26,8 @@ const removePlugin = (name, config) => {
 const env = {
 	PUBLIC_URL: process.env.PUBLIC_URL || "",
 	STAGE: process.env.REACT_APP_STAGE || "",
-	DEV_CONFIG: isTrue(process.env.DEV_CONFIG)
+	DEV_CONFIG: isTrue(process.env.DEV_CONFIG),
+	SENTRY_DSN: process.env.SENTRY_DSN || "" // If set, replace REACT_APP_SENTRY_DSN
 };
 
 const addAlias = mw((config) => {
@@ -76,6 +78,13 @@ const buildApp = mw((config) => {
 		"process.env.REACT_APP_PUBLIC_URL": JSON.stringify(env.PUBLIC_URL),
 		"process.env.REACT_APP_SENTRY_RELEASE": JSON.stringify(pkg.version)
 	};
+
+	// Consolidate SENTRY_DSN env var.
+	if (!process.env.REACT_APP_SENTRY_DSN && env.SENTRY_DSN) {
+		definitions["process.env.REACT_APP_SENTRY_DSN"] = JSON.stringify(
+			env.SENTRY_DSN
+		);
+	}
 
 	// Apply definitions
 	config = editWebpackPlugin(

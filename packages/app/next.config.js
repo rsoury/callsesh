@@ -1,4 +1,4 @@
-require("dotenv").config();
+require("dotenv").config({ path: require("find-config")(".env") }); // eslint-disable-line
 const withSourceMaps = require("@zeit/next-source-maps")();
 const {
 	PHASE_PRODUCTION_SERVER,

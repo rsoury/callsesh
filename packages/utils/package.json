@@ -4,7 +4,7 @@
 	"private": true,
 	"main": "dist/index.js",
 	"scripts": {
-		"build": "babel ./src/* --out-dir dist --copy-files",
+		"build": "babel src --out-dir dist --copy-files --delete-dir-on-start",
 		"watch": "yarn build --watch",
 		"clean": "rimraf ./dist"
 	},
