@@ -20,7 +20,7 @@ definition:
   States:
     EnsureExpiry:
       Type: Wait
-      Seconds: 60 # Should take 60 seconds to expire
+      Seconds: 1 # 60 # Should take 60 seconds to expire
       Next: End
     End:
       Type: Task

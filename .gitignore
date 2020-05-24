@@ -2,6 +2,8 @@
 
 # dependencies
 node_modules
+jspm_packages
+flow-typed
 package-lock.json
 yarn.lock
 !/yarn.lock
@@ -15,6 +17,7 @@ coverage
 logs
 tmp
 report.*
+.test_temp
 
 # next.js
 .next
@@ -26,6 +29,7 @@ dist
 
 # misc
 .DS_Store
+package.json.lerna_backup
 
 # debug
 npm-debug.log*
@@ -34,16 +38,14 @@ yarn-error.log*
 
 # env files
 .env
-.env.build
-.env.development
-.env.test
-.env.production
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
+.env.*
+!.env.example
 
+# Now
 .now
 
 # Auth0 deployment
 .auth0
+
+# serverless
+.serverless

@@ -1,11 +1,3 @@
-# `call-session-manager`
+# Call Session Manager
 
-> TODO: description
-
-## Usage
-
-```
-const callSessionManager = require('call-session-manager');
-
-// TODO: DEMONSTRATE API
-```
+Serverless utility to manage officially ending call sessions

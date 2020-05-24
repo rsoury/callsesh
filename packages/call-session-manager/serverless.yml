@@ -16,12 +16,7 @@ provider:
       ${self:custom.nodeEnv.${opt:stage, self:provider.stage}, 'development'}
 
 package:
-  exclude:
-    - bin/**
-    - cache/**
-    - debug/**
-    - logs/**
-    - test/**
+  individually: true
 
 plugins:
   - serverless-plugin-common-excludes
@@ -38,6 +33,7 @@ custom:
     port: 9000
   webpack:
     webpackConfig: "webpack.config.js"
+    includeModules: true
 
 functions:
   end:

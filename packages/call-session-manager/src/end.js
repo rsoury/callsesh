@@ -1,5 +1,6 @@
 // import { isProd } from "@/env-config";
 
-export default function (event) {
-	console.log(event);
+export default async function (...params) {
+	console.log(params);
+	return {};
 }
