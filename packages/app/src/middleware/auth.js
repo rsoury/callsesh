@@ -9,7 +9,7 @@ import ono from "@jsdevtools/ono";
 import pick from "lodash/pick";
 
 import { ERROR_TYPES } from "@/constants";
-import stripe from "@callsesh/utils/stripe";
+import { isPayoutsEnabled } from "@callsesh/utils/stripe";
 import * as authManager from "@callsesh/utils/auth-manager";
 import { auth0 as config, publicUrl, sessionSecret } from "@/env-config";
 import * as routes from "@/routes";
@@ -116,11 +116,7 @@ const constructUser = async (
 		enabled: false
 	};
 	if (payouts.setup) {
-		const {
-			charges_enabled: chargesEnabled,
-			payouts_enabled: payoutsEnabled
-		} = await stripe.accounts.retrieve(appMetadata.stripeConnectId);
-		payouts.enabled = chargesEnabled && payoutsEnabled;
+		payouts.enabled = await isPayoutsEnabled(appMetadata.stripeConnectId);
 	}
 
 	// Get publicly viewable call session data

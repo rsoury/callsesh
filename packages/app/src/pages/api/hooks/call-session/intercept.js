@@ -12,7 +12,7 @@ import * as comms from "@callsesh/utils/comms";
 import getHandler from "@/middleware";
 import * as authManager from "@callsesh/utils/auth-manager";
 import handleException from "@/utils/handle-exception";
-import stripe from "@callsesh/utils/stripe";
+import stripe, { isPayoutsEnabled } from "@callsesh/utils/stripe";
 import * as fees from "@callsesh/utils/fees";
 import { CALL_SESSION_USER_TYPE } from "@/constants";
 
@@ -67,7 +67,8 @@ handler.post(async (req, res) => {
 		if (isEmpty(callSession.preAuthorisation)) {
 			// We need the currency to charge in. Get the user that is in session with caller.
 			const operatorUser = await authManager.getUserByUsername(
-				callSession.with
+				callSession.with,
+				{ withContext: true }
 			);
 			if (isEmpty(operatorUser)) {
 				throw new Error("Cannot find the operator user in call session");
@@ -79,20 +80,41 @@ handler.post(async (req, res) => {
 			// You may need to send the customer an SMS here with a link to confirm payment.
 			const customer = await stripe.customers.retrieve(stripeCustomerId);
 			const paymentMethodId = customer.invoice_settings.default_payment_method;
-			const preAuth = await stripe.paymentIntents.create({
+			const preAuthParams = {
 				amount: fees.preAuthAmount(),
 				currency: operatorUser.currency,
 				customer: stripeCustomerId,
 				payment_method: paymentMethodId,
 				description: "Call session pre-authorisation",
 				metadata: {
-					callSessionId: callSession.id
+					callSessionId: callSession.id,
+					caller: {
+						name: user.nickname,
+						username: user.username
+					},
+					operator: {
+						name: operatorUser.nickname,
+						username: operatorUser.username
+					}
 				},
 				statement_descriptor_suffix: truncate(operatorUser.givenName, 22),
 				off_session: true,
 				confirm: true,
+				error_on_requires_action: true,
 				capture_method: "manual"
-			});
+			};
+			// Check if operator has payouts setup, and if so add destination connect id.
+			// Requires to be set here, as destination cannot be added on update
+			const payoutsEnabled = await isPayoutsEnabled(
+				operatorUser.stripeConnectId
+			);
+			if (payoutsEnabled) {
+				preAuthParams.application_fee_amount = fees.preAuthAmount();
+				preAuthParams.transfer_data = {
+					destination: operatorUser.stripeConnectId
+				};
+			}
+			const preAuth = await stripe.paymentIntents.create(preAuthParams);
 
 			// Add pre auth charge id to application user data
 			await authManager.updateUser(user.id, {

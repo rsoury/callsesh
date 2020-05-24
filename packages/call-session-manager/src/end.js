@@ -9,15 +9,15 @@
  * 8. Charge caller for call.
  */
 
-// import { isProd } from "@/env-config";
 import isEmpty from "is-empty";
+import truncate from "lodash.truncate";
 import * as comms from "@callsesh/utils/comms";
 import * as authManager from "@callsesh/utils/auth-manager";
 import handleException from "@/utils/handle-exception";
 import logger from "@/utils/logger";
 import ono from "@jsdevtools/ono";
 import * as fees from "@callsesh/utils/fees";
-import stripe from "@callsesh/utils/stripe";
+import stripe, { isPayoutsEnabled } from "@callsesh/utils/stripe";
 
 const service = comms.getProxyService();
 
@@ -30,120 +30,134 @@ export default async function (event) {
 
 	logger.info(`Start Call Session Manager - Ender`, { event });
 
-	// Check if the status is closed.
-	const session = await service.sessions(interactionSessionSid).fetch();
-	logger.info(`Session status`, { status: session.status });
-	if (session.status === "closed") {
-		// Officially end the session
-		const [operatorParticipant, callerParticipant] = await Promise.all([
-			service
+	try {
+		// Check if the status is closed.
+		const session = await service.sessions(interactionSessionSid).fetch();
+		logger.info(`Session status`, { status: session.status });
+		if (session.status === "closed") {
+			// Officially end the session
+			const [operatorParticipant, callerParticipant] = await Promise.all([
+				service
+					.sessions(interactionSessionSid)
+					.participants(outboundParticipantSid)
+					.fetch(),
+				service
+					.sessions(interactionSessionSid)
+					.participants(inboundParticipantSid)
+					.fetch()
+			]);
+			logger.info(`Participants retrieved from Twilio`);
+
+			const [operatorUser, callerUser] = await Promise.all([
+				authManager.getUserByPhoneNumber(operatorParticipant.identifier, {
+					withContext: true
+				}),
+				authManager.getUserByPhoneNumber(callerParticipant.identifier, {
+					withContext: true
+				})
+			]);
+
+			logger.info(`Users retrieved from Applications`);
+
+			// Remove call session data from both users.
+			await Promise.all([
+				authManager.updateUser(operatorUser.id, {
+					metadata: {
+						app: {
+							callSession: {}
+						}
+					}
+				}),
+				authManager.updateUser(callerUser.id, {
+					metadata: {
+						app: {
+							callSession: {}
+						}
+					}
+				})
+			]);
+
+			logger.info(`User call sessions reset`);
+
+			// Fetch call logs
+			const interactions = await service
 				.sessions(interactionSessionSid)
-				.participants(outboundParticipantSid)
-				.fetch(),
-			service
-				.sessions(interactionSessionSid)
-				.participants(inboundParticipantSid)
-				.fetch()
-		]);
-		logger.info(`Participants retrieved from Twilio`);
+				.interactions.list({ limit: 99999999 });
 
-		const [operatorUser, callerUser] = await Promise.all([
-			authManager.getUserByPhoneNumber(operatorParticipant.identifier, {
-				withContext: true
-			}),
-			authManager.getUserByPhoneNumber(callerParticipant.identifier, {
-				withContext: true
-			})
-		]);
-
-		logger.info(`Users retrieved from Applications`);
-
-		// Remove call session data from both users.
-		await Promise.all([
-			authManager.updateUser(operatorUser.id, {
-				metadata: {
-					app: {
-						callSession: {}
-					}
-				}
-			}),
-			authManager.updateUser(callerUser.id, {
-				metadata: {
-					app: {
-						callSession: {}
-					}
-				}
-			})
-		]);
-
-		logger.info(`User call sessions reset`);
-
-		// Fetch call logs
-		const interactions = await service
-			.sessions(interactionSessionSid)
-			.interactions.list({ limit: 99999999 });
-
-		logger.info(`Interactions retrieved for session`, {
-			amount: interactions.length
-		});
-
-		// Calc total duration
-		const totalDuration = interactions.reduce((sum, interaction) => {
-			if (
-				interaction.outboundResourceType === "call" &&
-				interaction.outboundResourceStatus === "completed"
-			) {
-				if (!isEmpty(interaction.data)) {
-					try {
-						const data = JSON.parse(interaction.data);
-						const duration = parseInt(data.duration, 10);
-						sum += duration;
-					} catch (e) {
-						// empty catch
-					}
-				}
-			}
-			return sum;
-		}, 0);
-
-		logger.info(`Total talk duration calculated`, { duration: totalDuration });
-
-		const {
-			pendingPayoutAmount = 0,
-			hourlyRate,
-			stripeConnectId
-		} = operatorUser;
-		// Quantify the caller charge amount of session based on operator hourly rate
-		const chargeAmount = fees.chargeAmount(hourlyRate, totalDuration);
-		// Get application fee -- includes service fee
-		const applicationFee = fees.applicationAmount(hourlyRate, totalDuration);
-
-		const payoutAmount = chargeAmount - applicationFee + pendingPayoutAmount;
-
-		const chargeParams = {}; // TODO: set payment intent params here.
-
-		let payoutsEnabled = false;
-		if (!isEmpty(stripeConnectId)) {
-			const account = await stripe.accounts.retrieve(stripeConnectId);
-			payoutsEnabled = account.charges_enabled && account.payouts_enabled;
-		}
-		if (payoutsEnabled) {
-			// Add payout to charge with destination
-			// TODO: Add connect details to chargeParams here.
-		} else {
-			// Add payout to pending payout amount
-			await authManager.updateUser(stripeConnectId, {
-				metadata: {
-					app: {
-						pendingPayoutAmount: payoutAmount
-					}
-				}
+			logger.info(`Interactions retrieved for session`, {
+				amount: interactions.length
 			});
+
+			// Calc total duration
+			const totalDuration = interactions.reduce((sum, interaction) => {
+				if (
+					interaction.outboundResourceType === "call" &&
+					interaction.outboundResourceStatus === "completed"
+				) {
+					if (!isEmpty(interaction.data)) {
+						try {
+							const data = JSON.parse(interaction.data);
+							const duration = parseInt(data.duration, 10);
+							sum += duration;
+						} catch (e) {
+							// empty catch
+						}
+					}
+				}
+				return sum;
+			}, 0);
+
+			logger.info(`Total talk duration calculated`, {
+				duration: totalDuration
+			});
+
+			const {
+				pendingPayoutAmount = 0,
+				hourlyRate,
+				stripeConnectId
+			} = operatorUser;
+			// Quantify the caller charge amount of session based on operator hourly rate
+			const chargeAmount = fees.chargeAmount(hourlyRate, totalDuration);
+			// Get application fee -- includes service fee
+			const applicationFee = fees.applicationAmount(hourlyRate, totalDuration);
+
+			const chargeParams = {
+				amount: chargeAmount,
+				description: `Call session complete - Caller: ${truncate(
+					callerUser.givenName,
+					{ length: 22 }
+				)} - Operator: ${truncate(operatorUser.givenName, { length: 22 })}`
+			};
+
+			const payoutsEnabled = await isPayoutsEnabled(stripeConnectId);
+			if (payoutsEnabled) {
+				// Add payout to charge with destination
+				chargeParams.application_fee_amount = applicationFee;
+			} else {
+				// Add payout to pending payout amount
+				await authManager.updateUser(stripeConnectId, {
+					metadata: {
+						app: {
+							pendingPayoutAmount:
+								chargeAmount - applicationFee + pendingPayoutAmount
+						}
+					}
+				});
+			}
+
+			// Update payment intent with chargeParams
+			await stripe.paymentIntents.update(
+				callerUser.preAuthorisation,
+				chargeParams
+			);
+		} else if (session.status === "failed") {
+			logger.error(`Session failed`);
+			// Capture an exception for further investigation
+			handleException(ono(new Error("Session failed"), { event }));
 		}
-	} else if (session.status === "failed") {
-		logger.error(`Session failed`);
-		// Capture an exception for further investigation
-		handleException(ono(new Error("Session failed"), { event }));
+	} catch (e) {
+		handleException(e);
+		throw e;
 	}
 
 	return {};

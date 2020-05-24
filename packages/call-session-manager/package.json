@@ -25,6 +25,7 @@
 		"@sentry/integrations": "^5.15.5",
 		"@sentry/node": "^5.15.5",
 		"is-empty": "^1.2.0",
+		"lodash.truncate": "^4.4.2",
 		"pino": "^6.2.1",
 		"source-map-support": "^0.5.19"
 	},
