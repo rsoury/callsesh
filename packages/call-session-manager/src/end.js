@@ -147,7 +147,7 @@ export default async function (event) {
 					logger.debug({ cancelledPayment }, `Cancelled payment intent`);
 					logger.info(`Cancelling payment...`);
 				}
-				logger.info(`Call session ended with no talk time.`);
+				logger.info(`Call session ended with insufficient talk time.`);
 				return {};
 			}
 
