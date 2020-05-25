@@ -107,10 +107,7 @@ handler.post(async (req, res) => {
 						callerName: user.nickname,
 						callerUsername: user.username,
 						operatorName: operatorUser.nickname,
-						operatorUsername: operatorUser.username,
-						hello: {
-							throwing: "error"
-						}
+						operatorUsername: operatorUser.username
 					},
 					statement_descriptor_suffix: `OP: ${truncate(
 						operatorUser.givenName,
