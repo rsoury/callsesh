@@ -2,7 +2,7 @@ import nextConnect from "next-connect";
 import pino from "express-pino-logger";
 
 import handleException from "@/utils/handle-exception";
-import { isProd } from "@/env-config";
+import { isProd, logLevel } from "@/env-config";
 
 export const onError = (err, req, res) => {
 	handleException(err);
@@ -36,6 +36,7 @@ export default function getHandler() {
 	// Add pino logger
 	handler.use(
 		pino({
+			level: logLevel || "info",
 			prettyPrint: !isProd
 		})
 	);

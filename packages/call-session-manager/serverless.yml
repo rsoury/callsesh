@@ -12,8 +12,7 @@ provider:
   timeout: 30
   stage: ${opt:stage, 'dev'}
   environment:
-    NODE_ENV:
-      ${self:custom.nodeEnv.${opt:stage, self:provider.stage}, 'development'}
+    NODE_ENV: ${self:custom.nodeEnv.${opt:stage, self:provider.stage}, 'development'}
 
 package:
   individually: true

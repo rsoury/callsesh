@@ -7,6 +7,7 @@
  * 6. Calc transfer amount -- include existing pendingPayoutAmount and minus service fee
  * 7. Check if operator has stripeConnectId and enabled payouts, if so, add destination, otherwise overwrite to pendingPayoutAmount
  * 8. Charge caller for call.
+ * 9. Notify both parties in the session with a call summary via text.
  */
 
 import isEmpty from "is-empty";
@@ -143,13 +144,22 @@ export default async function (event) {
 						}
 					}
 				});
+
+				logger.info(`Pending payout amount updated`);
 			}
 
 			// Update payment intent with chargeParams
-			await stripe.paymentIntents.update(
-				callerUser.preAuthorisation,
+			// Payments will be captured manually for now.
+			const paymentIntent = await stripe.paymentIntents.update(
+				callerUser.callSession.preAuthorisation,
 				chargeParams
 			);
+
+			logger.debug(`Payment Intent`, paymentIntent);
+
+			logger.info(`Charge payment updated with latest call session details.`);
+
+			// Notify both parties in the session with a call summary via text.
 		} else if (session.status === "failed") {
 			logger.error(`Session failed`);
 			// Capture an exception for further investigation

@@ -2,6 +2,8 @@ const slsw = require("serverless-webpack");
 const nodeExternals = require("webpack-node-externals");
 const filenamify = require("filenamify");
 const webpack = require("webpack");
+const DotenvPlugin = require("dotenv-webpack");
+const findConfig = require("find-config");
 
 const { alias } = require("./config/alias");
 const pkg = require("./package.json");
@@ -33,6 +35,9 @@ module.exports = {
 	plugins: [
 		new webpack.DefinePlugin({
 			"process.env.SENTRY_RELEASE": JSON.stringify(sentryRelease)
+		}),
+		new DotenvPlugin({
+			path: findConfig(".env")
 		})
 	],
 	module: {

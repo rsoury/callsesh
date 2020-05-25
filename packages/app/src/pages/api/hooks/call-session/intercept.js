@@ -23,6 +23,8 @@ handler.post(async (req, res) => {
 
 	const logParams = { requestBody: { ...req.body } };
 
+	req.log.info(`Start call session interaction intercept`);
+
 	try {
 		// Get participant in call session
 		const participant = await comms
@@ -34,6 +36,8 @@ handler.post(async (req, res) => {
 
 		logParams.participant = participant;
 
+		req.log.info(`Caller participant retrieved`, { id: participant.sid });
+
 		// Use participant identifier to determine user
 		const user = await authManager.getUserByPhoneNumber(phoneNumber, {
 			withContext: true
@@ -41,6 +45,10 @@ handler.post(async (req, res) => {
 		if (isEmpty(user)) {
 			throw new Error("No caller user found in session");
 		}
+
+		req.log.info(`Caller application user retrieved`, {
+			username: user.username
+		});
 
 		const { callSession, stripeCustomerId } = user;
 
@@ -62,6 +70,8 @@ handler.post(async (req, res) => {
 			);
 			return res.status(403).end();
 		}
+
+		req.log.info(`Participant is a valid caller`);
 
 		// Check caller in callSession to find if callSession.preAuthorisation (stripe id) exists.
 		if (isEmpty(callSession.preAuthorisation)) {
@@ -127,6 +137,8 @@ handler.post(async (req, res) => {
 					}
 				}
 			});
+
+			req.log.info(`Pre-authorisation charge complete`);
 		}
 
 		// Return 200.

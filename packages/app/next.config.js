@@ -72,10 +72,13 @@ module.exports = (phase) => {
 
 				// Resolve node related dependencies.
 				config.node = {
+					// Used by Auth0 Management
 					dns: "empty",
 					fs: "empty",
 					net: "empty",
-					tls: "empty"
+					tls: "empty",
+					// Stripe-node cannot resolve this on browser
+					child_process: "empty"
 				};
 			}
 

@@ -66,9 +66,9 @@ ThreeDSecure.defaultProps = {
 
 export async function getServerSideProps({
 	query: {
-		setup_intent: setupIntentId,
-		setup_intent_client_secret: setupIntentSecret,
-		source_type: sourceType
+		setup_intent: setupIntentId = "",
+		setup_intent_client_secret: setupIntentSecret = "",
+		source_type: sourceType = ""
 	}
 }) {
 	return {

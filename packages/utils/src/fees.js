@@ -1,3 +1,9 @@
+/**
+ * Methods suffixed with 'Amount' will return nunbers
+ * Methods suffixed with 'Text' will return strings.
+ * Methods suffixed with 'Rate' will return either a number or string
+ */
+
 import isEmpty from "is-empty";
 import { FEE_MULTIPLIER, SERVICE_FEE } from "./constants";
 
@@ -94,7 +100,7 @@ export const getSecondRate = (hourlyRate, returnFloat = false) => {
  * @param   {number}  duration
  * @param   {boolean}  returnFloat
  *
- * @return  {string|number}
+ * @return  {number}
  */
 export const chargeAmount = (hourlyRate, duration, returnFloat = false) => {
 	const secondRate = getSecondRate(hourlyRate, true);
@@ -112,7 +118,7 @@ export const chargeAmount = (hourlyRate, duration, returnFloat = false) => {
  * @param   {number}  duration
  * @param   {boolean} returnFloat
  *
- * @return  {string|number}
+ * @return  {number}
  */
 export const applicationAmount = (
 	hourlyRate,
