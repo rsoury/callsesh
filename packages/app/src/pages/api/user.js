@@ -5,6 +5,7 @@
 import * as yup from "yup";
 import isEmpty from "is-empty";
 import set from "lodash/set";
+import { parseCookies, destroyCookie } from "nookies";
 
 import getHandler, { onError } from "@/middleware";
 import {
@@ -118,6 +119,7 @@ handler
 			}
 		};
 
+		// Set profile picture
 		if (isEmpty(profilePicture)) {
 			updateParams.picture = `https://api.adorable.io/avatars/285/${new Date(
 				user.createdAt
@@ -125,6 +127,16 @@ handler
 		} else {
 			updateParams.picture = profilePicture.cdnUrl;
 			updateParams.metadata.user.profilePicture = profilePicture;
+		}
+
+		// Set referrer
+		const { referrer } = parseCookies({ req, res });
+		destroyCookie({ req, res }, "referrer");
+		// Make sure referrer has a value, and there is no current referrer value
+		if (!isEmpty(referrer) && isEmpty(user.referrer)) {
+			updateParams.metadata.app = {
+				referrer
+			};
 		}
 
 		try {

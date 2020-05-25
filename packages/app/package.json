@@ -45,6 +45,7 @@
 		"next-connect": "^0.6.4",
 		"next-seo": "^4.4.0",
 		"nl2br": "^0.0.3",
+		"nookies": "^2.3.0",
 		"nprogress": "^0.2.0",
 		"prop-types": "^15.7.2",
 		"react": "^16.8.0",

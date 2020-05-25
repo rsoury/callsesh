@@ -233,6 +233,28 @@ export default async function (event) {
 			logger.info(`Charge payment create with latest call session details.`);
 
 			// Notify both parties in the session with a call summary via text.
+			await Promise.all([
+				// Operator
+				comms.sms(
+					operatorUser.phoneNumber,
+					`This call went for ${totalDuration} seconds. You will paid $${
+						chargeAmount - applicationFee
+					}.${
+						pendingPayoutAmount > 0
+							? ` You have a pending payout of $${(
+									pendingPayoutAmount / 100
+							  ).toFixed(
+									2
+							  )} which will be paid the first day of the next month.`
+							: ``
+					} You can manage your payouts through the Callsesh web app.`
+				),
+				// Caller
+				comms.sms(
+					callerUser.phoneNumber,
+					`This call went for ${totalDuration} seconds and metered ${chargeAmount}. You can find your receipt here: ${payment.charges.data[0].receipt_url} We hope you're happy with the call! Have issues? Contact Callsesh support.`
+				)
+			]);
 		} else if (session.status === "failed") {
 			logger.error(`Session failed`);
 			// Capture an exception for further investigation
