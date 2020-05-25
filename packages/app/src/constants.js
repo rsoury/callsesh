@@ -1,14 +1,10 @@
-// Payouts
-export const PAYOUTS_SUBMISSION_FORM_URL = "";
+import { constants } from "@callsesh/utils";
 
 // Call Session
-export const CALL_SESSION_USER_TYPE = {
-	caller: "caller",
-	operator: "operator"
-};
+export const { CALL_SESSION_USER_TYPE } = constants;
 
-// SMS Sender Id
-export const SMS_SENDER_ID = "Callsesh";
+// Payouts
+export const PAYOUTS_SUBMISSION_FORM_URL = "";
 
 // Error Types -- Shared between frontend and backend.
 export const ERROR_TYPES = {

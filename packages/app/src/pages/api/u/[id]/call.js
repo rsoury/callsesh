@@ -331,7 +331,8 @@ handler
 				`You have a caller named ${user.givenName}! You should receive a call within a minute. If you do not, this means the caller has abandoned the session.`
 			),
 			// Notify caller with proxy phone number
-			comms.sms(user.phoneNumber, getUserSMSMessage(proxyPhoneNumber))
+			// comms.sms(user.phoneNumber, getUserSMSMessage(proxyPhoneNumber))
+			comms.call(user.phoneNumber, proxyPhoneNumber)
 		]);
 
 		// Response should be the proxy phone number

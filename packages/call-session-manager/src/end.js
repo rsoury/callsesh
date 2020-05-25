@@ -19,6 +19,9 @@ import logger from "@/utils/logger";
 import ono from "@jsdevtools/ono";
 import * as fees from "@callsesh/utils/fees";
 import stripe, { isPayoutsEnabled } from "@callsesh/utils/stripe";
+import { constants } from "@callsesh/utils";
+
+const { CALL_SESSION_USER_TYPE } = constants;
 
 const service = comms.getProxyService();
 
@@ -60,6 +63,31 @@ export default async function (event) {
 
 			logger.info(`Users retrieved from Applications`);
 
+			// Check if users are still in a call session together with appropriate roles
+			// ie. Call session could have already ended, and new sessions could be in place.
+			let valid = false;
+			if (
+				!isEmpty(callerUser.callSession) &&
+				!isEmpty(operatorUser.callSession)
+			) {
+				if (
+					// Usernames match
+					callerUser.callSession.with === operatorUser.username &&
+					operatorUser.callSession.with === callerUser.username &&
+					// Roles match
+					callerUser.callSession.as === CALL_SESSION_USER_TYPE.caller &&
+					operatorUser.callSession.as === CALL_SESSION_USER_TYPE.operator &&
+					// Ids match
+					callerUser.callSession.id === operatorUser.callSession.id
+				) {
+					valid = true;
+				}
+			}
+			if (!valid) {
+				logger.warn(`Call session is invalid`, { event });
+				return {};
+			}
+
 			// Remove call session data from both users.
 			await Promise.all([
 				authManager.endCallSession(operatorUser.id),
@@ -99,6 +127,18 @@ export default async function (event) {
 			logger.info(`Total talk duration calculated`, {
 				duration: totalDuration
 			});
+
+			// Check if any talk time accrued
+			if (isEmpty(totalDuration)) {
+				await stripe.paymentIntents.cancel(
+					callerUser.callSession.preAuthorisation,
+					{
+						cancellation_reason: "abandoned"
+					}
+				);
+				logger.info(`Call session ended with no talk time. Cancelling payment`);
+				return {};
+			}
 
 			const {
 				pendingPayoutAmount = 0,

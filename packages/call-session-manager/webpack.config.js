@@ -1,3 +1,4 @@
+const path = require("path");
 const slsw = require("serverless-webpack");
 const nodeExternals = require("webpack-node-externals");
 const filenamify = require("filenamify");
@@ -24,14 +25,14 @@ module.exports = {
 	// we exclude all node dependencies
 	externals: [nodeExternals()],
 	mode: slsw.lib.webpack.isLocal ? "development" : "production",
-	// optimization: {
-	//   // We no not want to minimize our code.
-	//   minimize: false,
-	// },
-	// performance: {
-	//   // Turn off size warnings for entry points
-	//   hints: false,
-	// },
+	optimization: {
+		// We no not want to minimize our code.
+		minimize: false
+	},
+	performance: {
+		// Turn off size warnings for entry points
+		hints: false
+	},
 	plugins: [
 		new webpack.DefinePlugin({
 			"process.env.SENTRY_RELEASE": JSON.stringify(sentryRelease)
@@ -52,5 +53,11 @@ module.exports = {
 				]
 			}
 		]
+	},
+	output: {
+		libraryTarget: "commonjs2",
+		path: path.join(__dirname, ".webpack"),
+		filename: "[name].js",
+		sourceMapFilename: "[file].map"
 	}
 };

@@ -62,3 +62,21 @@ export const sms = (phoneNumber, messageBody) => {
 		to: phoneNumber
 	});
 };
+
+// const {VoiceResponse} = Twilio.twiml;
+
+export const call = (phoneNumber, fromPhoneNumber) => {
+	// const response = new VoiceResponse();
+	// response.dial(fromPhoneNumber);
+
+	return client.calls.create({
+		to: phoneNumber,
+		from: fromPhoneNumber,
+		twiml: `<Response><Dial><Number>${fromPhoneNumber}</Number></Dial></Response>`
+	});
+};
+
+/**
+ * Get Twilio client
+ */
+export const getClient = () => client;
