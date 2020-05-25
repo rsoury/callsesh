@@ -62,20 +62,8 @@ export default async function (event) {
 
 			// Remove call session data from both users.
 			await Promise.all([
-				authManager.updateUser(operatorUser.id, {
-					metadata: {
-						app: {
-							callSession: {}
-						}
-					}
-				}),
-				authManager.updateUser(callerUser.id, {
-					metadata: {
-						app: {
-							callSession: {}
-						}
-					}
-				})
+				authManager.endCallSession(operatorUser.id),
+				authManager.endCallSession(callerUser.id)
 			]);
 
 			logger.info(`User call sessions reset`);

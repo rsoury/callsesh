@@ -171,4 +171,14 @@ export const isUsernameAvailable = async (username) => {
 	return isEmpty(users);
 };
 
+export const endCallSession = (id) => {
+	return updateUser(id, {
+		metadata: {
+			app: {
+				callSession: {}
+			}
+		}
+	});
+};
+
 export const getClient = () => client;

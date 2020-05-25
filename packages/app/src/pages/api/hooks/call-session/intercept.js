@@ -15,6 +15,8 @@ import handleException from "@/utils/handle-exception";
 import stripe, { isPayoutsEnabled } from "@callsesh/utils/stripe";
 import * as fees from "@callsesh/utils/fees";
 import { CALL_SESSION_USER_TYPE } from "@/constants";
+import { publicUrl } from "@/env-config";
+import * as routes from "@/routes";
 
 const handler = getHandler();
 
@@ -78,67 +80,95 @@ handler.post(async (req, res) => {
 			// We need the currency to charge in. Get the user that is in session with caller.
 			const operatorUser = await authManager.getUserByUsername(
 				callSession.with,
-				{ withContext: true }
+				{
+					withContext: true
+				}
 			);
 			if (isEmpty(operatorUser)) {
 				throw new Error("Cannot find the operator user in call session");
 			}
 
-			// If not, authorise amount
-			// The payment intent can error if authentication is required
-			// -- setup intent is in use to prevent this, but not guaranteed
-			// You may need to send the customer an SMS here with a link to confirm payment.
-			const customer = await stripe.customers.retrieve(stripeCustomerId);
-			const paymentMethodId = customer.invoice_settings.default_payment_method;
-			const preAuthParams = {
-				amount: fees.preAuthAmount(),
-				currency: operatorUser.currency,
-				customer: stripeCustomerId,
-				payment_method: paymentMethodId,
-				description: "Call session pre-authorisation",
-				metadata: {
-					callSessionId: callSession.id,
-					caller: {
-						name: user.nickname,
-						username: user.username
+			try {
+				// If not, authorise amount
+				// The payment intent can error if authentication is required
+				// -- setup intent is in use to prevent this, but not guaranteed
+				// You may need to send the customer an SMS here with a link to confirm payment.
+				const customer = await stripe.customers.retrieve(stripeCustomerId);
+				const paymentMethodId =
+					customer.invoice_settings.default_payment_method;
+				const preAuthParams = {
+					amount: fees.preAuthAmount(),
+					currency: operatorUser.currency,
+					customer: stripeCustomerId,
+					payment_method: paymentMethodId,
+					description: "Call session pre-authorisation",
+					metadata: {
+						callSessionId: callSession.id,
+						callerName: user.nickname,
+						callerUsername: user.username,
+						operatorName: operatorUser.nickname,
+						operatorUsername: operatorUser.username,
+						hello: {
+							throwing: "error"
+						}
 					},
-					operator: {
-						name: operatorUser.nickname,
-						username: operatorUser.username
-					}
-				},
-				statement_descriptor_suffix: truncate(operatorUser.givenName, 22),
-				off_session: true,
-				confirm: true,
-				error_on_requires_action: true,
-				capture_method: "manual"
-			};
-			// Check if operator has payouts setup, and if so add destination connect id.
-			// Requires to be set here, as destination cannot be added on update
-			const payoutsEnabled = await isPayoutsEnabled(
-				operatorUser.stripeConnectId
-			);
-			if (payoutsEnabled) {
-				preAuthParams.application_fee_amount = fees.preAuthAmount();
-				preAuthParams.transfer_data = {
-					destination: operatorUser.stripeConnectId
+					statement_descriptor_suffix: `OP: ${truncate(
+						operatorUser.givenName,
+						18
+					)}`,
+					off_session: true,
+					confirm: true,
+					error_on_requires_action: true,
+					capture_method: "manual"
 				};
-			}
-			const preAuth = await stripe.paymentIntents.create(preAuthParams);
+				// Check if operator has payouts setup, and if so add destination connect id.
+				// Requires to be set here, as destination cannot be added on update
+				const payoutsEnabled = await isPayoutsEnabled(
+					operatorUser.stripeConnectId
+				);
+				if (payoutsEnabled) {
+					preAuthParams.application_fee_amount = fees.preAuthAmount();
+					preAuthParams.transfer_data = {
+						destination: operatorUser.stripeConnectId
+					};
+				}
+				const preAuth = await stripe.paymentIntents.create(preAuthParams);
 
-			// Add pre auth charge id to application user data
-			await authManager.updateUser(user.id, {
-				metadata: {
-					app: {
-						callSession: {
-							...callSession,
-							preAuthorisation: preAuth.id
+				// Add pre auth charge id to application user data
+				await authManager.updateUser(user.id, {
+					metadata: {
+						app: {
+							callSession: {
+								...callSession,
+								preAuthorisation: preAuth.id
+							}
 						}
 					}
-				}
-			});
+				});
 
-			req.log.info(`Pre-authorisation charge complete`);
+				req.log.info(`Pre-authorisation charge complete`);
+			} catch (e) {
+				// Remove users from call session if payment fails
+				if (!isEmpty(user) && !isEmpty(operatorUser)) {
+					await Promise.all([
+						authManager.endCallSession(operatorUser.id),
+						authManager.endCallSession(user.id)
+					]);
+
+					// SMS Caller of issue with payment too.
+					await comms.sms(
+						user.phoneNumber,
+						`There seems to have been an issue with your payment method. Please configure or add a new payment method through your Callsesh Wallet. ${publicUrl}${routes.page.settings.wallet}`
+					);
+
+					req.log.info("Users removed from call session", {
+						id: interactionSessionSid
+					});
+				}
+
+				// Handle exception in parent try/catch
+				throw e;
+			}
 		}
 
 		// Return 200.
@@ -146,6 +176,7 @@ handler.post(async (req, res) => {
 	} catch (err) {
 		req.log.error(err.message, logParams);
 		handleException(ono(err, logParams));
+
 		// Status 403 Forbidden required to end the call.
 		return res.status(403).end();
 	}
