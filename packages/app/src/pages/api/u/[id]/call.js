@@ -21,6 +21,8 @@ import * as authManager from "@callsesh/utils/auth-manager";
 import isUserOperator from "@/utils/is-operator";
 import stripe from "@callsesh/utils/stripe";
 import { ERROR_TYPES, CALL_SESSION_USER_TYPE } from "@/constants";
+import { callSessionManagerUrl } from "@/env-config";
+import request from "@/utils/request";
 
 const handler = getHandler();
 
@@ -261,7 +263,8 @@ handler
 		// Create the call session
 		const {
 			session: callSession,
-			caller: { proxyIdentifier: proxyPhoneNumber }
+			caller: { sid: callerParticipantId, proxyIdentifier: proxyPhoneNumber },
+			operator: { sid: operatorParticipantId }
 		} = await comms.createSession(
 			{
 				name: user.nickname,
@@ -333,6 +336,13 @@ handler
 			// Notify caller with proxy phone number
 			comms.sms(user.phoneNumber, getUserSMSMessage(proxyPhoneNumber))
 		]);
+
+		// Fire a request to CSM here to end the session, in the caller never makes the call.
+		await request.post(callSessionManagerUrl, {
+			interactionSessionSid: callSession.sid,
+			outboundParticipantSid: operatorParticipantId,
+			inboundParticipantSid: callerParticipantId
+		});
 
 		// Response should be the proxy phone number
 		return res.json({

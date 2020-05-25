@@ -5,13 +5,11 @@ import { stripe as config } from "./env-config";
 const stripe = Stripe(config.secretKey);
 
 export const isPayoutsEnabled = async (connectId) => {
-	let enabled = false;
-	if (!isEmpty(connectId)) {
-		const account = await stripe.accounts.retrieve(connectId);
-		enabled = account.charges_enabled && account.payouts_enabled;
+	if (isEmpty(connectId)) {
+		return false;
 	}
-
-	return enabled;
+	const account = await stripe.accounts.retrieve(connectId);
+	return account.charges_enabled && account.payouts_enabled;
 };
 
 export default stripe;

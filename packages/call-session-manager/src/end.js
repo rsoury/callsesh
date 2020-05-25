@@ -135,16 +135,19 @@ export default async function (event) {
 				`Total talk duration calculated`
 			);
 
-			// Check if any talk time accrued
-			if (isEmpty(totalDuration)) {
-				const cancelledPayment = await stripe.paymentIntents.cancel(
-					callerUser.callSession.preAuthorisation,
-					{
-						cancellation_reason: "abandoned"
-					}
-				);
-				logger.debug({ cancelledPayment }, `Cancelled payment intent`);
-				logger.info(`Call session ended with no talk time. Cancelling payment`);
+			// Check if any talk time accrued. Ensure duration is greater than 10 seconds.
+			if (totalDuration < 10) {
+				if (!isEmpty(callerUser.callSession.preAuthorisation)) {
+					const cancelledPayment = await stripe.paymentIntents.cancel(
+						callerUser.callSession.preAuthorisation,
+						{
+							cancellation_reason: "abandoned"
+						}
+					);
+					logger.debug({ cancelledPayment }, `Cancelled payment intent`);
+					logger.info(`Cancelling payment...`);
+				}
+				logger.info(`Call session ended with no talk time.`);
 				return {};
 			}
 
@@ -204,7 +207,7 @@ export default async function (event) {
 				await authManager.updateUser(operatorUser.id, {
 					metadata: {
 						app: {
-							pendingPayoutAmount: payoutAmount
+							pendingPayoutAmount: payoutAmount > 0 ? payoutAmount : 0
 						}
 					}
 				});
@@ -222,7 +225,10 @@ export default async function (event) {
 			// Payments will be captured manually for now.
 			const payment = await stripe.paymentIntents.create(chargeParams);
 
-			logger.debug({ payment, cancelledPayment }, `Successful payment intent`);
+			logger.debug(
+				{ payment, cancelledPayment, chargeParams },
+				`Successful payment intent`
+			);
 
 			logger.info(`Charge payment create with latest call session details.`);
 
