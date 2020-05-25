@@ -56,7 +56,7 @@ function useUser({ required } = {}) {
 	useRequest(
 		isEmpty((user || {}).callSession)
 			? null
-			: routes.build.callUser(user.username),
+			: routes.build.callUser(user.callSession.with),
 		{
 			initialData: {},
 			refreshInterval: 60 * 1000, // 60 seconds
