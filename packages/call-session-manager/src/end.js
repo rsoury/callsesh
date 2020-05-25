@@ -137,13 +137,13 @@ export default async function (event) {
 
 			// Check if any talk time accrued
 			if (isEmpty(totalDuration)) {
-				const paymentIntent = await stripe.paymentIntents.cancel(
+				const cancelledPayment = await stripe.paymentIntents.cancel(
 					callerUser.callSession.preAuthorisation,
 					{
 						cancellation_reason: "abandoned"
 					}
 				);
-				logger.debug({ paymentIntent }, `Cancelled payment intent`);
+				logger.debug({ cancelledPayment }, `Cancelled payment intent`);
 				logger.info(`Call session ended with no talk time. Cancelling payment`);
 				return {};
 			}
@@ -157,43 +157,74 @@ export default async function (event) {
 			const chargeAmount = fees.chargeAmount(hourlyRate, totalDuration);
 			// Get application fee -- includes service fee
 			const applicationFee = fees.applicationAmount(hourlyRate, totalDuration);
-
+			const customer = await stripe.customers.retrieve(
+				callerUser.stripeCustomerId
+			);
+			const paymentMethodId = customer.invoice_settings.default_payment_method;
 			const chargeParams = {
 				amount: chargeAmount,
+				currency: operatorUser.currency,
+				customer: callerUser.stripeCustomerId,
+				payment_method: paymentMethodId,
 				description: `Call session complete - Caller: ${truncate(
 					callerUser.givenName,
 					{ length: 22 }
-				)} - Operator: ${truncate(operatorUser.givenName, { length: 22 })}`
+				)} - Operator: ${truncate(operatorUser.givenName, { length: 22 })}`,
+				metadata: {
+					callSessionId: callerUser.callSession.id,
+					callerName: callerUser.nickname,
+					callerUsername: callerUser.username,
+					operatorName: operatorUser.nickname,
+					operatorUsername: operatorUser.username,
+					pendingPayoutAmount,
+					hourlyRate,
+					totalDuration
+				},
+				statement_descriptor_suffix: `OP: ${truncate(
+					operatorUser.givenName,
+					18
+				)}`,
+				off_session: true,
+				confirm: true,
+				error_on_requires_action: true,
+				capture_method: "manual"
 			};
 
 			const payoutsEnabled = await isPayoutsEnabled(stripeConnectId);
 			if (payoutsEnabled) {
 				// Add payout to charge with destination
 				chargeParams.application_fee_amount = applicationFee;
+				chargeParams.transfer_data = {
+					destination: operatorUser.stripeConnectId
+				};
 			} else {
 				// Add payout to pending payout amount
+				const payoutAmount =
+					chargeAmount - applicationFee + pendingPayoutAmount;
 				await authManager.updateUser(operatorUser.id, {
 					metadata: {
 						app: {
-							pendingPayoutAmount:
-								chargeAmount - applicationFee + pendingPayoutAmount
+							pendingPayoutAmount: payoutAmount
 						}
 					}
 				});
 
-				logger.info(`Pending payout amount updated`);
+				logger.info({ payoutAmount }, `Pending payout amount updated`);
 			}
 
-			// Update payment intent with chargeParams
-			// Payments will be captured manually for now.
-			const paymentIntent = await stripe.paymentIntents.update(
+			// Cancel pre-auth payment intent. Create new payment intent with chargeParams
+			const cancelledPayment = await stripe.paymentIntents.cancel(
 				callerUser.callSession.preAuthorisation,
-				chargeParams
+				{
+					cancellation_reason: "duplicate"
+				}
 			);
+			// Payments will be captured manually for now.
+			const payment = await stripe.paymentIntents.create(chargeParams);
 
-			logger.debug({ paymentIntent }, `Successful payment intent`);
+			logger.debug({ payment, cancelledPayment }, `Successful payment intent`);
 
-			logger.info(`Charge payment updated with latest call session details.`);
+			logger.info(`Charge payment create with latest call session details.`);
 
 			// Notify both parties in the session with a call summary via text.
 		} else if (session.status === "failed") {

@@ -34,6 +34,7 @@
 		"@babel/preset-env": "^7.9.6",
 		"babel-loader": "^8.1.0",
 		"babel-plugin-source-map-support": "^2.1.1",
+		"dotenv": "^8.2.0",
 		"dotenv-webpack": "^1.8.0",
 		"filenamify": "^4.1.0",
 		"find-config": "^1.0.0",
