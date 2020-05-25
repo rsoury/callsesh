@@ -21,12 +21,12 @@
 		"deploy": ""
 	},
 	"dependencies": {
+		"@financial-times/lambda-logger": "^2.0.4",
 		"@jsdevtools/ono": "^7.1.2",
 		"@sentry/integrations": "^5.15.5",
 		"@sentry/node": "^5.15.5",
 		"is-empty": "^1.2.0",
 		"lodash.truncate": "^4.4.2",
-		"pino": "^6.2.1",
 		"source-map-support": "^0.5.19"
 	},
 	"devDependencies": {
@@ -37,7 +37,6 @@
 		"dotenv-webpack": "^1.8.0",
 		"filenamify": "^4.1.0",
 		"find-config": "^1.0.0",
-		"pino-pretty": "^4.0.0",
 		"serverless": "^1.71.3",
 		"serverless-offline": "^6.1.7",
 		"serverless-plugin-common-excludes": "^3.0.0",

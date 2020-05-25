@@ -35,7 +35,16 @@ module.exports = {
 	},
 	plugins: [
 		new webpack.DefinePlugin({
-			"process.env.SENTRY_RELEASE": JSON.stringify(sentryRelease)
+			"process.env.SENTRY_RELEASE": JSON.stringify(sentryRelease),
+			// Used by financial times logger
+			"process.env.CONSOLE_LOG_LEVEL": JSON.stringify(
+				process.env.LOG_LEVEL || "info"
+			),
+			// Formidable Lambda Error:
+			// https://github.com/netlify/netlify-lambda/issues/64
+			// https://github.com/serverless-heaven/serverless-webpack/issues/543
+			// https://github.com/node-formidable/formidable/issues/337
+			"global.GENTLY": false
 		}),
 		new DotenvPlugin({
 			path: findConfig(".env")

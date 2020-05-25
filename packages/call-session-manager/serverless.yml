@@ -13,6 +13,7 @@ provider:
   stage: ${opt:stage, 'dev'}
   environment:
     NODE_ENV: ${self:custom.nodeEnv.${opt:stage, self:provider.stage}, 'development'}
+    STAGE: ${opt:stage, self:provider.stage}
 
 package:
   individually: true

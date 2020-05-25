@@ -14,12 +14,13 @@ import isEmpty from "is-empty";
 import truncate from "lodash.truncate";
 import * as comms from "@callsesh/utils/comms";
 import * as authManager from "@callsesh/utils/auth-manager";
-import handleException from "@/utils/handle-exception";
-import logger from "@/utils/logger";
 import ono from "@jsdevtools/ono";
 import * as fees from "@callsesh/utils/fees";
 import stripe, { isPayoutsEnabled } from "@callsesh/utils/stripe";
 import { constants } from "@callsesh/utils";
+
+import handleException from "@/utils/handle-exception";
+import logger from "@financial-times/lambda-logger";
 
 const { CALL_SESSION_USER_TYPE } = constants;
 
@@ -32,12 +33,12 @@ export default async function (event) {
 		inboundParticipantSid
 	} = event;
 
-	logger.info(`Start Call Session Manager - Ender`, { event });
+	logger.info({ event }, `Start Call Session Manager - Ender`);
 
 	try {
 		// Check if the status is closed.
 		const session = await service.sessions(interactionSessionSid).fetch();
-		logger.info(`Session status`, { status: session.status });
+		logger.info({ status: session.status }, `Session status`);
 		if (session.status === "closed") {
 			// Officially end the session
 			const [operatorParticipant, callerParticipant] = await Promise.all([
@@ -84,7 +85,7 @@ export default async function (event) {
 				}
 			}
 			if (!valid) {
-				logger.warn(`Call session is invalid`, { event });
+				logger.warn({ event }, `Call session is invalid`);
 				return {};
 			}
 
@@ -101,9 +102,12 @@ export default async function (event) {
 				.sessions(interactionSessionSid)
 				.interactions.list({ limit: 99999999 });
 
-			logger.info(`Interactions retrieved for session`, {
-				amount: interactions.length
-			});
+			logger.info(
+				{
+					amount: interactions.length
+				},
+				`Interactions retrieved for session`
+			);
 
 			// Calc total duration
 			const totalDuration = interactions.reduce((sum, interaction) => {
@@ -124,18 +128,22 @@ export default async function (event) {
 				return sum;
 			}, 0);
 
-			logger.info(`Total talk duration calculated`, {
-				duration: totalDuration
-			});
+			logger.info(
+				{
+					duration: totalDuration
+				},
+				`Total talk duration calculated`
+			);
 
 			// Check if any talk time accrued
 			if (isEmpty(totalDuration)) {
-				await stripe.paymentIntents.cancel(
+				const paymentIntent = await stripe.paymentIntents.cancel(
 					callerUser.callSession.preAuthorisation,
 					{
 						cancellation_reason: "abandoned"
 					}
 				);
+				logger.debug({ paymentIntent }, `Cancelled payment intent`);
 				logger.info(`Call session ended with no talk time. Cancelling payment`);
 				return {};
 			}
@@ -164,7 +172,7 @@ export default async function (event) {
 				chargeParams.application_fee_amount = applicationFee;
 			} else {
 				// Add payout to pending payout amount
-				await authManager.updateUser(stripeConnectId, {
+				await authManager.updateUser(operatorUser.id, {
 					metadata: {
 						app: {
 							pendingPayoutAmount:
@@ -183,7 +191,7 @@ export default async function (event) {
 				chargeParams
 			);
 
-			logger.debug(`Payment Intent`, paymentIntent);
+			logger.debug({ paymentIntent }, `Successful payment intent`);
 
 			logger.info(`Charge payment updated with latest call session details.`);
 

@@ -37,8 +37,7 @@ handler.post(async (req, res) => {
 		outboundResourceType,
 		outboundResourceStatus,
 		interactionSessionSid,
-		inboundResourceType,
-		inboundResourceSid
+		inboundResourceType
 	} = req.body;
 
 	const logParams = { requestBody: { ...req.body } };
@@ -57,19 +56,11 @@ handler.post(async (req, res) => {
 		case "initiated":
 			// Give the call session an expiry of a day when initiating a call.
 			await prolongSession(interactionSessionSid);
+			// Update the outbound call to detect machine and hangup accordingly.
+
 			req.log.info("Call inititated. Prolong call session", logParams);
 			break;
 		case "completed":
-			await expireSession(interactionSessionSid);
-			// Trigger Call Session Manager
-			await request.post(callSessionManagerUrl, {
-				...req.body
-			});
-			req.log.info(
-				"Call completed. Expiry added to session for recovery",
-				logParams
-			);
-			break;
 		case "busy":
 		case "no-answer":
 			await expireSession(interactionSessionSid);
@@ -77,14 +68,8 @@ handler.post(async (req, res) => {
 			await request.post(callSessionManagerUrl, {
 				...req.body
 			});
-			// On no answer, end the call programmatically
-			await comms
-				.getClient()
-				.calls(inboundResourceSid)
-				.update({ status: "completed" });
-
 			req.log.info(
-				"No answer. Expiry added to session for recovery. Inbound call completed to prevent voice bank.",
+				`Call ${outboundResourceStatus}. Expiry added to session for recovery. Inbound call marked completed to prevent voice bank.`,
 				logParams
 			);
 			break;
