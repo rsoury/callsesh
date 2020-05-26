@@ -302,7 +302,7 @@ export default async function (event) {
 
 				if (pendingPayoutAmount > 0) {
 					operatorSummary.push(
-						`You have $${(pendingPayoutAmount / 100).toFixed(
+						`You also have $${(pendingPayoutAmount / 100).toFixed(
 							2
 						)} pending payout.`
 					);
@@ -315,7 +315,7 @@ export default async function (event) {
 				);
 			}
 			operatorSummary.push(
-				`This will be paid the first day of the next month. You can manage your payouts through the Callsesh web app.`
+				`Pending payouts are paid at the start each month. You can manage your payouts through the Callsesh web app.`
 			);
 			await Promise.all([
 				// Operator
