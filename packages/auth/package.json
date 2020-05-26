@@ -43,7 +43,7 @@
 		"@sentry/browser": "^5.15.5",
 		"@sentry/integrations": "^5.15.5",
 		"auth0-js": "^9.13.2",
-		"baseui": "^9.73.1",
+		"baseui": "9.78.0",
 		"formik": "^2.1.4",
 		"formik-wizard": "^3.1.2",
 		"is-empty": "^1.2.0",
@@ -62,7 +62,7 @@
 		"react-scripts": "3.4.1",
 		"styletron-engine-atomic": "^1.4.6",
 		"styletron-react": "^5.2.7",
-		"yup": "^0.28.5"
+		"yup": "^0.29.0"
 	},
 	"devDependencies": {
 		"@rescripts/cli": "^0.0.13",
@@ -72,7 +72,7 @@
 		"@testing-library/react": "^9.3.2",
 		"@testing-library/user-event": "^7.1.2",
 		"auth0-deploy-cli": "^4.2.1",
-		"babel-jest": "24.9.0",
+		"babel-jest": "^25.4.0",
 		"chalk": "^4.0.0",
 		"cross-env": "^7.0.2",
 		"dotenv": "^8.2.0",
@@ -84,7 +84,7 @@
 		"gulp-rename": "^2.0.0",
 		"gulp-string-replace": "^1.1.2",
 		"is-ci-cli": "^2.0.0",
-		"jest": "24.9.0",
+		"jest": "^25.4.0",
 		"per-env": "^1.0.2",
 		"rimraf": "^3.0.2",
 		"s3-deploy": "^1.4.0",

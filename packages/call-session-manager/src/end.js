@@ -26,7 +26,7 @@ const { CALL_SESSION_USER_TYPE } = constants;
 
 const service = comms.getProxyService();
 
-export default async function (event) {
+export default async function endCallSession(event) {
 	const {
 		interactionSessionSid,
 		outboundParticipantSid,

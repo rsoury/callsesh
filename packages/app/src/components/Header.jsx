@@ -200,8 +200,11 @@ const Header = () => {
 		>
 			{!isEmpty((user || {}).callSession) && <InCallTopBar />}
 			<AppNavBar
-				appDisplayName={<Logo />}
-				appDisplayNameLink={routes.page.index}
+				appDisplayName={
+					<Link href={routes.page.index} button>
+						<Logo />
+					</Link>
+				}
 				isNavItemActive={() => {}}
 				onNavItemSelect={() => {}}
 				{...navProps}

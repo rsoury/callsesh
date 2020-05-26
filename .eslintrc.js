@@ -1,4 +1,3 @@
-const path = require("path");
 const { alias: appAlias } = require("./packages/app/config/alias");
 const { alias: authAlias } = require("./packages/auth/config/alias");
 const {
