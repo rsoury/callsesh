@@ -110,11 +110,8 @@ export default async function (event) {
 			);
 
 			// Calc total duration
-			// Use a 10 second buffer
-			// Total to start at -5, and to check if less than 5
-			// ie. charge for the first 5 if 10 seconds has accrued
+			// Use a 10 second buffer -- prevents charge on accidental call/voice-message
 			const durationBuffer = 10;
-			const durationBufferSplit = durationBuffer / 2;
 			const totalDuration = interactions.reduce((sum, interaction) => {
 				if (
 					interaction.outboundResourceType === "call" &&
@@ -131,7 +128,7 @@ export default async function (event) {
 					}
 				}
 				return sum;
-			}, -durationBufferSplit);
+			}, 0);
 
 			logger.info(
 				{
@@ -141,7 +138,7 @@ export default async function (event) {
 			);
 
 			// Check if any talk time accrued.
-			if (totalDuration < durationBufferSplit) {
+			if (totalDuration < durationBuffer) {
 				if (!isEmpty(callerUser.callSession.preAuthorisation)) {
 					const cancelledPayment = await stripe.paymentIntents.cancel(
 						callerUser.callSession.preAuthorisation,
@@ -165,6 +162,7 @@ export default async function (event) {
 
 			// Quantify the caller charge amount of session based on operator hourly rate
 			const chargeAmount = fees.chargeAmount(hourlyRate, totalDuration);
+			const totalChargeAmount = chargeAmount + fees.preAuthAmount();
 			// If referrer exists, calc referral fee
 			let referralFee = 0;
 			let referrerUser;
@@ -187,7 +185,7 @@ export default async function (event) {
 			);
 			const paymentMethodId = customer.invoice_settings.default_payment_method;
 			const chargeParams = {
-				amount: chargeAmount + fees.preAuthAmount(),
+				amount: totalChargeAmount,
 				currency: operatorUser.currency,
 				customer: callerUser.stripeCustomerId,
 				payment_method: paymentMethodId,
@@ -253,7 +251,10 @@ export default async function (event) {
 				`Successful payment intent`
 			);
 
-			logger.info(`Charge payment create with latest call session details.`);
+			logger.info(
+				{ chargeAmount, applicationFee },
+				`Charge payment create with latest call session details.`
+			);
 
 			// Update the earnings of the referrerUser
 			// We update earnings here to ensure payment is successful
@@ -321,11 +322,11 @@ export default async function (event) {
 					callerUser.phoneNumber,
 					[
 						`This call went for ${totalDuration} seconds and metered $${(
-							chargeAmount / 100
+							totalChargeAmount / 100
 						).toFixed(2)}.`,
-						`You can find your receipt here: ${payment.charges.data[0].receipt_url}`,
+						`You can find your receipt here: ${payment.charges.data[0].receipt_url} `,
 						`We hope you're happy with the call! Have issues? Contact Callsesh support.`
-					].join("%0A") // new line: https://support.twilio.com/hc/en-us/articles/223181468-How-do-I-Add-a-Line-Break-in-my-SMS-or-MMS-Message-
+					].join("%0a") // new line: https://support.twilio.com/hc/en-us/articles/223181468-How-do-I-Add-a-Line-Break-in-my-SMS-or-MMS-Message-
 				)
 			]);
 		} else if (session.status === "failed") {
