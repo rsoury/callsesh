@@ -329,7 +329,7 @@ export default async function (event) {
 						).toFixed(2)}.`,
 						`You can find your receipt here: ${payment.charges.data[0].receipt_url} `,
 						`We hope you're happy with the call! Have issues? Contact Callsesh support.`
-					].join("%0a") // new line: https://support.twilio.com/hc/en-us/articles/223181468-How-do-I-Add-a-Line-Break-in-my-SMS-or-MMS-Message-
+					].join("\n") // new line: https://stackoverflow.com/questions/24218945/how-do-i-add-a-line-break-in-my-twilio-sms-message
 				)
 			]);
 		} else if (session.status === "failed") {
