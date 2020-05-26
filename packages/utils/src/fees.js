@@ -5,7 +5,7 @@
  */
 
 import isEmpty from "is-empty";
-import { FEE_MULTIPLIER, SERVICE_FEE } from "./constants";
+import { FEE_MULTIPLIER, SERVICE_FEE, COUPONS } from "./constants";
 
 /**
  * Calc application's rate based on hourly rate
@@ -15,7 +15,7 @@ import { FEE_MULTIPLIER, SERVICE_FEE } from "./constants";
  *
  * @return  {string|number}
  */
-export const applicationRate = (hourlyRate, returnFloat = false) => {
+export const applicationRate = (hourlyRate, { returnFloat = false } = {}) => {
 	if (isEmpty(hourlyRate)) {
 		if (returnFloat) {
 			return 0;
@@ -37,7 +37,7 @@ export const applicationRate = (hourlyRate, returnFloat = false) => {
  *
  * @return  {string|number}
  */
-export const payoutRate = (hourlyRate, returnFloat = false) => {
+export const payoutRate = (hourlyRate, { returnFloat = false } = {}) => {
 	if (isEmpty(hourlyRate)) {
 		if (returnFloat) {
 			return 0;
@@ -69,7 +69,7 @@ export const preAuthAmountText = () => `$${(SERVICE_FEE / 100).toFixed(2)}`;
  *
  * @return  {string|number}
  */
-export const getMinuteRate = (hourlyRate, returnFloat = false) => {
+export const getMinuteRate = (hourlyRate, { returnFloat = false } = {}) => {
 	const rate = parseFloat(hourlyRate) / 60;
 	if (returnFloat) {
 		return rate;
@@ -85,7 +85,7 @@ export const getMinuteRate = (hourlyRate, returnFloat = false) => {
  *
  * @return  {string|number}
  */
-export const getSecondRate = (hourlyRate, returnFloat = false) => {
+export const getSecondRate = (hourlyRate, { returnFloat = false } = {}) => {
 	const rate = parseFloat(hourlyRate) / 60 / 60;
 	if (returnFloat) {
 		return rate;
@@ -102,7 +102,11 @@ export const getSecondRate = (hourlyRate, returnFloat = false) => {
  *
  * @return  {number}
  */
-export const chargeAmount = (hourlyRate, duration, returnFloat = false) => {
+export const chargeAmount = (
+	hourlyRate,
+	duration,
+	{ returnFloat = false } = {}
+) => {
 	const secondRate = getSecondRate(hourlyRate, true);
 	let amount = secondRate * duration;
 	if (!returnFloat) {
@@ -123,12 +127,23 @@ export const chargeAmount = (hourlyRate, duration, returnFloat = false) => {
 export const applicationAmount = (
 	hourlyRate,
 	duration,
-	returnFloat = false
+	{ returnFloat = false } = {}
 ) => {
-	const amountToCharge = chargeAmount(hourlyRate, duration, returnFloat);
+	const amountToCharge = chargeAmount(hourlyRate, duration, { returnFloat });
 	let amount = amountToCharge * FEE_MULTIPLIER;
 	if (!returnFloat) {
 		amount = Math.round(amount);
 	}
 	return amount + preAuthAmount();
+};
+
+/**
+ * Method to get coupon by coupon id
+ *
+ * @param   {string}  couponId
+ *
+ * @return {Object}
+ */
+export const getCoupon = (couponId) => {
+	return COUPONS.find(({ id }) => id === couponId);
 };
