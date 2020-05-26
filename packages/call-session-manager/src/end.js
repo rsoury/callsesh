@@ -110,8 +110,8 @@ export default async function (event) {
 			);
 
 			// Calc total duration
-			// Use a 10 second buffer -- prevents charge on accidental call/voice-message
-			const durationBuffer = 10;
+			// Use a 8 second buffer -- prevents charge on accidental call/voice-message
+			const durationBuffer = 8;
 			const totalDuration = interactions.reduce((sum, interaction) => {
 				if (
 					interaction.outboundResourceType === "call" &&
@@ -121,7 +121,10 @@ export default async function (event) {
 						try {
 							const data = JSON.parse(interaction.data);
 							const duration = parseInt(data.duration, 10);
-							sum += duration;
+							// Only total interactions with a valid duration. -- ie. no dropouts or no-answers
+							if (duration >= durationBuffer) {
+								sum += duration;
+							}
 						} catch (e) {
 							// empty catch
 						}
@@ -138,7 +141,7 @@ export default async function (event) {
 			);
 
 			// Check if any talk time accrued.
-			if (totalDuration < durationBuffer) {
+			if (isEmpty(totalDuration)) {
 				if (!isEmpty(callerUser.callSession.preAuthorisation)) {
 					const cancelledPayment = await stripe.paymentIntents.cancel(
 						callerUser.callSession.preAuthorisation,
