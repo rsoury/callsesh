@@ -5,7 +5,13 @@
  */
 
 import isEmpty from "is-empty";
-import { FEE_MULTIPLIER, SERVICE_FEE, COUPONS } from "./constants";
+import {
+	FEE_MULTIPLIER,
+	SERVICE_FEE,
+	COUPONS,
+	OPERATOR_REFERRAL_MULTIPLIER,
+	OPERATOR_REFERRAL_EARNINGS_CAP
+} from "./constants";
 
 /**
  * Calc application's rate based on hourly rate
@@ -95,6 +101,7 @@ export const getSecondRate = (hourlyRate, { returnFloat = false } = {}) => {
 
 /**
  * Calc charge amount based on hourlyRate and call duration -- duration in seconds
+ * Produces amount in cents.
  *
  * @param   {string}  hourlyRate
  * @param   {number}  duration
@@ -107,12 +114,12 @@ export const chargeAmount = (
 	duration,
 	{ returnFloat = false } = {}
 ) => {
-	const secondRate = getSecondRate(hourlyRate, true);
-	let amount = secondRate * duration;
+	const secondRate = getSecondRate(hourlyRate, { returnFloat: true });
+	let amount = secondRate * duration * 100; // stripe accepts amount in cents.
 	if (!returnFloat) {
 		amount = Math.round(amount);
 	}
-	return amount + preAuthAmount();
+	return amount;
 };
 
 /**
@@ -129,12 +136,14 @@ export const applicationAmount = (
 	duration,
 	{ returnFloat = false } = {}
 ) => {
-	const amountToCharge = chargeAmount(hourlyRate, duration, { returnFloat });
+	const amountToCharge = chargeAmount(hourlyRate, duration, {
+		returnFloat: true
+	});
 	let amount = amountToCharge * FEE_MULTIPLIER;
 	if (!returnFloat) {
 		amount = Math.round(amount);
 	}
-	return amount + preAuthAmount();
+	return amount;
 };
 
 /**
@@ -146,4 +155,29 @@ export const applicationAmount = (
  */
 export const getCoupon = (couponId) => {
 	return COUPONS.find(({ id }) => id === couponId);
+};
+
+/**
+ * Calc operator referral amount based on an amount parameter
+ *
+ * If earnings come under the cap, get the difference between the cap and earnings.
+ * If the referralFee is greater than than the difference, use the difference as referralFee, otherwise use the referralFee in total
+ */
+export const operatorReferralAmount = (
+	amountToCharge,
+	earnings = 0,
+	{ returnFloat = false } = {}
+) => {
+	if (earnings >= OPERATOR_REFERRAL_EARNINGS_CAP) {
+		return 0;
+	}
+	let amount = amountToCharge * OPERATOR_REFERRAL_MULTIPLIER;
+	if (!returnFloat) {
+		amount = Math.round(amount);
+	}
+	const difference = OPERATOR_REFERRAL_EARNINGS_CAP - earnings;
+	if (amount > difference) {
+		return difference;
+	}
+	return amount;
 };

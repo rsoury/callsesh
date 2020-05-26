@@ -110,6 +110,11 @@ export default async function (event) {
 			);
 
 			// Calc total duration
+			// Use a 10 second buffer
+			// Total to start at -5, and to check if less than 5
+			// ie. charge for the first 5 if 10 seconds has accrued
+			const durationBuffer = 10;
+			const durationBufferSplit = durationBuffer / 2;
 			const totalDuration = interactions.reduce((sum, interaction) => {
 				if (
 					interaction.outboundResourceType === "call" &&
@@ -126,7 +131,7 @@ export default async function (event) {
 					}
 				}
 				return sum;
-			}, 0);
+			}, -durationBufferSplit);
 
 			logger.info(
 				{
@@ -135,8 +140,8 @@ export default async function (event) {
 				`Total talk duration calculated`
 			);
 
-			// Check if any talk time accrued. Ensure duration is greater than 10 seconds.
-			if (totalDuration < 10) {
+			// Check if any talk time accrued.
+			if (totalDuration < durationBufferSplit) {
 				if (!isEmpty(callerUser.callSession.preAuthorisation)) {
 					const cancelledPayment = await stripe.paymentIntents.cancel(
 						callerUser.callSession.preAuthorisation,
@@ -154,18 +159,35 @@ export default async function (event) {
 			const {
 				pendingPayoutAmount = 0,
 				hourlyRate,
-				stripeConnectId
+				stripeConnectId,
+				referrer: operatorReferrer
 			} = operatorUser;
+
 			// Quantify the caller charge amount of session based on operator hourly rate
 			const chargeAmount = fees.chargeAmount(hourlyRate, totalDuration);
-			// Get application fee -- includes service fee
-			const applicationFee = fees.applicationAmount(hourlyRate, totalDuration);
+			// If referrer exists, calc referral fee
+			let referralFee = 0;
+			let referrerUser;
+			if (
+				!isEmpty(operatorReferrer) &&
+				operatorReferrer !== callerUser.username // make sure operator referrer isn't also the caller user.
+			) {
+				referrerUser = await authManager.getUserByUsername(operatorReferrer, {
+					withContext: true
+				});
+				const { referrals: { earnings } = {} } = referrerUser;
+				referralFee = fees.operatorReferralAmount(chargeAmount, earnings);
+			}
+			// Get application fee
+			const applicationFee =
+				fees.applicationAmount(hourlyRate, totalDuration) - referralFee;
+
 			const customer = await stripe.customers.retrieve(
 				callerUser.stripeCustomerId
 			);
 			const paymentMethodId = customer.invoice_settings.default_payment_method;
 			const chargeParams = {
-				amount: chargeAmount,
+				amount: chargeAmount + fees.preAuthAmount(),
 				currency: operatorUser.currency,
 				customer: callerUser.stripeCustomerId,
 				payment_method: paymentMethodId,
@@ -194,24 +216,25 @@ export default async function (event) {
 			};
 
 			const payoutsEnabled = await isPayoutsEnabled(stripeConnectId);
+			const payoutAmount = chargeAmount - applicationFee + pendingPayoutAmount;
+			const newPendingPayoutAmount = payoutAmount > 0 ? payoutAmount : 0;
+
 			if (payoutsEnabled) {
 				// Add payout to charge with destination
-				chargeParams.application_fee_amount = applicationFee;
+				chargeParams.application_fee_amount =
+					applicationFee + fees.preAuthAmount();
 				chargeParams.transfer_data = {
-					destination: operatorUser.stripeConnectId
+					destination: stripeConnectId
 				};
 			} else {
 				// Add payout to pending payout amount
-				const payoutAmount =
-					chargeAmount - applicationFee + pendingPayoutAmount;
 				await authManager.updateUser(operatorUser.id, {
 					metadata: {
 						app: {
-							pendingPayoutAmount: payoutAmount > 0 ? payoutAmount : 0
+							pendingPayoutAmount: newPendingPayoutAmount
 						}
 					}
 				});
-
 				logger.info({ payoutAmount }, `Pending payout amount updated`);
 			}
 
@@ -232,27 +255,77 @@ export default async function (event) {
 
 			logger.info(`Charge payment create with latest call session details.`);
 
+			// Update the earnings of the referrerUser
+			// We update earnings here to ensure payment is successful
+			if (!isEmpty(referrerUser) && !isEmpty(referralFee)) {
+				const {
+					referrals: { earnings = 0 } = {},
+					pendingPayoutAmount: referrerPendingPayoutAmount = 0
+				} = referrerUser;
+				const newEarnings = earnings + referralFee;
+				await authManager.updateUser(referrerUser.id, {
+					metadata: {
+						app: {
+							referrals: {
+								earnings: newEarnings
+							},
+							pendingPayoutAmount: referrerPendingPayoutAmount + referralFee
+						}
+					}
+				});
+				logger.info(
+					{
+						earnings,
+						referralFee,
+						newEarnings,
+						referrerUser: {
+							username: referrerUser.username,
+							name: referrerUser.nickname
+						}
+					},
+					`Updated the referral user's earnings`
+				);
+			}
+
 			// Notify both parties in the session with a call summary via text.
+			const operatorSummary = [`This call went for ${totalDuration} seconds.`];
+			if (payoutsEnabled) {
+				operatorSummary.push(
+					`You will be paid $${((chargeAmount - applicationFee) / 100).toFixed(
+						2
+					)}.`
+				);
+
+				if (pendingPayoutAmount > 0) {
+					operatorSummary.push(
+						`You have $${(pendingPayoutAmount / 100).toFixed(
+							2
+						)} pending payout.`
+					);
+				}
+			} else {
+				operatorSummary.push(
+					`You now have $${(newPendingPayoutAmount / 100).toFixed(
+						2
+					)} pending payout.`
+				);
+			}
+			operatorSummary.push(
+				`This will be paid the first day of the next month. You can manage your payouts through the Callsesh web app.`
+			);
 			await Promise.all([
 				// Operator
-				comms.sms(
-					operatorUser.phoneNumber,
-					`This call went for ${totalDuration} seconds. You will paid $${
-						chargeAmount - applicationFee
-					}.${
-						pendingPayoutAmount > 0
-							? ` You have a pending payout of $${(
-									pendingPayoutAmount / 100
-							  ).toFixed(
-									2
-							  )} which will be paid the first day of the next month.`
-							: ``
-					} You can manage your payouts through the Callsesh web app.`
-				),
+				comms.sms(operatorUser.phoneNumber, operatorSummary.join(" ")),
 				// Caller
 				comms.sms(
 					callerUser.phoneNumber,
-					`This call went for ${totalDuration} seconds and metered ${chargeAmount}. You can find your receipt here: ${payment.charges.data[0].receipt_url} We hope you're happy with the call! Have issues? Contact Callsesh support.`
+					[
+						`This call went for ${totalDuration} seconds and metered $${(
+							chargeAmount / 100
+						).toFixed(2)}.`,
+						`You can find your receipt here: ${payment.charges.data[0].receipt_url}`,
+						`We hope you're happy with the call! Have issues? Contact Callsesh support.`
+					].join("%0A") // new line: https://support.twilio.com/hc/en-us/articles/223181468-How-do-I-Add-a-Line-Break-in-my-SMS-or-MMS-Message-
 				)
 			]);
 		} else if (session.status === "failed") {

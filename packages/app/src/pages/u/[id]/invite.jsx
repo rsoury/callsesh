@@ -14,7 +14,7 @@ export async function getServerSideProps({
 		path: "/"
 	});
 	res.writeHead(302, {
-		Location: `${routes.api.auth.signup}?return_url=${returnUrl}`
+		Location: `${routes.page.signup}?return_url=${returnUrl}`
 	});
 	res.end();
 

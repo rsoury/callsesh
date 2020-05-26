@@ -129,14 +129,16 @@ handler
 			updateParams.metadata.user.profilePicture = profilePicture;
 		}
 
-		// Set referrer
-		const { referrer } = parseCookies({ req, res });
-		destroyCookie({ req, res }, "referrer");
-		// Make sure referrer has a value, and there is no current referrer value
-		if (!isEmpty(referrer) && isEmpty(user.referrer)) {
-			updateParams.metadata.app = {
-				referrer
-			};
+		// Set referrer for newly registered users.
+		if (!user.isRegistered) {
+			const { referrer } = parseCookies({ req, res });
+			destroyCookie({ req, res }, "referrer");
+			// Make sure referrer has a value, and there is no current referrer value
+			if (!isEmpty(referrer) && isEmpty(user.referrer)) {
+				updateParams.metadata.app = {
+					referrer
+				};
+			}
 		}
 
 		try {
