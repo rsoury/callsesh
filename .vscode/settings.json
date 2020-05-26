@@ -1,5 +1,11 @@
 {
-	"eslint.workingDirectories": ["./", "./packages/app", "./packages/auth", "./packages/call-session-manager", "./packages/utils"],
+	"eslint.workingDirectories": [
+		"./",
+		"./packages/app",
+		"./packages/auth",
+		"./packages/call-session-manager",
+		"./packages/utils"
+	],
 	"eslint.validate": ["javascript", "javascriptreact"],
 	"prettier.configPath": "./.prettierrc",
 	"prettier.prettierPath": "./node_modules/prettier"
