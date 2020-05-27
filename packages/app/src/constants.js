@@ -4,7 +4,8 @@ import { constants } from "@callsesh/utils";
 export const { CALL_SESSION_USER_TYPE } = constants;
 
 // Payouts
-export const PAYOUTS_SUBMISSION_FORM_URL = "";
+export const PAYOUTS_SUBMISSION_FORM_URL =
+	"https://forms.gle/zYHyhTds5opadV8b8";
 
 // Error Types -- Shared between frontend and backend.
 export const ERROR_TYPES = {
