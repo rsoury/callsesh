@@ -222,8 +222,9 @@ export default async function endCallSession(event) {
 
 			if (payoutsEnabled) {
 				// Add payout to charge with destination
+				// Include referral fee to ensure we capture the amount that's to be paid to the referrer
 				chargeParams.application_fee_amount =
-					applicationFee + fees.preAuthAmount();
+					applicationFee + fees.preAuthAmount() + referralFee;
 				chargeParams.transfer_data = {
 					destination: stripeConnectId
 				};
