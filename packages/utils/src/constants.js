@@ -4,7 +4,7 @@ export const SERVICE_FEE = 250;
 
 // Referral
 export const OPERATOR_REFERRAL_MULTIPLIER = 0.05;
-export const OPERATOR_REFERRAL_EARNINGS_CAP = 5000 * 100; // 5,000
+export const OPERATOR_REFERRAL_EARNINGS_CAP = 50000 * 100; // 50,000
 
 // Caller Coupons
 export const COUPONS = [

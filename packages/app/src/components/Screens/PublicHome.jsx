@@ -13,14 +13,10 @@ import {
 	DollarSign as PayoutIcon,
 	User as UserIcon
 } from "react-feather";
-import { Button, SIZE as BUTTON_SIZE } from "baseui/button";
-import ArrowRight from "baseui/icon/arrow-right";
 
-import * as routes from "@/routes";
-import Link from "@/components/Link";
 import Highlight from "@/components/Highlight";
+import SignupActionButton from "@/components/SignupActionButton";
 import PhoneMockup from "@/components/PhoneMockup";
-// import UppercaseLabel from "@/components/UppercaseLabel";
 
 const PublicHomeScreen = () => {
 	const [css, theme] = useStyletron();
@@ -61,7 +57,7 @@ const PublicHomeScreen = () => {
 	};
 
 	return (
-		<div id="callsesh-public-home-screen">
+		<div id="callsesh-public-home-screen" className={css({ maxWidth: "100%" })}>
 			<Grid gridGutters={16}>
 				<Cell span={[12, 5, 6]}>
 					<div
@@ -96,52 +92,7 @@ const PublicHomeScreen = () => {
 								width: "100%"
 							})}
 						>
-							<Link
-								href={routes.page.signup}
-								button
-								style={{
-									display: "inline-block",
-									width: "100%",
-									maxWidth: "300px"
-								}}
-							>
-								<Button
-									size={BUTTON_SIZE.large}
-									endEnhancer={<ArrowRight size={24} />}
-									overrides={{
-										BaseButton: {
-											style: {
-												width: "100%",
-												position: "relative",
-												"::before": {
-													content: '""',
-													position: "absolute",
-													left: "0px",
-													right: "0px",
-													top: "0px",
-													bottom: "0px",
-													backgroundColor: theme.colors.accent,
-													transform: "translate(-5px, 5px)",
-													zIndex: "-1",
-													transition: "transform 0.25s"
-												},
-												":hover": {
-													"::before": {
-														transform: "translate(-10px, 10px)"
-													}
-												},
-												":active": {
-													"::before": {
-														transform: "translate(0)"
-													}
-												}
-											}
-										}
-									}}
-								>
-									Get Started
-								</Button>
-							</Link>
+							<SignupActionButton />
 						</div>
 					</div>
 				</Cell>
