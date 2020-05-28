@@ -24,7 +24,7 @@ const nav = [
 	},
 	{
 		text: "Callsesh Support",
-		href: "mailto:support@webdoodle.com.au",
+		href: "mailto:support@callsesh.com",
 		standard: true
 	}
 ];
