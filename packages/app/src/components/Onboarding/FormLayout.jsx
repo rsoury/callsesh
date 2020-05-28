@@ -7,7 +7,6 @@ import ArrowRight from "baseui/icon/arrow-right";
 import Check from "baseui/icon/check";
 import { ProgressBar } from "baseui/progress-bar";
 import startCase from "lodash/startCase";
-import { FixedBottom } from "react-fixed-bottom";
 
 import { isProd } from "@/env-config";
 import { ChildrenProps } from "@/utils/common-prop-types";
@@ -108,63 +107,40 @@ const FormLayout = ({
 					formValues: values
 				})}
 			</div>
-			<FixedBottom>
+			<div
+				className={css({
+					height: "80px",
+					width: "100%",
+					position: "fixed",
+					bottom: "0px",
+					left: "0px",
+					right: "0px",
+					zIndex: "999"
+				})}
+			>
 				<div
 					className={css({
-						height: "80px",
+						height: "100%",
 						width: "100%",
-						position: "fixed",
-						bottom: "0px",
-						left: "0px",
-						right: "0px",
-						zIndex: "999"
+						padding: "0 10px",
+						maxWidth: "800px",
+						margin: "0 auto",
+						display: "flex",
+						flexDirection: "row",
+						alignItems: "center",
+						justifyContent: "space-between",
+						borderTopWidth: "1px",
+						borderTopStyle: "solid",
+						borderTopColor: theme.colors.borderOpaque,
+						backgroundColor: "#ffffff"
 					})}
 				>
-					<div
-						className={css({
-							height: "100%",
-							width: "100%",
-							padding: "0 10px",
-							maxWidth: "800px",
-							margin: "0 auto",
-							display: "flex",
-							flexDirection: "row",
-							alignItems: "center",
-							justifyContent: "space-between",
-							borderTopWidth: "1px",
-							borderTopStyle: "solid",
-							borderTopColor: theme.colors.borderOpaque,
-							backgroundColor: "#ffffff"
-						})}
-					>
-						{canGoBack ? (
-							<Button
-								onClick={goToPreviousStep}
-								kind={BUTTON_KIND.minimal}
-								disabled={isSubmitting}
-								startEnhancer={() => <ArrowLeft size={24} />}
-								overrides={{
-									BaseButton: {
-										style: {
-											height: "52px"
-										}
-									}
-								}}
-							>
-								Previous
-							</Button>
-						) : (
-							<div />
-						)}
+					{canGoBack ? (
 						<Button
-							type="submit"
-							endEnhancer={
-								isLastStep
-									? () => <Check size={24} />
-									: () => <ArrowRight size={24} />
-							}
-							isLoading={isSubmitting}
+							onClick={goToPreviousStep}
+							kind={BUTTON_KIND.minimal}
 							disabled={isSubmitting}
+							startEnhancer={() => <ArrowLeft size={24} />}
 							overrides={{
 								BaseButton: {
 									style: {
@@ -173,11 +149,32 @@ const FormLayout = ({
 								}
 							}}
 						>
-							{actionLabel || (isLastStep ? "Create your account" : "Next")}
+							Previous
 						</Button>
-					</div>
+					) : (
+						<div />
+					)}
+					<Button
+						type="submit"
+						endEnhancer={
+							isLastStep
+								? () => <Check size={24} />
+								: () => <ArrowRight size={24} />
+						}
+						isLoading={isSubmitting}
+						disabled={isSubmitting}
+						overrides={{
+							BaseButton: {
+								style: {
+									height: "52px"
+								}
+							}
+						}}
+					>
+						{actionLabel || (isLastStep ? "Create your account" : "Next")}
+					</Button>
 				</div>
-			</FixedBottom>
+			</div>
 		</FormContainer>
 	);
 };

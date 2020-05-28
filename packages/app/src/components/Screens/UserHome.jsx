@@ -1,3 +1,4 @@
+import React from "react";
 import { useStyletron } from "baseui";
 import { H1 as Heading, Paragraph2 as Paragraph } from "baseui/typography";
 import { Grid, Cell } from "baseui/layout-grid";

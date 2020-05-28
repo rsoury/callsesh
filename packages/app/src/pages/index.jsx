@@ -2,6 +2,7 @@ import isEmpty from "is-empty";
 
 import Layout from "@/components/Layout";
 import UserHomeScreen from "@/components/Screens/UserHome";
+import PublicHomeScreen from "@/components/Screens/PublicHome";
 import * as routes from "@/routes";
 import { UserProps } from "@/utils/common-prop-types";
 import ssrUser from "@/utils/ssr-user";
@@ -11,7 +12,7 @@ const Index = ({ user }) => {
 
 	return (
 		<Layout>
-			{isAuthenticated ? <UserHomeScreen /> : <h1>Welcome to Callsesh!</h1>}
+			{isAuthenticated ? <UserHomeScreen /> : <PublicHomeScreen />}
 		</Layout>
 	);
 };

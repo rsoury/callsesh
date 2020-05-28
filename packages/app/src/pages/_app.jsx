@@ -16,7 +16,7 @@ import RouteReferrerProvider from "@/components/Providers/RouteReferrerProvider"
 import "setimmediate";
 import "modern-normalize";
 import "nprogress/nprogress.css";
-import "@/styles.css";
+import "@/styles.scss";
 
 // Add a page load progress indicator
 Router.events.on("routeChangeStart", () => NProgress.start());
