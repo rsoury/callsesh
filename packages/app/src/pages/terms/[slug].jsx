@@ -6,11 +6,12 @@ import matter from "gray-matter";
 import glob from "glob-promise";
 import styleToCss from "style-object-to-css-string";
 import { Block } from "baseui/block";
+import isEmpty from "is-empty";
 
 import Layout from "@/components/Layout";
 import ScreenContainer from "@/components/ScreenContainer";
 
-const TermsTemplate = ({ title, date, body }) => {
+const TermsTemplate = ({ title, date, body, contents }) => {
 	const [, theme] = useStyletron();
 
 	const headingStyle = styleToCss(theme.typography.HeadingSmall);
@@ -23,21 +24,73 @@ const TermsTemplate = ({ title, date, body }) => {
 				<article>
 					<H1>{title}</H1>
 					<Paragraph fontStyle="italic">Last amended: {date}</Paragraph>
-					<Block marginTop="20px" marginBottom="20px">
+					{!isEmpty(contents) && (
+						<ol>
+							{contents.map((item) => (
+								<li>{item}</li>
+							))}
+						</ol>
+					)}
+					<Block
+						marginTop="20px"
+						marginBottom="20px"
+						id="callsesh-terms-content"
+					>
 						<Markdown source={body} />
 					</Block>
 				</article>
 			</ScreenContainer>
 			<style jsx global>
 				{`
+					#callsesh-terms-content ol {
+						list-style: none;
+						padding: 0;
+						margin: 10px 0;
+					}
+					#callsesh-terms-content {
+						counter-reset: section-counter;
+					}
+					#callsesh-terms-content > ol {
+						counter-increment: section-counter;
+						counter-reset: item-counter;
+					}
+					#callsesh-terms-content > ol > li {
+						counter-increment: item-counter;
+						padding-left: 40px;
+					}
+					#callsesh-terms-content > ol > li > ol {
+						counter-reset: sub-item-counter;
+					}
+					#callsesh-terms-content > ol > li > ol > li {
+						counter-increment: sub-item-counter;
+						padding-left: 50px;
+					}
+					#callsesh-terms-content > ol > li:before {
+						content: counter(section-counter) "." counter(item-counter);
+						position: absolute;
+						left: 0;
+						top: 0px;
+						font-weight: 700;
+					}
+					#callsesh-terms-content > ol > li > ol > li:before {
+						content: counter(section-counter) "." counter(item-counter) "."
+							counter(sub-item-counter);
+						position: absolute;
+						left: 0;
+						top: 0px;
+						font-weight: 700;
+					}
 					#callsesh-terms h2 {
 						${headingStyle}
+						margin-top: 40px;
 					}
 					#callsesh-terms h3 {
 						${smallHeadingStyle}
 					}
-					#callsesh-terms p {
+					#callsesh-terms p,
+					#callsesh-terms li {
 						${paragraphStyle}
+						position: relative;
 					}
 				`}
 			</style>
@@ -48,13 +101,15 @@ const TermsTemplate = ({ title, date, body }) => {
 TermsTemplate.propTypes = {
 	title: PropTypes.string,
 	date: PropTypes.string,
-	body: PropTypes.string
+	body: PropTypes.string,
+	contents: PropTypes.arrayOf(PropTypes.string)
 };
 
 TermsTemplate.defaultProps = {
 	title: "",
 	date: "",
-	body: ""
+	body: "",
+	contents: []
 };
 
 export async function getStaticProps({ params: { slug } = {} }) {
@@ -71,7 +126,8 @@ export async function getStaticProps({ params: { slug } = {} }) {
 				month: "long",
 				day: "numeric"
 			}).format(new Date(data.date)),
-			body: content
+			body: content,
+			contents: data.contents
 		}
 	};
 }
