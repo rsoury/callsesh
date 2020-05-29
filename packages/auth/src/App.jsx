@@ -15,7 +15,7 @@ import Login from "./Login";
 
 let actionConsumed = false;
 
-const tosUrl = `https://callsesh.com/terms-of-service`;
+const tosUrl = `https://callsesh.com/terms`;
 
 const App = ({ location, history }) => {
 	const [css] = useStyletron();

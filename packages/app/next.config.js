@@ -104,6 +104,12 @@ module.exports = (phase) => {
 				);
 			}
 
+			// Add markdown loader for legal pages
+			config.module.rules.push({
+				test: /\.md$/,
+				use: "raw-loader"
+			});
+
 			return config;
 		},
 		target: "serverless",

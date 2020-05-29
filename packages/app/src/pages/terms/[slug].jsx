@@ -1,0 +1,100 @@
+import { useStyletron } from "baseui";
+import PropTypes from "prop-types";
+import { H1, Paragraph2 as Paragraph } from "baseui/typography";
+import Markdown from "react-markdown";
+import matter from "gray-matter";
+import glob from "glob-promise";
+import styleToCss from "style-object-to-css-string";
+import { Block } from "baseui/block";
+
+import Layout from "@/components/Layout";
+import ScreenContainer from "@/components/ScreenContainer";
+
+const TermsTemplate = ({ title, date, body }) => {
+	const [, theme] = useStyletron();
+
+	const headingStyle = styleToCss(theme.typography.HeadingSmall);
+	const smallHeadingStyle = styleToCss(theme.typography.HeadingXSmall);
+	const paragraphStyle = styleToCss(theme.typography.ParagraphSmall);
+
+	return (
+		<Layout>
+			<ScreenContainer id="callsesh-terms">
+				<article>
+					<H1>{title}</H1>
+					<Paragraph fontStyle="italic">Last amended: {date}</Paragraph>
+					<Block marginTop="20px" marginBottom="20px">
+						<Markdown source={body} />
+					</Block>
+				</article>
+			</ScreenContainer>
+			<style jsx global>
+				{`
+					#callsesh-terms h2 {
+						${headingStyle}
+					}
+					#callsesh-terms h3 {
+						${smallHeadingStyle}
+					}
+					#callsesh-terms p {
+						${paragraphStyle}
+					}
+				`}
+			</style>
+		</Layout>
+	);
+};
+
+TermsTemplate.propTypes = {
+	title: PropTypes.string,
+	date: PropTypes.string,
+	body: PropTypes.string
+};
+
+TermsTemplate.defaultProps = {
+	title: "",
+	date: "",
+	body: ""
+};
+
+export async function getStaticProps({ params: { slug } = {} }) {
+	const rawContent = await import(`@/md/terms/${slug}.md`).then(
+		(m) => m.default || m
+	);
+	const { data, content } = matter(rawContent);
+
+	return {
+		props: {
+			title: data.title,
+			date: new Intl.DateTimeFormat("en-US", {
+				year: "numeric",
+				month: "long",
+				day: "numeric"
+			}).format(new Date(data.date)),
+			body: content
+		}
+	};
+}
+
+export async function getStaticPaths() {
+	// get all .md files in the md/terms dir
+	const terms = await glob("src/md/terms/**/*.md");
+
+	// remove path and extension to leave filename only
+	const termsSlugs = terms
+		.map((file) =>
+			file.replace("src/md/terms/", "").replace(/ /g, "-").slice(0, -3).trim()
+		)
+		// Handled in terms/index.jsx
+		.filter((slug) => slug !== "terms-of-service");
+
+	// create paths with `slug` param
+	const paths = termsSlugs.map((slug) => `/terms/${slug}`);
+
+	return {
+		paths,
+		fallback: false
+	};
+}
+
+export default TermsTemplate;

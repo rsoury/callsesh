@@ -14,10 +14,13 @@ module.exports = {
 		"plugin:jest/recommended"
 	],
 	parser: "babel-eslint",
-	plugins: ["babel", "react", "baseui", "jest"],
+	plugins: ["baseui", "jest"],
 	env: {
 		browser: true,
-		jest: true
+		commonjs: true,
+		es6: true,
+		jest: true,
+		node: true
 	},
 	settings: {
 		react: {
