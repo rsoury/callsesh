@@ -8,6 +8,7 @@ import styleToCss from "style-object-to-css-string";
 import { Block } from "baseui/block";
 import isEmpty from "is-empty";
 
+import { publicUrl } from "@/env-config";
 import Layout from "@/components/Layout";
 import ScreenContainer from "@/components/ScreenContainer";
 
@@ -36,7 +37,16 @@ const TermsTemplate = ({ title, date, body, contents }) => {
 						marginBottom="20px"
 						id="callsesh-terms-content"
 					>
-						<Markdown source={body} escapeHtml={false} />
+						<Markdown
+							source={body}
+							escapeHtml={false}
+							linkTarget={(url) => {
+								if (url.indexOf(publicUrl) < 0 || url.charAt(0) !== "/") {
+									return "_blank";
+								}
+								return undefined;
+							}}
+						/>
 					</Block>
 				</article>
 			</ScreenContainer>
