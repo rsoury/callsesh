@@ -9,9 +9,11 @@ export const page = {
 	logout: "/logout",
 	register: "/get-started",
 	user: `/user/:id`,
-	tos: "/terms-of-service",
-	privacyPolicy: "/privacy-policy",
-	cookiePolicy: "/cookie-policy",
+	terms: {
+		tos: "/terms",
+		privacyPolicy: "/terms/privacy-policy",
+		cookiePolicy: "/terms/cookie-policy"
+	},
 	settings: {
 		profile: "/settings/profile",
 		wallet: "/settings/wallet",

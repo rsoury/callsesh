@@ -11,7 +11,6 @@ contents:
   - License
   - Acceptable Use
   - User Content
-  - DMCA
   - Linking to the Website and Social Media Features
   - Links from the Website
   - Referral Program
@@ -185,12 +184,7 @@ In these Terms following terms have the following meanings:
 6. Upon signing up to Callsesh, you also agree to act as custodian of records for the content that you upload to Callsesh.
 7. Any questions regarding User Content can be addressed by emailing support@callsesh.com.
 
-## 10. DMCA
-
-1. Callsesh respects the intellectual property rights of third parties and voluntarily complies with the Digital Millennium Copyright Act (DMCA). Our full DMCA Notice and Takedown Policy can be found here: https://callsesh.com/terms/dmca. Callsesh has implemented a policy to terminate repeat copyright infringers. A copy of our repeat infringer policy (RIP) is available upon request to our users.
-2. Please note that, under the DMCA, any person who knowingly makes material misrepresentations in a notification of claimed infringement or in a counter-notification may be liable for damages.
-
-## 11. Linking to the Platform and Social Media Features
+## 10. Linking to the Platform and Social Media Features
 
 1. You may link to Web Doodle or Callsesh homepage, provided you do so in a way that is fair and legal and does not damage Web Doodle reputation or take advantage of it, but you must not establish a link in such a way as to suggest any form of association, approval, or endorsement on Web Doodle part.
 2. The Platform may provide certain social media features that enable you to:
@@ -205,11 +199,11 @@ In these Terms following terms have the following meanings:
 4. You agree to cooperate with Web Doodle in causing any unauthorised framing or linking immediately to stop. Web Doodle reserves the right to withdraw linking permission without notice.
 5. Web Doodle may disable all or any social media features and any links at any time without notice in Web Doodle discretion.
 
-## 12. Links from the Platform
+## 11. Links from the Platform
 
 1. If the Platform contains links to other sites and resources provided by third parties, these links are provided for your convenience only. This includes links contained in advertisements, including, without limitation, banner advertisements and sponsored links. Web Doodle has no control over the contents of those sites or resources and accepts no responsibility for them or for any loss or damage that may arise from your use of them. If you decide to access any of the third-party websites linked to this Platform, you do so entirely at your own risk and subject to the terms and conditions of use for such websites.
 
-## 13. Referral Program
+## 12. Referral Program
 
 1. Web Doodle offers a referral program which incentivises Users to introduce to Callsesh people who are interested in becoming Users. This clause sets out when Web Doodle will pay an Incentive Payment. Web Doodle reserves the right to change the how it pays Incentive Payments but no change will deprive any Users of Incentive Payments already earned under before the changes came into effect:
    1. Users with a valid User Account with Callsesh can participate;
@@ -227,7 +221,7 @@ More information on how the Referral Program works can be found at: https://call
 4. The Incentive Payment will be processed on the first calendar business day of each month and paid in accordance with the Payment Provider’s terms.
 5. The Incentive Payment is deducted from the monies that Web Doodle would retain from the transaction and not from the monies earned by the referred User.
 
-## 14. Disclaimer of Warranties; Limitations of Liability
+## 13. Disclaimer of Warranties; Limitations of Liability
 
 1. By using Callsesh, you acknowledge and agree as follows:
    1. Callsesh and all of its services and features are provided without warranties of any kind, express or implied. To the fullest extent permitted by law, Web Doodle disclaim any and all warranties, express or implied, with respect to Callsesh and all of its services and features, including, and without limitation, implied warranties of merchantability and fitness for a particular purpose. Web Doodle does not warrant or guarantee the accuracy, usefulness, completeness or reliability of Callsesh, or the results of your use of Callsesh. Web Doodle disclaim all liability and responsibility arising from any reliance placed on such materials by you or any other visitor to the Platform, or by anyone who may be informed of any of its contents. Web Doodle also do not warrant or guarantee that Callsesh and all of its services and features will be available at any particular time or location; that Callsesh and all of its services and features will be secure, uninterrupted, and error-free; that any defect or error will be corrected; or that Callsesh and all of its services and features will be free of viruses and other harmful components. You are responsible for implementing sufficient procedures and checkpoints to satisfy your particular requirements for antivirus protection and accuracy of data input and output, and for maintaining a means external to the Platform for any reconstruction of any lost data. To the fullest extent provided by law, Web Doodle will not be liable for any loss or damage caused by a distributed denial-of-service attack, viruses, or other technologically harmful material that may infect your computer equipment, computer programs, data, or other proprietary material due to your use of the Platform or any services or items obtained through the Platform or to your downloading of any material posted on it, or on any website linked to it. Your use of Callsesh and its services and features will be solely and entirely at your own risk. The foregoing does not affect any warranties that cannot be excluded or limited under applicable law;
@@ -236,7 +230,7 @@ More information on how the Referral Program works can be found at: https://call
    4. in no event shall Web Doodle total and aggregate liability to you and/or others for any and all claims arising out of or related to your use of (or your inability to use) Callsesh or any of its services or features, exceed one hundred dollars Australian (\$100.00 AUD). This does not affect any liability that cannot be excluded or limited under applicable law.
 2. Because some jurisdictions do not allow the exclusion or limitation of liability for consequential or incidental damages or total liability, the above limitation may not apply to you. In such case, our total and aggregate liability to you arising out of or related to your use of (or your inability to use) Callsesh or any of its services or features shall be limited to the maximum extent permitted by law or, if no amount is specified, one hundred dollars Australian (\$100.00 AUD).
 
-## 15. User indemnification
+## 14. User indemnification
 
 1. By using Callsesh, you agree to indemnify and hold harmless Web Doodle and our employees, agents, representatives, successors and assigns from and against any and all claims, demands, causes of action, actions, suits, proceedings, judgments, orders, damages, liabilities, losses, costs and expenses (including, without limitation, reasonable attorneys' fees and legal costs) arising out of or related to any of the following:
    1. your use of Callsesh or any of its services or features;
@@ -245,21 +239,21 @@ More information on how the Referral Program works can be found at: https://call
    4. your violation of the Terms or any applicable law.
 2. Notwithstanding Web Doodle’s appointment as the Operator’s agent to pay the Operator Commission, Web Doodle, the Caller and Operator are independent contractors and are responsible for meeting all of their respective legal or statutory obligations. This extends to the payment of any taxes or other payments properly demanded by a regulatory authority. Should a User fail to meet those obligations then the User shall indemnify Web Doodle for any loss or expense, including management time that is as a consequence incurred by Web Doodle.
 
-## 16. Governing Law and Dispute Resolution
+## 15. Governing Law and Dispute Resolution
 
 1. You and Web Doodle agree that these Terms shall be governed by and construed in accordance with the laws of Australia (without regard to the conflict of laws provisions thereof) and that any dispute between you and Web Doodle concerning Callsesh or arising out of or related to these Terms shall be resolved exclusively in the courts of Australia.
 2. Except where prohibited by applicable law, any claim or cause of action by you concerning Callsesh or arising out of or related to these Terms must be filed within one year after such claim or cause of action arose, or be forever barred.
 
-## 17. Waiver and Severability
+## 16. Waiver and Severability
 
 1. No waiver of any term or condition set out in these Terms shall be deemed a further or continuing waiver of such term or condition or a waiver of any other term or condition, and any failure to assert a right or provision under these Terms shall not constitute a waiver of such right or provision.
 2. If any provision of these Terms is held by a court or other tribunal of competent jurisdiction to be invalid, illegal or unenforceable for any reason, such provision shall be eliminated or limited to the minimum extent such that the remaining provisions of the Terms will continue in full force and effect.
 
-## 18. General
+## 17. General
 
 1. The Terms constitute the sole and entire agreement between you and Web Doodle regarding the Platform and supersede all prior and contemporaneous understandings, agreements, representations, and warranties, both written and oral, regarding the Platform.
 2. The Contracts (Rights of Third Parties) Act 1999 is excluded.
 
-## 19. Contact
+## 18. Contact
 
 1. If you have any questions, comments, complaints or concerns about Callsesh, please contact our support team at support@callsesh.com

@@ -27,7 +27,7 @@ const TermsTemplate = ({ title, date, body, contents }) => {
 					{!isEmpty(contents) && (
 						<ol>
 							{contents.map((item) => (
-								<li>{item}</li>
+								<li key={item}>{item}</li>
 							))}
 						</ol>
 					)}
@@ -36,7 +36,7 @@ const TermsTemplate = ({ title, date, body, contents }) => {
 						marginBottom="20px"
 						id="callsesh-terms-content"
 					>
-						<Markdown source={body} />
+						<Markdown source={body} escapeHtml={false} />
 					</Block>
 				</article>
 			</ScreenContainer>
@@ -116,18 +116,21 @@ export async function getStaticProps({ params: { slug } = {} }) {
 	const rawContent = await import(`@/md/terms/${slug}.md`).then(
 		(m) => m.default || m
 	);
-	const { data, content } = matter(rawContent);
+	const {
+		data: { title = "", date = "", contents: tableOfContents = [] },
+		content
+	} = matter(rawContent);
 
 	return {
 		props: {
-			title: data.title,
+			title,
 			date: new Intl.DateTimeFormat("en-US", {
 				year: "numeric",
 				month: "long",
 				day: "numeric"
-			}).format(new Date(data.date)),
+			}).format(new Date(date)),
 			body: content,
-			contents: data.contents
+			contents: tableOfContents
 		}
 	};
 }

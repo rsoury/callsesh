@@ -4,33 +4,38 @@ import { Paragraph4 as Paragraph } from "baseui/typography";
 
 import { page as pageRoutes } from "@/routes";
 import Link from "@/components/Link";
+import useUser from "@/hooks/use-user";
 
-const nav = [
-	{
-		text: "Referrals",
-		href: pageRoutes.referrals
-	},
-	{
-		text: "Terms of Service",
-		href: pageRoutes.tos
-	},
-	{
-		text: "Privacy Policy",
-		href: pageRoutes.privacyPolicy
-	},
-	{
-		text: "Cookie Policy",
-		href: pageRoutes.cookiePolicy
-	},
-	{
-		text: "Callsesh Support",
-		href: "mailto:support@callsesh.com",
-		standard: true
-	}
-];
+const getSupportEmail = (userId = "") =>
+	`mailto:support${userId ? `+${userId}` : ``}@callsesh.com`;
 
 const Footer = () => {
 	const [css, theme] = useStyletron();
+	const [user] = useUser();
+
+	const nav = [
+		{
+			text: "Referrals",
+			href: pageRoutes.referrals
+		},
+		{
+			text: "Terms of Service",
+			href: pageRoutes.terms.tos
+		},
+		{
+			text: "Privacy Policy",
+			href: pageRoutes.terms.privacyPolicy
+		},
+		{
+			text: "Cookie Policy",
+			href: pageRoutes.terms.cookiePolicy
+		},
+		{
+			text: "Callsesh Support",
+			href: getSupportEmail((user || {}).username),
+			standard: true
+		}
+	];
 
 	return (
 		<footer className={css({ padding: "40px 0 10px 0" })}>
@@ -67,7 +72,7 @@ const Footer = () => {
 					textAlign: "center"
 				})}
 			>
-				A{" "}
+				&copy;2020 Callsesh &nbsp;&middot;&nbsp; A{" "}
 				<Link
 					href="https://webdoodle.com.au/"
 					target="_blank"
