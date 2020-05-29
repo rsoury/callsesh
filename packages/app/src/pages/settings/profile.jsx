@@ -6,7 +6,11 @@
 import { useState } from "react";
 import { useStyletron } from "baseui";
 import { Grid, Cell } from "baseui/layout-grid";
-import { Paragraph2 as Paragraph, H4 as SmallHeading } from "baseui/typography";
+import {
+	Paragraph2 as Paragraph,
+	H4 as SmallHeading,
+	Label2 as Label
+} from "baseui/typography";
 import isEmpty from "is-empty";
 import {
 	Phone as PhoneIcon,
@@ -147,6 +151,9 @@ const getEditConfig = (user, type) => {
 							}`}
 							name={EDIT_TYPES.username}
 						/>
+						<Label marginTop="10px">
+							Note: Changing your username will change your user link.
+						</Label>
 					</Cell>
 				</Grid>
 			)
@@ -450,10 +457,11 @@ const Profile = () => {
 									)}
 								>
 									<Paragraph margin="0">
-										{(() => {
-											const date = new Date(user.dob);
-											return `${date.getFullYear()}/${date.getMonth()}/${date.getDate()}`;
-										})()}
+										{new Intl.DateTimeFormat("en-US", {
+											year: "numeric",
+											month: "long",
+											day: "numeric"
+										}).format(new Date(user.dob))}
 									</Paragraph>
 								</LabelControl>
 							</Cell>

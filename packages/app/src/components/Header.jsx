@@ -201,7 +201,7 @@ const Header = () => {
 			{!isEmpty((user || {}).callSession) && <InCallTopBar />}
 			<AppNavBar
 				appDisplayName={
-					<Link href={routes.page.index} button>
+					<Link href={routes.page.index} button pass>
 						<Logo />
 					</Link>
 				}

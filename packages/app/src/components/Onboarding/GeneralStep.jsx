@@ -138,7 +138,7 @@ const GeneralStep = ({ setFieldValue, values }) => {
 					<TextField
 						name="firstName"
 						label="First Name"
-						placeholder="Ryan"
+						placeholder="Christie"
 						onChange={(e) => {
 							if (!selfManagedUsername) {
 								const username = generateUsername(
@@ -154,7 +154,7 @@ const GeneralStep = ({ setFieldValue, values }) => {
 					<TextField
 						name="lastName"
 						label="Last Name"
-						placeholder="Soury"
+						placeholder="Holderplace"
 						onChange={(e) => {
 							if (!selfManagedUsername) {
 								const username = generateUsername(
@@ -173,7 +173,7 @@ const GeneralStep = ({ setFieldValue, values }) => {
 						caption={`Your link will look like ${publicUrl}/u/${
 							values.username || "..."
 						}`}
-						placeholder="ryan_soury"
+						placeholder="christie_holderplace"
 						maxLength={25}
 						{...(selfManagedUsername
 							? {}

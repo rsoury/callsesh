@@ -113,7 +113,7 @@ const PublicHomeScreen = () => {
 					>
 						<PhoneMockup>
 							<img
-								src="/static/assets/phone-demo-2.jpg"
+								src="/static/assets/phone-demo-3.jpg"
 								alt="Callsesh phone demonstration"
 							/>
 						</PhoneMockup>
