@@ -52,6 +52,9 @@ module.exports = (phase) => {
 		}
 	});
 
+	// Print PUBLIC_URL for reference
+	console.log(`Application public url: ${env.PUBLIC_URL}`);
+
 	const nextConfig = {
 		// Explicitly define environment variables to be used at build time.
 		env,
