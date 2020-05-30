@@ -1,4 +1,5 @@
 id: CallSessionEnder
+name: CallSessionEnder-${opt:stage, self:provider.stage}
 events:
   - http:
       path: "/"

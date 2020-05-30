@@ -16,7 +16,10 @@ module.exports = (phase) => {
 	// Explicitly define environment variables to be used at build time for both frontend and server
 	// dotenv.config should automatically configure process.env for local development
 	const frontendEnv = {
-		PUBLIC_URL: process.env.PUBLIC_URL || process.env.VERCEL_URL || "",
+		PUBLIC_URL:
+			process.env.PUBLIC_URL ||
+			(process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : ``) ||
+			"http://app.local",
 		AUTH0_DOMAIN: process.env.AUTH0_DOMAIN || "",
 		AUTH0_CLIENT_ID: process.env.AUTH0_CLIENT_ID || "",
 		STRIPE_PUBLIC_KEY: process.env.STRIPE_PUBLIC_KEY || "",

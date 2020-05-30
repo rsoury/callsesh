@@ -3,7 +3,7 @@ Resources:
     Type: AWS::SNS::Topic
     Properties:
       DisplayName: "Callsesh Call Session Manager Notifications"
-      TopicName: CallseshCSMNotifications
+      TopicName: CallseshCSMNotifications-${opt:stage, self:provider.stage}
       Subscription:
-        - Endpoint: "ryan@webdoodle.com.au"
+        - Endpoint: "ryan@callsesh.com"
           Protocol: email

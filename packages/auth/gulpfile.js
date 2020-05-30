@@ -1,6 +1,6 @@
 /* eslint-disable no-console, no-unused-vars */
 
-require("dotenv").config();
+require("dotenv").config({ path: require("find-config")(".env") });
 const gulp = require("gulp");
 const rename = require("gulp-rename");
 const replace = require("gulp-string-replace");
