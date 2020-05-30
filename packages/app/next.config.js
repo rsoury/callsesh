@@ -1,3 +1,5 @@
+/* eslint-disable no-console */
+
 require("dotenv").config({ path: require("find-config")(".env") }); // eslint-disable-line
 const withSourceMaps = require("@zeit/next-source-maps")();
 const {
@@ -6,6 +8,7 @@ const {
 } = require("next/constants");
 const SentryWebpackPlugin = require("@sentry/webpack-plugin");
 const filenamify = require("filenamify");
+const isEmpty = require("is-empty");
 const { alias } = require("./config/alias");
 const pkg = require("./package.json");
 
@@ -37,6 +40,14 @@ module.exports = (phase) => {
 			...serverEnv
 		};
 	}
+	// Ensure environment variables are set
+	Object.entries(env).forEach(([key, value]) => {
+		if (isEmpty(value)) {
+			console.log(
+				`WARNING: ${key} is a required environment variable. The application may not behave as expected.`
+			);
+		}
+	});
 
 	const nextConfig = {
 		// Explicitly define environment variables to be used at build time.
