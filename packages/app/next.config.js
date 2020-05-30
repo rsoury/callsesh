@@ -13,7 +13,7 @@ module.exports = (phase) => {
 	// Explicitly define environment variables to be used at build time for both frontend and server
 	// dotenv.config should automatically configure process.env for local development
 	const frontendEnv = {
-		PUBLIC_URL: process.env.PUBLIC_URL || "",
+		PUBLIC_URL: process.env.PUBLIC_URL || process.env.VERCEL_URL || "",
 		AUTH0_DOMAIN: process.env.AUTH0_DOMAIN || "",
 		AUTH0_CLIENT_ID: process.env.AUTH0_CLIENT_ID || "",
 		STRIPE_PUBLIC_KEY: process.env.STRIPE_PUBLIC_KEY || "",
@@ -27,9 +27,7 @@ module.exports = (phase) => {
 		TWILIO_AUTH_TOKEN: process.env.TWILIO_AUTH_TOKEN || "",
 		TWILIO_PROXY_SERVICE_SID: process.env.TWILIO_PROXY_SERVICE_SID || "",
 		AUTH0_CLIENT_SECRET: process.env.AUTH0_CLIENT_SECRET || "",
-		STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY || "",
-		AWS_ACCESS_KEY_ID: process.env.AWS_ACCESS_KEY_ID || "",
-		AWS_SECRET_ACCESS_KEY: process.env.AWS_SECRET_ACCESS_KEY || ""
+		STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY || ""
 	};
 
 	let env = frontendEnv;
