@@ -15,6 +15,8 @@ const pkg = require("./package.json");
 module.exports = (phase) => {
 	// Explicitly define environment variables to be used at build time for both frontend and server
 	// dotenv.config should automatically configure process.env for local development
+	console.log(process.env);
+
 	const frontendEnv = {
 		PUBLIC_URL:
 			process.env.PUBLIC_URL ||
@@ -33,7 +35,8 @@ module.exports = (phase) => {
 		TWILIO_AUTH_TOKEN: process.env.TWILIO_AUTH_TOKEN || "",
 		TWILIO_PROXY_SERVICE_SID: process.env.TWILIO_PROXY_SERVICE_SID || "",
 		AUTH0_CLIENT_SECRET: process.env.AUTH0_CLIENT_SECRET || "",
-		STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY || ""
+		STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY || "",
+		CALL_SESSION_MANAGER_URL: process.env.CALL_SESSION_MANAGER_URL || ""
 	};
 
 	let env = frontendEnv;

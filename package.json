@@ -20,7 +20,7 @@
 		"dev:utils": "lerna run --scope @callsesh/utils --parallel watch",
 		"start:app": "lerna run --scope @callsesh/app --parallel start",
 		"start:auth": "lerna run --scope @callsesh/auth --parallel start",
-		"build:app": "lerna run --scope @callsesh/app build",
+		"build:app": "lerna run --scope @callsesh/app build && lerna run --scope @callsesh/app export",
 		"build:auth": "lerna run --scope @callsesh/auth build",
 		"build:utils": "lerna run --scope @callsesh/utils build",
 		"test:app": "lerna run --scope @callsesh/app test",

@@ -1,11 +1,5 @@
 {
 	"version": 2,
-	"builds": [
-		{
-			"src": "packages/app/next.config.js",
-			"use": "@now/next"
-		}
-	],
 	"rewrites": [
 		{
 			"source": "/auth/(.*)",
