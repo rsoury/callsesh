@@ -1,4 +1,4 @@
-/* eslint-disable no-console, no-unused-vars */
+/* eslint-disable no-console, no-unused-vars, global-require */
 
 require("dotenv").config({ path: require("find-config")(".env") });
 const gulp = require("gulp");
