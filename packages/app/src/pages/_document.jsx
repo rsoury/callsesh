@@ -29,6 +29,7 @@ class Document extends NextDocument {
 							key={i} // eslint-disable-line
 						/>
 					))}
+					<link rel="shortcut icon" href="/favicon.ico" />
 					<link
 						rel="apple-touch-icon-precomposed"
 						sizes="57x57"
