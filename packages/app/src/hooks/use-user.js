@@ -1,89 +1,115 @@
-/* eslint-disable no-underscore-dangle */
+/**
+ * Hook to manage state in context.
+ * Manage router here.
+ */
 
-import { useState, useEffect } from "react";
+import { useEffect, useContext } from "react";
 import Router from "next/router";
-import request from "@/utils/request";
+import isEmpty from "is-empty";
+import { useRequest } from "@callsesh/utils";
+import debounce from "lodash/debounce";
+
+import * as routes from "@/routes";
+import appendReturnUrl from "@/utils/append-return-url";
+import { UserContext } from "@/components/Providers/UserProvider";
+import handleException, {
+	setUser as setErrorTrackingUser
+} from "@/utils/handle-exception";
+
+const handleExceptionDebounced = debounce((...params) => {
+	handleException(...params);
+}, 500);
 
 // We need to check whether user is registered. If not redirect to /register
 const ensureUserRegistered = (user) => {
+	if (isEmpty(user)) {
+		return false;
+	}
 	const { isRegistered } = user;
 	if (!isRegistered) {
-		Router.push("/get-started");
+		// Redirect to get started if not registered
+		if (window.location.pathname.indexOf(routes.page.register) !== 0) {
+			Router.push(appendReturnUrl(routes.page.register, true));
+			return false;
+		}
 	}
+	return true;
 };
 
-export async function getUser(cookie = "") {
-	if (typeof window !== "undefined" && window.__user) {
-		return window.__user;
-	}
+/**
+ * Helper function to set user state
+ */
+export const useSetUser = () => {
+	const { setUser: setUserState } = useContext(UserContext);
 
-	try {
-		const user = await request
-			.get(
-				"/api/user",
-				cookie
-					? {
-							headers: {
-								cookie
-							}
-					  }
-					: {}
-			)
-			.then(({ data }) => data);
-
-		if (typeof window !== "undefined") {
-			window.__user = user;
-		}
-		return user;
-	} catch (e) {
-		delete window.__user;
-		return null;
-	}
-}
+	return setUserState;
+};
 
 function useUser({ required } = {}) {
-	const [loading, setLoading] = useState(
-		() => !(typeof window !== "undefined" && window.__user)
-	);
-	const [user, setUser] = useState(() => {
-		if (typeof window === "undefined") {
-			return null;
+	const {
+		user,
+		removeUser,
+		getUser,
+		loading,
+		setUser: setUserState
+	} = useContext(UserContext);
+	useRequest(
+		isEmpty((user || {}).callSession)
+			? null
+			: routes.build.callUser(user.callSession.with),
+		{
+			initialData: {},
+			refreshInterval: 60 * 1000, // 60 seconds
+			refreshWhenHidden: false,
+			onSuccess({ data: { callSession } }) {
+				setUserState({
+					...user,
+					callSession: callSession.caller
+				});
+			},
+			onError(err) {
+				handleExceptionDebounced(err);
+				setUserState({
+					...user,
+					callSession: {}
+				});
+			}
 		}
+	);
 
-		return window.__user || null;
-	});
-
+	// Manage user tracking, guidance and fetching
 	useEffect(() => {
-		// If user already exists.
+		// If user already fetched
 		if (!loading && user) {
-			ensureUserRegistered(user);
+			if (!isEmpty(user)) {
+				// If user object has data...  then -- SSR can pass an empty user object to indicate no user.
+				ensureUserRegistered(user);
+				setErrorTrackingUser(user);
+			}
 			return () => {};
 		}
 		// Start user fetch
-		setLoading(true);
 		let isMounted = true;
 
-		getUser()
-			.then((newUser) => {
-				// Only set the user if the component is still mounted
-				if (isMounted) {
-					// When the user is not logged in but login is required
-					if (required && !newUser) {
-						Router.replace("/login");
-						return;
-					}
-					ensureUserRegistered(newUser);
-					setUser(newUser);
+		getUser().then((newUser) => {
+			// Only use the user if the component is still mounted
+			if (isMounted) {
+				// When the user is not logged in but login is required
+				if (required && !newUser) {
+					Router.replace(routes.page.login);
+					return;
 				}
-			})
-			.finally(() => setLoading(false));
+				ensureUserRegistered(newUser);
+				setErrorTrackingUser(newUser);
+			}
+		});
 
 		return () => {
 			isMounted = false;
 		};
 	}, []);
 
-	return [user, loading];
+	return [user, loading, { removeUser, getUser, setUser: setUserState }];
 }
 
 export default useUser;

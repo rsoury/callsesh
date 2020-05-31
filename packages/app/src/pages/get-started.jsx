@@ -1,166 +1,128 @@
 /* Page used to register new users */
 
-import { useState, useEffect, useCallback } from "react";
-import { H1 as Heading, Paragraph2 as Paragraph } from "baseui/typography";
-import { useStyletron } from "baseui";
-import { Formik, Form } from "formik";
-import { Grid, Cell } from "baseui/layout-grid";
-import { Button } from "baseui/button";
-import * as yup from "yup";
-import Confetti from "react-dom-confetti";
+import { useState, useCallback } from "react";
+import { FormikWizard } from "rsoury-formik-wizard";
+import isEmpty from "is-empty";
+import { toaster } from "baseui/toast";
+import Url from "url-parse";
+import ono from "@jsdevtools/ono";
 
-import TextField from "@/components/Fields/Text";
-import SelectField from "@/components/Fields/Select";
-import DateField from "@/components/Fields/Date";
-import Emoji from "@/components/Emoji";
+import * as routes from "@/routes";
+import FormLayout from "@/components/Onboarding/FormLayout";
+import GeneralStep, {
+	initialValues as generalInitialValues,
+	validationSchema as generalValidationSchema
+} from "@/components/Onboarding/GeneralStep";
+import OperatorStep, {
+	initialValues as operatorInitialValues,
+	validationSchema as operatorValidationSchema
+} from "@/components/Onboarding/OperatorStep";
+import CallerStep, {
+	initialValues as callerInitialValues,
+	validationSchema as callerValidationSchema
+} from "@/components/Onboarding/CallerStep";
+import request from "@/utils/request";
+import handleException, { alerts } from "@/utils/handle-exception";
+import ssrUser from "@/utils/ssr-user";
 
-const confettiConfig = {
-	angle: "109",
-	spread: "177",
-	startVelocity: "34",
-	elementCount: "147",
-	dragFriction: "0.09",
-	duration: "3310",
-	stagger: "0",
-	width: "12px",
-	height: "9px",
-	colors: ["#a864fd", "#29cdff", "#78ff44", "#ff718d", "#fdff6a"]
-};
-
-const genderOptions = [
-	{ label: "Male", id: "male" },
-	{ label: "Female", id: "female" },
-	{ label: "Other", id: "other" }
+const formSteps = [
+	{
+		id: "general",
+		component: GeneralStep,
+		initialValues: generalInitialValues,
+		validationSchema: generalValidationSchema
+	},
+	{
+		id: "caller",
+		component: CallerStep,
+		initialValues: callerInitialValues,
+		validationSchema: callerValidationSchema
+	},
+	{
+		id: "operator",
+		component: OperatorStep,
+		initialValues: operatorInitialValues,
+		validationSchema: operatorValidationSchema
+	}
 ];
 
-const validationSchema = yup.object().shape({
-	firstName: yup.string().required(),
-	lastName: yup.string().required(),
-	gender: yup.string().oneOf(["male", "female", "other"]).required(),
-	dob: yup.string(),
-	operator: yup.boolean(),
-	hourlyRate: yup.string(),
-	profilePicture: yup.string(),
-	purpose: yup.string(),
-	messageBroadcast: yup.string()
-});
+const GetStarted = () => {
+	const [isSubmitting, setSubmitting] = useState(false);
 
-const Register = () => {
-	const [css] = useStyletron();
-	const [confetti, setConfetti] = useState(false);
+	const handleSubmit = useCallback((values) => {
+		setSubmitting(true);
+		const params = {
+			...values.general,
+			gender: values.general.gender.label,
+			...values.caller,
+			...values.operator,
+			purpose: isEmpty(values.operator.purpose.value)
+				? values.operator.purpose.option.label
+				: values.operator.purpose.value
+		};
+		request
+			.post(routes.api.user, params)
+			.then(({ data }) => data)
+			.then(() => {
+				// There should be some redirect here to the original url.
+				toaster.positive(
+					`Nice! Your account has been created. Please wait as we redirect you...`
+				);
 
-	const initialValues = {
-		firstName: "",
-		lastName: "",
-		gender: genderOptions[2],
-		dob: [new Date("1996/08/31")]
-	};
+				// Check for return_url
+				const url = new Url(window.location.href, true);
+				const { return_url: returnUrl } = url.query;
 
-	useEffect(() => {
-		setTimeout(() => {
-			setConfetti(true);
-		}, 250);
-	}, []);
-
-	const handleSubmit = useCallback((values, actions) => {
-		setTimeout(() => {
-			console.log(values);
-			actions.setSubmitting(false);
-		}, 1000);
+				// Use window.location.href to prevent rerunning SSR on this page.
+				if (!isEmpty(returnUrl)) {
+					window.location.href = returnUrl;
+				}
+				// Otherwise, redirect to index.
+				window.location.href = routes.page.index;
+			})
+			.catch((error) => {
+				handleException(ono(error, params));
+				alerts.error();
+			})
+			.finally(() => {
+				setSubmitting(false);
+			});
 	}, []);
 
 	return (
 		<main>
-			<Formik
-				initialValues={initialValues}
+			<FormikWizard
+				steps={formSteps}
 				onSubmit={handleSubmit}
-				validationSchema={validationSchema}
-			>
-				{({ isSubmitting }) => (
-					<Form>
-						<div
-							className={css({
-								maxWidth: "800px",
-								width: "100%",
-								margin: "0 auto"
-							})}
-						>
-							<div className={css({ marginBottom: "20px" })}>
-								<Grid>
-									<Cell span={12}>
-										<Heading>
-											Welcome to Callsesh&nbsp;&nbsp;
-											<Emoji label="celebrate" symbol="🎉" />
-										</Heading>
-										<Paragraph>
-											Get started by providing more information about yourself
-										</Paragraph>
-									</Cell>
-								</Grid>
-							</div>
-							<Confetti active={confetti} config={confettiConfig} />
-							<Grid>
-								<Cell span={(12, 4, 6)}>
-									<TextField
-										name="firstName"
-										label="First Name"
-										placeholder="Ryan"
-									/>
-								</Cell>
-								<Cell span={(12, 4, 6)}>
-									<TextField
-										name="lastName"
-										label="Last Name"
-										placeholder="Soury"
-									/>
-								</Cell>
-							</Grid>
-							<Grid>
-								<Cell span={(12, 4, 6)}>
-									<SelectField
-										name="gender"
-										label="Gender"
-										options={genderOptions}
-									/>
-								</Cell>
-								<Cell span={(12, 4, 6)}>
-									<DateField
-										name="dob"
-										label="Date of birth"
-										caption="YYYY/MM/DD"
-									/>
-								</Cell>
-							</Grid>
-							<div className={css({ marginTop: "40px" })}>
-								<Grid gridGutters={16}>
-									<Cell span={12}>
-										<div className={css({ textAlign: "center" })}>
-											<Button
-												type="submit"
-												isLoading={isSubmitting}
-												disabled={isSubmitting}
-												overrides={{
-													BaseButton: {
-														style: {
-															height: "52px",
-															width: "100%",
-															maxWidth: "300px"
-														}
-													}
-												}}
-											>
-												Create your account
-											</Button>
-										</div>
-									</Cell>
-								</Grid>
-							</div>
-						</div>
-					</Form>
+				render={(props) => (
+					<FormLayout {...props} isSubmitting={isSubmitting} />
 				)}
-			</Formik>
+			/>
 		</main>
 	);
 };
 
-export default Register;
+export function getServerSideProps({ req, res }) {
+	return ssrUser({ req, res }, (user) => {
+		if (isEmpty(user)) {
+			res.writeHead(302, {
+				Location: routes.page.index
+			});
+			res.end();
+		} else if (user.isRegistered) {
+			// If user is registered, redirect to settings/profile
+			res.writeHead(302, {
+				Location: routes.page.settings.profile
+			});
+			res.end();
+		}
+
+		return {
+			props: {
+				user // User data retrieved by provider
+			}
+		};
+	});
+}
+
+export default GetStarted;

@@ -4,7 +4,9 @@ import { matchPath, withRouter } from "react-router";
 import RouterPropTypes from "react-router-prop-types";
 import { useStyletron } from "baseui";
 import { ToasterContainer, PLACEMENT } from "baseui/toast";
+import { Paragraph4 as Paragraph } from "baseui/typography";
 
+import Link from "@/components/Link";
 import Header from "@/components/Header";
 import { shouldSignup } from "@/utils/auth";
 
@@ -12,6 +14,8 @@ import Signup from "./Signup";
 import Login from "./Login";
 
 let actionConsumed = false;
+
+const tosUrl = `https://callsesh.com/terms`;
 
 const App = ({ location, history }) => {
 	const [css] = useStyletron();
@@ -77,6 +81,26 @@ const App = ({ location, history }) => {
 								<Redirect to="/" />
 							</Route>
 						</Switch>
+						<div>
+							<Paragraph
+								className={css({
+									maxWidth: "300px",
+									margin: "20px auto",
+									textAlign: "center"
+								})}
+							>
+								By registering, authenticating and using a Callsesh account, you
+								agree to our{" "}
+								<Link
+									to={tosUrl}
+									target="_blank"
+									rel="noopener noreferrer"
+									standard
+								>
+									Terms of Service
+								</Link>
+							</Paragraph>
+						</div>
 					</div>
 				</div>
 			</main>

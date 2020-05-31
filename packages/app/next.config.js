@@ -1,4 +1,6 @@
-require("dotenv").config();
+/* eslint-disable no-console */
+
+require("dotenv").config({ path: require("find-config")(".env") }); // eslint-disable-line
 const withSourceMaps = require("@zeit/next-source-maps")();
 const {
 	PHASE_PRODUCTION_SERVER,
@@ -6,18 +8,25 @@ const {
 } = require("next/constants");
 const SentryWebpackPlugin = require("@sentry/webpack-plugin");
 const filenamify = require("filenamify");
+const isEmpty = require("is-empty");
 const { alias } = require("./config/alias");
 const pkg = require("./package.json");
 
 module.exports = (phase) => {
 	// Explicitly define environment variables to be used at build time for both frontend and server
 	// dotenv.config should automatically configure process.env for local development
+
 	const frontendEnv = {
-		PUBLIC_URL: process.env.PUBLIC_URL || "",
+		PUBLIC_URL:
+			process.env.PUBLIC_URL ||
+			(process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : ``) ||
+			"http://app.local",
 		AUTH0_DOMAIN: process.env.AUTH0_DOMAIN || "",
 		AUTH0_CLIENT_ID: process.env.AUTH0_CLIENT_ID || "",
 		STRIPE_PUBLIC_KEY: process.env.STRIPE_PUBLIC_KEY || "",
-		SENTRY_DSN: process.env.SENTRY_DSN || ""
+		STRIPE_CONNECT_ID: process.env.STRIPE_CONNECT_ID || "",
+		SENTRY_DSN: process.env.SENTRY_DSN || "",
+		UPLOADCARE_PUBLIC_KEY: process.env.UPLOADCARE_PUBLIC_KEY || ""
 	};
 	const serverEnv = {
 		SESSION_SECRET: process.env.SESSION_SECRET || "",
@@ -25,7 +34,8 @@ module.exports = (phase) => {
 		TWILIO_AUTH_TOKEN: process.env.TWILIO_AUTH_TOKEN || "",
 		TWILIO_PROXY_SERVICE_SID: process.env.TWILIO_PROXY_SERVICE_SID || "",
 		AUTH0_CLIENT_SECRET: process.env.AUTH0_CLIENT_SECRET || "",
-		STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY || ""
+		STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY || "",
+		CALL_SESSION_MANAGER_URL: process.env.CALL_SESSION_MANAGER_URL || ""
 	};
 
 	let env = frontendEnv;
@@ -35,6 +45,17 @@ module.exports = (phase) => {
 			...serverEnv
 		};
 	}
+	// Ensure environment variables are set
+	Object.entries(env).forEach(([key, value]) => {
+		if (isEmpty(value)) {
+			console.log(
+				`WARNING: ${key} is a required environment variable. The application may not behave as expected.`
+			);
+		}
+	});
+
+	// Print PUBLIC_URL for reference
+	console.log(`Application public url: ${env.PUBLIC_URL}`);
 
 	const nextConfig = {
 		// Explicitly define environment variables to be used at build time.
@@ -58,9 +79,24 @@ module.exports = (phase) => {
 				config.resolve.alias[key] = value;
 			});
 
-			// Sentry alias
+			// Add react alias -- this allows us to link other projects without referencing duplicate react libraries.
+			config.resolve.alias.react = require.resolve("react");
+			config.resolve.alias.formik = require.resolve("formik");
+
 			if (!isServer) {
+				// Sentry alias
 				config.resolve.alias["@sentry/node"] = "@sentry/browser";
+
+				// Resolve node related dependencies.
+				config.node = {
+					// Used by Auth0 Management
+					dns: "empty",
+					fs: "empty",
+					net: "empty",
+					tls: "empty",
+					// Stripe-node cannot resolve this on browser
+					child_process: "empty"
+				};
 			}
 
 			// When all the Sentry configuration env variables are available/configured
@@ -84,6 +120,12 @@ module.exports = (phase) => {
 					})
 				);
 			}
+
+			// Add markdown loader for legal pages
+			config.module.rules.push({
+				test: /\.md$/,
+				use: "raw-loader"
+			});
 
 			return config;
 		},

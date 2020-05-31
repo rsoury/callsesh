@@ -19,7 +19,10 @@
 		}
 	},
 	"scripts": {
-		"start": "cross-env PORT=3001 rescripts start",
+		"start": "per-env",
+		"start:development": "cross-env PORT=3001 rescripts start",
+		"start:staging": "cross-env PORT=3001 rescripts start",
+		"start:production": "cross-env PORT=3001 rescripts start",
 		"build": "per-env",
 		"build:development": "rescripts build",
 		"build:staging": "rescripts build",
@@ -40,8 +43,7 @@
 		"@sentry/browser": "^5.15.5",
 		"@sentry/integrations": "^5.15.5",
 		"auth0-js": "^9.13.2",
-		"axios": "^0.19.2",
-		"baseui": "^9.73.1",
+		"baseui": "9.78.0",
 		"formik": "^2.1.4",
 		"formik-wizard": "^3.1.2",
 		"is-empty": "^1.2.0",
@@ -60,8 +62,7 @@
 		"react-scripts": "3.4.1",
 		"styletron-engine-atomic": "^1.4.6",
 		"styletron-react": "^5.2.7",
-		"swr": "^0.2.0",
-		"yup": "^0.28.5"
+		"yup": "^0.29.0"
 	},
 	"devDependencies": {
 		"@rescripts/cli": "^0.0.13",
@@ -75,7 +76,10 @@
 		"chalk": "^4.0.0",
 		"cross-env": "^7.0.2",
 		"dotenv": "^8.2.0",
+		"eslint": "6.6.0",
 		"fancy-log": "^1.3.3",
+		"filenamify": "^4.1.0",
+		"find-config": "^1.0.0",
 		"gulp": "^4.0.2",
 		"gulp-if": "^3.0.0",
 		"gulp-rename": "^2.0.0",

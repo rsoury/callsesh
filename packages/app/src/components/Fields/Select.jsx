@@ -21,9 +21,11 @@ const SelectField = ({
 			form: { setFieldValue }
 		}) => (
 			<FormControl
-				label={label || name ? () => label || name : null}
-				caption={caption ? () => caption : null}
-				error={() => (meta.touched ? format.message(meta.error) : "")}
+				label={label ? () => label : null}
+				caption={() => caption}
+				error={
+					meta.touched && meta.error ? () => format.message(meta.error) : null
+				}
 			>
 				<Select
 					{...field}
@@ -37,7 +39,7 @@ const SelectField = ({
 					onChange={({ value: newValue }) => {
 						setFieldValue(name, newValue[0]);
 					}}
-					value={value}
+					value={[value]}
 					{...props}
 				/>
 			</FormControl>

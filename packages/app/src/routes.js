@@ -1,13 +1,51 @@
-export default {
+/**
+ * An object defining all page routes.page.
+ */
+
+export const page = {
 	index: "/",
-	login: "/api/auth/login",
-	signup: "/api/auth/signup",
-	tos: "/terms-of-service",
-	privacyPolicy: "/privacy-policy",
-	cookiePolicy: "/cookie-policy",
+	login: "/login",
+	signup: "/signup",
+	logout: "/logout",
+	register: "/get-started",
+	user: `/user/:id`,
+	terms: {
+		tos: "/terms",
+		privacyPolicy: "/terms/privacy-policy",
+		cookiePolicy: "/terms/cookie-policy"
+	},
 	settings: {
 		profile: "/settings/profile",
-		paymentMethods: "/settings/payment-methods",
-		notifications: "/settings/notifications"
+		wallet: "/settings/wallet",
+		threeDSecure: "/settings/3d-secure"
+	},
+	becomeAnOperator: "/become-an-operator",
+	referrals: "/referrals"
+};
+
+export const build = {
+	user(username) {
+		return `/u/${username}`;
+	},
+	callUser(username) {
+		return `/api/u/${username}/call`;
 	}
+};
+
+export const api = {
+	auth: {
+		callback: "/api/auth/callback",
+		login: "/api/auth/login",
+		logout: "/api/auth/logout",
+		signup: "/api/auth/signup"
+	},
+	user: "/api/user",
+	cards: "/api/cards",
+	live: "/api/live",
+	usernameAvailable: "/api/username-available",
+	connect: {
+		start: "/api/connect",
+		redirect: "/api/connect/oauth"
+	},
+	callUser: `/api/u/:id/call`
 };

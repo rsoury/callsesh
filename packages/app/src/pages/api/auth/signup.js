@@ -11,7 +11,8 @@ handler.get(async (req, res) => {
 	const { return_url: returnUrl = "/" } = req.query;
 	await auth.handleLogin(req, res, {
 		authParams: {
-			action: "signup"
+			action: "signup",
+			prompt: "login"
 		},
 		redirectTo: returnUrl
 	});

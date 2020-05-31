@@ -1,5 +1,6 @@
 import isEmpty from "is-empty";
 import auth from "@/middleware/auth";
+import * as routes from "@/routes";
 
 const Logout = () => null;
 
@@ -11,15 +12,16 @@ export async function getServerSideProps({ req, res }) {
 
 	if (isEmpty(session)) {
 		res.writeHead(302, {
-			Location: `/`
+			Location: routes.page.index
 		});
 	} else {
 		res.writeHead(302, {
-			Location: "/api/auth/logout"
+			Location: routes.api.auth.logout
 		});
 	}
 	res.end();
-	return {};
+
+	return { props: {} };
 }
 
 export default Logout;

@@ -1,6 +1,8 @@
-const path = require("path");
 const { alias: appAlias } = require("./packages/app/config/alias");
 const { alias: authAlias } = require("./packages/auth/config/alias");
+const {
+	alias: csmAlias
+} = require("./packages/call-session-manager/config/alias");
 
 module.exports = {
 	extends: [
@@ -12,10 +14,13 @@ module.exports = {
 		"plugin:jest/recommended"
 	],
 	parser: "babel-eslint",
-	plugins: ["babel", "react", "baseui", "jest"],
+	plugins: ["baseui", "jest"],
 	env: {
 		browser: true,
-		jest: true
+		commonjs: true,
+		es6: true,
+		jest: true,
+		node: true
 	},
 	settings: {
 		react: {
@@ -45,6 +50,16 @@ module.exports = {
 				"import/resolver": {
 					alias: {
 						map: Object.entries(authAlias)
+					}
+				}
+			}
+		},
+		{
+			files: ["packages/call-session-manager/**/*"],
+			settings: {
+				"import/resolver": {
+					alias: {
+						map: Object.entries(csmAlias)
 					}
 				}
 			}
