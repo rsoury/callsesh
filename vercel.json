@@ -1,5 +1,11 @@
 {
 	"version": 2,
+	"builds": [
+		{
+			"src": "packages/app/next.config.js",
+			"use": "@vercel/next"
+		}
+	],
 	"rewrites": [
 		{
 			"source": "/auth/(.*)",
