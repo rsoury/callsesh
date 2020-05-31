@@ -47,11 +47,10 @@ yarn-error.log*
 
 # Now
 .now
+.vercel
 
 # Auth0 deployment
 .auth0
 
 # serverless
 .serverless
-
-.vercel
