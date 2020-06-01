@@ -62,19 +62,23 @@ const PayoutsCard = ({ ...props }) => {
 		<Card {...cardProps} {...props}>
 			{isStripeConnectAvailable(user.country) ? (
 				<div>
-					{user.payouts.setup && (
-						<div className={css({ marginBottom: "10px" })}>
-							{user.payouts.enabled ? (
-								<Tag {...tagProps} kind={TAG_KIND.positive}>
-									Connected
-								</Tag>
-							) : (
-								<Tag {...tagProps} kind={TAG_KIND.negative}>
-									Requires further information
-								</Tag>
-							)}
-						</div>
-					)}
+					<div className={css({ marginBottom: "10px" })}>
+						{!user.payouts.setup && (
+							<Tag {...tagProps} kind={TAG_KIND.primary}>
+								Requires setup
+							</Tag>
+						)}
+						{user.payouts.setup && !user.payouts.enabled && (
+							<Tag {...tagProps} kind={TAG_KIND.negative}>
+								Requires further information
+							</Tag>
+						)}
+						{user.payouts.setup && user.payouts.enabled && (
+							<Tag {...tagProps} kind={TAG_KIND.positive}>
+								Connected
+							</Tag>
+						)}
+					</div>
 					<Link href={routes.api.connect.start} button>
 						<Button
 							startEnhancer={() => <SecureIcon size={22} />}
@@ -89,19 +93,27 @@ const PayoutsCard = ({ ...props }) => {
 					</ParagraphXSmall>
 				</div>
 			) : (
-				<Link
-					href={PAYOUTS_SUBMISSION_FORM_URL}
-					target="_blank"
-					rel="noopener noreferrer"
-					standard
-				>
-					<Button
-						startEnhancer={() => <FormIcon size={22} />}
-						endEnhancer={() => <ChevronRight size={22} />}
+				<div>
+					<Link
+						href={PAYOUTS_SUBMISSION_FORM_URL}
+						target="_blank"
+						rel="noopener noreferrer"
+						standard
+						button
 					>
-						Setup Payouts
-					</Button>
-				</Link>
+						<Button
+							startEnhancer={() => <FormIcon size={22} />}
+							endEnhancer={() => <ChevronRight size={22} />}
+						>
+							Setup Payouts
+						</Button>
+					</Link>
+					<ParagraphXSmall>
+						Submit your payout information and verify your details with the
+						Callsesh support team to get paid by us on the first day of each
+						calendar month.
+					</ParagraphXSmall>
+				</div>
 			)}
 		</Card>
 	);

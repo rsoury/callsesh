@@ -47,6 +47,17 @@ const auth = initAuth0({
 });
 
 /**
+ * Safer sesson retrieval in case of bad auth values.
+ */
+export const getSession = async (...params) =>
+	auth.getSession(...params).catch((e) => {
+		if (e.message === "Bad hmac value") {
+			return null;
+		}
+		throw e;
+	});
+
+/**
  * Next Connect middleware wrapper around auth.requireAuthentication
  */
 export const requireAuthentication = nextConnect().use((req, res, next) =>
@@ -177,7 +188,7 @@ const constructUser = async (
  * @return  {Object}
  */
 export const getUser = async (req, options) => {
-	const session = await auth.getSession(req);
+	const session = await getSession(req);
 
 	// return empty object if session empty --- user not authenticated
 	if (isEmpty(session)) {
@@ -213,7 +224,7 @@ export const getUser = async (req, options) => {
  * @return  {Object}           User
  */
 export const updateAndGetUser = async (req, params, options) => {
-	const session = await auth.getSession(req);
+	const session = await getSession(req);
 
 	// return empty object if session empty --- user not authenticated
 	if (isEmpty(session)) {
