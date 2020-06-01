@@ -49,7 +49,7 @@ const PublicHomeScreen = () => {
 				style: {
 					height: "auto",
 					width: "calc(100% - 70px)",
-					borderBottom: "0px",
+					borderBottomWidth: "0px",
 					paddingBottom: "0px"
 				}
 			}

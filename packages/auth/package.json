@@ -29,14 +29,14 @@
 		"build:production": "cross-env SKIP_PREFLIGHT_CHECK=true rescripts build",
 		"test": "cross-env SKIP_PREFLIGHT_CHECK=true rescripts test",
 		"eject": "rescripts eject",
-		"clean": "rimraf ./build ./dist",
+		"clean": "rimraf ./build ./dist ./.auth0",
 		"analyse": "source-map-explorer build/main.*",
 		"deploy": "per-env",
 		"deploy:development": "yarn deploy:app",
 		"deploy:staging": "yarn deploy:app",
 		"deploy:production": "yarn deploy:app",
 		"deploy:app": "s3-deploy './build/**' --cwd './build/' --region us-east-2 --bucket callsesh-auth --deleteRemoved && gulp deploy",
-		"build-and-deploy": "yarn build && yarn deploy"
+		"build:deploy": "yarn build && yarn deploy"
 	},
 	"dependencies": {
 		"@callsesh/utils": "^1.0.0",

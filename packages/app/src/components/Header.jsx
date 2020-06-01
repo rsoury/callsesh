@@ -11,12 +11,15 @@ import {
 	CreditCard as WalletIcon,
 	User as ProfileIcon,
 	LogOut as LogoutIcon,
-	PhoneCall as PhoneIcon
+	PhoneCall as PhoneIcon,
+	LogIn as LoginIcon,
+	Edit2 as SignupIcon
 } from "react-feather";
 import ArrowRight from "baseui/icon/arrow-right";
 import isEmpty from "is-empty";
 import { Unstable_AppNavBar as AppNavBar } from "baseui/app-nav-bar";
 import Skeleton from "react-loading-skeleton";
+import { useRouter } from "next/router";
 
 import Link from "@/components/Link";
 import * as routes from "@/routes";
@@ -31,7 +34,12 @@ const NavItem = ({ label, href, ...props }) => (
 	</Link>
 );
 
-const NavItemButton = ({ label, href, buttonKind, ...props }) => (
+const getNavItemButton = ([, theme]) => ({
+	label,
+	href,
+	buttonKind,
+	...props
+}) => (
 	<Link href={href} button {...props}>
 		<Button
 			kind={buttonKind || BUTTON_KIND.tertiary}
@@ -39,7 +47,11 @@ const NavItemButton = ({ label, href, buttonKind, ...props }) => (
 				BaseButton: {
 					style: {
 						width: "100%",
-						justifyContent: "flex-start"
+						justifyContent: "flex-start",
+						[theme.mediaQuery.maxSmall]: {
+							backgroundColor: "rgba(0, 0, 0, 0)",
+							color: theme.colors.primary
+						}
 					}
 				}
 			}}
@@ -113,8 +125,9 @@ const InCallTopBar = () => {
 };
 
 const Header = () => {
-	const [css] = useStyletron();
+	const [css, theme] = useStyletron();
 	const [user, isLoading] = useUser();
+	const router = useRouter();
 
 	const navProps = {};
 
@@ -135,22 +148,25 @@ const Header = () => {
 			)
 		}));
 	} else if (isEmpty(user)) {
+		const NavItemButton = getNavItemButton([css, theme]);
 		navProps.mainNav = [
 			{
+				icon: LoginIcon,
 				item: {
 					label: "Log In",
-					href: appendReturnUrl(routes.page.login, true),
-					pass: true
+					href: appendReturnUrl(routes.page.login),
+					standard: true
 				},
 				mapItemToNode: NavItemButton,
 				mapItemToString: NavItemLabel
 			},
 			{
+				icon: SignupIcon,
 				item: {
 					label: "Sign Up",
-					href: appendReturnUrl(routes.page.signup, true),
+					href: appendReturnUrl(routes.page.signup),
 					buttonKind: BUTTON_KIND.primary,
-					pass: true
+					standard: true
 				},
 				mapItemToNode: NavItemButton,
 				mapItemToString: NavItemLabel
@@ -166,7 +182,7 @@ const Header = () => {
 				item: {
 					label: "Logout",
 					href: routes.page.logout,
-					pass: true
+					standard: true
 				},
 				mapItemToNode: NavItem,
 				mapItemToString: NavItemLabel
@@ -205,8 +221,20 @@ const Header = () => {
 						<Logo />
 					</Link>
 				}
-				isNavItemActive={() => {}}
-				onNavItemSelect={() => {}}
+				onNavItemSelect={({ item: { item: { href, standard } = {} } }) => {
+					if (!isEmpty(href) && !standard) {
+						if (typeof href === "object") {
+							return router.push(href);
+						}
+						if (typeof href === "string") {
+							if (href.charAt(0) === "/") {
+								return router.push(href);
+							}
+							window.location.href = href;
+						}
+					}
+					return null;
+				}}
 				{...navProps}
 			/>
 		</header>

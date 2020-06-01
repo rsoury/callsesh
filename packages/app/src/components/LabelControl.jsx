@@ -36,6 +36,7 @@ const LabelControl = ({
 			<Content>
 				<div
 					className={css({
+						position: "relative",
 						display: "flex",
 						alignItems: "center",
 						minHeight: "50px",

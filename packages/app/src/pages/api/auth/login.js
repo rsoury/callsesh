@@ -9,7 +9,12 @@ const handler = getHandler();
 
 handler.get(async (req, res) => {
 	const { return_url: returnUrl = "/" } = req.query;
-	await auth.handleLogin(req, res, { redirectTo: returnUrl });
+	await auth.handleLogin(req, res, {
+		authParams: {
+			returnUrl
+		},
+		redirectTo: returnUrl
+	});
 });
 
 export default handler;

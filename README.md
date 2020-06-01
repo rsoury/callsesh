@@ -1,5 +1,8 @@
 # Callsesh
 
-### Notes
+## Secret Management
 
-- `pages` is used by Auth0 to managed hosted pages.
+Chamber is used to manage secrets: https://github.com/segmentio/chamber
+```
+NODE_ENV=production chamber exec callsesh -- yarn build:auth
+```
