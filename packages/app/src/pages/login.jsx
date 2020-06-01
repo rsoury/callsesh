@@ -1,5 +1,5 @@
 import isEmpty from "is-empty";
-import auth from "@/middleware/auth";
+import { getSession } from "@/middleware/auth";
 import * as routes from "@/routes";
 
 const Login = () => null;
@@ -12,7 +12,7 @@ export async function getServerSideProps({
 	// Here you can check authentication status directly before rendering the page,
 	// however the page would be a serverless function, which is more expensive and
 	// slower than a static page with client side authentication
-	const session = await auth.getSession(req);
+	const session = await getSession(req);
 
 	if (isEmpty(session)) {
 		res.writeHead(302, {
