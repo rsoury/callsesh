@@ -33,7 +33,7 @@ const SettingsEditModal = ({
 	return (
 		<Modal
 			onClose={onClose}
-			closeable
+			closeable={false}
 			animate
 			isOpen={isOpen}
 			size={MODAL_SIZE.default}

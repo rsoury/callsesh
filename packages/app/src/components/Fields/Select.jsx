@@ -16,7 +16,7 @@ const SelectField = ({
 }) => (
 	<Field name={name} id={snakeCase(name)}>
 		{({
-			field: { onChange, value, ...field },
+			field: { onChange, value, onBlur, ...field },
 			meta,
 			form: { setFieldValue }
 		}) => (
@@ -29,6 +29,7 @@ const SelectField = ({
 			>
 				<Select
 					{...field}
+					id={`${snakeCase(name)}_select`}
 					clearable={false}
 					filterOutSelected={false}
 					searchable={false}
@@ -40,7 +41,23 @@ const SelectField = ({
 						setFieldValue(name, newValue[0]);
 					}}
 					value={[value]}
+					onBlur={(e) => {
+						console.log(e);
+						onBlur(e);
+					}}
 					{...props}
+					overrides={{
+						ControlContainer: {
+							props: {
+								id: `${snakeCase(name)}_select_control`
+							}
+						},
+						InputContainer: {
+							style: {
+								display: "none"
+							}
+						}
+					}}
 				/>
 			</FormControl>
 		)}
