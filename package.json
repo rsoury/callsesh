@@ -23,10 +23,12 @@
 		"build:app": "lerna run --scope @callsesh/app build",
 		"build:auth": "lerna run --scope @callsesh/auth build",
 		"build:utils": "lerna run --scope @callsesh/utils build",
+		"build:deploy:auth": "lerna run --scope @callsesh/auth build:deploy --parallel",
 		"test:app": "lerna run --scope @callsesh/app test",
 		"test:auth": "lerna run --scope @callsesh/auth test",
 		"clean:app": "lerna run --scope @callsesh/app clean",
 		"clean:auth": "lerna run --scope @callsesh/auth clean && rimraf ./pages/*",
+		"deploy:auth": "lerna run --scope @callsesh/auth deploy --parallel",
 		"lint": "eslint -c ./.eslintrc.js \"./**/*.{js,jsx,ts,tsx,mjs}\"",
 		"format": "prettier --write \"./**/*.{js,jsx,mjs,ts,tsx,json,css,scss,md}\""
 	},
