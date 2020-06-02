@@ -19,7 +19,7 @@ const Footer = () => {
 			href: pageRoutes.faq
 		},
 		{
-			text: "Referrals",
+			text: "Refer A Friend",
 			href: pageRoutes.referrals
 		},
 		{

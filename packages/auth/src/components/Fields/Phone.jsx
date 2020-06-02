@@ -18,7 +18,6 @@ import examplePhoneNumbers from "libphonenumber-js/examples.mobile.json";
 import isEmpty from "is-empty";
 import snakeCase from "lodash/snakeCase";
 import { useRequest, format } from "@callsesh/utils";
-import hasEmojiSupport from "detect-emoji-support";
 
 import { authConfig } from "@/env-config";
 import getSpinner from "@/components/getSpinner";
@@ -62,6 +61,9 @@ const PhoneInputField = ({
 	});
 
 	const overrides = {
+		FlagContainer: {
+			component: FallbackFlag
+		},
 		CountrySelect: {
 			props: {
 				overrides: {
@@ -74,19 +76,14 @@ const PhoneInputField = ({
 						style: {
 							cursor: "pointer"
 						}
+					},
+					Dropdown: {
+						component: CountrySelectDropdown
 					}
 				}
 			}
 		}
 	};
-	if (!hasEmojiSupport()) {
-		overrides.FlagContainer = {
-			component: FallbackFlag
-		};
-		overrides.CountrySelect.props.overrides.Dropdown = {
-			component: CountrySelectDropdown
-		};
-	}
 
 	useEffect(() => {
 		const { country_code: countryCode } = lookupData || {};

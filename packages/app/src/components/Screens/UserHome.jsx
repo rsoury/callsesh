@@ -36,10 +36,31 @@ const UserHomeScreen = () => {
 				{isOperator ? (
 					<>
 						<Cell span={[12, 4, 6]}>
-							<GoLiveCard />
+							<GoLiveCard
+								overrides={{
+									Root: {
+										style: {
+											borderRightWidth: "0px",
+											borderLeftWidth: "0px",
+											borderBottomWidth: "0px"
+										}
+									}
+								}}
+							/>
 						</Cell>
 						<Cell span={[12, 4, 6]}>
-							<PayoutsCard helpPlacement={TOOLTIP_PLACEMENT.left} />
+							<PayoutsCard
+								helpPlacement={TOOLTIP_PLACEMENT.left}
+								overrides={{
+									Root: {
+										style: {
+											borderRightWidth: "0px",
+											borderLeftWidth: "0px",
+											borderBottomWidth: "0px"
+										}
+									}
+								}}
+							/>
 						</Cell>
 					</>
 				) : (
@@ -60,7 +81,19 @@ const UserHomeScreen = () => {
 					<LinksCard />
 				</Cell>
 				<Cell span={[12, 4, 6]}>
-					<Card title="Where to find Operators?" icon={MapIcon}>
+					<Card
+						title="Where to find Operators?"
+						icon={MapIcon}
+						overrides={{
+							Root: {
+								style: {
+									borderRightWidth: "0px",
+									borderLeftWidth: "0px",
+									borderBottomWidth: "0px"
+								}
+							}
+						}}
+					>
 						<Paragraph>
 							Callsesh Operators will share their links around the internet, and
 							on their <Highlight>social media</Highlight> profiles. If an
@@ -69,7 +102,19 @@ const UserHomeScreen = () => {
 					</Card>
 				</Cell>
 				<Cell span={[12, 4, 6]}>
-					<Card title="New to the world" icon={StarIcon}>
+					<Card
+						title="New to the world"
+						icon={StarIcon}
+						overrides={{
+							Root: {
+								style: {
+									borderRightWidth: "0px",
+									borderLeftWidth: "0px",
+									borderBottomWidth: "0px"
+								}
+							}
+						}}
+					>
 						<Paragraph>
 							Callsesh is a new platform and is currently in{" "}
 							<Highlight>Beta</Highlight>. If you experience any odd behaviour,

@@ -43,7 +43,6 @@
 		"@sentry/integrations": "^5.15.5",
 		"auth0-js": "^9.13.2",
 		"baseui": "9.80.2",
-		"detect-emoji-support": "^0.1.7",
 		"formik": "^2.1.4",
 		"formik-wizard": "^3.1.2",
 		"is-empty": "^1.2.0",

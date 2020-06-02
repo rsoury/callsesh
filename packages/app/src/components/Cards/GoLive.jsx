@@ -147,8 +147,7 @@ const GoLiveCard = ({ ...props }) => {
 			</div>
 			<ParagraphXSmall>
 				<Highlight>Go live</Highlight> to accept calls from your page visitors.
-				This toggle allows you to receive calls on your terms. You should never
-				receive a call if you are not live.
+				You will never receive a call if you are not live.
 			</ParagraphXSmall>
 		</Card>
 	);
