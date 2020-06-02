@@ -50,9 +50,10 @@ export const purposeOptions = [
 	{ label: "Advice", id: "advice" },
 	{ label: "Expertise", id: "expertise" },
 	{ label: "Consultancy", id: "consultancy" },
-	{ label: "Guidance", id: "guidance" },
+	{ label: "Coaching", id: "coaching" },
 	{ label: "Companionship", id: "companionship" },
-	{ label: "Therapy", id: "therapy" },
+	{ label: "Entertainment", id: "entertainment" },
+	{ label: "Counseling", id: "counseling" },
 	{ label: "Other", id: "other" }
 ];
 

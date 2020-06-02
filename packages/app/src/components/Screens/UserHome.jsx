@@ -28,7 +28,7 @@ const UserHomeScreen = () => {
 	const isOperator = isUserOperator(user);
 
 	return (
-		<div id="callsesh-user-home-screen">
+		<div id="callsesh-user-home-screen" className={css({ maxWidth: "100%" })}>
 			<Grid gridGutters={16}>
 				<Cell span={12}>
 					<Heading>Welcome {user.givenName}!</Heading>

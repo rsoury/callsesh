@@ -16,6 +16,18 @@
 			"destination": "http://callsesh-auth.s3-website.us-east-2.amazonaws.com/prod/$1"
 		},
 		{
+			"source": "^/favicon.ico",
+			"destination": "/packages/app/favicon.ico"
+		},
+		{
+			"source": "^/robots.txt",
+			"destination": "/packages/app/robots.txt"
+		},
+		{
+			"source": "^/manifest.webmanifest",
+			"destination": "/packages/app/manifest.webmanifest"
+		},
+		{
 			"source": "/(.*)",
 			"destination": "/packages/app/$1"
 		}
