@@ -78,7 +78,7 @@ const PhoneInputField = ({
 			}
 		}
 	};
-	if (hasEmojiSupport()) {
+	if (!hasEmojiSupport()) {
 		overrides.FlagContainer = {
 			component: FallbackFlag
 		};

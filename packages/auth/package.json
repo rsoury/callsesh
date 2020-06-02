@@ -10,7 +10,7 @@
 		},
 		"staging": {
 			"PUBLIC_URL": "http://callsesh-auth.s3-website.us-east-2.amazonaws.com/staging",
-			"AUTH_PUBLIC_URL": "https://callsesh.now.sh/staging/auth",
+			"AUTH_PUBLIC_URL": "https://callsesh-git-dev.callsesh-team.now.sh/staging/auth",
 			"REACT_APP_STAGE": "staging"
 		},
 		"development": {
