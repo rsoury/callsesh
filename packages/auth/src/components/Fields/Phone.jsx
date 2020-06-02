@@ -4,7 +4,12 @@ import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import { Field } from "formik";
 import { FormControl } from "baseui/form-control";
-import { PhoneInput, COUNTRIES } from "baseui/phone-input";
+import {
+	PhoneInput,
+	COUNTRIES,
+	CountrySelectDropdown,
+	StyledFlag
+} from "baseui/phone-input";
 import {
 	parsePhoneNumberFromString,
 	getExampleNumber
@@ -13,8 +18,9 @@ import examplePhoneNumbers from "libphonenumber-js/examples.mobile.json";
 import isEmpty from "is-empty";
 import snakeCase from "lodash/snakeCase";
 import { useRequest, format } from "@callsesh/utils";
-import { authConfig } from "@/env-config";
+import hasEmojiSupport from "detect-emoji-support";
 
+import { authConfig } from "@/env-config";
 import getSpinner from "@/components/getSpinner";
 import onChangeIsNumber from "@/utils/on-change-is-number";
 
@@ -25,6 +31,10 @@ const Spinner = getSpinner({
 	borderLeftColor: "rgb(220, 220, 220)",
 	borderRightColor: "rgb(220, 220, 220)"
 });
+
+const FallbackFlag = ({ children, ...props }) => (
+	<StyledFlag iso={props.$iso} {...props} />
+);
 
 const PhoneInputField = ({
 	field: { onChange, value, onBlur, ...field },
@@ -49,6 +59,33 @@ const PhoneInputField = ({
 		url: `https://${authConfig.auth0Domain}/user/geoloc/country`,
 		method: "GET"
 	});
+
+	const overrides = {
+		CountrySelect: {
+			props: {
+				overrides: {
+					Root: {
+						style: {
+							cursor: "pointer"
+						}
+					},
+					ControlContainer: {
+						style: {
+							cursor: "pointer"
+						}
+					}
+				}
+			}
+		}
+	};
+	if (hasEmojiSupport()) {
+		overrides.FlagContainer = {
+			component: FallbackFlag
+		};
+		overrides.CountrySelect.props.overrides.Dropdown = {
+			component: CountrySelectDropdown
+		};
+	}
 
 	useEffect(() => {
 		const { country_code: countryCode } = lookupData || {};
@@ -102,24 +139,7 @@ const PhoneInputField = ({
 				{...field}
 				text={text}
 				placeholder={placeholder}
-				overrides={{
-					CountrySelect: {
-						props: {
-							overrides: {
-								Root: {
-									style: {
-										cursor: "pointer"
-									}
-								},
-								ControlContainer: {
-									style: {
-										cursor: "pointer"
-									}
-								}
-							}
-						}
-					}
-				}}
+				overrides={overrides}
 				endEnhancer={isLoadingLookup && (() => <Spinner />)}
 				disabled={isLoadingLookup}
 			/>

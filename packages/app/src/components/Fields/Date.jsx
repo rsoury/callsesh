@@ -6,6 +6,11 @@ import { Datepicker } from "baseui/datepicker";
 import snakeCase from "lodash/snakeCase";
 import { format } from "@callsesh/utils";
 
+const minDate = new Date();
+minDate.setFullYear(minDate.getFullYear() - 118);
+const maxDate = new Date();
+maxDate.setFullYear(maxDate.getFullYear() - 18);
+
 const DateField = ({ name, label, caption, placeholder, ...props }) => (
 	<Field name={name} id={snakeCase(name)}>
 		{({
@@ -28,6 +33,8 @@ const DateField = ({ name, label, caption, placeholder, ...props }) => (
 						setFieldValue(name, (Array.isArray(date) ? date : [date])[0]);
 					}}
 					value={[value]}
+					maxDate={maxDate}
+					minDate={minDate}
 					{...props}
 				/>
 			</FormControl>

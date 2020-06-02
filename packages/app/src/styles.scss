@@ -46,3 +46,8 @@ button span {
 		max-width: 100%;
 	}
 }
+
+// Drawer
+[data-baseweb="drawer"] {
+	z-index: 99999;
+}

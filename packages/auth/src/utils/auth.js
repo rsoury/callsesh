@@ -62,3 +62,8 @@ export const verify = (phoneNumber, verificationCode, additionalData = {}) => {
  * Simple method to check action and determine whether to signup
  */
 export const shouldSignup = () => config.internalOptions?.action === "signup";
+
+/**
+ * Get return url
+ */
+export const getReturnUrl = () => config.internalOptions?.returnUrl || "";

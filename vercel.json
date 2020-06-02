@@ -8,11 +8,15 @@
 	],
 	"rewrites": [
 		{
-			"source": "/auth/(.*)",
-			"destination": "http://callsesh-auth.s3-website.us-east-2.amazonaws.com/$1"
+			"source": "/staging/auth/(.*)",
+			"destination": "http://callsesh-auth.s3-website.us-east-2.amazonaws.com/staging/$1"
 		},
 		{
-			"source": "(.*)",
+			"source": "/auth/(.*)",
+			"destination": "http://callsesh-auth.s3-website.us-east-2.amazonaws.com/prod/$1"
+		},
+		{
+			"source": "/(.*)",
 			"destination": "/packages/app/$1"
 		}
 	]

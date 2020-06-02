@@ -34,7 +34,7 @@ const App = ({ location, history }) => {
 			}
 			actionConsumed = true;
 		}
-	}, [location.pathname, actionConsumed]);
+	}, [location.pathname, history]);
 
 	return (
 		<ToasterContainer

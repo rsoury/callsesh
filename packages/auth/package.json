@@ -4,13 +4,13 @@
 	"private": true,
 	"per-env": {
 		"production": {
-			"PUBLIC_URL": "http://callsesh-auth.s3-website.us-east-2.amazonaws.com",
+			"PUBLIC_URL": "http://callsesh-auth.s3-website.us-east-2.amazonaws.com/prod",
 			"AUTH_PUBLIC_URL": "https://callsesh.com/auth",
 			"REACT_APP_STAGE": "production"
 		},
 		"staging": {
-			"PUBLIC_URL": "http://callsesh-auth.s3-website.us-east-2.amazonaws.com",
-			"AUTH_PUBLIC_URL": "https://callsesh.now.sh/auth",
+			"PUBLIC_URL": "http://callsesh-auth.s3-website.us-east-2.amazonaws.com/staging",
+			"AUTH_PUBLIC_URL": "https://callsesh.now.sh/staging/auth",
 			"REACT_APP_STAGE": "staging"
 		},
 		"development": {
@@ -20,30 +20,30 @@
 	},
 	"scripts": {
 		"start": "per-env",
-		"start:development": "cross-env PORT=3001 rescripts start",
-		"start:staging": "cross-env PORT=3001 rescripts start",
-		"start:production": "cross-env PORT=3001 rescripts start",
+		"start:development": "cross-env SKIP_PREFLIGHT_CHECK=true PORT=3001 rescripts start",
+		"start:staging": "cross-env SKIP_PREFLIGHT_CHECK=true PORT=3001 rescripts start",
+		"start:production": "cross-env SKIP_PREFLIGHT_CHECK=true PORT=3001 rescripts start",
 		"build": "per-env",
-		"build:development": "rescripts build",
-		"build:staging": "rescripts build",
-		"build:production": "rescripts build",
-		"test": "rescripts test",
+		"build:development": "cross-env SKIP_PREFLIGHT_CHECK=true rescripts build",
+		"build:staging": "cross-env SKIP_PREFLIGHT_CHECK=true rescripts build",
+		"build:production": "cross-env SKIP_PREFLIGHT_CHECK=true rescripts build",
+		"test": "cross-env SKIP_PREFLIGHT_CHECK=true rescripts test",
 		"eject": "rescripts eject",
-		"clean": "rimraf ./build ./dist",
+		"clean": "rimraf ./build ./dist ./.auth0",
 		"analyse": "source-map-explorer build/main.*",
 		"deploy": "per-env",
-		"deploy:development": "yarn deploy:app",
-		"deploy:staging": "yarn deploy:app",
-		"deploy:production": "yarn deploy:app",
-		"deploy:app": "s3-deploy './build/**' --cwd './build/' --region us-east-2 --bucket callsesh-auth --deleteRemoved && gulp deploy",
-		"build-and-deploy": "yarn build && yarn deploy"
+		"deploy:development": "echo \"To deploy, use: 'NODE_ENV=staging yarn deploy' or 'NODE_ENV=production chamber exec callsesh -- yarn deploy'\"",
+		"deploy:staging": "aws s3 rm s3://callsesh-auth/staging && s3-deploy './build/**' --cwd './build/' --region us-east-2 --bucket callsesh-auth --filePrefix 'staging' && gulp deploy",
+		"deploy:production": "aws s3 rm s3://callsesh-auth/prod && s3-deploy './build/**' --cwd './build/' --region us-east-2 --bucket callsesh-auth --filePrefix 'prod' && gulp deploy",
+		"build:deploy": "yarn build && yarn deploy"
 	},
 	"dependencies": {
 		"@callsesh/utils": "^1.0.0",
 		"@sentry/browser": "^5.15.5",
 		"@sentry/integrations": "^5.15.5",
 		"auth0-js": "^9.13.2",
-		"baseui": "9.78.0",
+		"baseui": "9.80.2",
+		"detect-emoji-support": "^0.1.7",
 		"formik": "^2.1.4",
 		"formik-wizard": "^3.1.2",
 		"is-empty": "^1.2.0",

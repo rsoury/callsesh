@@ -62,7 +62,13 @@ export default async function endCallSession(event) {
 				})
 			]);
 
-			logger.info(`Users retrieved from Applications`);
+			logger.info(
+				{
+					operator: operatorUser.username,
+					caller: callerUser.username
+				},
+				`Users retrieved from Applications`
+			);
 
 			// Check if users are still in a call session together with appropriate roles
 			// ie. Call session could have already ended, and new sessions could be in place.

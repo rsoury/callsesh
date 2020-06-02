@@ -2,9 +2,8 @@ import { useStyletron } from "baseui";
 import { Label2 as Label } from "baseui/typography";
 import {
 	Link as LinkIcon,
-	Phone as PhoneIcon,
-	Users as InviteIcon,
-	Clipboard as ClipboardIcon
+	PhoneForwarded as CallLinkIcon,
+	UserPlus as InviteLinkIcon
 } from "react-feather";
 import CopyToClipboard from "react-copy-to-clipboard";
 import { toaster } from "baseui/toast";
@@ -39,13 +38,24 @@ const LinksCard = ({ ...props }) => {
 	const inviteLink = `${window.location.origin}/u/${user.username}/invite`;
 
 	const copyTextClassName = css({
-		opacity: "1",
-		transition: "opacity 0.25s",
 		cursor: "pointer",
 		fontWeight: "700 !important",
 		color: `${theme.colors.accent} !important`,
+		"::before": {
+			position: "absolute",
+			left: "0px",
+			right: "0px",
+			top: "0px",
+			bottom: "0px",
+			content: '""',
+			backgroundColor: "rgba(0, 0, 0, 0)",
+			pointerEvents: "none",
+			transition: "background-color 0.25s"
+		},
 		":active": {
-			opacity: `0.8 !important`
+			"::before": {
+				backgroundColor: "rgba(0, 0, 0, 0.1)"
+			}
 		}
 	});
 
@@ -60,7 +70,7 @@ const LinksCard = ({ ...props }) => {
 			<LabelControl
 				label={() => (
 					<div className={css({ display: "flex", alignItems: "center" })}>
-						<span className={css({ marginRight: "10px" })}>Operator Link</span>
+						<span className={css({ marginRight: "10px" })}>Call Link</span>
 						<span
 							className={css({
 								height: "2px",
@@ -88,19 +98,19 @@ const LinksCard = ({ ...props }) => {
 						? `Share this link with your audience or customers. Visitors will be able to call you if you're live.`
 						: `Share this link with your audience or customers. Once you become an Operator, visitors will be able to call you.`
 				}
-				startEnhancer={() => <PhoneIcon size={22} />}
-				endEnhancer={() => <ClipboardIcon size={22} />}
+				startEnhancer={() => <CallLinkIcon size={22} />}
+				endEnhancer={() => <Label>Copy</Label>}
 				style={labelControlStyle}
 			>
 				<CopyToClipboard
 					text={operatorLink}
-					onCopy={() => toaster.info(`Copied Operator Link!`)}
+					onCopy={() => toaster.info(`Copied Call Link!`)}
 				>
 					<Label className={copyTextClassName}>{operatorLink}</Label>
 				</CopyToClipboard>
 			</LabelControl>
 			<LabelControl
-				label="Invite Link"
+				label="Referral Invite Link"
 				caption={() => (
 					<span>
 						Invite others to become an Operator and earn a commission on their
@@ -110,13 +120,13 @@ const LinksCard = ({ ...props }) => {
 						</Link>
 					</span>
 				)}
-				startEnhancer={() => <InviteIcon size={22} />}
-				endEnhancer={() => <ClipboardIcon size={22} />}
+				startEnhancer={() => <InviteLinkIcon size={22} />}
+				endEnhancer={() => <Label>Copy</Label>}
 				style={labelControlStyle}
 			>
 				<CopyToClipboard
 					text={inviteLink}
-					onCopy={() => toaster.info(`Copied Invite Link!`)}
+					onCopy={() => toaster.info(`Copied Referral Invite Link!`)}
 				>
 					<Label className={copyTextClassName}>{inviteLink}</Label>
 				</CopyToClipboard>

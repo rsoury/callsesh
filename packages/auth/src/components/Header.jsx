@@ -3,6 +3,7 @@
  */
 
 import React from "react";
+import isEmpty from "is-empty";
 import { Button, KIND as BUTTON_KIND } from "baseui/button";
 import {
 	HeaderNavigation,
@@ -11,6 +12,9 @@ import {
 	StyledNavigationItem as NavigationItem
 } from "baseui/header-navigation";
 import ChevronLeft from "baseui/icon/chevron-left";
+import { getReturnUrl } from "@/utils/auth";
+
+const returnUrl = getReturnUrl();
 
 const Header = () => (
 	<header>
@@ -26,7 +30,21 @@ const Header = () => (
 					<Button
 						kind={BUTTON_KIND.tertiary}
 						startEnhancer={() => <ChevronLeft size={24} />}
-						onClick={() => window.history.back()}
+						{...(isEmpty(returnUrl)
+							? {
+									onClick: () => window.history.back()
+							  }
+							: {
+									$as: "a",
+									href: returnUrl,
+									overrides: {
+										BaseButton: {
+											style: {
+												textDecoration: "none"
+											}
+										}
+									}
+							  })}
 					>
 						Back to Callsesh
 					</Button>

@@ -17,8 +17,9 @@
 		"url": "https://gitlab.com/web-doodle/callsesh/issues"
 	},
 	"scripts": {
-		"dev": "",
-		"deploy": ""
+		"deploy": "per-env",
+		"deploy:development": "chamber exec callsesh-dev -- sls deploy -v",
+		"deploy:production": "chamber exec callsesh -- sls deploy -s prod -v"
 	},
 	"dependencies": {
 		"@financial-times/lambda-logger": "^2.0.4",
@@ -38,6 +39,7 @@
 		"dotenv-webpack": "^1.8.0",
 		"filenamify": "^4.1.0",
 		"find-config": "^1.0.0",
+		"per-env": "^1.0.2",
 		"serverless": "^1.71.3",
 		"serverless-offline": "^6.1.7",
 		"serverless-plugin-common-excludes": "^3.0.0",
