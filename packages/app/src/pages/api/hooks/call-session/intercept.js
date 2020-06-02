@@ -12,7 +12,7 @@ import * as comms from "@callsesh/utils/comms";
 import getHandler from "@/middleware";
 import * as authManager from "@callsesh/utils/auth-manager";
 import handleException from "@/utils/handle-exception";
-import stripe, { isPayoutsEnabled } from "@callsesh/utils/stripe";
+import stripe from "@callsesh/utils/stripe";
 import * as fees from "@callsesh/utils/fees";
 import { CALL_SESSION_USER_TYPE } from "@/constants";
 import { publicUrl } from "@/env-config";
@@ -118,17 +118,6 @@ handler.post(async (req, res) => {
 					error_on_requires_action: true,
 					capture_method: "manual"
 				};
-				// Check if operator has payouts setup, and if so add destination connect id.
-				// Requires to be set here, as destination cannot be added on update
-				const payoutsEnabled = await isPayoutsEnabled(
-					operatorUser.stripeConnectId
-				);
-				if (payoutsEnabled) {
-					preAuthParams.application_fee_amount = fees.preAuthAmount();
-					preAuthParams.transfer_data = {
-						destination: operatorUser.stripeConnectId
-					};
-				}
 				const preAuth = await stripe.paymentIntents.create(preAuthParams);
 
 				// Add pre auth charge id to application user data
@@ -143,7 +132,7 @@ handler.post(async (req, res) => {
 					}
 				});
 
-				req.log.info(`Pre-authorisation charge complete`);
+				req.log.info(`Pre-authorisation charge complete`, { id: preAuth.id });
 			} catch (e) {
 				// Remove users from call session if payment fails
 				if (!isEmpty(user) && !isEmpty(operatorUser)) {

@@ -25,6 +25,7 @@ if (!isProd) {
 } else {
 	sentryOptions.maxBreadcrumbs = 50;
 	sentryOptions.attachStacktrace = true;
+	sentryOptions.ignoreErrors = ["Non-Error exception captured"];
 }
 
 if (sentry.dsn) {

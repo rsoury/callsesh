@@ -101,7 +101,13 @@ export default async function endCallSession(event) {
 				authManager.endCallSession(callerUser.id)
 			]);
 
-			logger.info(`User call sessions reset`);
+			logger.info(
+				{
+					operator: operatorUser.callSession,
+					caller: callerUser.callSession
+				},
+				`User call sessions reset`
+			);
 
 			// Fetch call logs
 			const interactions = await service
