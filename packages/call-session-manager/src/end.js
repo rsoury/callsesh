@@ -324,7 +324,7 @@ export default async function endCallSession(event) {
 				}
 			} else {
 				operatorSummary.push(
-					`You now have $${(newPendingPayoutAmount / 100).toFixed(
+					`You now have a $${(newPendingPayoutAmount / 100).toFixed(
 						2
 					)} pending payout.`
 				);
