@@ -27,6 +27,7 @@
 		"@sentry/browser": "^5.15.5",
 		"@sentry/integrations": "^5.15.5",
 		"@sentry/node": "^5.15.5",
+		"@sindresorhus/slugify": "^1.0.0",
 		"@stripe/react-stripe-js": "^1.1.2",
 		"@stripe/stripe-js": "^1.5.0",
 		"@uploadcare/react-widget": "^1.2.6",

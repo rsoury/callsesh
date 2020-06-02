@@ -142,7 +142,7 @@ export const getUserByUsername = (username, options) => {
 			search_engine: "v3",
 			page: 0,
 			per_page: 10,
-			q: `user_metadata.username:"${username}"`
+			q: `app_metadata.usernamespace:"${username.toLowerCase()}"`
 		},
 		options
 	);
@@ -163,7 +163,7 @@ export const getUserByPhoneNumber = (phoneNumber, options) => {
 export const isUsernameAvailable = async (username) => {
 	const users = await client.getUsers({
 		search_engine: "v3",
-		q: `user_metadata.username:"${username}"`,
+		q: `app_metadata.usernamespace:"${username.toLowerCase()}"`,
 		per_page: 10,
 		page: 0
 	});

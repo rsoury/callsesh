@@ -27,3 +27,10 @@ export const THREE_D_SECURE_MESSAGE_TYPES = {
 	complete: "3DS-authentication-complete",
 	failed: "3DS-authentication-failed"
 };
+
+// Slugify options
+export const SLUGIFY_OPTIONS = {
+	separator: "_",
+	decamelize: false,
+	lowercase: false
+};

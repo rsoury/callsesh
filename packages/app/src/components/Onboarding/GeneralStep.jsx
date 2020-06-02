@@ -12,14 +12,16 @@ import { Edit2 as EditIcon } from "react-feather";
 import { useStyletron } from "baseui";
 import * as yup from "yup";
 import debounce from "lodash/debounce";
+import slugify from "@sindresorhus/slugify";
 
 import { publicUrl } from "@/env-config";
 import TextField from "@/components/Fields/Text";
 import SelectField from "@/components/Fields/Select";
 import DateField from "@/components/Fields/Date";
 import Emoji from "@/components/Emoji";
-import { api as apiRoutes } from "@/routes";
+import * as routes from "@/routes";
 import request from "@/utils/request";
+import { SLUGIFY_OPTIONS } from "@/constants";
 
 const confettiConfig = {
 	angle: "109",
@@ -49,13 +51,13 @@ const generateUsername = (firstName, lastName) => {
 		.toLowerCase()
 		.substring(0, 25);
 
-	return username;
+	return slugify(username, SLUGIFY_OPTIONS);
 };
 
 const checkUsernameAvailable = debounce(async (value) => {
 	try {
 		const { available } = await request
-			.get(apiRoutes.usernameAvailable, {
+			.get(routes.api.usernameAvailable, {
 				params: {
 					username: value
 				}
@@ -81,6 +83,11 @@ export const schemaProperties = {
 	lastName: yup.string().required(),
 	username: yup
 		.string()
+		.test(
+			"is-valid",
+			"Your ${path} can only contain letters, numbers and '_'",
+			(value) => value === slugify(value, SLUGIFY_OPTIONS)
+		)
 		.test(
 			"is-available",
 			// eslint-disable-next-line
@@ -170,9 +177,9 @@ const GeneralStep = ({ setFieldValue, values }) => {
 					<TextField
 						name="username"
 						label="Username"
-						caption={`Your link will look like ${publicUrl}/u/${
+						caption={`Your link will look like ${publicUrl}${routes.build.user(
 							values.username || "..."
-						}`}
+						)}`}
 						placeholder="christie_holderplace"
 						maxLength={25}
 						{...(selfManagedUsername

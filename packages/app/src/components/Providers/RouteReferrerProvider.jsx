@@ -16,10 +16,6 @@ const RouteReferrerContextProvider = ({ children }) => {
 	const beforeHistoryChangeHandler = (pathname) => {
 		// Set route referrer to whatevers in current pathname
 		setRouteReferrer(currentPathname);
-		// Set user route referrer to current pathname where pathname resembles user.
-		if (currentPathname.indexOf("/u/") === 0) {
-			setUserRouteReferrer(currentPathname);
-		}
 		// Update current pathname
 		setCurrentPathname(pathname);
 	};

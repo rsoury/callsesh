@@ -146,9 +146,9 @@ const getEditConfig = (user, type) => {
 					<Cell span={12}>
 						<TextField
 							{...props}
-							caption={`Your link will look like ${publicUrl}/u/${
+							caption={`Your link will look like ${publicUrl}${routes.build.user(
 								username || "..."
-							}`}
+							)}`}
 							name={EDIT_TYPES.username}
 						/>
 						<Label marginTop="10px">
