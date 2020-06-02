@@ -33,6 +33,7 @@ const Spinner = getSpinner({
 });
 
 const FallbackFlag = ({ children, ...props }) => (
+	// eslint-disable-next-line react/destructuring-assignment
 	<StyledFlag iso={props.$iso} {...props} />
 );
 

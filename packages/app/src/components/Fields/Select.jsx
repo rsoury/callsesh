@@ -16,7 +16,7 @@ const SelectField = ({
 }) => (
 	<Field name={name} id={snakeCase(name)}>
 		{({
-			field: { onChange, value, onBlur, ...field },
+			field: { onChange, value, ...field },
 			meta,
 			form: { setFieldValue }
 		}) => (
@@ -41,10 +41,6 @@ const SelectField = ({
 						setFieldValue(name, newValue[0]);
 					}}
 					value={[value]}
-					onBlur={(e) => {
-						console.log(e);
-						onBlur(e);
-					}}
 					{...props}
 					overrides={{
 						ControlContainer: {

@@ -20,7 +20,8 @@ export const page = {
 		threeDSecure: "/settings/3d-secure"
 	},
 	becomeAnOperator: "/become-an-operator",
-	referrals: "/referrals"
+	referrals: "/referrals",
+	faq: "/faq"
 };
 
 export const build = {

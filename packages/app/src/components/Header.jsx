@@ -26,7 +26,6 @@ import Link from "@/components/Link";
 import * as routes from "@/routes";
 import useUser from "@/hooks/use-user";
 import appendReturnUrl from "@/utils/append-return-url";
-import { publicUrl } from "@/env-config";
 
 import Logo from "./Logo";
 
