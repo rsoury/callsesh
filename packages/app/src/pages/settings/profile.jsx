@@ -9,7 +9,7 @@ import { Grid, Cell } from "baseui/layout-grid";
 import {
 	Paragraph2 as Paragraph,
 	H4 as SmallHeading,
-	Label2 as Label
+	Label3 as Label
 } from "baseui/typography";
 import isEmpty from "is-empty";
 import {
@@ -146,9 +146,9 @@ const getEditConfig = (user, type) => {
 					<Cell span={12}>
 						<TextField
 							{...props}
-							caption={`Your link will look like ${publicUrl}/u/${
+							caption={`Your link will look like ${publicUrl}${routes.build.user(
 								username || "..."
-							}`}
+							)}`}
 							name={EDIT_TYPES.username}
 						/>
 						<Label marginTop="10px">
@@ -172,6 +172,7 @@ const getEditConfig = (user, type) => {
 					<Cell span={12}>
 						<SelectField
 							{...props}
+							inModal
 							options={genderOptions}
 							name={EDIT_TYPES.gender}
 						/>
@@ -199,13 +200,14 @@ const getEditConfig = (user, type) => {
 	};
 	if (isUserOperator(user)) {
 		// Determine purpose initial value to be compatible with Select
+		// Purpose stored as string. If option doesn't exist, purpose is "Other" with custom value
 		let purposeInitialValue = {
 			option: purposeOptions.find(({ label }) => label === user.purpose),
 			value: ""
 		};
 		if (isEmpty(purposeInitialValue.option)) {
 			purposeInitialValue = {
-				option: purposeOptions.find(({ label }) => label === "Other"),
+				option: purposeOptions.find(({ id }) => id === "other"),
 				value: user.purpose
 			};
 		}

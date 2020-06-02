@@ -10,7 +10,7 @@
 		},
 		"staging": {
 			"PUBLIC_URL": "http://callsesh-auth.s3-website.us-east-2.amazonaws.com/staging",
-			"AUTH_PUBLIC_URL": "https://callsesh.now.sh/staging/auth",
+			"AUTH_PUBLIC_URL": "https://callsesh-git-dev.callsesh-team.now.sh/staging/auth",
 			"REACT_APP_STAGE": "staging"
 		},
 		"development": {
@@ -76,7 +76,6 @@
 		"chalk": "^4.0.0",
 		"cross-env": "^7.0.2",
 		"dotenv": "^8.2.0",
-		"eslint": "6.6.0",
 		"fancy-log": "^1.3.3",
 		"filenamify": "^4.1.0",
 		"find-config": "^1.0.0",

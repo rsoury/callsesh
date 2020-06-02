@@ -33,9 +33,11 @@ const LinksCard = ({ ...props }) => {
 
 	const isOperator = isUserOperator(user);
 
-	const operatorPathname = `/u/${user.username}`;
+	const operatorPathname = routes.build.user(user.username);
 	const operatorLink = `${window.location.origin}${operatorPathname}`;
-	const inviteLink = `${window.location.origin}/u/${user.username}/invite`;
+	const inviteLink = `${window.location.origin}${routes.build.invite(
+		user.username
+	)}`;
 
 	const copyTextClassName = css({
 		cursor: "pointer",

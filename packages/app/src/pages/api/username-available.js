@@ -5,7 +5,7 @@
 import isEmpty from "is-empty";
 import getHandler from "@/middleware";
 import { requireAuthentication } from "@/middleware/auth";
-import * as authManager from "@callsesh/utils/auth-manager";
+import isUsernameAvailable from "@/utils/is-username-available";
 
 const handler = getHandler();
 
@@ -20,7 +20,7 @@ handler.use(requireAuthentication).get(async (req, res) => {
 		});
 	}
 
-	const usernameAvailable = await authManager.isUsernameAvailable(username);
+	const usernameAvailable = await isUsernameAvailable(username);
 
 	if (usernameAvailable) {
 		return res.json({

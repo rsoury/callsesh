@@ -51,3 +51,15 @@ button span {
 [data-baseweb="drawer"] {
 	z-index: 99999;
 }
+
+// Accordion
+.accordion-panel-content {
+	> p {
+		&:first-child{
+			margin-top: 0px;
+		}
+		&:last-child{
+			margin-bottom: 0px;
+		}
+	}
+}

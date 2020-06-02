@@ -4,11 +4,12 @@
 
 export const page = {
 	index: "/",
+	user: `/:id`,
+	invite: `/:id/invite`,
 	login: "/login",
 	signup: "/signup",
 	logout: "/logout",
 	register: "/get-started",
-	user: `/user/:id`,
 	terms: {
 		tos: "/terms",
 		privacyPolicy: "/terms/privacy-policy",
@@ -20,12 +21,16 @@ export const page = {
 		threeDSecure: "/settings/3d-secure"
 	},
 	becomeAnOperator: "/become-an-operator",
-	referrals: "/referrals"
+	referrals: "/referrals",
+	faq: "/faq"
 };
 
 export const build = {
 	user(username) {
-		return `/u/${username}`;
+		return `/${username}`;
+	},
+	invite(username) {
+		return `/${username}/invite`;
 	},
 	callUser(username) {
 		return `/api/u/${username}/call`;

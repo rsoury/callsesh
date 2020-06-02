@@ -15,6 +15,10 @@ const Footer = () => {
 
 	const nav = [
 		{
+			text: "FAQs",
+			href: pageRoutes.faq
+		},
+		{
 			text: "Referrals",
 			href: pageRoutes.referrals
 		},

@@ -15,6 +15,7 @@ import {
 } from "@/middleware/auth";
 import * as authManager from "@callsesh/utils/auth-manager";
 import stripe from "@callsesh/utils/stripe";
+import isUsernameAvailable from "@/utils/is-username-available";
 
 const handler = getHandler();
 
@@ -38,7 +39,11 @@ const postSchema = yup.object().shape(schemaProperties);
 const patchMap = {
 	firstName: "given_name",
 	lastName: "family_name",
-	username: "metadata.user.username",
+	username: (patch, value) => {
+		set(patch, "metadata.user.username", value);
+		set(patch, "metadata.app.usernamespace", value.toLowerCase());
+		return patch;
+	},
 	gender: "metadata.user.gender",
 	dob: "metadata.user.dob",
 	country: "metadata.user.country",
@@ -94,7 +99,7 @@ handler
 		} = req.body;
 
 		// Check if username already exists.
-		const usernameAvailable = await authManager.isUsernameAvailable(username);
+		const usernameAvailable = await isUsernameAvailable(username);
 		if (!usernameAvailable) {
 			throw new Error("Username is not available");
 		}
@@ -115,6 +120,9 @@ handler
 					dob,
 					country,
 					currency
+				},
+				app: {
+					usernamespace: username.toLowerCase()
 				}
 			}
 		};
@@ -135,9 +143,7 @@ handler
 			destroyCookie({ req, res }, "referrer");
 			// Make sure referrer has a value, and there is no current referrer value
 			if (!isEmpty(referrer) && isEmpty(user.referrer)) {
-				updateParams.metadata.app = {
-					referrer
-				};
+				updateParams.metadata.app.referrer = referrer;
 			}
 		}
 

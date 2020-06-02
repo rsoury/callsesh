@@ -3,7 +3,7 @@
  * Includes operator settings if user is an operator.
  */
 
-import { useState, useCallback } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useStyletron } from "baseui";
 import isEmpty from "is-empty";
 import { Grid, Cell } from "baseui/layout-grid";
@@ -29,6 +29,7 @@ import { ERROR_TYPES } from "@/constants";
 import handleException, { alerts } from "@/utils/handle-exception";
 import ssrUser from "@/utils/ssr-user";
 import * as authManager from "@callsesh/utils/auth-manager";
+import { useUserRouteReferrer } from "@/hooks/use-route-referrer";
 
 // We're referring to the currently viewed user, as the viewUser
 const ViewUser = ({ user, viewUser: viewUserBase, error }) => {
@@ -36,10 +37,18 @@ const ViewUser = ({ user, viewUser: viewUserBase, error }) => {
 	const [isStartingCall, setStartingCall] = useState(false);
 	const [viewUser, setViewUser] = useState(viewUserBase);
 	const setUser = useSetUser();
+	const [, setUserRouteReferrer] = useUserRouteReferrer();
 
 	const isOperator = isUserOperator(viewUser);
 
 	const md = new MobileDetect(window.navigator.userAgent);
+
+	// Set current pathname to userRouteReferrer state if error is empty.
+	useEffect(() => {
+		if (isEmpty(error)) {
+			setUserRouteReferrer(window.location.pathname);
+		}
+	}, [error]);
 
 	const startCallSession = useCallback(
 		debounce(() => {
