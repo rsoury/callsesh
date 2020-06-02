@@ -229,6 +229,8 @@ export default async function endCallSession(event) {
 			if (payoutsEnabled) {
 				// Add payout to charge with destination
 				// Include referral fee to ensure we capture the amount that's to be paid to the referrer
+				// We should be including the existing payout amount into this transfer, however, Stripe only allows payouts equal/upto to the amount of the transaction
+				// In the future, there should be a check to see if transfers are available for this user. -- Stripe Transfers are restricted in that the connected account (Operator) and Caller must be in the same region
 				chargeParams.application_fee_amount =
 					applicationFee + fees.preAuthAmount() + referralFee;
 				chargeParams.transfer_data = {
