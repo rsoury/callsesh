@@ -1,3 +1,5 @@
+/* eslint-disable no-template-curly-in-string */
+
 import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import { H1 as Heading, H5 as Subheader } from "baseui/typography";
@@ -88,12 +90,7 @@ export const schemaProperties = {
 			"Your ${path} can only contain letters, numbers and '_'",
 			(value) => value === slugify(value, SLUGIFY_OPTIONS)
 		)
-		.test(
-			"is-available",
-			// eslint-disable-next-line
-			"${path} is not available",
-			checkUsernameAvailable
-		)
+		.test("is-available", "${path} is not available", checkUsernameAvailable)
 		.required(),
 	gender: yup
 		.object()
