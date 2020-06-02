@@ -20,11 +20,13 @@ import isEmpty from "is-empty";
 import { Unstable_AppNavBar as AppNavBar } from "baseui/app-nav-bar";
 import Skeleton from "react-loading-skeleton";
 import { useRouter } from "next/router";
+import Url from "url-parse";
 
 import Link from "@/components/Link";
 import * as routes from "@/routes";
 import useUser from "@/hooks/use-user";
 import appendReturnUrl from "@/utils/append-return-url";
+import { publicUrl } from "@/env-config";
 
 import Logo from "./Logo";
 
@@ -222,13 +224,22 @@ const Header = () => {
 					</Link>
 				}
 				onNavItemSelect={({ item: { item: { href, standard } = {} } }) => {
-					if (!isEmpty(href) && !standard) {
+					if (!isEmpty(href)) {
 						if (typeof href === "object") {
 							return router.push(href);
 						}
 						if (typeof href === "string") {
-							if (href.charAt(0) === "/") {
-								return router.push(href);
+							if (!standard) {
+								if (href.charAt(0) === "/") {
+									return router.push(href);
+								}
+								const url = new Url(href, true);
+								if (url.origin === window.location.origin) {
+									return router.push({
+										pathname: url.pathname,
+										query: url.query
+									});
+								}
 							}
 							window.location.href = href;
 						}
