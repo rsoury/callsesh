@@ -21,17 +21,14 @@ handler.use(requireAuthentication).get(async (req, res) => {
 		code
 	});
 
-	const {
-		stripe_user_id: stripeConnectId,
-		stripe_publishable_key: stripeConnectPublicKey
-	} = response;
+	const { stripe_user_id: stripeConnectId } = response;
 
 	// Store connect id in user account
 	await authManager.updateUser(user.id, {
 		metadata: {
 			app: {
 				stripeConnectId,
-				stripeConnectPublicKey
+				stripeConnectData: response
 			}
 		}
 	});
