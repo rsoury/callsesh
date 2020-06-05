@@ -44,6 +44,8 @@ button span {
 .device .device-frame {
 	& img {
 		max-width: 100%;
+		backface-visibility: hidden;
+    transform: translateZ(0);
 	}
 }
 
@@ -61,5 +63,27 @@ button span {
 		&:last-child{
 			margin-bottom: 0px;
 		}
+	}
+}
+
+// Device Slider
+.device .slick-slider {
+	position: relative;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
+	.slick-list {
+		width: 100%;
+		flex-grow: 1;
+		transform: translateX(-14px);
+	}
+
+	.slick-track > div {
+		display: inline-block !important;
+	}
+
+	.slick-slide div {
+		outline: 0 !important;
 	}
 }
