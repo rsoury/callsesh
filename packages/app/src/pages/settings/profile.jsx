@@ -25,6 +25,7 @@ import { Avatar } from "baseui/avatar";
 import { Button, SIZE as BUTTON_SIZE } from "baseui/button";
 import nl2br from "nl2br";
 import ono from "@jsdevtools/ono";
+import { toaster } from "baseui/toast";
 
 import Layout from "@/components/Layout";
 import LabelControl from "@/components/LabelControl";
@@ -371,6 +372,8 @@ const Profile = () => {
 				.then(({ user: newUser }) => {
 					setEditType("");
 					setUser(newUser);
+
+					toaster.positive(`Profile settings successfully saved.`);
 				})
 				.catch((err) => {
 					handleException(ono(err, values));

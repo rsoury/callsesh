@@ -13,13 +13,60 @@ import {
 	DollarSign as PayoutIcon,
 	User as UserIcon
 } from "react-feather";
+import ArrowRight from "baseui/icon/arrow-right";
+import ArrowLeft from "baseui/icon/arrow-left";
+import Slider from "react-slick";
+import {
+	Button,
+	SIZE as BUTTON_SIZE,
+	SHAPE as BUTTON_SHAPE,
+	KIND as BUTTON_KIND
+} from "baseui/button";
 
 import Highlight from "@/components/Highlight";
 import SignupActionButton from "@/components/SignupActionButton";
 import PhoneMockup from "@/components/PhoneMockup";
 
+const demoSlides = [
+	{
+		name: "Brendan",
+		src: "/static/assets/demo/brendan.jpg"
+	},
+	{
+		name: "Jenny",
+		src: "/static/assets/demo/jenny.jpg"
+	},
+	{
+		name: "Christie",
+		src: "/static/assets/demo/christie.jpg"
+	},
+	{
+		name: "Willis",
+		src: "/static/assets/demo/willis.jpg"
+	},
+	{
+		name: "Samantha",
+		src: "/static/assets/demo/samantha.jpg"
+	}
+];
+
+const sliderSettings = {
+	infinite: true,
+	speed: 250,
+	slidesToShow: 1,
+	slidesToScroll: 1,
+	autoplay: true,
+	autoplaySpeed: 5000,
+	arrow: false
+};
+
 const PublicHomeScreen = () => {
 	const [css, theme] = useStyletron();
+	const slider = React.createRef();
+
+	React.useEffect(() => {
+		console.log(slider);
+	}, []);
 
 	const listItemProps = {
 		artworkSize: ARTWORK_SIZES.MEDIUM,
@@ -101,7 +148,8 @@ const PublicHomeScreen = () => {
 						className={css({
 							display: "flex",
 							justifyContent: "flex-end",
-							transform: "scale(0.9) rotate(3deg)",
+							position: "relative",
+							overflow: "hidden",
 							[theme.mediaQuery.maxMedium]: {
 								marginRight: "-40px"
 							},
@@ -111,12 +159,56 @@ const PublicHomeScreen = () => {
 							}
 						})}
 					>
-						<PhoneMockup>
-							<img
-								src="/static/assets/phone-demo-3.jpg"
-								alt="Callsesh phone demonstration"
-							/>
-						</PhoneMockup>
+						<div
+							className={css({
+								display: "flex",
+								alignItems: "center",
+								marginRight: "10px"
+							})}
+						>
+							<Button
+								size={BUTTON_SIZE.mini}
+								shape={BUTTON_SHAPE.round}
+								kind={BUTTON_KIND.secondary}
+								onClick={() => slider.current.slickPrev()}
+							>
+								<ArrowLeft size={22} />
+							</Button>
+						</div>
+						<div
+							className={css({
+								transform: "rotate(3deg) scale(0.9)"
+							})}
+						>
+							<PhoneMockup>
+								<Slider {...sliderSettings} ref={slider}>
+									{demoSlides.map((slide) => (
+										<div key={slide.name}>
+											<img
+												src={slide.src}
+												alt={`Callsesh phone demonstration for ${slide.name}`}
+											/>
+										</div>
+									))}
+								</Slider>
+							</PhoneMockup>
+						</div>
+						<div
+							className={css({
+								display: "flex",
+								alignItems: "center",
+								marginLeft: "10px"
+							})}
+						>
+							<Button
+								size={BUTTON_SIZE.mini}
+								shape={BUTTON_SHAPE.round}
+								kind={BUTTON_KIND.secondary}
+								onClick={() => slider.current.slickNext()}
+							>
+								<ArrowRight size={22} />
+							</Button>
+						</div>
 					</div>
 				</Cell>
 				<Cell span={12}>
