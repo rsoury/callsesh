@@ -64,10 +64,6 @@ const PublicHomeScreen = () => {
 	const [css, theme] = useStyletron();
 	const slider = React.createRef();
 
-	React.useEffect(() => {
-		console.log(slider);
-	}, []);
-
 	const listItemProps = {
 		artworkSize: ARTWORK_SIZES.MEDIUM,
 		overrides: {

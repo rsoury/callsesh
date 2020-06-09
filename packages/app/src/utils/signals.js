@@ -1,4 +1,7 @@
-import { isProd } from "@/env-config";
+import isEmpty from "is-empty";
+import ReactGA from "react-ga";
+import Router from "next/router";
+import { isProd, gaTrackingId } from "@/env-config";
 import isUserOperator from "@/utils/is-operator";
 import { Sentry } from "@/utils/handle-exception";
 
@@ -23,6 +26,18 @@ const getLogRocket = () => import("logrocket").then((m) => m.default || m);
  */
 export const setup = mw(async () => {
 	if (typeof window !== "undefined") {
+		// Setup Ga
+		if (!isEmpty(gaTrackingId)) {
+			ReactGA.initialize(gaTrackingId);
+			ReactGA.pageview(window.location.pathname + window.location.search);
+			Router.events.on("routeChangeComplete", (url) => {
+				setTimeout(() => {
+					ReactGA.pageview(url);
+				}, 0);
+			});
+		}
+
+		// Setup Log Rocket
 		const LogRocket = await getLogRocket();
 		const setupLogRocketReact = await import("logrocket-react").then(
 			(m) => m.default || m
@@ -44,6 +59,10 @@ export const setup = mw(async () => {
  * @param   {Object}  user  Callsesh user object
  */
 export const identifyUser = mw(async (user) => {
+	if (isEmpty(user)) {
+		return null;
+	}
+
 	// if (mixpanel) {
 	// }
 
