@@ -75,4 +75,6 @@ export const identifyUser = mw(async (user) => {
 			operator: isUserOperator(user)
 		});
 	}
+
+	return user;
 });
