@@ -173,7 +173,7 @@ const PublicHomeScreen = () => {
 						</div>
 						<div
 							className={css({
-								transform: "rotate(3deg) scale(0.9)"
+								// transform: "rotate(3deg) scale(0.9)"
 							})}
 						>
 							<PhoneMockup>

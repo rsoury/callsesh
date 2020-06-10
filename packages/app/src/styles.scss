@@ -72,11 +72,13 @@ button span {
 	display: flex;
 	align-items: center;
 	justify-content: center;
+	border-radius: 30px !important;
+	mask-image: -webkit-radial-gradient(circle, white 100%, black 100%);
+	-webkit-mask-image: -webkit-radial-gradient(circle, white 100%, black 100%);
 
 	.slick-list {
 		width: 100%;
 		flex-grow: 1;
-		transform: translateX(-14px);
 	}
 
 	.slick-track > div {
@@ -85,5 +87,9 @@ button span {
 
 	.slick-slide div {
 		outline: 0 !important;
+	}
+
+	.slick-arrow {
+		display: none !important;
 	}
 }
