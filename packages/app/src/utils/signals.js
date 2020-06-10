@@ -15,12 +15,6 @@ const mw = (fn) => (...params) => {
 
 const getLogRocket = () => import("logrocket").then((m) => m.default || m);
 
-// let mixpanel;
-// if (isProd) {
-// 	// TODO: Next.config should resolve mixpanel/node for backend --- or typeof window to determine import.
-// 	mixpanel = import("mixpanel-browser").then((m) => m.default || m);
-// }
-
 /**
  * Setup tracking
  */
@@ -62,9 +56,6 @@ export const identifyUser = mw(async (user) => {
 	if (isEmpty(user)) {
 		return null;
 	}
-
-	// if (mixpanel) {
-	// }
 
 	if (typeof window !== "undefined") {
 		// Identify for GA
