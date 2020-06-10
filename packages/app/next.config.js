@@ -26,7 +26,8 @@ module.exports = (phase) => {
 		STRIPE_PUBLIC_KEY: process.env.STRIPE_PUBLIC_KEY || "",
 		STRIPE_CONNECT_ID: process.env.STRIPE_CONNECT_ID || "",
 		SENTRY_DSN: process.env.SENTRY_DSN || "",
-		UPLOADCARE_PUBLIC_KEY: process.env.UPLOADCARE_PUBLIC_KEY || ""
+		UPLOADCARE_PUBLIC_KEY: process.env.UPLOADCARE_PUBLIC_KEY || "",
+		GA_TRACKING_ID: process.env.GA_TRACKING_ID || ""
 	};
 	const serverEnv = {
 		SESSION_SECRET: process.env.SESSION_SECRET || "",
