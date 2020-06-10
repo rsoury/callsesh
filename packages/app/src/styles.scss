@@ -44,8 +44,10 @@ button span {
 .device .device-frame {
 	& img {
 		max-width: 100%;
+		-webkit-font-smoothing: antialised;
 		backface-visibility: hidden;
-    transform: translateZ(0);
+		transform: translateZ(0);
+		-webkit-font-smoothing: subpixel-antialiased;
 	}
 }
 

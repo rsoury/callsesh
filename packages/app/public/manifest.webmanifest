@@ -4,19 +4,21 @@
 	"description": "Callsesh allows you to make money by offering call sessions. Share your expertise, advice or care to your customers or audience.",
 	"icons": [
 		{
-			"src": "/static/icon/icon-192x192.png",
-			"type": "image/png",
-			"sizes": "192x192"
+			"src": "/static/icon/manifest-icon-192.jpg",
+			"sizes": "192x192",
+			"type": "image/jpg",
+			"purpose": "maskable any"
 		},
 		{
-			"src": "/static/icon/icon-512x512.png",
-			"type": "image/png",
-			"sizes": "512x512"
+			"src": "/static/icon/manifest-icon-512.jpg",
+			"sizes": "512x512",
+			"type": "image/jpg",
+			"purpose": "maskable any"
 		}
 	],
 	"start_url": "/?source=pwa",
 	"background_color": "#111111",
-	"display": "standalone",
+	"display": "minimal-ui",
 	"orientation": "portrait",
 	"scope": "/",
 	"theme_color": "#ffffff"
