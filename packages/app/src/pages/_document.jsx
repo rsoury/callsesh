@@ -33,6 +33,7 @@ class Document extends NextDocument {
 						name="viewport"
 						content="width=device-width, initial-scale=1.0"
 					/>
+					<link rel="manifest" href="/manifest.webmanifest" />
 					<link rel="shortcut icon" href="/favicon.ico" />
 					<link
 						rel="apple-touch-icon-precomposed"
