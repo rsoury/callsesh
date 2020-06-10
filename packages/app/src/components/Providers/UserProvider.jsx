@@ -8,6 +8,7 @@ import get from "lodash/get";
 import { ChildrenProps } from "@/utils/common-prop-types";
 import * as routes from "@/routes";
 import request from "@/utils/request";
+import { identifyUser } from "@/utils/signals";
 
 export const UserContext = createContext();
 
@@ -29,6 +30,7 @@ const UserContextProvider = ({ children }) => {
 			return null;
 		}
 		setUserState(paramUser);
+		identifyUser(paramUser);
 		return paramUser;
 	};
 	const removeUser = () => setUser({});

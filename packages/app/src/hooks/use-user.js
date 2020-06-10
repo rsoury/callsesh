@@ -15,6 +15,7 @@ import { UserContext } from "@/components/Providers/UserProvider";
 import handleException, {
 	setUser as setErrorTrackingUser
 } from "@/utils/handle-exception";
+import { identifyUser } from "@/utils/signals";
 
 const handleExceptionDebounced = debounce((...params) => {
 	handleException(...params);
@@ -34,6 +35,13 @@ const ensureUserRegistered = (user) => {
 		}
 	}
 	return true;
+};
+
+// Just a helper to wrap functions to call with user object.
+const resolveUser = (user) => {
+	ensureUserRegistered(user);
+	setErrorTrackingUser(user);
+	identifyUser(user);
 };
 
 /**
@@ -83,8 +91,7 @@ function useUser({ required } = {}) {
 		if (!loading && user) {
 			if (!isEmpty(user)) {
 				// If user object has data...  then -- SSR can pass an empty user object to indicate no user.
-				ensureUserRegistered(user);
-				setErrorTrackingUser(user);
+				resolveUser(user);
 			}
 			return () => {};
 		}
@@ -99,8 +106,7 @@ function useUser({ required } = {}) {
 					Router.replace(routes.page.login);
 					return;
 				}
-				ensureUserRegistered(newUser);
-				setErrorTrackingUser(newUser);
+				resolveUser(newUser);
 			}
 		});
 

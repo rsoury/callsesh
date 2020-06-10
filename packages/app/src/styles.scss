@@ -44,6 +44,10 @@ button span {
 .device .device-frame {
 	& img {
 		max-width: 100%;
+		-webkit-font-smoothing: antialised;
+		backface-visibility: hidden;
+		transform: translateZ(0);
+		-webkit-font-smoothing: subpixel-antialiased;
 	}
 }
 
@@ -61,5 +65,33 @@ button span {
 		&:last-child{
 			margin-bottom: 0px;
 		}
+	}
+}
+
+// Device Slider
+.device .slick-slider {
+	position: relative;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	border-radius: 30px !important;
+	mask-image: -webkit-radial-gradient(circle, white 100%, black 100%);
+	-webkit-mask-image: -webkit-radial-gradient(circle, white 100%, black 100%);
+
+	.slick-list {
+		width: 100%;
+		flex-grow: 1;
+	}
+
+	.slick-track > div {
+		display: inline-block !important;
+	}
+
+	.slick-slide div {
+		outline: 0 !important;
+	}
+
+	.slick-arrow {
+		display: none !important;
 	}
 }
