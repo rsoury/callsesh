@@ -12,6 +12,7 @@ import { engine, debug } from "@config/styletron";
 import seoConfig from "@config/seo";
 import UserProvider from "@/components/Providers/UserProvider";
 import RouteReferrerProvider from "@/components/Providers/RouteReferrerProvider";
+import { setup as setupSignals } from "@/utils/signals";
 
 import "setimmediate";
 import "modern-normalize";
@@ -49,6 +50,7 @@ class App extends NextApp {
 	componentDidMount() {
 		if (typeof window !== "undefined") {
 			initFastclick();
+			setupSignals();
 		}
 	}
 

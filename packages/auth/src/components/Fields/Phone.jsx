@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import { Field } from "formik";
+import { styled } from "baseui";
 import { FormControl } from "baseui/form-control";
 import {
 	PhoneInput,
@@ -31,10 +32,23 @@ const Spinner = getSpinner({
 	borderRightColor: "rgb(220, 220, 220)"
 });
 
-const FallbackFlag = ({ children, ...props }) => (
-	// eslint-disable-next-line react/destructuring-assignment
-	<StyledFlag iso={props.$iso} {...props} />
-);
+const FlagContainer = styled("div", {
+	display: "flex",
+	alignItems: "center",
+	justifyContent: "center"
+});
+
+const FallbackFlag = ({ children, ...props }) => {
+	const { $iso: iso } = props;
+	return (
+		<FlagContainer>
+			<StyledFlag iso={iso} {...props} />
+		</FlagContainer>
+	);
+};
+
+// A flag to prevent reset country to detected country on country change... as useEffect would do.
+let detected = false;
 
 const PhoneInputField = ({
 	field: { onChange, value, onBlur, ...field },
@@ -86,16 +100,22 @@ const PhoneInputField = ({
 	};
 
 	useEffect(() => {
-		const { country_code: countryCode } = lookupData || {};
-		if (countryCode) {
-			const exampleNumber = getExampleNumber(countryCode, examplePhoneNumbers);
-			const newPlaceholder = exampleNumber
-				.formatInternational()
-				.replace(country.dialCode, "")
-				.trim();
-			setPlaceholder(newPlaceholder);
+		if (!detected) {
+			const { country_code: countryCode } = lookupData || {};
+			if (countryCode) {
+				const exampleNumber = getExampleNumber(
+					countryCode,
+					examplePhoneNumbers
+				);
+				const newPlaceholder = exampleNumber
+					.formatInternational()
+					.replace(country.dialCode, "")
+					.trim();
+				setPlaceholder(newPlaceholder);
 
-			setCountry(COUNTRIES[countryCode.toUpperCase()]);
+				setCountry(COUNTRIES[countryCode.toUpperCase()]);
+				detected = true;
+			}
 		}
 	}, [lookupData, country]);
 

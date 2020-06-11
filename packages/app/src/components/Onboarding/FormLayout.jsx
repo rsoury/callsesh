@@ -8,7 +8,6 @@ import Check from "baseui/icon/check";
 import { ProgressBar } from "baseui/progress-bar";
 import startCase from "lodash/startCase";
 
-import { isProd } from "@/env-config";
 import { ChildrenProps } from "@/utils/common-prop-types";
 
 export const FormContainer = ({ children, style }) => {
@@ -69,11 +68,14 @@ const FormLayout = ({
 
 	// Load a onbeforeleave listener to confirm that users want to leave the form.
 	useEffect(() => {
-		if (isProd) {
-			if (typeof window !== "undefined") {
-				const message = "Are you sure you would like to leave?";
-				window.onbeforeunload = () => message;
-				window.addEventListener("beforeunload", () => message, false);
+		if (typeof window !== "undefined") {
+			const returnMessage = () => "Are you sure you would like to leave?";
+			if (isSubmitting) {
+				window.onbeforeunload = null;
+				window.removeEventListener("beforeunload", returnMessage, false);
+			} else {
+				window.onbeforeunload = returnMessage;
+				window.addEventListener("beforeunload", returnMessage, false);
 			}
 		}
 	}, []);
