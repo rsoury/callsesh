@@ -104,15 +104,9 @@ const GetStarted = () => {
 
 export function getServerSideProps({ req, res }) {
 	return ssrUser({ req, res }, (user) => {
-		if (isEmpty(user)) {
+		if (isEmpty(user) || (user || {}).isRegistered) {
 			res.writeHead(302, {
 				Location: routes.page.index
-			});
-			res.end();
-		} else if (user.isRegistered) {
-			// If user is registered, redirect to settings/profile
-			res.writeHead(302, {
-				Location: routes.page.settings.profile
 			});
 			res.end();
 		}
