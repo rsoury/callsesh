@@ -60,17 +60,23 @@ export const identifyUser = mw(async (user) => {
 	if (typeof window !== "undefined") {
 		// Identify for GA
 		if (!isEmpty(gaTrackingId)) {
-			ReactGA.set({ userId: user.username });
+			ReactGA.set({ userId: user.id });
 		}
 
 		// Identify Log Rocket
 		const LogRocket = await getLogRocket();
-		LogRocket.identify(user.username, {
-			name: user.nickname,
-			country: user.country,
-			currency: user.currency,
-			operator: isUserOperator(user)
-		});
+		LogRocket.identify(
+			user.id,
+			isEmpty(user.username)
+				? {}
+				: {
+						name: user.nickname,
+						username: user.username,
+						country: user.country,
+						currency: user.currency,
+						operator: isUserOperator(user)
+				  }
+		);
 	}
 
 	return user;
