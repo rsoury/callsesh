@@ -6,6 +6,7 @@
 
 import isEmpty from "is-empty";
 import isNumber from "is-number";
+import Dinero from "dinero.js";
 import {
 	FEE_MULTIPLIER,
 	SERVICE_FEE,

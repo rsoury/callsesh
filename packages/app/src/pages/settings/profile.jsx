@@ -26,6 +26,7 @@ import { Button, SIZE as BUTTON_SIZE } from "baseui/button";
 import nl2br from "nl2br";
 import ono from "@jsdevtools/ono";
 import { toaster } from "baseui/toast";
+import Dinero from "dinero.js";
 
 import Layout from "@/components/Layout";
 import LabelControl from "@/components/LabelControl";
