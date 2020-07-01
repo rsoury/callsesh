@@ -17,10 +17,9 @@ import SelectField from "@/components/Fields/Select";
 import TextField from "@/components/Fields/Text";
 import CheckboxField from "@/components/Fields/Checkbox";
 import FileUploaderField from "@/components/Fields/FileUploader";
+import MoneyField from "@/components/Fields/Money";
 import Emoji from "@/components/Emoji";
 import useUser from "@/hooks/use-user";
-
-import FeeCalculator from "./FeeCalculator";
 
 const listItemProps = {
 	artworkSize: ARTWORK_SIZES.MEDIUM,
@@ -183,16 +182,15 @@ const OperatorStep = ({ values }) => {
 									borderBottomColor: theme.colors.borderOpaque
 								})}
 							>
-								<TextField
+								<MoneyField
 									name="hourlyRate"
 									label="What is your hourly rate?"
 									startEnhancer={() => <HourlyRateIcon />}
 									endEnhancer={() => <span>/hour</span>}
 									caption={`Callers will be charged per second based on this rate. Currency is in ${user.currency}.`}
 									placeholder="30"
-									numeric
+									calculator
 								/>
-								<FeeCalculator hourlyRate={values.hourlyRate} />
 							</div>
 						</Cell>
 						<Cell span={12}>

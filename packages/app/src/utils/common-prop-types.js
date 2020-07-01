@@ -40,7 +40,7 @@ export const ViewUserProps = PropTypes.shape({
 	currency: PropTypes.string,
 	dob: PropTypes.string,
 	gender: PropTypes.string,
-	hourlyRate: PropTypes.string,
+	hourlyRate: PropTypes.number,
 	messageBroadcast: PropTypes.string,
 	purpose: PropTypes.string,
 	isLive: PropTypes.bool,

@@ -5,6 +5,7 @@
  */
 
 import isEmpty from "is-empty";
+import isNumber from "is-number";
 import {
 	FEE_MULTIPLIER,
 	SERVICE_FEE,
@@ -16,45 +17,45 @@ import {
 /**
  * Calc application's rate based on hourly rate
  *
- * @param   {string}  hourlyRate
- * @param   {boolean}  returnFloat
+ * @param   {number}  hourlyRate
+ * @param   {boolean}  returnInt
  *
- * @return  {string|number}
+ * @return  {number|string}
  */
-export const applicationRate = (hourlyRate, { returnFloat = false } = {}) => {
-	if (isEmpty(hourlyRate)) {
-		if (returnFloat) {
+export const applicationRate = (hourlyRate, returnInt = false) => {
+	if (isEmpty(hourlyRate) || !isNumber(hourlyRate)) {
+		if (returnInt) {
 			return 0;
 		}
 		return "0.00";
 	}
-	const rate = FEE_MULTIPLIER * parseFloat(hourlyRate);
-	if (returnFloat) {
-		return rate;
+	const rate = Dinero({ amount: hourlyRate }).multiply(FEE_MULTIPLIER);
+	if (returnInt) {
+		return rate.toRoundedUnit(2) * 100;
 	}
-	return rate.toFixed(2);
+	return rate.toFormat("$0.00");
 };
 
 /**
  * Calc payout rate based on hourly rate
  *
- * @param   {string}  hourlyRate
- * @param   {boolean}  returnFloat
+ * @param   {number}  hourlyRate
+ * @param   {boolean}  returnInt
  *
- * @return  {string|number}
+ * @return  {number|string}
  */
-export const payoutRate = (hourlyRate, { returnFloat = false } = {}) => {
-	if (isEmpty(hourlyRate)) {
-		if (returnFloat) {
+export const payoutRate = (hourlyRate, returnInt = false) => {
+	if (isEmpty(hourlyRate) || !isNumber(hourlyRate)) {
+		if (returnInt) {
 			return 0;
 		}
 		return "0.00";
 	}
-	const rate = (1 - FEE_MULTIPLIER) * parseFloat(hourlyRate);
-	if (returnFloat) {
-		return rate;
+	const rate = Dinero({ amount: hourlyRate }).multiply(1 - FEE_MULTIPLIER);
+	if (returnInt) {
+		return rate.toRoundedUnit(2) * 100;
 	}
-	return rate.toFixed(2);
+	return rate.toFormat("$0.00");
 };
 
 /**
@@ -65,85 +66,80 @@ export const preAuthAmount = () => SERVICE_FEE;
 /**
  * Get service fee in text format
  */
-export const preAuthAmountText = () => `$${(SERVICE_FEE / 100).toFixed(2)}`;
+export const preAuthAmountText = () =>
+	Dinero({ amount: SERVICE_FEE }).toFormat("$0.00");
 
 /**
  * Get minute rate based on hourly rate
  *
- * @param   {string}  hourlyRate
- * @param   {boolean}  returnFloat
+ * @param   {number}  hourlyRate
+ * @param   {boolean}  returnInt
  *
- * @return  {string|number}
+ * @return  {number|string}
  */
-export const getMinuteRate = (hourlyRate, { returnFloat = false } = {}) => {
-	const rate = parseFloat(hourlyRate) / 60;
-	if (returnFloat) {
-		return rate;
+export const getMinuteRate = (hourlyRate, returnInt = false) => {
+	const rate = Dinero({ amount: hourlyRate }).divide(60);
+	if (returnInt) {
+		return rate.toRoundedUnit(2) * 100;
 	}
-	return rate.toFixed(2);
+	return rate.toFormat("$0.00");
 };
 
 /**
  * Get second rate based on hourly rate
  *
- * @param   {string}  hourlyRate
- * @param   {boolean}  returnFloat
+ * @param   {number}  hourlyRate
+ * @param   {boolean}  returnInt
  *
  * @return  {string|number}
  */
-export const getSecondRate = (hourlyRate, { returnFloat = false } = {}) => {
-	const rate = parseFloat(hourlyRate) / 60 / 60;
-	if (returnFloat) {
-		return rate;
+export const getSecondRate = (hourlyRate, returnInt = false) => {
+	const rate = Dinero({ amount: hourlyRate }).divide(60 / 60);
+	if (returnInt) {
+		return rate.toRoundedUnit(2) * 100;
 	}
-	return rate.toFixed(2);
+	return rate.toFormat("$0.00");
 };
 
 /**
  * Calc charge amount based on hourlyRate and call duration -- duration in seconds
  * Produces amount in cents.
  *
- * @param   {string}  hourlyRate
- * @param   {number}  duration
+ * @param   {number}  hourlyRate
+ * @param   {number}  secondDuration
  * @param   {boolean}  returnFloat
  *
- * @return  {number}
+ * @return  {number|string}
  */
-export const chargeAmount = (
-	hourlyRate,
-	duration,
-	{ returnFloat = false } = {}
-) => {
-	const secondRate = getSecondRate(hourlyRate, { returnFloat: true });
-	let amount = secondRate * duration * 100; // stripe accepts amount in cents.
-	if (!returnFloat) {
-		amount = Math.round(amount);
+export const chargeAmount = (hourlyRate, secondDuration, returnInt = false) => {
+	const secondRate = getSecondRate(hourlyRate, true);
+	const amount = secondRate * secondDuration;
+	if (returnInt) {
+		return amount;
 	}
-	return amount;
+	return Dinero({ amount }).toFormat("$0.00");
 };
 
 /**
  * Calc application amount based on hourlyRate and call duration -- duration in seconds
  *
- * @param   {string}  hourlyRate
- * @param   {number}  duration
- * @param   {boolean} returnFloat
+ * @param   {number}  hourlyRate
+ * @param   {number}  secondDuration
+ * @param   {boolean} returnInt
  *
- * @return  {number}
+ * @return  {number|string}
  */
 export const applicationAmount = (
 	hourlyRate,
-	duration,
-	{ returnFloat = false } = {}
+	secondDuration,
+	returnInt = false
 ) => {
-	const amountToCharge = chargeAmount(hourlyRate, duration, {
-		returnFloat: true
-	});
-	let amount = amountToCharge * FEE_MULTIPLIER;
-	if (!returnFloat) {
-		amount = Math.round(amount);
+	const amountToCharge = chargeAmount(hourlyRate, secondDuration, true);
+	const amount = amountToCharge * FEE_MULTIPLIER;
+	if (returnInt) {
+		return amount;
 	}
-	return amount;
+	return Dinero({ amount }).toFormat("$0.00");
 };
 
 /**
@@ -166,18 +162,27 @@ export const getCoupon = (couponId) => {
 export const operatorReferralAmount = (
 	amountToCharge,
 	earnings = 0,
-	{ returnFloat = false } = {}
+	returnInt = false
 ) => {
 	if (earnings >= OPERATOR_REFERRAL_EARNINGS_CAP) {
 		return 0;
 	}
 	let amount = amountToCharge * OPERATOR_REFERRAL_MULTIPLIER;
-	if (!returnFloat) {
-		amount = Math.round(amount);
-	}
 	const difference = OPERATOR_REFERRAL_EARNINGS_CAP - earnings;
 	if (amount > difference) {
-		return difference;
+		// Cap amount to difference if greater
+		amount = difference;
 	}
-	return amount;
+
+	// Use Dinero to round money value to keep consistent rounding
+	if (returnInt) {
+		return Dinero({ amount }).toRoundedUnit(2) * 100;
+	}
+
+	return Dinero({ amount }).toFormat("$0.00");
 };
+
+/**
+ * Takes an integer and formats appropriately
+ */
+export const format = (amount) => Dinero({ amount }).toFormat("$0.00");

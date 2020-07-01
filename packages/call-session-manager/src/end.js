@@ -176,7 +176,7 @@ export default async function endCallSession(event) {
 			} = operatorUser;
 
 			// Quantify the caller charge amount of session based on operator hourly rate
-			const chargeAmount = fees.chargeAmount(hourlyRate, totalDuration);
+			const chargeAmount = fees.chargeAmount(hourlyRate, totalDuration, true);
 			const totalChargeAmount = chargeAmount + fees.preAuthAmount();
 			// If referrer exists, calc referral fee
 			let referralFee = 0;
@@ -189,11 +189,11 @@ export default async function endCallSession(event) {
 					withContext: true
 				});
 				const { referrals: { earnings } = {} } = referrerUser;
-				referralFee = fees.operatorReferralAmount(chargeAmount, earnings);
+				referralFee = fees.operatorReferralAmount(chargeAmount, earnings, true);
 			}
 			// Get application fee
 			const applicationFee =
-				fees.applicationAmount(hourlyRate, totalDuration) - referralFee;
+				fees.applicationAmount(hourlyRate, totalDuration, true) - referralFee;
 
 			const customer = await stripe.customers.retrieve(
 				callerUser.stripeCustomerId
@@ -234,7 +234,7 @@ export default async function endCallSession(event) {
 
 			if (payoutsEnabled) {
 				// Add payout to charge with destination
-				// Include referral fee to ensure we capture the amount that's to be paid to the referrer
+				// Include referral fee to ensure we capture the amount that's to be paid to the referrer. ie. 15% (app-fee) + $2.50 (pre-auth) + 5% (referral fee)
 				// We should be including the existing payout amount into this transfer, however, Stripe only allows payouts equal/upto to the amount of the transaction
 				// In the future, there should be a check to see if transfers are available for this user. -- Stripe Transfers are restricted in that the connected account (Operator) and Caller must be in the same region
 				chargeParams.application_fee_amount =
@@ -310,22 +310,18 @@ export default async function endCallSession(event) {
 			const operatorSummary = [`This call went for ${totalDuration} seconds.`];
 			if (payoutsEnabled) {
 				operatorSummary.push(
-					`You will be paid $${((chargeAmount - applicationFee) / 100).toFixed(
-						2
-					)}.`
+					`You will be paid ${fees.format(chargeAmount - applicationFee)}.`
 				);
 
 				if (pendingPayoutAmount > 0) {
 					operatorSummary.push(
-						`You also have $${(pendingPayoutAmount / 100).toFixed(
-							2
-						)} pending payout.`
+						`You also have ${fees.format(pendingPayoutAmount)} pending payout.`
 					);
 				}
 			} else {
 				operatorSummary.push(
-					`You now have a $${(newPendingPayoutAmount / 100).toFixed(
-						2
+					`You now have a ${fees.format(
+						newPendingPayoutAmount
 					)} pending payout.`
 				);
 			}
@@ -339,9 +335,9 @@ export default async function endCallSession(event) {
 				comms.sms(
 					callerUser.phoneNumber,
 					[
-						`This call went for ${totalDuration} seconds and metered $${(
-							totalChargeAmount / 100
-						).toFixed(2)}.`,
+						`This call went for ${totalDuration} seconds and metered ${fees.format(
+							totalChargeAmount
+						)}.`,
 						`You can find your receipt here: ${payment.charges.data[0].receipt_url} `,
 						`We hope you're happy with the call! Have issues? Contact Callsesh support.`
 					].join("\n") // new line: https://stackoverflow.com/questions/24218945/how-do-i-add-a-line-break-in-my-twilio-sms-message

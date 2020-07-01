@@ -46,10 +46,11 @@ import * as routes from "@/routes";
 import { publicUrl } from "@/env-config";
 import request from "@/utils/request";
 import TextField from "@/components/Fields/Text";
+import MoneyField from "@/components/Fields/Money";
 import SelectField from "@/components/Fields/Select";
 import FileUploaderField from "@/components/Fields/FileUploader";
 import DateField from "@/components/Fields/Date";
-import FeeCalculator from "@/components/Onboarding/FeeCalculator";
+import FeeCalculator from "@/components/FeeCalculator";
 import isUserOperator from "@/utils/is-operator";
 import handleException, { alerts } from "@/utils/handle-exception";
 import ScreenContainer from "@/components/ScreenContainer";
@@ -225,21 +226,19 @@ const getEditConfig = (user, type) => {
 					);
 				},
 				initialValue: user.hourlyRate,
-				// eslint-disable-next-line
-				Component: ({ values: { hourlyRate }, ...props }) => (
+				Component: (props) => (
 					<Grid {...fieldGridProps}>
 						<Cell span={12}>
-							<TextField
+							<MoneyField
 								{...props}
 								label="What is your hourly rate?"
 								startEnhancer={() => <HourlyRateIcon />}
 								endEnhancer={() => <span>/hour</span>}
 								caption={`Callers will be charged per second based on this rate. Currency is in ${user.currency}.`}
 								placeholder="30"
-								numeric
 								name={EDIT_TYPES.hourlyRate}
+								calculator
 							/>
-							<FeeCalculator hourlyRate={hourlyRate} />
 						</Cell>
 					</Grid>
 				)
@@ -531,7 +530,9 @@ const Profile = () => {
 												<FeeCalculator hourlyRate={user.hourlyRate} />
 											)}
 										>
-											<Paragraph margin="0">{user.hourlyRate}</Paragraph>
+											<Paragraph margin="0">
+												{Dinero({ amount: user.hourlyRate }).toFormat("$0.00")}
+											</Paragraph>
 										</LabelControl>
 									</div>
 								</Cell>

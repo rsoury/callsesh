@@ -8774,6 +8774,11 @@ dijkstrajs@^1.0.1:
   resolved "https://registry.yarnpkg.com/dijkstrajs/-/dijkstrajs-1.0.1.tgz#d3cd81221e3ea40742cfcde556d4e99e98ddc71b"
   integrity sha1-082BIh4+pAdCz83lVtTpnpjdxxs=
 
+dinero.js@^1.8.1:
+  version "1.8.1"
+  resolved "https://registry.yarnpkg.com/dinero.js/-/dinero.js-1.8.1.tgz#775a647629b4195af9d02f46e9b7fa1fd81e906d"
+  integrity sha512-AQ09MDKonkGUrhBZZFx4tPTVcVJuHJ0VEA73LvcBoBB2eQSi1DbapeXj4wnUUpx1hVnPdyev1xPNnNMGy/Au0g==
+
 dir-glob@2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/dir-glob/-/dir-glob-2.0.0.tgz#0b205d2b6aef98238ca286598a8204d29d0a0034"

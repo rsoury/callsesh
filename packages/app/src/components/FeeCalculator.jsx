@@ -57,7 +57,7 @@ const FeeCalculator = ({ hourlyRate }) => {
 };
 
 FeeCalculator.propTypes = {
-	hourlyRate: PropTypes.string.isRequired
+	hourlyRate: PropTypes.number.isRequired
 };
 
 export default FeeCalculator;
