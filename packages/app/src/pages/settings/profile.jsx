@@ -26,7 +26,7 @@ import { Button, SIZE as BUTTON_SIZE } from "baseui/button";
 import nl2br from "nl2br";
 import ono from "@jsdevtools/ono";
 import { toaster } from "baseui/toast";
-import Dinero from "dinero.js";
+import * as fees from "@callsesh/utils/fees";
 
 import Layout from "@/components/Layout";
 import LabelControl from "@/components/LabelControl";
@@ -532,7 +532,7 @@ const Profile = () => {
 											)}
 										>
 											<Paragraph margin="0">
-												{Dinero({ amount: user.hourlyRate }).toFormat("$0.00")}
+												{fees.format(user.hourlyRate, true)}
 											</Paragraph>
 										</LabelControl>
 									</div>

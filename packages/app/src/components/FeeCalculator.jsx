@@ -24,19 +24,20 @@ const FeeCalculator = ({ hourlyRate }) => {
 						</div>
 					)}
 					placement={TOOLTIP_PLACEMENT.topLeft}
+					showArrow
 				>
 					<div
 						className={css({
-							display: "flex",
+							display: "inline-flex",
 							alignItems: "center",
 							justifyContent: "flex-start"
 						})}
 					>
 						<LabelSmall>
 							Callsesh fees are{" "}
-							<strong>${fees.applicationRate(hourlyRate)} / hour</strong>
+							<strong>{fees.applicationRate(hourlyRate)} / hour</strong>
 						</LabelSmall>
-						<div className={css({ marginLeft: "5px" })}>
+						<div className={css({ marginLeft: "10px", display: "flex" })}>
 							<HelpIcon size={18} />
 						</div>
 					</div>
@@ -48,8 +49,7 @@ const FeeCalculator = ({ hourlyRate }) => {
 						color: `${theme.colors.accent} !important`
 					})}
 				>
-					You will be paid{" "}
-					<strong>${fees.payoutRate(hourlyRate)} / hour</strong>
+					You will be paid <strong>{fees.payoutRate(hourlyRate)} / hour</strong>
 				</LabelSmall>
 			</div>
 		</div>
