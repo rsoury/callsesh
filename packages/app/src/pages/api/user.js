@@ -6,6 +6,7 @@ import * as yup from "yup";
 import isEmpty from "is-empty";
 import set from "lodash/set";
 import { parseCookies, destroyCookie } from "nookies";
+import isEmail from "is-email";
 
 import getHandler, { onError } from "@/middleware";
 import {
@@ -16,21 +17,33 @@ import {
 import * as authManager from "@callsesh/utils/auth-manager";
 import stripe from "@callsesh/utils/stripe";
 import isUsernameAvailable from "@/utils/is-username-available";
+import slugify from "@/utils/slugify";
 
 const handler = getHandler();
 
 const schemaProperties = {
+	email: yup
+		.string()
+		.test("is-email", "${path} is not valid", (value) => isEmail(value))
+		.required(),
 	firstName: yup.string().required(),
 	lastName: yup.string().required(),
-	username: yup.string().required(),
-	gender: yup.string().required(),
+	username: yup
+		.string()
+		.test(
+			"is-valid",
+			"Your ${path} can only contain letters, numbers and '_'",
+			(value) => value === slugify(value)
+		)
+		.required(),
+	gender: yup.string().oneOf(["Male", "Female", "Other"]).required(),
 	dob: yup.string().required(),
+	profilePicture: yup.object(),
 	country: yup.string(),
 	currency: yup.string(),
 	paymentMethod: yup.object(),
 	operator: yup.boolean(),
 	hourlyRate: yup.string(),
-	profilePicture: yup.object(),
 	purpose: yup.string(),
 	messageBroadcast: yup.string()
 };
@@ -60,6 +73,28 @@ const patchMap = {
 };
 const patchProperties = Object.keys(patchMap);
 
+const updateEmail = async (userId, email, emailIdentity) => {
+	// Check if email identity exists. If so, unlink and delete it for to be created
+	if (!isEmpty(email)) {
+		await authManager.getClient().unlinkUsers({
+			id: userId,
+			user_id: emailIdentity,
+			provider: "email"
+		});
+		await authManager.getClient().deleteUser({ id: `email|${emailIdentity}` });
+	}
+	// Use email to create a new account
+	const emailUser = await authManager
+		.getClient()
+		.createUser({ email, connection: "email" });
+	// Create an account link with the newly created account
+	await authManager
+		.getClient()
+		.linkUsers(userId, { user_id: emailUser.user_id, provider: "email" });
+
+	return emailUser.user_id.split("|")[1]; // Remove email|xxx from id
+};
+
 handler
 	.use(requireAuthentication)
 	.get(async (req, res) => {
@@ -86,6 +121,7 @@ handler
 		const { stripeCustomerId, phoneNumber, country, currency } = user;
 
 		const {
+			email,
 			firstName,
 			lastName,
 			username,
@@ -148,6 +184,11 @@ handler
 		}
 
 		try {
+			// Update email identity
+			await updateEmail(user.id, email, user.emailIdentity);
+			req.log.info("Created email identity", { user: user.id, email });
+
+			// Update operator details
 			if (operator) {
 				updateParams.metadata.user = {
 					...updateParams.metadata.user,
@@ -181,6 +222,7 @@ handler
 			if (!isEmpty(stripeCustomerId)) {
 				await stripe.customers.update(stripeCustomerId, {
 					description: `Caller: ${name}`,
+					email,
 					name,
 					phone: phoneNumber
 				});
@@ -199,8 +241,11 @@ handler
 
 		req.log.info("Patch user", { user: user.id });
 
+		// Seperate user patch parameters from identity updates
+		const { email, ...requestBody } = req.body;
+
 		// Scope body to accepted properties
-		const bodyEntries = Object.entries(req.body).filter(([property]) =>
+		const bodyEntries = Object.entries(requestBody).filter(([property]) =>
 			patchProperties.includes(property)
 		);
 		// Validate entries using schema
@@ -253,17 +298,34 @@ handler
 		// Used to update the existing user
 		// Works by constructing a patchParams object by iterating over the request body
 		try {
+			let newUser = user;
+			const stripeUpdateParams = {};
+
+			// Update email identity
+			if (typeof email === "string" && isEmail(email)) {
+				await updateEmail(user.id, email, user.emailIdentity);
+				stripeUpdateParams.email = email;
+				// Apply changes to newUser
+				newUser = {
+					...newUser,
+					email,
+					emailVerified: false
+				};
+				req.log.info("Updated email identity", { user: user.id, email });
+			}
+
 			// Update update
-			const newUser = await updateAndGetUser(req, patchParams);
-			req.log.info("Patch user data", { user: user.id });
+			if (!isEmpty(patchParams)) {
+				newUser = await updateAndGetUser(req, patchParams);
+				stripeUpdateParams.description = `Caller: ${name}`;
+				stripeUpdateParams.name = name;
+				req.log.info("Patch user data", { user: user.id });
+			}
 
 			// Register the same data against the stripe customer entity if it exists.
 			const { stripeCustomerId } = user;
-			if (!isEmpty(stripeCustomerId) && !isEmpty(name)) {
-				await stripe.customers.update(stripeCustomerId, {
-					description: `Caller: ${name}`,
-					name
-				});
+			if (!isEmpty(stripeCustomerId) && !isEmpty(stripeUpdateParams)) {
+				await stripe.customers.update(stripeCustomerId, stripeUpdateParams);
 				req.log.info("Patch stripe customer data", { user: user.id });
 			}
 

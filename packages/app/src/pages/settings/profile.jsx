@@ -19,7 +19,8 @@ import {
 	Image as PictureIcon,
 	AlignLeft as PurposeIcon,
 	Users as GenderIcon,
-	Calendar as CalendarIcon
+	Calendar as CalendarIcon,
+	Mail as EmailIcon
 } from "react-feather";
 import { Avatar } from "baseui/avatar";
 import { Button, SIZE as BUTTON_SIZE } from "baseui/button";
@@ -61,6 +62,7 @@ const EDIT_TYPES = {
 	firstName: "firstName",
 	lastName: "lastName",
 	username: "username",
+	email: "email",
 	gender: "gender",
 	dob: "dob",
 	hourlyRate: "hourlyRate",
@@ -155,7 +157,34 @@ const getEditConfig = (user, type) => {
 							name={EDIT_TYPES.username}
 						/>
 						<Label marginTop="10px">
-							Note: Changing your username will change your user link.
+							Changing your username will change your user link.
+						</Label>
+					</Cell>
+				</Grid>
+			)
+		},
+		[EDIT_TYPES.email]: {
+			title: "Email",
+			validate(values) {
+				return validate(
+					{
+						[EDIT_TYPES.email]: generalSchemaProperties.email.required()
+					},
+					values
+				);
+			},
+			initialValue: user.email,
+			Component: (props) => (
+				<Grid {...fieldGridProps}>
+					<Cell span={12}>
+						<TextField
+							{...props}
+							placeholder="your.email@provider.com"
+							maxLength={250}
+							name={EDIT_TYPES.email}
+						/>
+						<Label marginTop="10px">
+							Changing your email requires email verification.
 						</Label>
 					</Cell>
 				</Grid>
@@ -422,15 +451,7 @@ const Profile = () => {
 									<Paragraph margin="0">{user.familyName}</Paragraph>
 								</LabelControl>
 							</Cell>
-							<Cell span={[12, 4, 6]}>
-								<LabelControl
-									label="Phone Number"
-									startEnhancer={() => <PhoneIcon size={20} />}
-								>
-									<Paragraph margin="0">{user.phoneNumber}</Paragraph>
-								</LabelControl>
-							</Cell>
-							<Cell span={[12, 4, 6]}>
+							<Cell span={12}>
 								<LabelControl
 									label="Username"
 									startEnhancer={() => <UserIcon size={20} />}
@@ -441,6 +462,27 @@ const Profile = () => {
 									)}
 								>
 									<Paragraph margin="0">{user.username}</Paragraph>
+								</LabelControl>
+							</Cell>
+							<Cell span={[12, 4, 6]}>
+								<LabelControl
+									label="Phone Number"
+									startEnhancer={() => <PhoneIcon size={20} />}
+								>
+									<Paragraph margin="0">{user.phoneNumber}</Paragraph>
+								</LabelControl>
+							</Cell>
+							<Cell span={[12, 4, 6]}>
+								<LabelControl
+									label="Email"
+									startEnhancer={() => <EmailIcon size={20} />}
+									endEnhancer={() => (
+										<EditEnhancer
+											onClick={() => setEditType(EDIT_TYPES.email)}
+										/>
+									)}
+								>
+									<Paragraph margin="0">{user.email}</Paragraph>
 								</LabelControl>
 							</Cell>
 							<Cell span={[12, 4, 6]}>

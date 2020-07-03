@@ -77,7 +77,7 @@ MoneyInput.propTypes = {
 	onChange: PropTypes.func,
 	onBlur: PropTypes.func,
 	error: PropTypes.oneOfType([PropTypes.string, PropTypes.func]),
-	value: PropTypes.number,
+	value: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
 	calculator: PropTypes.bool
 };
 

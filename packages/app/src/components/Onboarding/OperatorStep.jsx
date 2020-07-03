@@ -68,14 +68,17 @@ export const initialValues = {
 
 export const schemaProperties = {
 	operator: yup.boolean().required(),
-	hourlyRate: yup
-		.number()
-		.test(
-			"is-valid",
-			"${path} must be greater than or equal to $1.00 / hour", // eslint-disable-line
-			(value) => isNumber(value) && value > 100
-		)
-		.when("operator", { is: true, then: (s) => s.required() }),
+	hourlyRate: yup.number().when("operator", {
+		is: true,
+		then: (s) =>
+			s
+				.test(
+					"is-valid",
+					"${path} must be greater than or equal to $1.00 / hour",
+					(value) => isNumber(value) && value > 100
+				)
+				.required()
+	}),
 	purpose: yup.object().shape({
 		option: yup
 			.object()

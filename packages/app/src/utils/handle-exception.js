@@ -7,7 +7,8 @@ const sentryOptions = {
 	dsn: sentry.dsn,
 	enabled: process.env.NODE_ENV !== "test",
 	release: sentry.release,
-	environment: process.env.NODE_ENV
+	environment: process.env.NODE_ENV,
+	attachStacktrace: true
 };
 
 // If developing locally
@@ -22,9 +23,9 @@ if (!isProd) {
 			debugger: false
 		})
 	];
+	sentryOptions.maxBreadcrumbs = 10;
 } else {
 	sentryOptions.maxBreadcrumbs = 50;
-	sentryOptions.attachStacktrace = true;
 	sentryOptions.ignoreErrors = ["Non-Error exception captured"];
 }
 

@@ -37,6 +37,7 @@ handler.use(requireAuthentication).get(async (req, res) => {
 			"stripe_user[phone_number]": phoneNumber.nationalNumber,
 			"stripe_user[first_name]": user.givenName,
 			"stripe_user[last_name]": user.familyName,
+			"stripe_user[email]": user.email,
 			"stripe_user[dob_day]": date.getDate(),
 			"stripe_user[dob_month]": date.getMonth(),
 			"stripe_user[dob_year]": date.getFullYear(),

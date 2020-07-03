@@ -153,7 +153,7 @@ const ViewUserOperatorAction = ({ viewUser, onStart, isStarting }) => {
 									<span>Currently in a call. Check in later.</span>
 								) : (
 									<span>
-										Call {viewUser.givenName} for ${minuteRate}
+										Call {viewUser.givenName} for {minuteRate}
 										/minute
 									</span>
 								)}

@@ -68,7 +68,7 @@ const ViewUserIntroduction = ({ viewUser }) => {
 									<span>
 										offering <Highlight>{viewUser.purpose}</Highlight> over a
 										phone call for{" "}
-										<Highlight noBreak>${minuteRate}/minute</Highlight>
+										<Highlight noBreak>{minuteRate}/minute</Highlight>
 									</span>
 								) : (
 									<span>making calls on Callsesh. You can too!</span>

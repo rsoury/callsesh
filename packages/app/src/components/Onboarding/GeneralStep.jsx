@@ -1,5 +1,3 @@
-/* eslint-disable no-template-curly-in-string */
-
 import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import { H1 as Heading, H5 as Subheader } from "baseui/typography";
@@ -14,7 +12,7 @@ import { Edit2 as EditIcon } from "react-feather";
 import { useStyletron } from "baseui";
 import * as yup from "yup";
 import debounce from "lodash/debounce";
-import slugify from "@sindresorhus/slugify";
+import isEmail from "is-email";
 
 import { publicUrl } from "@/env-config";
 import TextField from "@/components/Fields/Text";
@@ -24,7 +22,7 @@ import FileUploaderField from "@/components/Fields/FileUploader";
 import Emoji from "@/components/Emoji";
 import * as routes from "@/routes";
 import request from "@/utils/request";
-import { SLUGIFY_OPTIONS } from "@/constants";
+import slugify from "@/utils/slugify";
 
 const confettiConfig = {
 	angle: "109",
@@ -54,7 +52,7 @@ const generateUsername = (firstName, lastName) => {
 		.toLowerCase()
 		.substring(0, 25);
 
-	return slugify(username, SLUGIFY_OPTIONS);
+	return slugify(username);
 };
 
 const checkUsernameAvailable = debounce(async (value) => {
@@ -74,6 +72,7 @@ const checkUsernameAvailable = debounce(async (value) => {
 }, 500);
 
 export const initialValues = {
+	email: "",
 	firstName: "",
 	lastName: "",
 	username: "",
@@ -83,6 +82,10 @@ export const initialValues = {
 };
 
 export const schemaProperties = {
+	email: yup
+		.string()
+		.test("is-email", "${path} is not valid", (value) => isEmail(value))
+		.required(),
 	firstName: yup.string().required(),
 	lastName: yup.string().required(),
 	username: yup
@@ -90,7 +93,7 @@ export const schemaProperties = {
 		.test(
 			"is-valid",
 			"Your ${path} can only contain letters, numbers and '_'",
-			(value) => value === slugify(value, SLUGIFY_OPTIONS)
+			(value) => value === slugify(value)
 		)
 		.test("is-available", "${path} is not available", checkUsernameAvailable)
 		.required(),
@@ -143,6 +146,14 @@ const GeneralStep = ({ setFieldValue, values }) => {
 			</Grid>
 			<Confetti active={confetti} config={confettiConfig} />
 			<Grid>
+				<Cell span={12}>
+					<TextField
+						name="email"
+						label="Email"
+						placeholder="your.email@provider.com"
+						maxLength={250}
+					/>
+				</Cell>
 				<Cell span={[12, 4, 6]}>
 					<TextField
 						name="firstName"

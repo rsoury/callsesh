@@ -326,7 +326,7 @@ export default async function endCallSession(event) {
 				);
 			}
 			operatorSummary.push(
-				`Pending payouts are paid at the start each month. You can manage your payouts through the Callsesh web app.`
+				`Pending payouts are paid at the start each month. You can manage your payouts at https://callsesh.com`
 			);
 			await Promise.all([
 				// Operator
@@ -337,8 +337,7 @@ export default async function endCallSession(event) {
 					[
 						`This call went for ${totalDuration} seconds and metered ${fees.format(
 							totalChargeAmount
-						)}.`,
-						`You can find your receipt here: ${payment.charges.data[0].receipt_url} `,
+						)}. A receipt has been emailed to you.`,
 						`We hope you're happy with the call! Have issues? Contact Callsesh support.`
 					].join("\n") // new line: https://stackoverflow.com/questions/24218945/how-do-i-add-a-line-break-in-my-twilio-sms-message
 				)

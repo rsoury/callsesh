@@ -11,14 +11,19 @@ import pick from "lodash/pick";
 import { ERROR_TYPES } from "@/constants";
 import { isPayoutsEnabled } from "@callsesh/utils/stripe";
 import * as authManager from "@callsesh/utils/auth-manager";
-import { auth0 as config, publicUrl, sessionSecret } from "@/env-config";
+import {
+	auth0 as config,
+	publicUrl,
+	sessionSecret,
+	isProd
+} from "@/env-config";
 import * as routes from "@/routes";
 
 // Client Secret hidden for browser environment
 const auth = initAuth0({
 	domain: config.domain,
 	clientId: config.clientId,
-	scope: "openid profile",
+	scope: "openid profile email",
 	redirectUri: `${publicUrl}${routes.api.auth.callback}`,
 	postLogoutRedirectUri: `${publicUrl}/`,
 	clientSecret: config.clientSecret,
@@ -49,22 +54,52 @@ const auth = initAuth0({
 /**
  * Safer sesson retrieval in case of bad auth values.
  */
-export const getSession = async (...params) =>
-	auth.getSession(...params).catch((e) => {
+export const getSession = async (req, ...params) => {
+	let session = await auth.getSession(req, ...params).catch((e) => {
 		if (e.message === "Bad hmac value") {
 			return null;
 		}
 		throw e;
 	});
 
+	// For development environment, enable user-id in request header for API development
+	if (!isProd && isEmpty(session) && !isEmpty(req.headers["x-debug-user"])) {
+		const userData = await authManager.getUser(req.headers["x-debug-user"]);
+		// emulate session
+		session = {
+			user: {
+				name: userData.name,
+				nickname: userData.nickname,
+				family_name: userData.family_name,
+				given_name: userData.given_name,
+				picture: userData.picture,
+				updated_at: userData.updated_at,
+				sub: userData.user_id
+			},
+			createdAt: userData.created_at
+		};
+
+		if (isEmpty(session)) {
+			throw new Error("Session does not exist");
+		}
+	}
+
+	return session;
+};
+
 /**
  * Next Connect middleware wrapper around auth.requireAuthentication
+ *
+ * Pass authentication if platform in development and x-debug-user header passed.
  */
-export const requireAuthentication = nextConnect().use((req, res, next) =>
-	auth.requireAuthentication(() => {
+export const requireAuthentication = nextConnect().use((req, res, next) => {
+	if (!isProd && !isEmpty(req.headers["x-debug-user"])) {
+		return next();
+	}
+	return auth.requireAuthentication(() => {
 		next();
-	})(req, res)
-);
+	})(req, res);
+});
 
 const registeredUserSchema = yup.object().shape({
 	id: yup.string().required(),
@@ -105,6 +140,7 @@ const constructUser = async (
 		family_name: familyName = "",
 		given_name: givenName = "",
 		picture, // Use picture from user data as session picture will be old
+		identities,
 		...userData
 	} = rawUser;
 
@@ -133,6 +169,23 @@ const constructUser = async (
 	// Get publicly viewable call session data
 	const { callSession = {} } = appMetadata;
 
+	// Get email attributes
+	const emailAttributes = {
+		email: "",
+		emailVerified: false
+	};
+	const emailAttributesWithContext = {
+		emailIdentity: ""
+	};
+	const emailIdentity = identities.find(
+		({ connection }) => connection === "email"
+	);
+	if (!isEmpty(emailIdentity)) {
+		emailAttributes.email = emailIdentity.profileData.email;
+		emailAttributes.emailVerified = emailIdentity.profileData.email_verified;
+		emailAttributesWithContext.emailIdentity = emailIdentity.user_id;
+	}
+
 	let user = {
 		id: sessionUser.sub,
 		...sessionUser,
@@ -146,6 +199,7 @@ const constructUser = async (
 			name: role.name,
 			description: role.description
 		})),
+		...emailAttributes,
 		payouts
 	};
 	if (withContext) {
@@ -154,7 +208,8 @@ const constructUser = async (
 			roles,
 			...userData,
 			...appMetadata, // will include call session related data by default.
-			callSession
+			callSession,
+			...emailAttributesWithContext
 		};
 	}
 	user = mapKeys(user, (value, key) => camelCase(key));

@@ -21,7 +21,7 @@
 		"test:coverage": "jest --coverage"
 	},
 	"dependencies": {
-		"@auth0/nextjs-auth0": "^0.11.0",
+		"@auth0/nextjs-auth0": "^0.13.0",
 		"@callsesh/utils": "^1.0.0",
 		"@jsdevtools/ono": "^7.1.2",
 		"@sentry/browser": "^5.15.5",
@@ -42,6 +42,7 @@
 		"glob": "^7.1.6",
 		"glob-promise": "^3.4.0",
 		"gray-matter": "^4.0.2",
+		"is-email": "^1.0.0",
 		"is-empty": "^1.2.0",
 		"is-number": "^7.0.0",
 		"libphonenumber-js": "^1.7.51",

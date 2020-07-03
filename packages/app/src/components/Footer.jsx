@@ -1,6 +1,5 @@
 import React from "react";
 import { useStyletron } from "baseui";
-import { Paragraph4 as Paragraph } from "baseui/typography";
 
 import { page as pageRoutes } from "@/routes";
 import Link from "@/components/Link";
@@ -76,7 +75,7 @@ const Footer = () => {
 					))}
 				</ul>
 			</nav>
-			<Paragraph
+			<div
 				className={css({
 					marginTop: "20px",
 					opacity: "0.8",
@@ -86,7 +85,8 @@ const Footer = () => {
 					justifyContent: "center",
 					[theme.mediaQuery.maxSmall]: {
 						flexDirection: "column"
-					}
+					},
+					...theme.typography.ParagraphXSmall
 				})}
 			>
 				<span className={css({ marginRight: "10px" })}>
@@ -131,7 +131,7 @@ const Footer = () => {
 						))}
 					</ul>
 				</nav>
-			</Paragraph>
+			</div>
 		</footer>
 	);
 };

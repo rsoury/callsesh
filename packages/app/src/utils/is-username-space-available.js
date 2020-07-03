@@ -5,9 +5,7 @@
 
 import path from "path";
 import glob from "glob-promise";
-import slugify from "@sindresorhus/slugify";
-
-import { SLUGIFY_OPTIONS } from "@/constants";
+import slugify from "@/utils/slugify";
 
 /**
  *
@@ -21,7 +19,7 @@ const isUsernameSpaceAvailable = async (username) => {
 	}
 
 	// Slugify and ensure output is the same
-	if (username !== slugify(username, SLUGIFY_OPTIONS)) {
+	if (username !== slugify(username)) {
 		return false;
 	}
 
