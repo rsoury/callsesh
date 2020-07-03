@@ -57,10 +57,10 @@
 		}
 	},
 	"lint-staged": {
-		"./**/*.+(js|jsx)": [
+		"**/*.+(js|jsx)": [
 			"yarn lint --fix"
 		],
-		"./**/*.{js,jsx,ts,tsx,json,css,scss,md}": [
+		"**/*.{js,jsx,ts,tsx,json,css,scss,md}": [
 			"yarn format"
 		]
 	}
