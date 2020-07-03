@@ -56,8 +56,7 @@ const MoneyInput = ({
 						if (isEmpty(e.target.value)) {
 							setInputValue("");
 						} else {
-							const intVal = fees.value(e.target.value);
-							setInputValue(fees.format(intVal, true));
+							setInputValue(fees.format(e.target.value, true));
 						}
 						return onBlur(e);
 					}}

@@ -348,6 +348,9 @@ const Profile = () => {
 	const [user, isUserLoading, { setUser }] = useUser({ required: true });
 	const [editType, setEditType] = useState("");
 
+	const isPageLoading =
+		isUserLoading || isEmpty(user) || !(user || {}).isRegistered;
+
 	const {
 		Component: EditModalField = null,
 		initialValue,
@@ -390,7 +393,7 @@ const Profile = () => {
 		<Layout>
 			<ScreenContainer id="callsesh-profile-settings">
 				<Header title="Profile" />
-				{isUserLoading || isEmpty(user) ? (
+				{isPageLoading ? (
 					<SettingsSkeleton />
 				) : (
 					<div>
@@ -462,11 +465,13 @@ const Profile = () => {
 									)}
 								>
 									<Paragraph margin="0">
-										{new Intl.DateTimeFormat("en-US", {
-											year: "numeric",
-											month: "long",
-											day: "numeric"
-										}).format(new Date(user.dob))}
+										{isEmpty(user.dob)
+											? ""
+											: new Intl.DateTimeFormat("en-US", {
+													year: "numeric",
+													month: "long",
+													day: "numeric"
+											  }).format(new Date(user.dob))}
 									</Paragraph>
 								</LabelControl>
 							</Cell>

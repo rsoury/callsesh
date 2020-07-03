@@ -253,7 +253,7 @@ const OperatorStep = ({ values }) => {
 OperatorStep.propTypes = {
 	values: PropTypes.shape({
 		operator: PropTypes.bool,
-		hourlyRate: PropTypes.string,
+		hourlyRate: PropTypes.number,
 		profilePicture: PropTypes.object,
 		purpose: PropTypes.shape({
 			option: PropTypes.object,

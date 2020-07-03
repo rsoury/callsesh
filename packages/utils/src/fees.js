@@ -184,13 +184,20 @@ export const operatorReferralAmount = (
 };
 
 /**
- * Takes an integer and formats appropriately
- */
-export const format = (amount, noSymbol = false) =>
-	Dinero({ amount }).toFormat(`${noSymbol ? "" : "$"}0.00`);
-
-/**
  * Takes a string, applies zero-decimal format, and round using Dinero
  */
 export const value = (v) =>
 	Math.round(parseFloat(typeof v === "string" ? v.replace("$", "") : "") * 100);
+
+/**
+ * Takes an integer and formats appropriately
+ */
+export const format = (amount, noSymbol = false) => {
+	const base = `${noSymbol ? "" : "$"}0.00`;
+	if (isEmpty(amount)) {
+		return base;
+	}
+	return Dinero({
+		amount: typeof amount === "number" ? amount : value(amount)
+	}).toFormat(base);
+};

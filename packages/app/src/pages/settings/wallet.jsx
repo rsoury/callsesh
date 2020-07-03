@@ -42,6 +42,9 @@ const Wallet = () => {
 	const [cards, setCards] = useState([]);
 	const [isLoading, setLoading] = useState(false);
 
+	const isPageLoading =
+		isUserLoading || isEmpty(user) || !(user || {}).isRegistered;
+
 	const listItemProps = {
 		artworkSize: ARTWORK_SIZES.LARGE,
 		overrides: {
@@ -176,7 +179,7 @@ const Wallet = () => {
 		<Layout>
 			<ScreenContainer id="callsesh-wallet-settings">
 				<Header title="Wallet" />
-				{isUserLoading || isEmpty(user) ? (
+				{isPageLoading ? (
 					<SettingsSkeleton />
 				) : (
 					<Grid>
