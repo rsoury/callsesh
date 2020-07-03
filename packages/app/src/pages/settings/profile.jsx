@@ -199,6 +199,30 @@ const getEditConfig = (user, type) => {
 					</Cell>
 				</Grid>
 			)
+		},
+		[EDIT_TYPES.profilePicture]: {
+			title: "Profile Picture",
+			validate(values) {
+				return validate(
+					{
+						[EDIT_TYPES.profilePicture]: generalSchemaProperties.profilePicture.required()
+					},
+					values
+				);
+			},
+			initialValue: user.profilePicture || { cdnUrl: user.picture },
+			Component: (props) => (
+				<Grid {...fieldGridProps}>
+					<Cell span={12}>
+						<FileUploaderField
+							{...props}
+							caption="Must be a JPEG or PNG with a max size of 2MB"
+							images
+							name={EDIT_TYPES.profilePicture}
+						/>
+					</Cell>
+				</Grid>
+			)
 		}
 	};
 	if (isUserOperator(user)) {
@@ -239,30 +263,6 @@ const getEditConfig = (user, type) => {
 								placeholder="30"
 								name={EDIT_TYPES.hourlyRate}
 								calculator
-							/>
-						</Cell>
-					</Grid>
-				)
-			},
-			[EDIT_TYPES.profilePicture]: {
-				title: "Profile Picture",
-				validate(values) {
-					return validate(
-						{
-							[EDIT_TYPES.profilePicture]: operatorSchemaProperties.profilePicture.required()
-						},
-						values
-					);
-				},
-				initialValue: user.profilePicture || { cdnUrl: user.picture },
-				Component: (props) => (
-					<Grid {...fieldGridProps}>
-						<Cell span={12}>
-							<FileUploaderField
-								{...props}
-								caption="Must be a JPEG or PNG with a max size of 2MB"
-								images
-								name={EDIT_TYPES.profilePicture}
 							/>
 						</Cell>
 					</Grid>
@@ -475,6 +475,26 @@ const Profile = () => {
 									</Paragraph>
 								</LabelControl>
 							</Cell>
+							<Cell span={12}>
+								<LabelControl label="Profile Picture" noBg>
+									<div>
+										<Avatar
+											name="profilePicture"
+											size="scale4800"
+											src={user.picture}
+										/>
+										<div className={css({ paddingTop: "10px" })}>
+											<Button
+												onClick={() => setEditType(EDIT_TYPES.profilePicture)}
+												startEnhancer={() => <PictureIcon size={20} />}
+												size={BUTTON_SIZE.compact}
+											>
+												Edit Profile Picture
+											</Button>
+										</div>
+									</div>
+								</LabelControl>
+							</Cell>
 						</Grid>
 						{isUserOperator(user) && (
 							<Grid>
@@ -482,29 +502,9 @@ const Profile = () => {
 									<SmallHeading>Operator Profile</SmallHeading>
 								</Cell>
 								<Cell span={12}>
-									<LabelControl label="Profile Picture" noBg>
-										<div>
-											<Avatar
-												name="profilePicture"
-												size="scale4800"
-												src={user.picture}
-											/>
-											<div className={css({ paddingTop: "10px" })}>
-												<Button
-													onClick={() => setEditType(EDIT_TYPES.profilePicture)}
-													startEnhancer={() => <PictureIcon size={20} />}
-													size={BUTTON_SIZE.compact}
-												>
-													Edit Profile Picture
-												</Button>
-											</div>
-										</div>
-									</LabelControl>
-								</Cell>
-								<Cell span={12}>
 									<div
 										className={css({
-											padding: "20px 0",
+											padding: "15px 0 10px 0",
 											margin: "10px 0 20px",
 											borderTopWidth: "1px",
 											borderTopStyle: "solid",

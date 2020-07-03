@@ -13,6 +13,18 @@ const Footer = () => {
 	const [css, theme] = useStyletron();
 	const [user] = useUser();
 
+	const navListProps = {
+		listStyle: "none",
+		display: "flex",
+		alignItems: "center",
+		justifyContent: "center",
+		margin: "0px",
+		padding: "0px",
+		[theme.mediaQuery.maxSmall]: {
+			flexDirection: "column"
+		}
+	};
+
 	const nav = [
 		{
 			text: "FAQs",
@@ -22,6 +34,14 @@ const Footer = () => {
 			text: "Refer A Friend",
 			href: pageRoutes.referrals
 		},
+		{
+			text: "Callsesh Support",
+			href: getSupportEmail((user || {}).username),
+			standard: true
+		}
+	];
+
+	const smallNav = [
 		{
 			text: "Terms of Service",
 			href: pageRoutes.terms.tos
@@ -33,11 +53,6 @@ const Footer = () => {
 		{
 			text: "Cookie Policy",
 			href: pageRoutes.terms.cookiePolicy
-		},
-		{
-			text: "Callsesh Support",
-			href: getSupportEmail((user || {}).username),
-			standard: true
 		}
 	];
 
@@ -46,15 +61,7 @@ const Footer = () => {
 			<nav>
 				<ul
 					className={css({
-						listStyle: "none",
-						display: "flex",
-						alignItems: "center",
-						justifyContent: "center",
-						margin: "0px",
-						padding: "0px",
-						[theme.mediaQuery.maxSmall]: {
-							flexDirection: "column"
-						}
+						...navListProps
 					})}
 				>
 					{nav.map(({ text, ...props }) => (
@@ -73,19 +80,57 @@ const Footer = () => {
 				className={css({
 					marginTop: "20px",
 					opacity: "0.8",
-					textAlign: "center"
+					textAlign: "center",
+					display: "flex",
+					alignItems: "center",
+					justifyContent: "center",
+					[theme.mediaQuery.maxSmall]: {
+						flexDirection: "column"
+					}
 				})}
 			>
-				&copy;2020 Callsesh &nbsp;&middot;&nbsp; A{" "}
-				<Link
-					href="https://webdoodle.com.au/"
-					target="_blank"
-					rel="noopener noreferrer"
-					standard
-				>
-					Web Doodle
-				</Link>{" "}
-				Project
+				<span className={css({ marginRight: "10px" })}>
+					&copy;2020 Callsesh
+				</span>
+				&middot;
+				<span className={css({ margin: "0 10px" })}>
+					A{" "}
+					<Link
+						href="https://webdoodle.com.au/"
+						target="_blank"
+						rel="noopener noreferrer"
+						standard
+						style={{ borderBottom: "1px solid" }}
+					>
+						Web Doodle
+					</Link>{" "}
+					Project
+				</span>
+				&middot;
+				<nav>
+					<ul
+						className={css({
+							...navListProps
+						})}
+					>
+						{smallNav.map(({ text, ...props }) => (
+							<li
+								key={text.toLowerCase()}
+								className={css({ margin: "5px 7.5px" })}
+							>
+								<Link
+									{...props}
+									pass
+									style={{
+										borderBottom: "1px solid"
+									}}
+								>
+									{text}
+								</Link>
+							</li>
+						))}
+					</ul>
+				</nav>
 			</Paragraph>
 		</footer>
 	);

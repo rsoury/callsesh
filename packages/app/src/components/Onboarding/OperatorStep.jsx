@@ -17,7 +17,6 @@ import isNumber from "is-number";
 import SelectField from "@/components/Fields/Select";
 import TextField from "@/components/Fields/Text";
 import CheckboxField from "@/components/Fields/Checkbox";
-import FileUploaderField from "@/components/Fields/FileUploader";
 import MoneyField from "@/components/Fields/Money";
 import Emoji from "@/components/Emoji";
 import useUser from "@/hooks/use-user";
@@ -60,7 +59,6 @@ export const purposeOptions = [
 export const initialValues = {
 	operator: false,
 	hourlyRate: "",
-	profilePicture: {},
 	purpose: {
 		option: purposeOptions[0],
 		value: ""
@@ -78,13 +76,6 @@ export const schemaProperties = {
 			(value) => isNumber(value) && value > 100
 		)
 		.when("operator", { is: true, then: (s) => s.required() }),
-	profilePicture: yup.object().when("operator", {
-		is: true,
-		then: (s) =>
-			s.shape({
-				cdnUrl: yup.string().required().label("Profile picture")
-			})
-	}),
 	purpose: yup.object().shape({
 		option: yup
 			.object()
@@ -199,14 +190,6 @@ const OperatorStep = ({ values }) => {
 								/>
 							</div>
 						</Cell>
-						<Cell span={12}>
-							<FileUploaderField
-								name="profilePicture"
-								label="Profile Picture"
-								caption="Must be a JPEG or PNG with a max size of 2MB"
-								images
-							/>
-						</Cell>
 						<Cell
 							span={values.purpose.option?.id === "other" ? [12, 4, 6] : 12}
 						>
@@ -254,7 +237,6 @@ OperatorStep.propTypes = {
 	values: PropTypes.shape({
 		operator: PropTypes.bool,
 		hourlyRate: PropTypes.number,
-		profilePicture: PropTypes.object,
 		purpose: PropTypes.shape({
 			option: PropTypes.object,
 			value: PropTypes.string

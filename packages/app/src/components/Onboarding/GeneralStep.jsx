@@ -20,6 +20,7 @@ import { publicUrl } from "@/env-config";
 import TextField from "@/components/Fields/Text";
 import SelectField from "@/components/Fields/Select";
 import DateField from "@/components/Fields/Date";
+import FileUploaderField from "@/components/Fields/FileUploader";
 import Emoji from "@/components/Emoji";
 import * as routes from "@/routes";
 import request from "@/utils/request";
@@ -77,7 +78,8 @@ export const initialValues = {
 	lastName: "",
 	username: "",
 	gender: genderOptions[2],
-	dob: new Date("1996/08/31")
+	dob: new Date("1996/08/31"),
+	profilePicture: {}
 };
 
 export const schemaProperties = {
@@ -105,7 +107,10 @@ export const schemaProperties = {
 			"is-over-18",
 			"Must be over 18 years of age",
 			(value) => new Date().getFullYear() - new Date(value).getFullYear() > 18
-		)
+		),
+	profilePicture: yup.object().shape({
+		cdnUrl: yup.string().label("Profile picture")
+	})
 };
 
 export const validationSchema = yup.object().shape(schemaProperties);
@@ -208,6 +213,14 @@ const GeneralStep = ({ setFieldValue, values }) => {
 				</Cell>
 				<Cell span={[12, 4, 6]}>
 					<DateField name="dob" label="Date of birth" caption="YYYY/MM/DD" />
+				</Cell>
+				<Cell span={12}>
+					<FileUploaderField
+						name="profilePicture"
+						label="Profile Picture"
+						caption="Must be a JPEG or PNG with a max size of 2MB"
+						images
+					/>
 				</Cell>
 			</Grid>
 		</div>
