@@ -12,6 +12,7 @@ import {
 	DollarSign as HourlyRateIcon
 } from "react-feather";
 import * as yup from "yup";
+import isNumber from "is-number";
 
 import SelectField from "@/components/Fields/Select";
 import TextField from "@/components/Fields/Text";
@@ -71,11 +72,10 @@ export const schemaProperties = {
 	operator: yup.boolean().required(),
 	hourlyRate: yup
 		.number()
-		.min(100)
 		.test(
 			"is-valid",
 			"${path} must be greater than or equal to $1.00 / hour", // eslint-disable-line
-			(value) => value
+			(value) => isNumber(value) && value > 100
 		)
 		.when("operator", { is: true, then: (s) => s.required() }),
 	profilePicture: yup.object().when("operator", {
