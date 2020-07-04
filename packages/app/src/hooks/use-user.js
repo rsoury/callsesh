@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 /**
  * Hook to manage state in context.
  * Manage router here.
@@ -8,6 +9,8 @@ import Router from "next/router";
 import isEmpty from "is-empty";
 import { useRequest } from "@callsesh/utils";
 import debounce from "lodash/debounce";
+import once from "lodash/once";
+import { toaster } from "baseui/toast";
 
 import * as routes from "@/routes";
 import appendReturnUrl from "@/utils/append-return-url";
@@ -16,6 +19,13 @@ import handleException, {
 	setUser as setErrorTrackingUser
 } from "@/utils/handle-exception";
 import { identifyUser } from "@/utils/signals";
+import stripTrailingSlash from "@/utils/strip-trailing-slash";
+
+const toastRedirectToSession = once(() => {
+	toaster.info(
+		`You're currently in a call session! Please wait while we redirect you to the session...`
+	);
+});
 
 const handleExceptionDebounced = debounce((...params) => {
 	handleException(...params);
@@ -34,15 +44,28 @@ const ensureUserRegistered = (user) => {
 			return false;
 		}
 	}
+	if (!isEmpty((user || {}).callSession)) {
+		const inSessionPathname = routes.build.user(user.callSession.with);
+		if (
+			stripTrailingSlash(window.location.pathname) !==
+			stripTrailingSlash(inSessionPathname)
+		) {
+			toastRedirectToSession();
+			Router.push(inSessionPathname);
+			return false;
+		}
+	}
 	return true;
 };
 
 // Just a helper to wrap functions to call with user object.
-const resolveUser = (user) => {
+const _resolveUser = (user) => {
 	ensureUserRegistered(user);
 	setErrorTrackingUser(user);
 	identifyUser(user);
 };
+
+const resolveUser = debounce(_resolveUser, 500);
 
 /**
  * Helper function to set user state

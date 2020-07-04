@@ -2,20 +2,14 @@
 
 import React from "react";
 import { useStyletron } from "baseui";
-import {
-	Button,
-	KIND as BUTTON_KIND,
-	SIZE as BUTTON_SIZE
-} from "baseui/button";
+import { Button, KIND as BUTTON_KIND } from "baseui/button";
 import {
 	CreditCard as WalletIcon,
 	User as ProfileIcon,
 	LogOut as LogoutIcon,
-	PhoneCall as PhoneIcon,
 	LogIn as LoginIcon,
 	Edit2 as SignupIcon
 } from "react-feather";
-import ArrowRight from "baseui/icon/arrow-right";
 import isEmpty from "is-empty";
 import { Unstable_AppNavBar as AppNavBar } from "baseui/app-nav-bar";
 import Skeleton from "react-loading-skeleton";
@@ -29,6 +23,7 @@ import appendReturnUrl from "@/utils/append-return-url";
 
 import Logo from "./Logo";
 import VerifyEmail from "./VerifyEmail";
+import InCallTopBar from "./InCallTopBar";
 
 const NavItem = ({ label, href, ...props }) => (
 	<Link href={href} button {...props}>
@@ -64,67 +59,6 @@ const getNavItemButton = ([, theme]) => ({
 );
 
 const NavItemLabel = ({ label }) => label;
-
-const InCallTopBar = () => {
-	const [css, theme] = useStyletron();
-	const [user] = useUser();
-
-	if (isEmpty(user)) {
-		return null;
-	}
-
-	const inSessionWithRoute = routes.build.user(user.callSession.with);
-	const onViewUserPage = window.location.pathname === inSessionWithRoute;
-
-	return (
-		<Link
-			href={inSessionWithRoute}
-			button
-			style={{ pointerEvents: onViewUserPage ? "none" : "auto" }}
-		>
-			<Button
-				size={BUTTON_SIZE.mini}
-				startEnhancer={() => <PhoneIcon size={18} />}
-				overrides={{
-					BaseButton: {
-						style: {
-							width: "100%",
-							backgroundColor: theme.colors.positive,
-							borderBottomLeftRadius: "4px",
-							borderBottomRightRadius: "4px"
-						}
-					}
-				}}
-			>
-				<span className={css({ display: "flex", alignItems: "center" })}>
-					You are currently in a call session
-					{!onViewUserPage && (
-						<span className={css({ display: "flex", alignItems: "center" })}>
-							<span
-								className={css({
-									height: "2px",
-									width: "10px",
-									backgroundColor: "#fff",
-									margin: "0 5px"
-								})}
-							/>
-							<span>Visit</span>
-							<span
-								className={css({
-									marginLeft: "5px",
-									display: "flex",
-									alignItems: "center"
-								})}
-							>
-								<ArrowRight size={20} />
-							</span>
-						</span>
-					)}
-				</span>
-			</Button>
-		</Link>
-	);
-};
 
 const Header = () => {
 	const [css, theme] = useStyletron();

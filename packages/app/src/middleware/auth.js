@@ -231,6 +231,12 @@ const constructUser = async (
 
 	user.isRegistered = isRegistered;
 
+	// EMULATE: Add callSession to current user
+	user.callSession = {
+		as: "caller",
+		with: "hello"
+	};
+
 	return user;
 };
 

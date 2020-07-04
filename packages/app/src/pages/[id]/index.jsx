@@ -25,7 +25,7 @@ import {
 import isUserOperator from "@/utils/is-operator";
 import * as routes from "@/routes";
 import { useSetUser } from "@/hooks/use-user";
-import { ERROR_TYPES } from "@/constants";
+import { ERROR_TYPES, CALL_SESSION_USER_TYPE } from "@/constants";
 import handleException, { alerts } from "@/utils/handle-exception";
 import ssrUser from "@/utils/ssr-user";
 import * as authManager from "@callsesh/utils/auth-manager";
@@ -42,6 +42,16 @@ const ViewUser = ({ user, viewUser: viewUserBase, error }) => {
 	const isOperator = isUserOperator(viewUser);
 
 	const md = new MobileDetect(window.navigator.userAgent);
+
+	const inSession = !isEmpty(user.callSession);
+	const viewUserInSession = !isEmpty(viewUser.callSession);
+	const inSessionWithViewUser =
+		viewUserInSession &&
+		inSession &&
+		viewUser.callSession.with === user.username &&
+		user.callSession.with === viewUser.username &&
+		viewUser.callSession.as === CALL_SESSION_USER_TYPE.operator &&
+		user.callSession.as === CALL_SESSION_USER_TYPE.caller;
 
 	// Set current pathname to userRouteReferrer state if error is empty.
 	useEffect(() => {
@@ -71,9 +81,9 @@ const ViewUser = ({ user, viewUser: viewUserBase, error }) => {
 					});
 
 					// Toast to the user that they're about to receive a call.
-					toaster.positive(
-						`Your call session has started. You should receive an SMS with a phone number to call that will connect you to operator.`
-					);
+					// toaster.positive(
+					// 	`Your call session has started. You should receive an SMS with a phone number to call that will connect you to operator.`
+					// );
 
 					// Check if mobile and latest browsers, and if so use tel:
 					if (md.phone()) {
@@ -121,6 +131,15 @@ const ViewUser = ({ user, viewUser: viewUserBase, error }) => {
 		}, 500),
 		[user, viewUser]
 	);
+
+	// If users in session with each other, show full screen InSesssionScreen
+	if (inSessionWithViewUser) {
+		return (
+			<div>
+				<div>Hello World</div>
+			</div>
+		);
+	}
 
 	return (
 		<Layout
@@ -206,6 +225,12 @@ export async function getServerSideProps({
 					}
 				};
 			}
+
+			// EMULATE: Add current user to callsesion with View User
+			viewUser.callSession = {
+				as: CALL_SESSION_USER_TYPE.operator,
+				with: "hello"
+			};
 
 			return {
 				props: {
