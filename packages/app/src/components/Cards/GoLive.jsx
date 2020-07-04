@@ -16,8 +16,8 @@ import { toaster } from "baseui/toast";
 
 import Card from "@/components/Card";
 import Highlight from "@/components/Highlight";
+// import Emoji from "@/components/Emoji";
 import Pulse from "@/components/Pulse";
-import EnsureVerified from "@/components/EnsureVerified";
 import useUser from "@/hooks/use-user";
 import handleException, { alerts } from "@/utils/handle-exception";
 import * as routes from "@/routes";
@@ -82,68 +82,66 @@ const GoLiveCard = ({ ...props }) => {
 				})}
 			>
 				<div className={css({ marginRight: "10px" })}>
-					<EnsureVerified inline>
-						<Checkbox
-							checked={isLive}
-							onChange={toggleLive}
-							labelPlacement={CHECKBOX_LABEL_PLACEMENT.right}
-							checkmarkType={CHECKBOX_STYLE_TYPE.toggle_round}
-							disabled={isLoading}
-							overrides={{
-								Root: {
-									style: {
-										opacity: isLoading ? "0.8" : "1",
-										pointerEvents: isLoading ? "none" : "auto",
-										display: "flex",
-										alignItems: "center"
-									}
-								},
-								Label: {
-									style: {
-										fontSize: "32px",
-										fontWeight: "900",
-										transition: "padding 0.25s",
-										paddingLeft: isLive
-											? theme.sizing.scale600
-											: theme.sizing.scale300
-									}
-								},
-								ToggleTrack: {
-									style: {
-										height: "30px",
-										width: "50px",
-										borderTopLeftRadius: "100px",
-										borderTopRightRadius: "100px",
-										borderBottomLeftRadius: "100px",
-										borderBottomRightRadius: "100px"
-									}
-								},
-								Toggle: {
-									style: {
-										height: "30px",
-										width: "30px"
-									}
+					<Checkbox
+						checked={isLive}
+						onChange={toggleLive}
+						labelPlacement={CHECKBOX_LABEL_PLACEMENT.right}
+						checkmarkType={CHECKBOX_STYLE_TYPE.toggle_round}
+						disabled={isLoading}
+						overrides={{
+							Root: {
+								style: {
+									opacity: isLoading ? "0.8" : "1",
+									pointerEvents: isLoading ? "none" : "auto",
+									display: "flex",
+									alignItems: "center"
 								}
-							}}
-						>
-							{isLive ? (
-								<div className={css({ display: "flex", alignItems: "center" })}>
-									<span
-										className={css({
-											position: "relative",
-											zIndex: "5",
-											marginRight: "10px"
-										})}
-									>
-										Live!
-									</span>
-									{!isLoading && <Pulse width="15px" height="15px" />}
-								</div>
-							) : (
-								<span>Go Live</span>
-							)}
-						</Checkbox>
-					</EnsureVerified>
+							},
+							Label: {
+								style: {
+									fontSize: "32px",
+									fontWeight: "900",
+									transition: "padding 0.25s",
+									paddingLeft: isLive
+										? theme.sizing.scale600
+										: theme.sizing.scale300
+								}
+							},
+							ToggleTrack: {
+								style: {
+									height: "30px",
+									width: "50px",
+									borderTopLeftRadius: "100px",
+									borderTopRightRadius: "100px",
+									borderBottomLeftRadius: "100px",
+									borderBottomRightRadius: "100px"
+								}
+							},
+							Toggle: {
+								style: {
+									height: "30px",
+									width: "30px"
+								}
+							}
+						}}
+					>
+						{isLive ? (
+							<div className={css({ display: "flex", alignItems: "center" })}>
+								<span
+									className={css({
+										position: "relative",
+										zIndex: "5",
+										marginRight: "10px"
+									})}
+								>
+									Live!
+								</span>
+								{!isLoading && <Pulse width="15px" height="15px" />}
+							</div>
+						) : (
+							<span>Go Live</span>
+						)}
+					</Checkbox>
 				</div>
 				<div>{isLoading && <Spinner />}</div>
 			</div>

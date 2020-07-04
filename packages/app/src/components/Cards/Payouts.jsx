@@ -17,7 +17,6 @@ import { Tag, VARIANT as TAG_VARIANT, KIND as TAG_KIND } from "baseui/tag";
 import Highlight from "@/components/Highlight";
 import Link from "@/components/Link";
 import Card from "@/components/Card";
-import EnsureVerified from "@/components/EnsureVerified";
 import * as routes from "@/routes";
 import { isStripeConnectAvailable } from "@/utils/user-support";
 import useUser from "@/hooks/use-user";
@@ -80,16 +79,14 @@ const PayoutsCard = ({ ...props }) => {
 							</Tag>
 						)}
 					</div>
-					<EnsureVerified inline>
-						<Link href={routes.api.connect.start} button>
-							<Button
-								startEnhancer={() => <SecureIcon size={22} />}
-								endEnhancer={() => <ChevronRight size={22} />}
-							>
-								{user.payouts.setup ? `Manage` : `Setup`} Payouts
-							</Button>
-						</Link>
-					</EnsureVerified>
+					<Link href={routes.api.connect.start} button>
+						<Button
+							startEnhancer={() => <SecureIcon size={22} />}
+							endEnhancer={() => <ChevronRight size={22} />}
+						>
+							{user.payouts.setup ? `Manage` : `Setup`} Payouts
+						</Button>
+					</Link>
 					<ParagraphXSmall>
 						We use <Highlight>Stripe</Highlight> to make sure you get paid on
 						time and to keep your personal bank and details secure.
@@ -97,22 +94,20 @@ const PayoutsCard = ({ ...props }) => {
 				</div>
 			) : (
 				<div>
-					<EnsureVerified inline>
-						<Link
-							href={PAYOUTS_SUBMISSION_FORM_URL}
-							target="_blank"
-							rel="noopener noreferrer"
-							standard
-							button
+					<Link
+						href={PAYOUTS_SUBMISSION_FORM_URL}
+						target="_blank"
+						rel="noopener noreferrer"
+						standard
+						button
+					>
+						<Button
+							startEnhancer={() => <FormIcon size={22} />}
+							endEnhancer={() => <ChevronRight size={22} />}
 						>
-							<Button
-								startEnhancer={() => <FormIcon size={22} />}
-								endEnhancer={() => <ChevronRight size={22} />}
-							>
-								Setup Payouts
-							</Button>
-						</Link>
-					</EnsureVerified>
+							Setup Payouts
+						</Button>
+					</Link>
 					<ParagraphXSmall>
 						Submit your payout information and verify your details with the
 						Callsesh support team to get paid by us on the first day of each
