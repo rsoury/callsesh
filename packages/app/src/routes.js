@@ -52,5 +52,6 @@ export const api = {
 		start: "/api/connect",
 		redirect: "/api/connect/oauth"
 	},
-	callUser: `/api/u/:id/call`
+	callUser: `/api/u/:id/call`,
+	resendEmail: `/api/resend-email`
 };

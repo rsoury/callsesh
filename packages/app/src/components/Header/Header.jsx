@@ -28,6 +28,7 @@ import useUser from "@/hooks/use-user";
 import appendReturnUrl from "@/utils/append-return-url";
 
 import Logo from "./Logo";
+import VerifyEmail from "./VerifyEmail";
 
 const NavItem = ({ label, href, ...props }) => (
 	<Link href={href} button {...props}>
@@ -216,6 +217,7 @@ const Header = () => {
 			})}
 		>
 			{!isEmpty((user || {}).callSession) && <InCallTopBar />}
+			{!isLoading && !(user || {}).emailVerified && <VerifyEmail />}
 			<AppNavBar
 				appDisplayName={
 					<Link href={routes.page.index} button pass>

@@ -16,6 +16,7 @@ import * as fees from "@callsesh/utils/fees";
 import useUser from "@/hooks/use-user";
 import Link from "@/components/Link";
 import Highlight from "@/components/Highlight";
+import EnsureVerified from "@/components/EnsureVerified";
 import { ViewUserProps } from "@/utils/common-prop-types";
 import * as routes from "@/routes";
 import { CALL_SESSION_USER_TYPE } from "@/constants";
@@ -123,41 +124,43 @@ const ViewUserOperatorAction = ({ viewUser, onStart, isStarting }) => {
 					)}
 					{isAuthenticated && viewUser.isLive && (
 						<div>
-							<Button
-								startEnhancer={
-									viewUserInSession && !inSessionWithViewUser
-										? () => <PhoneUnavailableIcon size={20} />
-										: () => <PhoneIcon size={20} />
-								}
-								disabled={
-									// Disabled when user looking at their own profile
-									// User in session, but new with view user
-									// View user in session but not with user.
-									// Means, if user and viewuser are in a session, together, this button is available.
-									isSameUser ||
-									(inSession && !inSessionWithViewUser) ||
-									(viewUserInSession && !inSessionWithViewUser)
-								}
-								onClick={onStart}
-								overrides={{
-									BaseButton: {
-										style: {
-											width: "100%",
-											pointerEvents: isStarting ? "none" : "auto"
-										}
+							<EnsureVerified>
+								<Button
+									startEnhancer={
+										viewUserInSession && !inSessionWithViewUser
+											? () => <PhoneUnavailableIcon size={20} />
+											: () => <PhoneIcon size={20} />
 									}
-								}}
-								isLoading={isStarting}
-							>
-								{viewUserInSession && !inSessionWithViewUser ? (
-									<span>Currently in a call. Check in later.</span>
-								) : (
-									<span>
-										Call {viewUser.givenName} for {minuteRate}
-										/minute
-									</span>
-								)}
-							</Button>
+									disabled={
+										// Disabled when user looking at their own profile
+										// User in session, but new with view user
+										// View user in session but not with user.
+										// Means, if user and viewuser are in a session, together, this button is available.
+										// isSameUser ||
+										(inSession && !inSessionWithViewUser) ||
+										(viewUserInSession && !inSessionWithViewUser)
+									}
+									onClick={onStart}
+									overrides={{
+										BaseButton: {
+											style: {
+												width: "100%",
+												pointerEvents: isStarting ? "none" : "auto"
+											}
+										}
+									}}
+									isLoading={isStarting}
+								>
+									{viewUserInSession && !inSessionWithViewUser ? (
+										<span>Currently in a call. Check in later.</span>
+									) : (
+										<span>
+											Call {viewUser.givenName} for {minuteRate}
+											/minute
+										</span>
+									)}
+								</Button>
+							</EnsureVerified>
 							<ParagraphXSmall marginTop="5px" marginBottom="0px">
 								A service fee of {fees.preAuthAmountText()} will be charged upon
 								initiating the call. Additional charges will apply only for time

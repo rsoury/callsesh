@@ -182,3 +182,27 @@ export const endCallSession = (id) => {
 };
 
 export const getClient = () => client;
+
+export const updateEmail = async (userId, email, emailIdentity) => {
+	// Check if email identity exists. If so, unlink and delete it for to be created
+	if (!isEmpty(emailIdentity)) {
+		await getClient().unlinkUsers({
+			id: userId,
+			user_id: emailIdentity,
+			provider: "email"
+		});
+		await getClient().deleteUser({ id: `email|${emailIdentity}` });
+	}
+	// Use email to create a new account
+	const emailUser = await getClient().createUser({
+		email,
+		connection: "email"
+	});
+	// Create an account link with the newly created account
+	await getClient().linkUsers(userId, {
+		user_id: emailUser.user_id,
+		provider: "email"
+	});
+
+	return emailUser.user_id.split("|")[1]; // Remove email|xxx from id
+};

@@ -73,28 +73,6 @@ const patchMap = {
 };
 const patchProperties = Object.keys(patchMap);
 
-const updateEmail = async (userId, email, emailIdentity) => {
-	// Check if email identity exists. If so, unlink and delete it for to be created
-	if (!isEmpty(email)) {
-		await authManager.getClient().unlinkUsers({
-			id: userId,
-			user_id: emailIdentity,
-			provider: "email"
-		});
-		await authManager.getClient().deleteUser({ id: `email|${emailIdentity}` });
-	}
-	// Use email to create a new account
-	const emailUser = await authManager
-		.getClient()
-		.createUser({ email, connection: "email" });
-	// Create an account link with the newly created account
-	await authManager
-		.getClient()
-		.linkUsers(userId, { user_id: emailUser.user_id, provider: "email" });
-
-	return emailUser.user_id.split("|")[1]; // Remove email|xxx from id
-};
-
 handler
 	.use(requireAuthentication)
 	.get(async (req, res) => {
@@ -185,7 +163,7 @@ handler
 
 		try {
 			// Update email identity
-			await updateEmail(user.id, email, user.emailIdentity);
+			await authManager.updateEmail(user.id, email, user.emailIdentity);
 			req.log.info("Created email identity", { user: user.id, email });
 
 			// Update operator details
@@ -303,7 +281,7 @@ handler
 
 			// Update email identity
 			if (typeof email === "string" && isEmail(email)) {
-				await updateEmail(user.id, email, user.emailIdentity);
+				await authManager.updateEmail(user.id, email, user.emailIdentity);
 				stripeUpdateParams.email = email;
 				// Apply changes to newUser
 				newUser = {
