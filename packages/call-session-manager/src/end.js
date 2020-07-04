@@ -307,7 +307,17 @@ export default async function endCallSession(event) {
 			}
 
 			// Notify both parties in the session with a call summary via text.
-			const operatorSummary = [`This call went for ${totalDuration} seconds.`];
+			const timeTypes = ["hour", "minute", "second"];
+			const readableDuration = new Date(totalDuration * 1000)
+				.toISOString()
+				.substr(11, 8)
+				.split(":")
+				.map((value, index) => {
+					const intVal = parseInt(value, 10);
+					return `${intVal} ${timeTypes[index]}${intVal > 1 ? "s" : ""}`;
+				})
+				.join(" ");
+			const operatorSummary = [`This call went for ${readableDuration}.`];
 			if (payoutsEnabled) {
 				operatorSummary.push(
 					`You will be paid ${fees.format(chargeAmount - applicationFee)}.`
@@ -335,7 +345,7 @@ export default async function endCallSession(event) {
 				comms.sms(
 					callerUser.phoneNumber,
 					[
-						`This call went for ${totalDuration} seconds and metered ${fees.format(
+						`This call went for ${readableDuration} and metered ${fees.format(
 							totalChargeAmount
 						)}. A receipt has been emailed to you.`,
 						`We hope you're happy with the call! Have issues? Contact Callsesh support.`
