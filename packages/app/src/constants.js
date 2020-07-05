@@ -3,6 +3,13 @@ import { constants } from "@callsesh/utils";
 // Call Session
 export const { CALL_SESSION_USER_TYPE } = constants;
 
+// Call Session Statuses
+export const CALL_SESSION_STATUS = {
+	active: "active",
+	inCall: "in-call",
+	metering: "metering"
+};
+
 // Payouts
 export const PAYOUTS_SUBMISSION_FORM_URL =
 	"https://forms.gle/zYHyhTds5opadV8b8";

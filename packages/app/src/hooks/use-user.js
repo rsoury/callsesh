@@ -140,6 +140,7 @@ function useUser({ required } = {}) {
 						callSession: {
 							...callSession,
 							status: "active"
+							// status: "metering"
 						}
 					});
 				}, 1000);
