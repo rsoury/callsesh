@@ -1,6 +1,6 @@
 /* eslint-disable no-underscore-dangle */
 
-import React, { createContext, useState } from "react";
+import React, { createContext, useState, useEffect } from "react";
 import isEmpty from "is-empty";
 import debounce from "debounce-promise";
 import get from "lodash/get";
@@ -9,6 +9,7 @@ import { ChildrenProps } from "@/utils/common-prop-types";
 import * as routes from "@/routes";
 import request from "@/utils/request";
 import { identifyUser } from "@/utils/signals";
+import { setUser as setErrorTrackingUser } from "@/utils/handle-exception";
 
 export const UserContext = createContext();
 
@@ -30,6 +31,7 @@ const UserContextProvider = ({ children }) => {
 			return null;
 		}
 		setUserState(paramUser);
+		setErrorTrackingUser(paramUser);
 		identifyUser(paramUser);
 		return paramUser;
 	};
@@ -62,6 +64,14 @@ const UserContextProvider = ({ children }) => {
 
 	// Debounce to prevent duplicate fetches executed simultaneously.
 	const debouncedGetUser = debounce(getUser, 500);
+
+	// If user sourced from SSR, apply to third party services
+	useEffect(() => {
+		if (!isEmpty(user)) {
+			setErrorTrackingUser(user);
+			identifyUser(user);
+		}
+	}, []);
 
 	return (
 		<UserContext.Provider

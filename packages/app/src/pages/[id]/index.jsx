@@ -16,6 +16,7 @@ import ono from "@jsdevtools/ono";
 import Layout from "@/components/Layout";
 import ScreenContainer from "@/components/ScreenContainer";
 import * as ViewUserScreen from "@/components/Screens/ViewUser";
+import InSessionScreen from "@/components/Screens/InSession";
 import request from "@/utils/request";
 import {
 	UserProps,
@@ -134,11 +135,7 @@ const ViewUser = ({ user, viewUser: viewUserBase, error }) => {
 
 	// If users in session with each other, show full screen InSesssionScreen
 	if (inSessionWithViewUser) {
-		return (
-			<div>
-				<div>Hello World</div>
-			</div>
-		);
+		return <InSessionScreen viewUser={viewUser} />;
 	}
 
 	return (

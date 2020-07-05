@@ -39,6 +39,7 @@
 		"eventemitter3": "^4.0.4",
 		"express-pino-logger": "^4.0.0",
 		"formik": "^2.1.4",
+		"framer-motion": "^1.11.1",
 		"glob": "^7.1.6",
 		"glob-promise": "^3.4.0",
 		"gray-matter": "^4.0.2",

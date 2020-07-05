@@ -6,7 +6,7 @@ import mapKeys from "lodash/mapKeys";
 import isEmpty from "is-empty";
 import { parsePhoneNumberFromString } from "libphonenumber-js";
 import ono from "@jsdevtools/ono";
-import pick from "lodash/pick";
+import pickBy from "lodash/pickBy";
 
 import { ERROR_TYPES } from "@/constants";
 import { isPayoutsEnabled } from "@callsesh/utils/stripe";
@@ -190,7 +190,7 @@ const constructUser = async (
 		id: sessionUser.sub,
 		...sessionUser,
 		...userMetadata,
-		callSession: pick(callSession, ["as", "with"]),
+		callSession: pickBy(callSession, (value, key) => !["id"].includes(key)),
 		phoneNumber,
 		familyName,
 		givenName,
