@@ -24,7 +24,11 @@ import {
 } from "@/utils/common-prop-types";
 import * as routes from "@/routes";
 import { useSetUser } from "@/hooks/use-user";
-import { ERROR_TYPES, CALL_SESSION_USER_TYPE } from "@/constants";
+import {
+	ERROR_TYPES,
+	CALL_SESSION_USER_TYPE,
+	CALL_SESSION_STATUS
+} from "@/constants";
 import handleException, { alerts } from "@/utils/handle-exception";
 import ssrUser from "@/utils/ssr-user";
 import { useUserRouteReferrer } from "@/hooks/use-route-referrer";
@@ -33,7 +37,6 @@ import checkCallSession from "@/utils/check-call-session";
 // We're referring to the currently viewed user, as the viewUser
 const ViewUser = ({ user, viewUser: viewUserBase, error }) => {
 	const [, theme] = useStyletron();
-	const [isStartingCall, setStartingCall] = useState(false);
 	const [viewUser, setViewUser] = useState(viewUserBase);
 	const setUser = useSetUser();
 	const [, setUserRouteReferrer] = useUserRouteReferrer();
@@ -49,10 +52,9 @@ const ViewUser = ({ user, viewUser: viewUserBase, error }) => {
 		}
 	}, [error]);
 
-	const startCallSession = useCallback(
-		debounce(() => {
+	const handleStartCallSession = useCallback(
+		debounce((done = () => {}) => {
 			// Start Call Session between user and viewUser
-			setStartingCall(true);
 			request
 				.post(routes.build.callUser(viewUser.username))
 				.then(({ data }) => data)
@@ -68,11 +70,6 @@ const ViewUser = ({ user, viewUser: viewUserBase, error }) => {
 						...viewUser,
 						callSession: callSession.operator
 					});
-
-					// Toast to the user that they're about to receive a call.
-					// toaster.positive(
-					// 	`Your call session has started. You should receive an SMS with a phone number to call that will connect you to operator.`
-					// );
 
 					// Check if mobile and latest browsers, and if so use tel:
 					if (md.phone()) {
@@ -115,15 +112,71 @@ const ViewUser = ({ user, viewUser: viewUserBase, error }) => {
 					}
 				})
 				.finally(() => {
-					setStartingCall(false);
+					done();
 				});
 		}, 500),
 		[user, viewUser]
 	);
 
+	const handleEndSession = useCallback(
+		(done = () => {}) => {
+			console.log("end session...");
+		},
+		[user]
+	);
+
+	const handleOpenChat = useCallback(() => {
+		console.log("open chat...");
+	}, []);
+
+	const handleCall = useCallback((done = () => {}) => {
+		// Send an SMS and Toast when desktop, otherwise trigger tel:
+		request
+			.get(
+				`${routes.build.callUser(user.username)}?sms=${
+					!md.phone() ? "true" : "false"
+				}`
+			)
+			.then(({ proxyPhoneNumber }) => {
+				if (md.phone()) {
+					window.location.href = `tel:${proxyPhoneNumber}`;
+				} else {
+					toaster.info(
+						`You should receive an SMS with a phone number to call that will connect you to operator.`
+					);
+				}
+			})
+			.catch((err) => {
+				handleException(err);
+				alerts.error();
+			})
+			.finally(() => {
+				done();
+			});
+	}, []);
+
+	const handleToggleMeter = useCallback(
+		(done = () => {}) => {
+			if (user.callSession.status === CALL_SESSION_STATUS.metering) {
+				// Stop the meter
+			} else {
+				// Start the meter
+			}
+		},
+		[user]
+	);
+
 	// If users in session with each other, show full screen InSesssionScreen
 	if (inSessionWithViewUser) {
-		return <InSessionScreen viewUser={viewUser} />;
+		return (
+			<InSessionScreen
+				viewUser={viewUser}
+				onEndSession={handleEndSession}
+				onOpenChat={handleOpenChat}
+				onCall={handleCall}
+				onToggleMeter={handleToggleMeter}
+			/>
+		);
 	}
 
 	return (
@@ -137,8 +190,7 @@ const ViewUser = ({ user, viewUser: viewUserBase, error }) => {
 			<ViewUserScreen
 				error={error}
 				viewUser={viewUser}
-				onStart={startCallSession}
-				isStarting={isStartingCall}
+				onStart={handleStartCallSession}
 			/>
 		</Layout>
 	);

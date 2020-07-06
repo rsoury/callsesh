@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import PropTypes from "prop-types";
 import isEmpty from "is-empty";
 import { useStyletron } from "baseui";
@@ -15,7 +15,7 @@ import OperatorDetails from "./Operator/Details";
 import OperatorAction from "./Operator/Action";
 import Visitor from "./Visitor";
 
-const ViewUserScreen = ({ error, viewUser, ...props }) => {
+const ViewUserScreen = ({ error, viewUser, onStartCallSession }) => {
 	const [css] = useStyletron();
 	const [user] = useUser();
 
@@ -31,7 +31,10 @@ const ViewUserScreen = ({ error, viewUser, ...props }) => {
 							<OperatorDetails viewUser={viewUser} />
 						</Cell>
 						<Cell span={[12, 3, 5]}>
-							<OperatorAction viewUser={viewUser} {...props} />
+							<OperatorAction
+								viewUser={viewUser}
+								onStart={onStartCallSession}
+							/>
 						</Cell>
 					</Grid>
 				) : (
@@ -53,11 +56,13 @@ const ViewUserScreen = ({ error, viewUser, ...props }) => {
 
 ViewUserScreen.propTypes = {
 	viewUser: ViewUserProps.isRequired,
-	error: PropTypes.object
+	error: PropTypes.object,
+	onStartCallSession: PropTypes.func
 };
 
 ViewUserScreen.defaultProps = {
-	error: {}
+	error: {},
+	onStartCallSession() {}
 };
 
 export default ViewUserScreen;

@@ -12,17 +12,17 @@ import isEmpty from "is-empty";
 import truncate from "lodash/truncate";
 import { nanoid } from "nanoid";
 import ono from "@jsdevtools/ono";
-import pick from "lodash/pick";
-
+import * as authManager from "@callsesh/utils/auth-manager";
 import * as comms from "@callsesh/utils/comms";
+import stripe from "@callsesh/utils/stripe";
+
 import getHandler, { onNoMatch } from "@/middleware";
 import { requireAuthentication, getUser } from "@/middleware/auth";
-import * as authManager from "@callsesh/utils/auth-manager";
 import isUserOperator from "@/utils/is-operator";
-import stripe from "@callsesh/utils/stripe";
 import { ERROR_TYPES, CALL_SESSION_USER_TYPE } from "@/constants";
 import { callSessionManagerUrl } from "@/env-config";
 import request from "@/utils/request";
+import checkCallSession from "@/utils/check-call-session";
 
 const handler = getHandler();
 
@@ -41,36 +41,52 @@ const logParams = (viewUser = {}, user = {}) => ({
 const getUserSMSMessage = (proxyPhoneNumber) =>
 	`Call your operator using this number: ${proxyPhoneNumber}. This number will be unavailable in a minute.`;
 
-const checkSessionWithViewUser = async (user, viewUser) => {
-	// Check if user and viewUser share session data
-	if (
-		user.callSession.with === viewUser.username &&
-		viewUser.callSession.with === user.username &&
-		user.callSession.as === CALL_SESSION_USER_TYPE.caller &&
-		viewUser.callSession.as === CALL_SESSION_USER_TYPE.operator &&
-		user.callSession.id === viewUser.callSession.id
-	) {
-		// Retrieve session and check if its still open (ie. not failed or closed).
-		const session = await comms
-			.getProxyService()
-			.sessions(user.callSession.id)
-			.fetch();
-		if (["closed", "failed"].includes(session.status)) {
-			return false;
-		}
-
-		return true;
+const isSessionValid = async (sessionId) => {
+	// Retrieve session and check if its still open (ie. not failed or closed).
+	const session = await comms.getProxyService().sessions(sessionId).fetch();
+	if (["closed", "failed"].includes(session.status)) {
+		return false;
 	}
-	return false;
+
+	return true;
 };
+
+const getProxyPhoneNumber = (user) =>
+	comms
+		.getProxyService()
+		.sessions(user.callSession?.id)
+		.participants.list({ limit: 20 })
+		.then(
+			(participants) =>
+				(
+					participants.find(
+						({ identifier }) => identifier === user.phoneNumber
+					) || {}
+				).proxyIdentifier
+		)
+		.then((proxyPhoneNumber) => {
+			if (isEmpty(proxyPhoneNumber)) {
+				throw ono(new Error("No proxy phone number found for caller"), {
+					type: ERROR_TYPES.proxyPhoneNumberRequired,
+					context: {
+						callSessionId: user.callSession.id,
+						callerId: user.id,
+						operatorUser: user.callSession.with
+					}
+				});
+			}
+			return proxyPhoneNumber;
+		});
 
 handler
 	.use(requireAuthentication)
 	.get(async (req, res) => {
 		// Handler for retreving existing session between user and viewUser
 		const {
-			query: { id: viewUsername }
+			query: { id: viewUsername, sms }
 		} = req;
+
+		const shouldSMS = sms === "true" || sms === true;
 
 		// Get view user
 		const viewUser = await authManager.getUserByUsername(viewUsername, {
@@ -86,32 +102,41 @@ handler
 
 		const user = await getUser(req, { withContext: true });
 
-		if (!isEmpty(user.callSession)) {
-			if (!isEmpty(viewUser.callSession)) {
-				const isInSessionWithViewUser = await checkSessionWithViewUser(
-					user,
-					viewUser
-				);
-				if (isInSessionWithViewUser) {
-					// Get session details to find if status is still open.
-					req.log.info(`User in call session with view user`, {
-						...logParams(viewUser, user),
-						callSessionId: user.callSession.id
-					});
+		const inSession = checkCallSession(user, viewUser);
+		if (inSession.isSame) {
+			const valid = await isSessionValid(user.callSession.id);
+			if (valid) {
+				const proxyPhoneNumber = await getProxyPhoneNumber(user);
 
-					return res.json({
-						success: true,
-						callSession: {
-							caller: pick(user.callSession, ["as", "with"]),
-							operator: pick(viewUser.callSession, ["as", "with"])
-						}
-					});
+				// Get session details to find if status is still open.
+				req.log.info(`User in call session with view user`, {
+					...logParams(viewUser, user),
+					callSessionId: user.callSession.id,
+					proxyPhoneNumber
+				});
+
+				if (shouldSMS) {
+					// Notify caller with proxy phone number
+					await comms.sms(
+						user.phoneNumber,
+						getUserSMSMessage(proxyPhoneNumber)
+					);
 				}
+
+				return res.json({
+					success: true,
+					proxyPhoneNumber,
+					callSession: {
+						caller: user.callSession,
+						operator: viewUser.callSession
+					}
+				});
 			}
 		}
 
 		return res.json({
 			success: true,
+			proxyPhoneNumber: "",
 			callSession: {
 				caller: {},
 				operator: {}
@@ -154,38 +179,14 @@ handler
 
 		// Make sure authed user is not already in a session
 		// If they are, check if they're already in a session with the viewUser
-		if (!isEmpty(user.callSession)) {
-			if (!isEmpty(viewUser.callSession)) {
-				const isInSessionWithViewUser = await checkSessionWithViewUser(
-					user,
-					viewUser
-				);
-				if (isInSessionWithViewUser) {
+		const inSession = checkCallSession(user, viewUser);
+		if (inSession.isUser) {
+			if (inSession.isViewUser && inSession.isSame) {
+				const valid = await isSessionValid(user.callSession.id);
+				if (valid) {
 					// Both users are already in a session together.
 					// Return the params for successful session creation.
-					const proxyPhoneNumber = await comms
-						.getProxyService()
-						.sessions(user.callSession.id)
-						.participants.list({ limit: 20 })
-						.then(
-							(participants) =>
-								(
-									participants.find(
-										({ identifier }) => identifier === user.phoneNumber
-									) || {}
-								).proxyIdentifier
-						);
-
-					if (isEmpty(proxyPhoneNumber)) {
-						throw ono(new Error("No proxy phone number found for caller"), {
-							type: ERROR_TYPES.proxyPhoneNumberRequired,
-							context: {
-								callSessionId: user.callSession.id,
-								callerId: user.id,
-								operatorId: viewUser.id
-							}
-						});
-					}
+					const proxyPhoneNumber = await getProxyPhoneNumber(user);
 
 					req.log.info(`User already in call session with view user`, {
 						...logParams(viewUser, user),
@@ -203,8 +204,8 @@ handler
 						success: true,
 						proxyPhoneNumber,
 						callSession: {
-							caller: pick(user.callSession, ["as", "with"]),
-							operator: pick(viewUser.callSession, ["as", "with"])
+							caller: user.callSession,
+							operator: viewUser.callSession
 						}
 					});
 				}
@@ -337,7 +338,7 @@ handler
 			comms.sms(user.phoneNumber, getUserSMSMessage(proxyPhoneNumber))
 		]);
 
-		// Fire a request to CSM here to end the session, in the caller never makes the call.
+		// Fire a request to CSM here to end the session, in  the caller never makes the call.
 		await request.post(callSessionManagerUrl, {
 			interactionSessionSid: callSession.sid,
 			outboundParticipantSid: operatorParticipantId,

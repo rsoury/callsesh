@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import PropTypes from "prop-types";
 import { useStyletron } from "baseui";
 import { Label1 as Label, ParagraphXSmall } from "baseui/typography";
@@ -20,9 +20,10 @@ import { ViewUserProps } from "@/utils/common-prop-types";
 import checkCallSession from "@/utils/check-call-session";
 import * as routes from "@/routes";
 
-const ViewUserOperatorAction = ({ viewUser, onStart, isStarting }) => {
+const ViewUserOperatorAction = ({ viewUser, onStart }) => {
 	const [css, theme] = useStyletron();
 	const [user] = useUser();
+	const [isStarting, setStarting] = useState(false);
 
 	const isAuthenticated = !isEmpty(user);
 	const isSameUser = isAuthenticated
@@ -35,6 +36,11 @@ const ViewUserOperatorAction = ({ viewUser, onStart, isStarting }) => {
 	} = checkCallSession(user, viewUser);
 
 	const minuteRate = fees.getMinuteRate(viewUser.hourlyRate);
+
+	const handleStart = () => {
+		setStarting(true);
+		return onStart(() => setStarting(false));
+	};
 
 	return (
 		<div
@@ -134,7 +140,7 @@ const ViewUserOperatorAction = ({ viewUser, onStart, isStarting }) => {
 									(inSession && !inSessionWithViewUser) ||
 									(viewUserInSession && !inSessionWithViewUser)
 								}
-								onClick={onStart}
+								onClick={handleStart}
 								overrides={{
 									BaseButton: {
 										style: {
@@ -169,13 +175,11 @@ const ViewUserOperatorAction = ({ viewUser, onStart, isStarting }) => {
 
 ViewUserOperatorAction.propTypes = {
 	viewUser: ViewUserProps.isRequired,
-	onStart: PropTypes.func,
-	isStarting: PropTypes.bool
+	onStart: PropTypes.func
 };
 
 ViewUserOperatorAction.defaultProps = {
-	onStart() {},
-	isStarting: false
+	onStart() {}
 };
 
 export default ViewUserOperatorAction;

@@ -6,11 +6,10 @@ import mapKeys from "lodash/mapKeys";
 import isEmpty from "is-empty";
 import { parsePhoneNumberFromString } from "libphonenumber-js";
 import ono from "@jsdevtools/ono";
-import pickBy from "lodash/pickBy";
-
-import { ERROR_TYPES } from "@/constants";
 import { isPayoutsEnabled } from "@callsesh/utils/stripe";
 import * as authManager from "@callsesh/utils/auth-manager";
+
+import { ERROR_TYPES } from "@/constants";
 import {
 	auth0 as config,
 	publicUrl,
@@ -190,7 +189,7 @@ const constructUser = async (
 		id: sessionUser.sub,
 		...sessionUser,
 		...userMetadata,
-		callSession: pickBy(callSession, (value, key) => !["id"].includes(key)),
+		callSession,
 		phoneNumber,
 		familyName,
 		givenName,
@@ -208,7 +207,6 @@ const constructUser = async (
 			roles,
 			...userData,
 			...appMetadata, // will include call session related data by default.
-			callSession,
 			...emailAttributesWithContext
 		};
 	}

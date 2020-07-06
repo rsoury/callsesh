@@ -1,9 +1,9 @@
-import React, { useCallback, useState } from "react";
+import React, { useState } from "react";
+import PropTypes from "prop-types";
 import isEmpty from "is-empty";
 import { useStyletron, withStyle } from "baseui";
 import { Paragraph2 as Paragraph, ParagraphXSmall } from "baseui/typography";
 import { StyledSpinnerNext, SIZE as SPINNER_SIZE } from "baseui/spinner";
-import { toaster } from "baseui/toast";
 import { motion } from "framer-motion";
 import {
 	PhoneOff as EndSessionIcon,
@@ -13,7 +13,6 @@ import {
 	Phone as CallIcon,
 	Info as InfoIcon
 } from "react-feather";
-import MobileDetect from "mobile-detect";
 import { KIND as NOTIFICATION_KIND } from "baseui/notification";
 
 import InCallTopBar from "@/components/Header/InCallTopBar";
@@ -21,9 +20,7 @@ import Notice from "@/components/Notice";
 import { ViewUserProps } from "@/utils/common-prop-types";
 import isUserOperator from "@/utils/is-operator";
 import useUser from "@/hooks/use-user";
-import request from "@/utils/request";
 import { CALL_SESSION_STATUS } from "@/constants";
-import * as routes from "@/routes";
 
 // import Notice from "./Notice";
 import With from "./With";
@@ -34,51 +31,33 @@ const Spinner = withStyle(StyledSpinnerNext, {
 	height: "40px"
 });
 
-const InSessionScreen = ({ viewUser }) => {
+// Basically a function to manage loading state for a handler.
+const manageLoadingState = (handler, setLoadingState) => {
+	setLoadingState(true);
+	return handler(() => setLoadingState(false));
+};
+
+const InSessionScreen = ({
+	viewUser,
+	onEndSession,
+	onOpenChat,
+	onCall,
+	onToggleMeter
+}) => {
 	const [css, theme] = useStyletron();
 	const [user] = useUser();
 	const [isCalling, setCalling] = useState(false);
+	const [isEndingSession, setEndingSession] = useState(false);
+	const [isLoadingMeter, setLoadingMeter] = useState(false);
 
 	const { callSession } = user;
 	const isPending = isEmpty(callSession.status);
 	const isOperator = isUserOperator(user);
 
-	const md = new MobileDetect(window.navigator.userAgent);
-
-	const handleEndSession = useCallback(() => {
-		console.log("end session...");
-	}, []);
-
-	const handleOpenChat = useCallback(() => {
-		console.log("open chat...");
-	}, []);
-
-	const handleCall = useCallback(() => {
-		// Send an SMS and Toast when desktop, otherwise trigger tel:
-		setCalling(true);
-		request
-			.get(routes.build.callUser(user.username))
-			.then(({ proxyPhoneNumber }) => {
-				if (md.phone()) {
-					window.location.href = `tel:${proxyPhoneNumber}`;
-				} else {
-					toaster.info(
-						`You should receive an SMS with a phone number to call that will connect you to operator.`
-					);
-				}
-			})
-			.finally(() => {
-				setCalling(false);
-			});
-	}, []);
-
-	const handleStartMeter = useCallback(() => {
-		console.log("start meter...");
-	}, []);
-
-	const handleEndMeter = useCallback(() => {
-		console.log("stop meter...");
-	}, []);
+	const handleEndSession = manageLoadingState(onEndSession, setEndingSession);
+	const handleOpenChat = onOpenChat;
+	const handleCall = manageLoadingState(onCall, setCalling);
+	const handleToggleMeter = manageLoadingState(onToggleMeter, setLoadingMeter);
 
 	return (
 		<main
@@ -195,11 +174,7 @@ const InSessionScreen = ({ viewUser }) => {
 										})}
 									>
 										<ActionButton
-											onClick={
-												callSession.status === CALL_SESSION_STATUS.metering
-													? handleEndMeter
-													: handleStartMeter
-											}
+											onClick={handleToggleMeter}
 											startEnhancer={
 												callSession.status === CALL_SESSION_STATUS.metering
 													? () => <StopMeterIcon size={30} />
@@ -211,15 +186,20 @@ const InSessionScreen = ({ viewUser }) => {
 													: ""
 											}
 											retain
+											isLoading={isLoadingMeter}
 										>
 											{callSession.status === CALL_SESSION_STATUS.metering
 												? `Stop the meter`
 												: `Start the meter`}
 										</ActionButton>
-										{callSession.status !== CALL_SESSION_STATUS.metering && (
+										{callSession.status === CALL_SESSION_STATUS.metering ? (
+											<ParagraphXSmall>
+												Calling will stop the meter.
+											</ParagraphXSmall>
+										) : (
 											<ParagraphXSmall>
 												Use to end the call and continue charging for the
-												duration of the session
+												duration of the session.
 											</ParagraphXSmall>
 										)}
 									</div>
@@ -235,6 +215,7 @@ const InSessionScreen = ({ viewUser }) => {
 										onClick={handleEndSession}
 										startEnhancer={() => <EndSessionIcon size={26} />}
 										variant="negative"
+										isLoading={isEndingSession}
 									>
 										End Session
 									</ActionButton>
@@ -267,7 +248,20 @@ const InSessionScreen = ({ viewUser }) => {
 };
 
 InSessionScreen.propTypes = {
-	viewUser: ViewUserProps.isRequired
+	viewUser: ViewUserProps.isRequired,
+	onEndSession: PropTypes.func,
+	onOpenChat: PropTypes.func,
+	onCall: PropTypes.func,
+	onStartMeter: PropTypes.func,
+	onStopMeter: PropTypes.func
+};
+
+InSessionScreen.defaultProps = {
+	onEndSession() {},
+	onOpenChat() {},
+	onCall() {},
+	onStartMeter() {},
+	onStopMeter() {}
 };
 
 export default InSessionScreen;
