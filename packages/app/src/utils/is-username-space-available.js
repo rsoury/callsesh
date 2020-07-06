@@ -5,7 +5,10 @@
 
 import path from "path";
 import glob from "glob-promise";
+import uniq from "lodash/uniq";
 import slugify from "@/utils/slugify";
+
+const reservedSpaces = ["blog"];
 
 /**
  *
@@ -25,7 +28,10 @@ const isUsernameSpaceAvailable = async (username) => {
 
 	const spaces = await await glob("src/pages/*");
 
-	const spacenames = spaces.map((space) => path.basename(space).split(".")[0]);
+	const spacenames = uniq(
+		...spaces.map((space) => path.basename(space).split(".")[0]),
+		...reservedSpaces
+	);
 
 	if (spacenames.includes(username)) {
 		return false;

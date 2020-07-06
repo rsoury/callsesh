@@ -6,16 +6,15 @@
 import { useEffect, useState, useCallback } from "react";
 import { useStyletron } from "baseui";
 import isEmpty from "is-empty";
-import { Grid, Cell } from "baseui/layout-grid";
 import debounce from "lodash/debounce";
 import { toaster } from "baseui/toast";
 import Router from "next/router";
 import MobileDetect from "mobile-detect";
 import ono from "@jsdevtools/ono";
+import * as authManager from "@callsesh/utils/auth-manager";
 
 import Layout from "@/components/Layout";
-import ScreenContainer from "@/components/ScreenContainer";
-import * as ViewUserScreen from "@/components/Screens/ViewUser";
+import ViewUserScreen from "@/components/Screens/ViewUser";
 import InSessionScreen from "@/components/Screens/InSession";
 import request from "@/utils/request";
 import {
@@ -23,36 +22,25 @@ import {
 	ViewUserProps,
 	ErrorPageProps
 } from "@/utils/common-prop-types";
-import isUserOperator from "@/utils/is-operator";
 import * as routes from "@/routes";
 import { useSetUser } from "@/hooks/use-user";
 import { ERROR_TYPES, CALL_SESSION_USER_TYPE } from "@/constants";
 import handleException, { alerts } from "@/utils/handle-exception";
 import ssrUser from "@/utils/ssr-user";
-import * as authManager from "@callsesh/utils/auth-manager";
 import { useUserRouteReferrer } from "@/hooks/use-route-referrer";
+import checkCallSession from "@/utils/check-call-session";
 
 // We're referring to the currently viewed user, as the viewUser
 const ViewUser = ({ user, viewUser: viewUserBase, error }) => {
-	const [css, theme] = useStyletron();
+	const [, theme] = useStyletron();
 	const [isStartingCall, setStartingCall] = useState(false);
 	const [viewUser, setViewUser] = useState(viewUserBase);
 	const setUser = useSetUser();
 	const [, setUserRouteReferrer] = useUserRouteReferrer();
 
-	const isOperator = isUserOperator(viewUser);
-
 	const md = new MobileDetect(window.navigator.userAgent);
 
-	const inSession = !isEmpty(user.callSession);
-	const viewUserInSession = !isEmpty(viewUser.callSession);
-	const inSessionWithViewUser =
-		viewUserInSession &&
-		inSession &&
-		viewUser.callSession.with === user.username &&
-		user.callSession.with === viewUser.username &&
-		viewUser.callSession.as === CALL_SESSION_USER_TYPE.operator &&
-		user.callSession.as === CALL_SESSION_USER_TYPE.caller;
+	const { isSame: inSessionWithViewUser } = checkCallSession(user, viewUser);
 
 	// Set current pathname to userRouteReferrer state if error is empty.
 	useEffect(() => {
@@ -146,34 +134,12 @@ const ViewUser = ({ user, viewUser: viewUserBase, error }) => {
 				}
 			}}
 		>
-			{isEmpty(error) ? (
-				<ScreenContainer id="callsesh-view-user">
-					<ViewUserScreen.Introduction viewUser={viewUser} />
-					{isOperator ? (
-						<Grid gridGutters="0px">
-							<Cell span={[12, 5, 7]}>
-								<ViewUserScreen.OperatorDetails viewUser={viewUser} />
-							</Cell>
-							<Cell span={[12, 3, 5]}>
-								<ViewUserScreen.OperatorAction
-									viewUser={viewUser}
-									onStart={startCallSession}
-									isStarting={isStartingCall}
-								/>
-							</Cell>
-						</Grid>
-					) : (
-						<ViewUserScreen.Visitor />
-					)}
-				</ScreenContainer>
-			) : (
-				<ScreenContainer
-					id="callsesh-view-user-error"
-					className={css({ margin: "auto" })}
-				>
-					<ViewUserScreen.Error error={error} />
-				</ScreenContainer>
-			)}
+			<ViewUserScreen
+				error={error}
+				viewUser={viewUser}
+				onStart={startCallSession}
+				isStarting={isStartingCall}
+			/>
 		</Layout>
 	);
 };

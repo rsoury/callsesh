@@ -20,12 +20,13 @@ import {
 	AlertCircle as AlertIcon,
 	CheckCircle as DefaultCardIcon
 } from "react-feather";
-import { Notification, KIND as NOTIFICATION_KIND } from "baseui/notification";
+import { KIND as NOTIFICATION_KIND } from "baseui/notification";
 import Skeleton from "react-loading-skeleton";
 import { ListItem, ListItemLabel, ARTWORK_SIZES } from "baseui/list";
 import { Block } from "baseui/block";
 
 import PaymentCardIcon from "@/components/PaymentCardIcon";
+import Notice from "@/components/Notice";
 import Layout from "@/components/Layout";
 import useUser from "@/hooks/use-user";
 import SettingsSkeleton from "@/components/Settings/Skeleton";
@@ -188,32 +189,20 @@ const Wallet = () => {
 								Configure your payment methods
 							</SmallHeading>
 							{showDefaultError && (
-								<Notification
+								<Notice
 									kind={NOTIFICATION_KIND.negative}
 									overrides={{
 										Body: {
 											style: {
-												width: "100%",
 												marginBottom: "40px"
 											}
 										}
 									}}
+									icon={AlertIcon}
 								>
-									{() => (
-										<div
-											className={css({ display: "flex", alignItems: "center" })}
-										>
-											<div className={css({ marginRight: "10px" })}>
-												<AlertIcon size={20} />
-											</div>
-											<Label>
-												No default payment method set. Add a new payment method,
-												or set a default payment method to continue using
-												Callsesh.
-											</Label>
-										</div>
-									)}
-								</Notification>
+									No default payment method set. Add a new payment method, or
+									set a default payment method to continue using Callsesh.
+								</Notice>
 							)}
 							<div className={css({ marginBottom: "10px" })}>
 								{isLoading ? (

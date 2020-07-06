@@ -17,8 +17,8 @@ import useUser from "@/hooks/use-user";
 import Link from "@/components/Link";
 import Highlight from "@/components/Highlight";
 import { ViewUserProps } from "@/utils/common-prop-types";
+import checkCallSession from "@/utils/check-call-session";
 import * as routes from "@/routes";
-import { CALL_SESSION_USER_TYPE } from "@/constants";
 
 const ViewUserOperatorAction = ({ viewUser, onStart, isStarting }) => {
 	const [css, theme] = useStyletron();
@@ -28,15 +28,11 @@ const ViewUserOperatorAction = ({ viewUser, onStart, isStarting }) => {
 	const isSameUser = isAuthenticated
 		? user.username === viewUser.username
 		: false;
-	const inSession = !isEmpty(user.callSession);
-	const viewUserInSession = !isEmpty(viewUser.callSession);
-	const inSessionWithViewUser =
-		viewUserInSession &&
-		inSession &&
-		viewUser.callSession.with === user.username &&
-		user.callSession.with === viewUser.username &&
-		viewUser.callSession.as === CALL_SESSION_USER_TYPE.operator &&
-		user.callSession.as === CALL_SESSION_USER_TYPE.caller;
+	const {
+		isUser: inSession,
+		isViewUser: viewUserInSession,
+		isSame: inSessionWithViewUser
+	} = checkCallSession(user, viewUser);
 
 	const minuteRate = fees.getMinuteRate(viewUser.hourlyRate);
 

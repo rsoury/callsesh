@@ -139,6 +139,7 @@ function useUser({ required } = {}) {
 						...user,
 						callSession: {
 							...callSession,
+							// status: "in-call"
 							status: "active"
 							// status: "metering"
 						}
