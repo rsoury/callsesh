@@ -252,16 +252,14 @@ InSessionScreen.propTypes = {
 	onEndSession: PropTypes.func,
 	onOpenChat: PropTypes.func,
 	onCall: PropTypes.func,
-	onStartMeter: PropTypes.func,
-	onStopMeter: PropTypes.func
+	onToggleMeter: PropTypes.func
 };
 
 InSessionScreen.defaultProps = {
 	onEndSession() {},
 	onOpenChat() {},
 	onCall() {},
-	onStartMeter() {},
-	onStopMeter() {}
+	onToggleMeter() {}
 };
 
 export default InSessionScreen;

@@ -14,7 +14,6 @@ import * as authManager from "@callsesh/utils/auth-manager";
 import handleException from "@/utils/handle-exception";
 import stripe from "@callsesh/utils/stripe";
 import * as fees from "@callsesh/utils/fees";
-import { CALL_SESSION_USER_TYPE } from "@/constants";
 import { publicUrl } from "@/env-config";
 import * as routes from "@/routes";
 
@@ -40,7 +39,7 @@ handler.post(async (req, res) => {
 
 		req.log.info(`Caller participant retrieved`, { id: participant.sid });
 
-		// Use participant identifier to determine user
+		// Use participant identifier (phoneNumber) to determine user
 		const user = await authManager.getUserByPhoneNumber(phoneNumber, {
 			withContext: true
 		});
@@ -63,17 +62,6 @@ handler.post(async (req, res) => {
 				"Application user call session does not match interaction session"
 			);
 		}
-
-		// Make sure this user is the caller in this call session
-		if (callSession.as !== CALL_SESSION_USER_TYPE.caller) {
-			req.log.info(
-				"Application user is not the caller in this session",
-				logParams
-			);
-			return res.status(403).end();
-		}
-
-		req.log.info(`Participant is a valid caller`);
 
 		// Check caller in callSession to find if callSession.preAuthorisation (stripe id) exists.
 		if (isEmpty(callSession.preAuthorisation)) {
