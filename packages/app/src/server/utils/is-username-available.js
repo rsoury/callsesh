@@ -1,5 +1,6 @@
 import * as authManager from "@callsesh/utils/auth-manager";
-import isUsernameSpaceAvailable from "@/utils/is-username-space-available";
+
+import isUsernameSpaceAvailable from "./is-username-space-available";
 
 /**
  * Consolidates username availability check
@@ -13,5 +14,6 @@ export default async (username) => {
 		authManager.isUsernameAvailable(username),
 		isUsernameSpaceAvailable(username)
 	]);
+
 	return usernameAvailable && usernameSpaceAvailable;
 };

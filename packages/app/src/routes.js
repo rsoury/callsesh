@@ -31,9 +31,6 @@ export const build = {
 	},
 	invite(username) {
 		return `/${username}/invite`;
-	},
-	callUser(username) {
-		return `/api/u/${username}/call`;
 	}
 };
 
@@ -45,6 +42,7 @@ export const api = {
 		signup: "/api/auth/signup"
 	},
 	user: "/api/user",
+	call: "/api/call",
 	cards: "/api/cards",
 	live: "/api/live",
 	usernameAvailable: "/api/username-available",
@@ -52,6 +50,5 @@ export const api = {
 		start: "/api/connect",
 		redirect: "/api/connect/oauth"
 	},
-	callUser: `/api/u/:id/call`,
 	resendEmail: `/api/resend-email`
 };

@@ -61,26 +61,21 @@ export const getSession = async (req, ...params) => {
 		throw e;
 	});
 
-	// For development environment, enable user-id in request header for API development
-	if (!isProd && isEmpty(session) && !isEmpty(req.headers["x-debug-user"])) {
-		const userData = await authManager.getUser(req.headers["x-debug-user"]);
+	// If session doesn't exist, but user is attached to request, could be an authenticated machine-to-machine request
+	if (isEmpty(session) && !isEmpty(req.user)) {
 		// emulate session
 		session = {
 			user: {
-				name: userData.name,
-				nickname: userData.nickname,
-				family_name: userData.family_name,
-				given_name: userData.given_name,
-				picture: userData.picture,
-				updated_at: userData.updated_at,
-				sub: userData.user_id
+				name: req.user.name,
+				nickname: req.user.nickname,
+				family_name: req.user.family_name,
+				given_name: req.user.given_name,
+				picture: req.user.picture,
+				updated_at: req.user.updated_at,
+				sub: req.user.user_id
 			},
-			createdAt: userData.created_at
+			createdAt: req.user.created_at
 		};
-
-		if (isEmpty(session)) {
-			throw new Error("Session does not exist");
-		}
 	}
 
 	return session;
@@ -88,17 +83,34 @@ export const getSession = async (req, ...params) => {
 
 /**
  * Next Connect middleware wrapper around auth.requireAuthentication
- *
- * Pass authentication if platform in development and x-debug-user header passed.
+ * Will check Authorization header for Bearer token. If token is OTP, with retrieve user for machine-to-machine authentication
+ * If in development, can pass user id as Authorization Bearer token
  */
-export const requireAuthentication = nextConnect().use((req, res, next) => {
-	if (!isProd && !isEmpty(req.headers["x-debug-user"])) {
-		return next();
+export const requireAuthentication = nextConnect().use(
+	async (req, res, next) => {
+		// Check machine-machine authentication
+		const authToken = req.headers.authorization.slice(7); // Remove "Bearer "
+		if (!isEmpty(authToken)) {
+			let user = await authManager.getUserByOTP(authToken);
+			if (!isProd && isEmpty(user)) {
+				try {
+					user = await authManager.getUser(authToken);
+				} catch (e) {
+					// Empty
+				}
+			}
+			if (!isEmpty(user)) {
+				// if user retrieved, associate to request.
+				req.user = user;
+				return next();
+			}
+		}
+
+		return auth.requireAuthentication(() => {
+			next();
+		})(req, res);
 	}
-	return auth.requireAuthentication(() => {
-		next();
-	})(req, res);
-});
+);
 
 const registeredUserSchema = yup.object().shape({
 	id: yup.string().required(),

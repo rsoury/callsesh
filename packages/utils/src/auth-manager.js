@@ -9,6 +9,7 @@ import mapKeys from "lodash/mapKeys";
 import camelCase from "lodash/camelCase";
 import pick from "lodash/pick";
 import ono from "@jsdevtools/ono";
+import nanoid from "nanoid";
 
 import { auth0 as config } from "./env-config";
 
@@ -205,4 +206,55 @@ export const updateEmail = async (userId, email, emailIdentity) => {
 	});
 
 	return emailUser.user_id.split("|")[1]; // Remove email|xxx from id
+};
+
+/**
+ * Create an OTP to be used in Authorization header from another service.
+ * Creates a simple means for Machine-Machine communication with Authentication
+ */
+export const createOTP = (id) => {
+	const token = nanoid(64);
+	return updateUser(id, {
+		metadata: {
+			app: {
+				otp: token
+			}
+		}
+	});
+};
+
+// Consume OTP token
+export const consumeOTP = (id) =>
+	updateUser(id, {
+		metadata: {
+			app: {
+				otp: null
+			}
+		}
+	});
+
+/**
+ * Get user via OTP (one-time-password token) and if retrieved, consume OTP
+ *
+ * @param   {string}  token    OTP Token
+ * @param   {Object}  options  Find options
+ *
+ * @return  {Object}           User
+ */
+export const getUserByOTP = async (token, options) => {
+	const { otp, ...user } = await findUser(
+		{
+			search_engine: "v3",
+			page: 0,
+			per_page: 10,
+			q: `app_metadata.otp:"${token}"`
+		},
+		options
+	);
+
+	if (!isEmpty(user)) {
+		await consumeOTP(user.id);
+	}
+
+	return user;
 };

@@ -26,12 +26,12 @@ const isUsernameSpaceAvailable = async (username) => {
 		return false;
 	}
 
-	const spaces = await await glob("src/pages/*");
+	const spaces = await glob("src/pages/*");
 
-	const spacenames = uniq(
+	const spacenames = uniq([
 		...spaces.map((space) => path.basename(space).split(".")[0]),
 		...reservedSpaces
-	);
+	]);
 
 	if (spacenames.includes(username)) {
 		return false;

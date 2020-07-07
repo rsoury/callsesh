@@ -16,7 +16,7 @@ import {
 } from "@/middleware/auth";
 import * as authManager from "@callsesh/utils/auth-manager";
 import stripe from "@callsesh/utils/stripe";
-import isUsernameAvailable from "@/utils/is-username-available";
+import isUsernameAvailable from "@/server/utils/is-username-available";
 import slugify from "@/utils/slugify";
 
 const handler = getHandler();

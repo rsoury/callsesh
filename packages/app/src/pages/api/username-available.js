@@ -5,7 +5,7 @@
 import isEmpty from "is-empty";
 import getHandler from "@/middleware";
 import { requireAuthentication } from "@/middleware/auth";
-import isUsernameAvailable from "@/utils/is-username-available";
+import isUsernameAvailable from "@/server/utils/is-username-available";
 
 const handler = getHandler();
 

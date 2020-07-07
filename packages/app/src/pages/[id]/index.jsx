@@ -56,7 +56,9 @@ const ViewUser = ({ user, viewUser: viewUserBase, error }) => {
 		debounce((done = () => {}) => {
 			// Start Call Session between user and viewUser
 			request
-				.post(routes.build.callUser(viewUser.username))
+				.post(routes.api.call, {
+					operator: viewUser.username
+				})
 				.then(({ data }) => data)
 				.then(({ proxyPhoneNumber, callSession }) => {
 					// Add callsession to user state

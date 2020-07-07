@@ -30,8 +30,8 @@ const ViewUserOperatorAction = ({ viewUser, onStart }) => {
 		? user.username === viewUser.username
 		: false;
 	const {
-		isUser: inSession,
-		isViewUser: viewUserInSession,
+		isCaller: inSession,
+		isOperator: viewUserInSession,
 		isSame: inSessionWithViewUser
 	} = checkCallSession(user, viewUser);
 

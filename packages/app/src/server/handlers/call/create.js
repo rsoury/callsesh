@@ -1,0 +1,235 @@
+import isEmpty from "is-empty";
+import truncate from "lodash/truncate";
+import { nanoid } from "nanoid";
+import ono from "@jsdevtools/ono";
+import * as authManager from "@callsesh/utils/auth-manager";
+import * as comms from "@callsesh/utils/comms";
+import stripe from "@callsesh/utils/stripe";
+
+import { onNoMatch } from "@/middleware";
+import { getUser } from "@/middleware/auth";
+import isUserOperator from "@/utils/is-operator";
+import { ERROR_TYPES, CALL_SESSION_USER_TYPE } from "@/constants";
+import { callSessionManagerUrl } from "@/env-config";
+import request from "@/utils/request";
+import checkCallSession from "@/utils/check-call-session";
+
+import * as utils from "./utils";
+
+export default async function createCallSession(req, res) {
+	// Get operator username from request body
+	const { operator: operatorUsername } = req.body;
+
+	// Get operator user
+	const operatorUser = await authManager.getUserByUsername(operatorUsername, {
+		withContext: true
+	});
+
+	// If not found, return not found.
+	if (isEmpty(operatorUser)) {
+		return onNoMatch(req, res);
+	}
+
+	req.log.info(`Operator user found`, utils.logParams(operatorUser));
+
+	// Make sure Operator user is an operator
+	if (!isUserOperator(operatorUser)) {
+		return res.status(400).json({
+			success: false,
+			code: 400,
+			type: ERROR_TYPES.operatorRequired,
+			message: "An operator user is required to start a call session"
+		});
+	}
+
+	req.log.info(
+		`Operator user has role operator`,
+		utils.logParams(operatorUser)
+	);
+
+	// Now that we have the operatorUser...
+	// Get the authed user
+	const user = await getUser(req, { withContext: true });
+
+	// Make sure authed user is not already in a session
+	// If they are, check if they're already in a session with the operatorUser
+	const inSession = checkCallSession(user, operatorUser);
+	if (inSession.isCaller) {
+		if (inSession.isOperator && inSession.isSame) {
+			const valid = await utils.isSessionValid(user.callSession.id);
+			if (valid) {
+				// Both users are already in a session together.
+				// Return the params for successful session creation.
+				const proxyPhoneNumber = await utils.getProxyPhoneNumber(user);
+
+				req.log.info(`User already in call session with Operator user`, {
+					...utils.logParams(operatorUser, user),
+					callSessionId: user.callSession.id,
+					proxyPhoneNumber
+				});
+
+				// Notify caller with proxy phone number
+				await comms.sms(
+					user.phoneNumber,
+					utils.getUserSMSMessage(proxyPhoneNumber)
+				);
+
+				return res.json({
+					success: true,
+					proxyPhoneNumber,
+					callSession: {
+						caller: user.callSession,
+						operator: operatorUser.callSession
+					}
+				});
+			}
+		}
+
+		req.log.info(
+			`User already in call session`,
+			utils.logParams(operatorUser, user)
+		);
+
+		return res.status(400).json({
+			success: false,
+			code: 400,
+			type: ERROR_TYPES.callSessionExists,
+			message: "Caller user already in session"
+		});
+	}
+
+	// Make sure operatorUser is live
+	if (!operatorUser.isLive) {
+		return res.status(400).json({
+			success: false,
+			code: 400,
+			type: ERROR_TYPES.operatorUnavailable,
+			message: "Operator user is unavailable"
+		});
+	}
+
+	req.log.info(`Operator user is live`, utils.logParams(operatorUser, user));
+
+	// Make sure operatorUser is not in session
+	if (!isEmpty(operatorUser.callSession)) {
+		return res.status(400).json({
+			success: false,
+			code: 400,
+			type: ERROR_TYPES.operatorBusy,
+			message: "Operator user is busy"
+		});
+	}
+
+	req.log.info(
+		`Operator user is available for a call`,
+		utils.logParams(operatorUser, user)
+	);
+
+	// Make sure authed user is a stripe customer
+	if (isEmpty(user.stripeCustomerId)) {
+		return res
+			.status(utils.customerErrResponse.code)
+			.json(utils.customerErrResponse);
+	}
+
+	// Check if a default payment method is set.
+	const customer = await stripe.customers.retrieve(user.stripeCustomerId);
+	if (isEmpty(customer.invoice_settings.default_payment_method)) {
+		return res
+			.status(utils.customerErrResponse.code)
+			.json(utils.customerErrResponse);
+	}
+
+	req.log.info(`User is a customer`, utils.logParams(operatorUser, user));
+
+	// Create the call session
+	const {
+		session: callSession,
+		caller: { sid: callerParticipantId, proxyIdentifier: proxyPhoneNumber },
+		operator: { sid: operatorParticipantId }
+	} = await comms.createSession(
+		{
+			name: user.nickname,
+			phoneNumber: user.phoneNumber
+		},
+		{
+			name: operatorUser.nickname,
+			phoneNumber: operatorUser.phoneNumber
+		},
+		{
+			uniqueName: `Caller: ${truncate(user.nickname, {
+				length: 70
+			})} and Operator: ${truncate(operatorUser.nickname, {
+				length: 70
+			})} - ${nanoid(20)}`
+		}
+	);
+
+	if (isEmpty(proxyPhoneNumber)) {
+		throw ono(new Error("No proxy phone number found for caller"), {
+			type: ERROR_TYPES.proxyPhoneNumberRequired,
+			context: {
+				callSessionId: user.callSession.id,
+				callerId: user.id,
+				operatorId: operatorUser.id
+			}
+		});
+	}
+
+	// Call session to return to authed user.
+	const callerCallSession = {
+		id: callSession.sid,
+		with: operatorUser.username,
+		as: CALL_SESSION_USER_TYPE.caller
+	};
+	const operatorCallSession = {
+		id: callSession.sid,
+		with: user.username,
+		as: CALL_SESSION_USER_TYPE.operator
+	};
+	// Store sessions against each use
+	await Promise.all([
+		authManager.updateUser(operatorUser.id, {
+			metadata: {
+				app: {
+					callSession: operatorCallSession
+				}
+			}
+		}),
+		authManager.updateUser(user.id, {
+			metadata: {
+				app: {
+					callSession: callerCallSession
+				}
+			}
+		})
+	]);
+
+	await Promise.all([
+		// Notify operator of an incoming caller.
+		comms.sms(
+			operatorUser.phoneNumber,
+			`You have a caller named ${user.givenName}! You should receive a call within a minute. If you do not, this means the caller has abandoned the session.`
+		),
+		// Notify caller with proxy phone number
+		comms.sms(user.phoneNumber, utils.getUserSMSMessage(proxyPhoneNumber))
+	]);
+
+	// TODO: Change this to fire a workflow that delays before ending the session,.
+	// Fire a request to CSM here to end the session, in  the caller never makes the call.
+	await request.post(callSessionManagerUrl, {
+		interactionSessionSid: callSession.sid,
+		outboundParticipantSid: operatorParticipantId,
+		inboundParticipantSid: callerParticipantId
+	});
+
+	// Response should be the proxy phone number
+	return res.json({
+		success: true,
+		proxyPhoneNumber,
+		callSession: {
+			caller: callerCallSession,
+			operator: operatorCallSession
+		}
+	});
+}

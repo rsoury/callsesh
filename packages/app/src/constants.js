@@ -20,6 +20,7 @@ export const ERROR_TYPES = {
 	userBlocked: "UserBlocked",
 	// Call session
 	paymentMethodRequired: "PaymentMethodRequired",
+	callSessionRequired: "CallSessionRequired",
 	// Operator
 	operatorRequired: "OperatorRequired",
 	operatorUnavailable: "OperatorUnavailable",
