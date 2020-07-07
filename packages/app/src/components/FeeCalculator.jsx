@@ -7,7 +7,7 @@ import {
 } from "baseui/tooltip";
 import { HelpCircle as HelpIcon } from "react-feather";
 import { LabelSmall } from "baseui/typography";
-import * as fees from "@callsesh/utils/fees";
+import * as fees from "@/utils/fees";
 
 const FeeCalculator = ({ hourlyRate }) => {
 	const [css, theme] = useStyletron();

@@ -6,8 +6,8 @@ import mapKeys from "lodash/mapKeys";
 import isEmpty from "is-empty";
 import { parsePhoneNumberFromString } from "libphonenumber-js";
 import ono from "@jsdevtools/ono";
-import { isPayoutsEnabled } from "@callsesh/utils/stripe";
-import * as authManager from "@callsesh/utils/auth-manager";
+import { isPayoutsEnabled } from "@/server/stripe";
+import * as authManager from "@/server/auth-manager";
 
 import { ERROR_TYPES } from "@/constants";
 import {

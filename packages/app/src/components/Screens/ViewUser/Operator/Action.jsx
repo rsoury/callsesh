@@ -11,7 +11,7 @@ import {
 	Lock as LockIcon
 } from "react-feather";
 import isEmpty from "is-empty";
-import * as fees from "@callsesh/utils/fees";
+import * as fees from "@/utils/fees";
 
 import useUser from "@/hooks/use-user";
 import Link from "@/components/Link";

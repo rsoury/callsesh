@@ -13,7 +13,7 @@ import {
 	COUPONS,
 	OPERATOR_REFERRAL_MULTIPLIER,
 	OPERATOR_REFERRAL_EARNINGS_CAP
-} from "./constants";
+} from "@/constants";
 
 /**
  * Calc application's rate based on hourly rate

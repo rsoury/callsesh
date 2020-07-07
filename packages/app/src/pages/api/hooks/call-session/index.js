@@ -7,7 +7,7 @@
  */
 
 import getHandler from "@/middleware";
-import * as comms from "@callsesh/utils/comms";
+import * as comms from "@/server/comms";
 import request from "@/utils/request";
 import { callSessionManagerUrl } from "@/env-config";
 

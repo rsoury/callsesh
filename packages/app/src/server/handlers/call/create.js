@@ -1,10 +1,20 @@
+/**
+ * Create a Twilio Proxy Session where participants are the currently authed user and the operator in url param
+ * 1. Check if both users exist and are active
+ * 2. Check if operator is live and available
+ * 3. Check if caller is a valid customer
+ * 4. Initiate session
+ *
+ * If both parties are not available, check if they're already in a session together.
+ */
+
 import isEmpty from "is-empty";
 import truncate from "lodash/truncate";
 import { nanoid } from "nanoid";
 import ono from "@jsdevtools/ono";
-import * as authManager from "@callsesh/utils/auth-manager";
-import * as comms from "@callsesh/utils/comms";
-import stripe from "@callsesh/utils/stripe";
+import * as authManager from "@/server/auth-manager";
+import * as comms from "@/server/comms";
+import stripe from "@/server/stripe";
 
 import { onNoMatch } from "@/middleware";
 import { getUser } from "@/middleware/auth";
@@ -215,7 +225,7 @@ export default async function createCallSession(req, res) {
 		comms.sms(user.phoneNumber, utils.getUserSMSMessage(proxyPhoneNumber))
 	]);
 
-	// TODO: Change this to fire a workflow that delays before ending the session,.
+	// TODO: Change this to fire a workflow that delays before ending the session.
 	// Fire a request to CSM here to end the session, in  the caller never makes the call.
 	await request.post(callSessionManagerUrl, {
 		interactionSessionSid: callSession.sid,

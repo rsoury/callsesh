@@ -7,7 +7,7 @@ import { H1 as Heading } from "baseui/typography";
 import Highlight from "@/components/Highlight";
 import { ViewUserProps } from "@/utils/common-prop-types";
 import isUserOperator from "@/utils/is-operator";
-import * as fees from "@callsesh/utils/fees";
+import * as fees from "@/utils/fees";
 
 const ViewUserIntroduction = ({ viewUser }) => {
 	const [css, theme] = useStyletron();

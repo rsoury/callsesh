@@ -1,5 +1,5 @@
-id: CallSessionEnder
-name: CallSessionEnder-${opt:stage, self:provider.stage}
+id: Delay
+name: Delay-${opt:stage, self:provider.stage}
 events:
   - http:
       path: "/"
@@ -16,15 +16,15 @@ notifications:
 role:
   Fn::GetAtt: [StateMachinePassRole, Arn]
 definition:
-  Comment: "Callsesh Call Session Ender"
-  StartAt: EnsureExpiry
+  Comment: "Delay then fire webhook"
+  StartAt: Delay
   States:
-    EnsureExpiry:
+    Delay:
       Type: Wait
       Seconds: 65 # (TTL + 5 seconds) 65 seconds to expire
-      Next: End
-    End:
+      Next: Fire
+    Fire:
       Type: Task
       Resource:
-        Fn::GetAtt: [end, Arn]
+        Fn::GetAtt: [hook, Arn]
       End: true

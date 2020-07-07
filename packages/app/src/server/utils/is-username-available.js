@@ -1,4 +1,4 @@
-import * as authManager from "@callsesh/utils/auth-manager";
+import * as authManager from "@/server/auth-manager";
 
 import isUsernameSpaceAvailable from "./is-username-space-available";
 

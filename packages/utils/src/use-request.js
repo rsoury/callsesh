@@ -1,3 +1,7 @@
+/**
+ * React hook to use request (swr + axios)
+ */
+
 import useSWR from "swr";
 import axios from "axios";
 

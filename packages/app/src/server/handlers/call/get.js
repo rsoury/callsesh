@@ -1,6 +1,6 @@
 import isEmpty from "is-empty";
-import * as comms from "@callsesh/utils/comms";
-import * as authManager from "@callsesh/utils/auth-manager";
+import * as comms from "@/server/comms";
+import * as authManager from "@/server/auth-manager";
 
 import { onNoMatch } from "@/middleware";
 import { getUser } from "@/middleware/auth";

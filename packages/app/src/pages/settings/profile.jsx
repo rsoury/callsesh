@@ -27,7 +27,7 @@ import { Button, SIZE as BUTTON_SIZE } from "baseui/button";
 import nl2br from "nl2br";
 import ono from "@jsdevtools/ono";
 import { toaster } from "baseui/toast";
-import * as fees from "@callsesh/utils/fees";
+import * as fees from "@/utils/fees";
 
 import Layout from "@/components/Layout";
 import LabelControl from "@/components/LabelControl";

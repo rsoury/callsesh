@@ -13,10 +13,10 @@
 import isEmpty from "is-empty";
 import truncate from "lodash/truncate";
 import ono from "@jsdevtools/ono";
-import * as authManager from "@callsesh/utils/auth-manager";
-import * as comms from "@callsesh/utils/comms";
-import stripe, { isPayoutsEnabled } from "@callsesh/utils/stripe";
-import * as fees from "@callsesh/utils/fees";
+import * as authManager from "@/server/auth-manager";
+import * as comms from "@/server/comms";
+import stripe, { isPayoutsEnabled } from "@/server/stripe";
+import * as fees from "@/utils/fees";
 
 import { onNoMatch } from "@/middleware";
 import { getUser } from "@/middleware/auth";
@@ -29,6 +29,8 @@ import * as utils from "./utils";
 const service = comms.getProxyService();
 
 export default async function endCallSession(req, res) {
+	const { force = false } = req.query;
+
 	const user = await getUser(req, { withContext: true });
 
 	if (isEmpty(user.callSession)) {
@@ -63,7 +65,10 @@ export default async function endCallSession(req, res) {
 	// Ensure the status is closed before ending -- for automatic call session ending
 	const session = await service.sessions(sessionId).fetch();
 	req.log.info(`Session status`, { status: session.status });
-	if (session.status !== "closed") {
+	if (force) {
+		// To force end session, hang up calls and close the session
+		// TODO: Create force end.
+	} else if (session.status !== "closed") {
 		if (session.status === "failed") {
 			req.log.error(`Session failed`);
 			// Capture an exception for further investigation

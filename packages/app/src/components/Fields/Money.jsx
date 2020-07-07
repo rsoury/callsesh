@@ -6,7 +6,7 @@ import { FormControl } from "baseui/form-control";
 import { Input } from "baseui/input";
 import snakeCase from "lodash/snakeCase";
 import isNumber from "is-number";
-import * as fees from "@callsesh/utils/fees";
+import * as fees from "@/utils/fees";
 import { format } from "@callsesh/utils";
 
 import FeeCalculator from "@/components/FeeCalculator";

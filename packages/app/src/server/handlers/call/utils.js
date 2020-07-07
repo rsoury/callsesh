@@ -1,6 +1,6 @@
 import isEmpty from "is-empty";
 import ono from "@jsdevtools/ono";
-import * as comms from "@callsesh/utils/comms";
+import * as comms from "@/server/comms";
 
 import { ERROR_TYPES } from "@/constants";
 

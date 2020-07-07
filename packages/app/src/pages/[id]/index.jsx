@@ -11,7 +11,7 @@ import { toaster } from "baseui/toast";
 import Router from "next/router";
 import MobileDetect from "mobile-detect";
 import ono from "@jsdevtools/ono";
-import * as authManager from "@callsesh/utils/auth-manager";
+import * as authManager from "@/server/auth-manager";
 
 import Layout from "@/components/Layout";
 import ViewUserScreen from "@/components/Screens/ViewUser";
@@ -123,6 +123,7 @@ const ViewUser = ({ user, viewUser: viewUserBase, error }) => {
 	const handleEndSession = useCallback(
 		(done = () => {}) => {
 			console.log("end session...");
+			done();
 		},
 		[user]
 	);
@@ -164,6 +165,7 @@ const ViewUser = ({ user, viewUser: viewUserBase, error }) => {
 			} else {
 				// Start the meter
 			}
+			done();
 		},
 		[user]
 	);

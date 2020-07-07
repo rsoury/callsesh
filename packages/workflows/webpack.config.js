@@ -49,32 +49,7 @@ module.exports = {
 			// https://github.com/node-formidable/formidable/issues/337
 			"global.GENTLY": false,
 			// Add env variables provided via chamber
-			"process.env.AUTH0_DOMAIN": JSON.stringify(process.env.AUTH0_DOMAIN),
-			"process.env.AUTH0_CLIENT_ID": JSON.stringify(
-				process.env.AUTH0_CLIENT_ID
-			),
-			"process.env.AUTH0_CLIENT_SECRET": JSON.stringify(
-				process.env.AUTH0_CLIENT_SECRET
-			),
-			"process.env.STRIPE_PUBLIC_KEY": JSON.stringify(
-				process.env.STRIPE_PUBLIC_KEY
-			),
-			"process.env.STRIPE_SECRET_KEY": JSON.stringify(
-				process.env.STRIPE_SECRET_KEY
-			),
-			"process.env.STRIPE_CONNECT_ID": JSON.stringify(
-				process.env.STRIPE_CONNECT_ID
-			),
-			"process.env.SENTRY_DSN": JSON.stringify(process.env.SENTRY_DSN),
-			"process.env.TWILIO_ACCOUNT_SID": JSON.stringify(
-				process.env.TWILIO_ACCOUNT_SID
-			),
-			"process.env.TWILIO_AUTH_TOKEN": JSON.stringify(
-				process.env.TWILIO_AUTH_TOKEN
-			),
-			"process.env.TWILIO_PROXY_SERVICE_SID": JSON.stringify(
-				process.env.TWILIO_PROXY_SERVICE_SID
-			)
+			"process.env.SENTRY_DSN": JSON.stringify(process.env.SENTRY_DSN)
 		})
 	],
 	module: {

@@ -1,8 +1,8 @@
 {
-	"name": "@callsesh/call-session-manager",
-	"version": "1.0.0",
+	"name": "@callsesh/workflows",
+	"version": "1.0.1",
 	"private": true,
-	"description": "Serverless State Machine to manage call sessions",
+	"description": "Serverless State Machine to manage Callsesh Workflows",
 	"author": "Ryan Soury <ryan@webdoodle.com.au>",
 	"main": "src/index.js",
 	"directories": {
@@ -22,12 +22,11 @@
 		"deploy:production": "chamber exec callsesh -- sls deploy -s prod -v"
 	},
 	"dependencies": {
+		"@callsesh/utils": "^1.0.0",
 		"@financial-times/lambda-logger": "^2.0.4",
 		"@jsdevtools/ono": "^7.1.2",
 		"@sentry/integrations": "^5.15.5",
 		"@sentry/node": "^5.15.5",
-		"is-empty": "^1.2.0",
-		"lodash.truncate": "^4.4.2",
 		"source-map-support": "^0.5.19"
 	},
 	"devDependencies": {

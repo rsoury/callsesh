@@ -1,4 +1,4 @@
-service: call-session-manager
+service: callsesh-workflows
 
 # You can pin your service to only deploy with a specific Serverless version
 # Check out our docs for more details
@@ -36,14 +36,14 @@ custom:
     includeModules: true
 
 functions:
-  end:
-    handler: src/index.end
-    description: Run call session end events if expired
+  hook:
+    handler: src/index.hook
+    description: Run webhook
 
 stepFunctions:
   validate: true
   stateMachines:
-    CallSessionEnder: ${file(resources/state-machines/ender.yml)}
+    Delay: ${file(resources/state-machines/delay.yml)}
 
 resources:
   - ${file(resources/iam.yml)}

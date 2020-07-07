@@ -7,7 +7,7 @@ import { publicUrl, stripe as stripeConfig } from "@/env-config";
 import getHandler from "@/middleware";
 import { requireAuthentication, getUser } from "@/middleware/auth";
 import * as routes from "@/routes";
-import stripe from "@callsesh/utils/stripe";
+import stripe from "@/server/stripe";
 
 const handler = getHandler();
 
