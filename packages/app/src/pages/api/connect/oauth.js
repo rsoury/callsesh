@@ -8,6 +8,6 @@ import connectOAuth from "@/server/handlers/connect/oauth";
 
 const handler = getHandler();
 
-handler.use(requireAuthentication).get("/oauth", connectOAuth);
+handler.use(requireAuthentication).get(connectOAuth);
 
 export default handler;

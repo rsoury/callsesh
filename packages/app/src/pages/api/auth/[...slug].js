@@ -11,9 +11,9 @@ import signup from "@/server/handlers/auth/signup";
 const handler = getHandler();
 
 handler
-	.get("/callback", callback)
-	.get("/logout", logout)
-	.get("/login", login)
-	.get("/signup", signup);
+	.get("/api/auth/callback", callback)
+	.get("/api/auth/logout", logout)
+	.get("/api/auth/login", login)
+	.get("/api/auth/signup", signup);
 
 export default handler;

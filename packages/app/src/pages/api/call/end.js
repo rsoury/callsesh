@@ -4,6 +4,6 @@ import endCallSession from "@/server/handlers/call/end";
 
 const handler = getHandler();
 
-handler.use(requireAuthentication).post("/end", endCallSession);
+handler.use(requireAuthentication).post(endCallSession);
 
 export default handler;

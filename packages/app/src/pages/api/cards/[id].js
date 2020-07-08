@@ -10,9 +10,6 @@ import updateCard from "@/server/handlers/cards/update";
 
 const handler = getHandler();
 
-handler
-	.use(requireAuthentication)
-	.delete("/:id", removeCard)
-	.patch("/:id", updateCard);
+handler.use(requireAuthentication).delete(removeCard).patch(updateCard);
 
 export default handler;

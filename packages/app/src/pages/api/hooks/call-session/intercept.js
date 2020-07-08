@@ -3,6 +3,6 @@ import proxyInterceptHook from "@/server/handlers/hooks/proxy/intercept";
 
 const handler = getHandler();
 
-handler.post("/intercept", proxyInterceptHook);
+handler.post(proxyInterceptHook);
 
 export default handler;
