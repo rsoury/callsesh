@@ -63,7 +63,7 @@ export const alerts = {
 	}
 };
 
-export default (err, ctx) => {
+const handleException = (err, ctx) => {
 	Sentry.configureScope((scope) => {
 		if (err.message) {
 			// De-duplication currently doesn't work correctly for SSR / browser errors
@@ -105,3 +105,5 @@ export default (err, ctx) => {
 
 	return Sentry.captureException(err);
 };
+
+export default handleException;

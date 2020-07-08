@@ -23,8 +23,14 @@ const Notice = ({ icon: Icon, kind, overrides, children, ...props }) => {
 	// Set default overrides
 	const bodyStyle = get(overrides, "Body.style", {});
 	set(overrides, "Body.style", {
-		borderRadius: "8px",
-		margin: "0px",
+		borderTopLeftRadius: "8px",
+		borderTopRightRadius: "8px",
+		borderBottomLeftRadius: "8px",
+		borderBottomRightRadius: "8px",
+		marginTop: "0px",
+		marginBottom: "0px",
+		marginLeft: "0px",
+		marginRight: "0px",
 		width: "100%",
 		...bodyStyle,
 		...kindStyle
@@ -48,7 +54,7 @@ const Notice = ({ icon: Icon, kind, overrides, children, ...props }) => {
 
 Notice.propTypes = {
 	children: ChildrenProps.isRequired,
-	icon: PropTypes.node,
+	icon: PropTypes.oneOfType([PropTypes.node, PropTypes.object]),
 	kind: PropTypes.string,
 	overrides: PropTypes.object
 };

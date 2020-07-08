@@ -134,17 +134,17 @@ function useUser({ required } = {}) {
 				// Subscribe to call session channel
 
 				// EMULATE: Event retrieval
-				setTimeout(() => {
-					setUserState({
-						...user,
-						callSession: {
-							...callSession,
-							// status: "in-call"
-							status: "active"
-							// status: "metering"
-						}
-					});
-				}, 1000);
+				// setTimeout(() => {
+				// 	setUserState({
+				// 		...user,
+				// 		callSession: {
+				// 			...callSession,
+				// 			// status: "in-call"
+				// 			status: "active"
+				// 			// status: "metering"
+				// 		}
+				// 	});
+				// }, 1000);
 
 				return true;
 			}

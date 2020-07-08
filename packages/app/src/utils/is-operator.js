@@ -4,10 +4,12 @@
 
 import isEmpty from "is-empty";
 
-export default (user) => {
+const isUserOperator = (user) => {
 	if (isEmpty(user)) {
 		return false;
 	}
 	const { roles } = user;
 	return !isEmpty(roles.find((role) => role.name.toLowerCase() === "operator"));
 };
+
+export default isUserOperator;

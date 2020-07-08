@@ -16,7 +16,10 @@ const InSessionActionButton = ({ variant, children, retain, ...props }) => {
 	const overrides = {
 		BaseButton: {
 			style: {
-				margin: "0 20px"
+				marginRight: "20px",
+				marginLeft: "20px",
+				marginTop: "0",
+				marginBottom: "0"
 			}
 		}
 	};

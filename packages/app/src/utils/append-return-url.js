@@ -1,6 +1,6 @@
 import Url from "url-parse";
 
-export default (sourceUrl, returnObject = false) => {
+const appendReturnUrl = (sourceUrl, returnObject = false) => {
 	if (typeof window !== "undefined") {
 		if (returnObject) {
 			return {
@@ -19,3 +19,5 @@ export default (sourceUrl, returnObject = false) => {
 	}
 	return sourceUrl;
 };
+
+export default appendReturnUrl;

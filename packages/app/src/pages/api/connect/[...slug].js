@@ -4,11 +4,10 @@
 
 import getHandler from "@/server/middleware";
 import { requireAuthentication } from "@/server/middleware/auth";
-import connect from "@/server/handlers/connect";
 import connectOAuth from "@/server/handlers/connect/oauth";
 
 const handler = getHandler();
 
-handler.use(requireAuthentication).get("/oauth", connectOAuth).get(connect);
+handler.use(requireAuthentication).get("/oauth", connectOAuth);
 
 export default handler;

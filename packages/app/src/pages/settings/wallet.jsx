@@ -13,7 +13,6 @@ import {
 	SIZE as BUTTON_SIZE,
 	KIND as BUTTON_KIND
 } from "baseui/button";
-import ono from "@jsdevtools/ono";
 import { toaster } from "baseui/toast";
 import {
 	Trash2 as DeleteIcon,
@@ -96,13 +95,15 @@ const Wallet = () => {
 			const resp = window.confirm(`Are you sure you want to remove this card?`);
 			if (resp) {
 				setCards(cards.filter((card) => card.id !== id));
-				const params = { id };
 				request
-					.delete(routes.api.cards, { params })
+					.delete(routes.build.card(id))
 					.then(() => {
 						toaster.positive(`Successfully removed payment method.`);
 					})
-					.catch((err) => ono(err, params));
+					.catch((e) => {
+						alerts.error();
+						throw e;
+					});
 			}
 		},
 		[cards]
@@ -116,13 +117,15 @@ const Wallet = () => {
 				return card;
 			});
 			setCards(newCards);
-			const params = { id };
 			request
-				.patch(routes.api.cards, params)
+				.patch(routes.build.card(id))
 				.then(() => {
 					toaster.positive(`Successfully set new default payment method.`);
 				})
-				.catch((err) => ono(err, params));
+				.catch((e) => {
+					alerts.error();
+					throw e;
+				});
 		},
 		[cards]
 	);

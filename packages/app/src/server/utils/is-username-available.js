@@ -5,7 +5,7 @@ import isUsernameSpaceAvailable from "./is-username-space-available";
 /**
  * Consolidates username availability check
  */
-export default async (username) => {
+const isUsernameAvailable = async (username) => {
 	if (typeof window !== "undefined") {
 		return false;
 	}
@@ -17,3 +17,5 @@ export default async (username) => {
 
 	return usernameAvailable && usernameSpaceAvailable;
 };
+
+export default isUsernameAvailable;

@@ -31,6 +31,9 @@ export const build = {
 	},
 	invite(username) {
 		return `/${username}/invite`;
+	},
+	card(id) {
+		return `/api/cards/${id}`;
 	}
 };
 

@@ -6,8 +6,10 @@ const defaultOptions = {
 	lowercase: false
 };
 
-export default (value, options = {}) =>
+const slugifyWithDefaults = (value, options = {}) =>
 	slugify(value, {
 		...defaultOptions,
 		...options
 	});
+
+export default slugifyWithDefaults;

@@ -246,10 +246,10 @@ export async function getServerSideProps({
 			}
 
 			// EMULATE: Add current user to callsesion with View User
-			viewUser.callSession = {
-				as: CALL_SESSION_USER_TYPE.operator,
-				with: "hello"
-			};
+			// viewUser.callSession = {
+			// 	as: CALL_SESSION_USER_TYPE.operator,
+			// 	with: "hello"
+			// };
 
 			return {
 				props: {
