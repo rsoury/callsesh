@@ -2,8 +2,8 @@
  * Resend email for verification or sign in
  */
 
-import getHandler from "@/middleware";
-import { requireAuthentication, getUser } from "@/middleware/auth";
+import getHandler from "@/server/middleware";
+import { requireAuthentication, getUser } from "@/server/middleware/auth";
 import * as authManager from "@/server/auth-manager";
 
 const handler = getHandler();

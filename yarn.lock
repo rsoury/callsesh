@@ -3937,7 +3937,7 @@
   resolved "https://registry.yarnpkg.com/@types/minimist/-/minimist-1.2.0.tgz#69a23a3ad29caf0097f06eda59b361ee2f0639f6"
   integrity sha1-aaI6OtKcrwCX8G7aWbNh7i8GOfY=
 
-"@types/node@*", "@types/node@>= 8", "@types/node@>=8.1.0":
+"@types/node@*", "@types/node@>= 8", "@types/node@>=8.1.0", "@types/node@^14.0.14":
   version "14.0.19"
   resolved "https://registry.yarnpkg.com/@types/node/-/node-14.0.19.tgz#994d99708822bca643a2364f8aeed04a16e0f5a1"
   integrity sha512-yf3BP/NIXF37BjrK5klu//asUWitOEoUP5xE1mhSUjazotwJ/eJDgEmMQNlOeWOVv72j24QQ+3bqXHE++CFGag==
@@ -15860,11 +15860,12 @@ netmask@^1.0.6:
   resolved "https://registry.yarnpkg.com/netmask/-/netmask-1.0.6.tgz#20297e89d86f6f6400f250d9f4f6b4c1945fcd35"
   integrity sha1-ICl+idhvb2QA8lDZ9Pa0wZRfzTU=
 
-next-connect@^0.6.4:
-  version "0.6.6"
-  resolved "https://registry.yarnpkg.com/next-connect/-/next-connect-0.6.6.tgz#baade099a79b691de6b8866c9ec7841ca5881224"
-  integrity sha512-LsDQxm+zl0qqyI15bxkhbjlpsrlrLhfQTxVtkoKF4qxB3KLTxAICE5kmbzhaMpJAQwSCgJbhzooLrHfpESmu2Q==
+next-connect@^0.8.1:
+  version "0.8.1"
+  resolved "https://registry.yarnpkg.com/next-connect/-/next-connect-0.8.1.tgz#def20d9045fb8043855a92a3bae40d88ef3f9d3b"
+  integrity sha512-V5O45OV6+neCb/iXfPUpfcFirSJ4czr02+Xay7TyW/8Ybq9KzDLPWpU36lkvPbwNhpdxRXAi/j907c8MIURMww==
   dependencies:
+    "@types/node" "^14.0.14"
     trouter "^3.1.0"
 
 next-seo@^4.4.0:

@@ -3,8 +3,8 @@
  */
 
 import isEmpty from "is-empty";
-import getHandler from "@/middleware";
-import { requireAuthentication } from "@/middleware/auth";
+import getHandler from "@/server/middleware";
+import { requireAuthentication } from "@/server/middleware/auth";
 import isUsernameAvailable from "@/server/utils/is-username-available";
 
 const handler = getHandler();

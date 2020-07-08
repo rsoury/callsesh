@@ -1,4 +1,4 @@
-import getHandler from "@/middleware";
+import getHandler from "@/server/middleware";
 import proxyCallbackHook from "@/server/handlers/hooks/proxy/callback";
 import proxyInterceptHook from "@/server/handlers/hooks/proxy/intercept";
 

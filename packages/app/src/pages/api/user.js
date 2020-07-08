@@ -8,12 +8,12 @@ import set from "lodash/set";
 import { parseCookies, destroyCookie } from "nookies";
 import isEmail from "is-email";
 
-import getHandler, { onError } from "@/middleware";
+import getHandler, { onError } from "@/server/middleware";
 import {
 	requireAuthentication,
 	getUser,
 	updateAndGetUser
-} from "@/middleware/auth";
+} from "@/server/middleware/auth";
 import * as authManager from "@/server/auth-manager";
 import stripe from "@/server/stripe";
 import isUsernameAvailable from "@/server/utils/is-username-available";

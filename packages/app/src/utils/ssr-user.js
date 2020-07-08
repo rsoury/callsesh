@@ -4,7 +4,7 @@
 
 import Url from "url-parse";
 import isEmpty from "is-empty";
-import { getUser } from "@/middleware/auth";
+import { getUser } from "@/server/middleware/auth";
 import * as routes from "@/routes";
 import { ERROR_TYPES } from "@/constants";
 import handleException from "@/utils/handle-exception";

@@ -89,7 +89,7 @@ export const getSession = async (req, ...params) => {
 export const requireAuthentication = nextConnect().use(
 	async (req, res, next) => {
 		// Check machine-machine authentication
-		const authToken = req.headers.authorization.slice(7); // Remove "Bearer "
+		const authToken = (req.headers.authorization || "").slice(7); // Remove "Bearer "
 		if (!isEmpty(authToken)) {
 			let user = await authManager.getUserByOTP(authToken);
 			if (!isProd && isEmpty(user)) {

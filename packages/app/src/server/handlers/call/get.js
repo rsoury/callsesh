@@ -2,8 +2,8 @@ import isEmpty from "is-empty";
 import * as comms from "@/server/comms";
 import * as authManager from "@/server/auth-manager";
 
-import { onNoMatch } from "@/middleware";
-import { getUser } from "@/middleware/auth";
+import { onNoMatch } from "@/server/middleware";
+import { getUser } from "@/server/middleware/auth";
 import checkCallSession from "@/utils/check-call-session";
 import { ERROR_TYPES, CALL_SESSION_USER_TYPE } from "@/constants";
 

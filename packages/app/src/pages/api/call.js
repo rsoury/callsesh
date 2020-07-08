@@ -1,5 +1,5 @@
-import getHandler from "@/middleware";
-import { requireAuthentication } from "@/middleware/auth";
+import getHandler from "@/server/middleware";
+import { requireAuthentication } from "@/server/middleware/auth";
 import getCallSession from "@/server/handlers/call/get";
 import createCallSession from "@/server/handlers/call/create";
 import endCallSession from "@/server/handlers/call/end";

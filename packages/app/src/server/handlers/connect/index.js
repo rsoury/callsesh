@@ -4,7 +4,7 @@
 
 import { parsePhoneNumberFromString } from "libphonenumber-js";
 import { publicUrl, stripe as stripeConfig } from "@/env-config";
-import { getUser } from "@/middleware/auth";
+import { getUser } from "@/server/middleware/auth";
 import * as routes from "@/routes";
 import stripe from "@/server/stripe";
 

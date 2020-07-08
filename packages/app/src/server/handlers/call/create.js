@@ -16,8 +16,8 @@ import * as authManager from "@/server/auth-manager";
 import * as comms from "@/server/comms";
 import stripe from "@/server/stripe";
 
-import { onNoMatch } from "@/middleware";
-import { getUser } from "@/middleware/auth";
+import { onNoMatch } from "@/server/middleware";
+import { getUser } from "@/server/middleware/auth";
 import isUserOperator from "@/utils/is-operator";
 import { ERROR_TYPES, CALL_SESSION_USER_TYPE } from "@/constants";
 import checkCallSession from "@/utils/check-call-session";

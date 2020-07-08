@@ -2,8 +2,8 @@
  * Toggle user live status.
  */
 
-import getHandler from "@/middleware";
-import { requireAuthentication, getUser } from "@/middleware/auth";
+import getHandler from "@/server/middleware";
+import { requireAuthentication, getUser } from "@/server/middleware/auth";
 import * as authManager from "@/server/auth-manager";
 import isUserOperator from "@/utils/is-operator";
 

@@ -18,8 +18,8 @@ import * as comms from "@/server/comms";
 import stripe, { isPayoutsEnabled } from "@/server/stripe";
 import * as fees from "@/utils/fees";
 
-import { onNoMatch } from "@/middleware";
-import { getUser } from "@/middleware/auth";
+import { onNoMatch } from "@/server/middleware";
+import { getUser } from "@/server/middleware/auth";
 import { ERROR_TYPES, CALL_SESSION_USER_TYPE } from "@/constants";
 import handleException from "@/utils/handle-exception";
 import checkCallSession from "@/utils/check-call-session";

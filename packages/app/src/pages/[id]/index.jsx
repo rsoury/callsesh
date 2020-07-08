@@ -135,11 +135,11 @@ const ViewUser = ({ user, viewUser: viewUserBase, error }) => {
 	const handleCall = useCallback((done = () => {}) => {
 		// Send an SMS and Toast when desktop, otherwise trigger tel:
 		request
-			.get(
-				`${routes.build.callUser(user.username)}?sms=${
-					!md.phone() ? "true" : "false"
-				}`
-			)
+			.get(routes.api.call, {
+				params: {
+					sms: !md.phone()
+				}
+			})
 			.then(({ proxyPhoneNumber }) => {
 				if (md.phone()) {
 					window.location.href = `tel:${proxyPhoneNumber}`;

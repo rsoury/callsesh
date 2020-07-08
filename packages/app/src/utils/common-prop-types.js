@@ -24,7 +24,7 @@ export const UserProps = PropTypes.shape({
 	email: PropTypes.string,
 	emailVerified: PropTypes.bool,
 	gender: PropTypes.string,
-	hourlyRate: PropTypes.string,
+	hourlyRate: PropTypes.number,
 	messageBroadcast: PropTypes.string,
 	purpose: PropTypes.string,
 	isRegistered: PropTypes.bool

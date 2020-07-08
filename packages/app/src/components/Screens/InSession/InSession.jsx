@@ -32,9 +32,9 @@ const Spinner = withStyle(StyledSpinnerNext, {
 });
 
 // Basically a function to manage loading state for a handler.
-const manageLoadingState = (handler, setLoadingState) => {
+const manageLoadingState = (handler, setLoadingState) => () => {
 	setLoadingState(true);
-	return handler(() => setLoadingState(false));
+	handler(() => setLoadingState(false));
 };
 
 const InSessionScreen = ({

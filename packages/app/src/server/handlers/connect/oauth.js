@@ -2,7 +2,7 @@
  * Manage credit cards using Stripe.
  */
 
-import { getUser } from "@/middleware/auth";
+import { getUser } from "@/server/middleware/auth";
 import * as routes from "@/routes";
 import stripe from "@/server/stripe";
 import * as authManager from "@/server/auth-manager";

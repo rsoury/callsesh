@@ -2,7 +2,7 @@
  * Endpoint to manage logouts
  */
 
-import getHandler from "@/middleware";
+import getHandler from "@/server/middleware";
 import logout from "@/server/handlers/auth/logout";
 import callback from "@/server/handlers/auth/callback";
 import login from "@/server/handlers/auth/login";

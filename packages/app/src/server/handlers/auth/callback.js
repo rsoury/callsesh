@@ -2,7 +2,7 @@
  * Endpoint to manage redirects to Auth0 Hosted page.
  */
 
-import auth, { getUser } from "@/middleware/auth";
+import auth, { getUser } from "@/server/middleware/auth";
 
 export default async function authCallback(req, res) {
 	try {

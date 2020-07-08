@@ -3,8 +3,8 @@
  */
 
 import isEmpty from "is-empty";
-import getHandler from "@/middleware";
-import { requireAuthentication, getUser } from "@/middleware/auth";
+import getHandler from "@/server/middleware";
+import { requireAuthentication, getUser } from "@/server/middleware/auth";
 import * as authManager from "@/server/auth-manager";
 import stripe from "@/server/stripe";
 import { publicUrl } from "@/env-config";
