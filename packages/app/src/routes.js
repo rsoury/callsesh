@@ -43,6 +43,7 @@ export const api = {
 	},
 	user: "/api/user",
 	call: "/api/call",
+	endCall: "/api/call/end",
 	cards: "/api/cards",
 	live: "/api/live",
 	usernameAvailable: "/api/username-available",

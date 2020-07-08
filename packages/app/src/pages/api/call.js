@@ -8,8 +8,8 @@ const handler = getHandler();
 
 handler
 	.use(requireAuthentication)
+	.post("/end", endCallSession)
 	.get(getCallSession)
-	.post(createCallSession)
-	.delete(endCallSession);
+	.post(createCallSession);
 
 export default handler;

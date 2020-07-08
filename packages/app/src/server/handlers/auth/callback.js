@@ -2,12 +2,9 @@
  * Endpoint to manage redirects to Auth0 Hosted page.
  */
 
-import getHandler from "@/middleware";
 import auth, { getUser } from "@/middleware/auth";
 
-const handler = getHandler();
-
-handler.get(async (req, res) => {
+export default async function authCallback(req, res) {
 	try {
 		const response = await auth.handleCallback(req, res);
 		return response;
@@ -36,6 +33,4 @@ handler.get(async (req, res) => {
 			message: error.message
 		});
 	}
-});
-
-export default handler;
+}

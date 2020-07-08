@@ -4,14 +4,11 @@
 
 import { parsePhoneNumberFromString } from "libphonenumber-js";
 import { publicUrl, stripe as stripeConfig } from "@/env-config";
-import getHandler from "@/middleware";
-import { requireAuthentication, getUser } from "@/middleware/auth";
+import { getUser } from "@/middleware/auth";
 import * as routes from "@/routes";
 import stripe from "@/server/stripe";
 
-const handler = getHandler();
-
-handler.use(requireAuthentication).get(async (req, res) => {
+export default async function connect(req, res) {
 	const user = await getUser(req, { withContext: true });
 
 	const phoneNumber = parsePhoneNumberFromString(user.phoneNumber);
@@ -53,6 +50,4 @@ handler.use(requireAuthentication).get(async (req, res) => {
 	}
 
 	return res.end();
-});
-
-export default handler;
+}

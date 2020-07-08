@@ -2,7 +2,7 @@ id: Delay
 name: Delay-${opt:stage, self:provider.stage}
 events:
   - http:
-      path: "/"
+      path: "/delay"
       method: "POST"
 notifications:
   ABORTED:

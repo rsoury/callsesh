@@ -29,7 +29,7 @@ import * as utils from "./utils";
 const service = comms.getProxyService();
 
 export default async function endCallSession(req, res) {
-	const { force = false } = req.query;
+	const { force = false } = req.body;
 
 	const user = await getUser(req, { withContext: true });
 

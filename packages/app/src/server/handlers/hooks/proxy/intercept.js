@@ -9,7 +9,6 @@ import ono from "@jsdevtools/ono";
 import truncate from "lodash/truncate";
 
 import * as comms from "@/server/comms";
-import getHandler from "@/middleware";
 import * as authManager from "@/server/auth-manager";
 import handleException from "@/utils/handle-exception";
 import stripe from "@/server/stripe";
@@ -17,9 +16,7 @@ import * as fees from "@/utils/fees";
 import { publicUrl } from "@/env-config";
 import * as routes from "@/routes";
 
-const handler = getHandler();
-
-handler.post(async (req, res) => {
+export default async function proxyInterceptHook(req, res) {
 	const { inboundParticipantSid, interactionSessionSid } = req.body;
 
 	const logParams = { requestBody: { ...req.body } };
@@ -154,6 +151,4 @@ handler.post(async (req, res) => {
 		// Status 403 Forbidden required to end the call.
 		return res.status(403).end();
 	}
-});
-
-export default handler;
+}

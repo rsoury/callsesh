@@ -6,12 +6,8 @@
  * Note: Twilio Proxy works by receiving an inbound call (by the caller) and automatically making an outbound call to the Operator.
  */
 
-import getHandler from "@/middleware";
 import * as comms from "@/server/comms";
-import request from "@/utils/request";
-import { callSessionManagerUrl } from "@/env-config";
-
-const handler = getHandler();
+import { delayEndSession } from "@/server/workflows";
 
 const expireSession = (sessionId) => {
 	// Overwrite expiry to 60 seconds -- end session in 60 seconds.
@@ -32,7 +28,7 @@ const prolongSession = (sessionId) => {
 	});
 };
 
-handler.post(async (req, res) => {
+export default async function proxyCallbackHook(req, res) {
 	const {
 		outboundResourceType,
 		outboundResourceStatus,
@@ -40,15 +36,15 @@ handler.post(async (req, res) => {
 		inboundResourceType
 	} = req.body;
 
-	const logParams = { requestBody: { ...req.body } };
+	const logger = req.log.child({ requestBody: { ...req.body } });
 
 	if (inboundResourceType !== "call") {
-		req.log.warn(`Inbound interaction is not a call`, logParams);
+		logger.warn(`Inbound interaction is not a call`);
 	}
 	// On the inbound call interaction, the outbound call may have not been initiated.
 	if (typeof outboundResourceType === "string") {
 		if (outboundResourceType !== "call") {
-			req.log.warn("Outbound interaction is not a call", logParams);
+			logger.warn("Outbound interaction is not a call");
 		}
 	}
 
@@ -58,27 +54,21 @@ handler.post(async (req, res) => {
 			await prolongSession(interactionSessionSid);
 			// Update the outbound call to detect machine and hangup accordingly.
 
-			req.log.info("Call inititated. Prolong call session", logParams);
+			logger.info("Call inititated. Prolong call session");
 			break;
 		case "completed":
 		case "busy":
 		case "no-answer":
 			await expireSession(interactionSessionSid);
-			// Trigger Call Session Manager -- Even if no answer, we need to officially close the call session.
-			await request.post(callSessionManagerUrl, {
-				...req.body
-			});
-			req.log.info(
-				`Call ${outboundResourceStatus}. Expiry added to session for recovery. Inbound call marked completed to prevent voice bank.`,
-				logParams
+			await delayEndSession(interactionSessionSid);
+			logger.info(
+				`Call ${outboundResourceStatus}. Expiry added to session for recovery. Inbound call marked completed to prevent voice bank.`
 			);
 			break;
 		default:
-			req.log.info("No action taken", logParams);
+			logger.info("No action taken");
 			break;
 	}
 
 	return res.end();
-});
-
-export default handler;
+}

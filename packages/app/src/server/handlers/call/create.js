@@ -20,9 +20,8 @@ import { onNoMatch } from "@/middleware";
 import { getUser } from "@/middleware/auth";
 import isUserOperator from "@/utils/is-operator";
 import { ERROR_TYPES, CALL_SESSION_USER_TYPE } from "@/constants";
-import { callSessionManagerUrl } from "@/env-config";
-import request from "@/utils/request";
 import checkCallSession from "@/utils/check-call-session";
+import { delayEndSession } from "@/server/workflows";
 
 import * as utils from "./utils";
 
@@ -40,7 +39,10 @@ export default async function createCallSession(req, res) {
 		return onNoMatch(req, res);
 	}
 
-	req.log.info(`Operator user found`, utils.logParams(operatorUser));
+	req.log.info(`Operator user found`, {
+		id: operatorUser.id,
+		username: operatorUser.username
+	});
 
 	// Make sure Operator user is an operator
 	if (!isUserOperator(operatorUser)) {
@@ -52,14 +54,13 @@ export default async function createCallSession(req, res) {
 		});
 	}
 
-	req.log.info(
-		`Operator user has role operator`,
-		utils.logParams(operatorUser)
-	);
+	req.log.info(`Operator user has role operator`);
 
 	// Now that we have the operatorUser...
 	// Get the authed user
 	const user = await getUser(req, { withContext: true });
+
+	const logger = req.log.child(utils.logParams(operatorUser, user));
 
 	// Make sure authed user is not already in a session
 	// If they are, check if they're already in a session with the operatorUser
@@ -72,8 +73,7 @@ export default async function createCallSession(req, res) {
 				// Return the params for successful session creation.
 				const proxyPhoneNumber = await utils.getProxyPhoneNumber(user);
 
-				req.log.info(`User already in call session with Operator user`, {
-					...utils.logParams(operatorUser, user),
+				logger.info(`User already in call session with Operator user`, {
 					callSessionId: user.callSession.id,
 					proxyPhoneNumber
 				});
@@ -95,10 +95,7 @@ export default async function createCallSession(req, res) {
 			}
 		}
 
-		req.log.info(
-			`User already in call session`,
-			utils.logParams(operatorUser, user)
-		);
+		logger.info(`User already in call session`);
 
 		return res.status(400).json({
 			success: false,
@@ -118,7 +115,7 @@ export default async function createCallSession(req, res) {
 		});
 	}
 
-	req.log.info(`Operator user is live`, utils.logParams(operatorUser, user));
+	logger.info(`Operator user is live`);
 
 	// Make sure operatorUser is not in session
 	if (!isEmpty(operatorUser.callSession)) {
@@ -130,10 +127,7 @@ export default async function createCallSession(req, res) {
 		});
 	}
 
-	req.log.info(
-		`Operator user is available for a call`,
-		utils.logParams(operatorUser, user)
-	);
+	logger.info(`Operator user is available for a call`);
 
 	// Make sure authed user is a stripe customer
 	if (isEmpty(user.stripeCustomerId)) {
@@ -150,13 +144,12 @@ export default async function createCallSession(req, res) {
 			.json(utils.customerErrResponse);
 	}
 
-	req.log.info(`User is a customer`, utils.logParams(operatorUser, user));
+	logger.info(`User is a customer`);
 
-	// Create the call session
+	// Create the proxy call session
 	const {
-		session: callSession,
-		caller: { sid: callerParticipantId, proxyIdentifier: proxyPhoneNumber },
-		operator: { sid: operatorParticipantId }
+		session: proxySession,
+		caller: { proxyIdentifier: proxyPhoneNumber }
 	} = await comms.createSession(
 		{
 			name: user.nickname,
@@ -188,12 +181,12 @@ export default async function createCallSession(req, res) {
 
 	// Call session to return to authed user.
 	const callerCallSession = {
-		id: callSession.sid,
+		id: proxySession.sid,
 		with: operatorUser.username,
 		as: CALL_SESSION_USER_TYPE.caller
 	};
 	const operatorCallSession = {
-		id: callSession.sid,
+		id: proxySession.sid,
 		with: user.username,
 		as: CALL_SESSION_USER_TYPE.operator
 	};
@@ -225,13 +218,7 @@ export default async function createCallSession(req, res) {
 		comms.sms(user.phoneNumber, utils.getUserSMSMessage(proxyPhoneNumber))
 	]);
 
-	// TODO: Change this to fire a workflow that delays before ending the session.
-	// Fire a request to CSM here to end the session, in  the caller never makes the call.
-	await request.post(callSessionManagerUrl, {
-		interactionSessionSid: callSession.sid,
-		outboundParticipantSid: operatorParticipantId,
-		inboundParticipantSid: callerParticipantId
-	});
+	await delayEndSession(proxySession.sid);
 
 	// Response should be the proxy phone number
 	return res.json({

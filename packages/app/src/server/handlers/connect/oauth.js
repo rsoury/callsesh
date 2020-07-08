@@ -2,15 +2,12 @@
  * Manage credit cards using Stripe.
  */
 
-import getHandler from "@/middleware";
-import { requireAuthentication, getUser } from "@/middleware/auth";
+import { getUser } from "@/middleware/auth";
 import * as routes from "@/routes";
 import stripe from "@/server/stripe";
 import * as authManager from "@/server/auth-manager";
 
-const handler = getHandler();
-
-handler.use(requireAuthentication).get(async (req, res) => {
+export default async function connectOAuth(req, res) {
 	const { code } = req.query;
 
 	const user = await getUser(req);
@@ -37,6 +34,4 @@ handler.use(requireAuthentication).get(async (req, res) => {
 		Location: routes.page.index
 	});
 	return res.end();
-});
-
-export default handler;
+}
