@@ -151,7 +151,9 @@ const Header = () => {
 			})}
 		>
 			{!isEmpty((user || {}).callSession) && <InCallTopBar />}
-			{!isLoading && !(user || {}).emailVerified && <VerifyEmail />}
+			{!isLoading && !isEmpty(user) && !(user || {}).emailVerified && (
+				<VerifyEmail />
+			)}
 			<AppNavBar
 				appDisplayName={
 					<Link href={routes.page.index} button pass>
