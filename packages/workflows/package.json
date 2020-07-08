@@ -22,7 +22,7 @@
 		"deploy:production": "chamber exec callsesh -- sls deploy -s prod -v"
 	},
 	"dependencies": {
-		"@callsesh/utils": "^1.0.0",
+		"@callsesh/utils": "^1.0.1",
 		"@financial-times/lambda-logger": "^2.0.4",
 		"@jsdevtools/ono": "^7.1.2",
 		"@sentry/integrations": "^5.15.5",

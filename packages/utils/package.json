@@ -2,13 +2,23 @@
 	"name": "@callsesh/utils",
 	"version": "1.0.1",
 	"private": true,
-	"main": "src/index.js",
-	"scripts": {},
+	"main": "dist/index.js",
+	"scripts": {
+		"build": "babel src --out-dir dist --copy-files --delete-dir-on-start",
+		"watch": "chokidar -p src/* -c \"babel src --out-dir dist --copy-files --source-maps\" --initial",
+		"clean": "rimraf ./dist"
+	},
 	"dependencies": {
 		"axios": "^0.19.2",
 		"axios-retry": "^3.1.8",
 		"lodash": "^4.17.15",
 		"swr": "^0.2.2"
 	},
-	"devDependencies": {}
+	"devDependencies": {
+		"@babel/cli": "^7.10.4",
+		"@babel/core": "^7.10.4",
+		"@babel/preset-env": "^7.10.4",
+		"chokidar-cli": "^2.1.0",
+		"rimraf": "^3.0.2"
+	}
 }

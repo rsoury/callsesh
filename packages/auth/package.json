@@ -38,7 +38,7 @@
 		"build:deploy": "yarn build && yarn deploy"
 	},
 	"dependencies": {
-		"@callsesh/utils": "^1.0.0",
+		"@callsesh/utils": "^1.0.1",
 		"@sentry/browser": "^5.15.5",
 		"@sentry/integrations": "^5.15.5",
 		"auth0-js": "^9.13.2",

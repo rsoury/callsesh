@@ -14,8 +14,8 @@
 	},
 	"scripts": {
 		"clean": "lerna run --parallel clean",
-		"build": "build:app",
-		"dev": "npm-run-all -p dev:*",
+		"build": "run-s build:utils build:app",
+		"dev": "run-p dev:*",
 		"dev:app": "lerna run --scope @callsesh/app --parallel dev -- -p 80",
 		"dev:utils": "lerna run --scope @callsesh/utils --parallel watch",
 		"start:app": "lerna run --scope @callsesh/app --parallel start",
