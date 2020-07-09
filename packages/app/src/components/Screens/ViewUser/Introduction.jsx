@@ -67,7 +67,7 @@ const ViewUserIntroduction = ({ viewUser }) => {
 								{isOperator ? (
 									<span>
 										offering <Highlight>{viewUser.purpose}</Highlight> over a
-										phone call for{" "}
+										call session for{" "}
 										<Highlight noBreak>{minuteRate}/minute</Highlight>
 									</span>
 								) : (

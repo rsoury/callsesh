@@ -1,5 +1,5 @@
 // Fees
-export const FEE_MULTIPLIER = 0.2;
+export const FEE_MULTIPLIER = 0.15;
 export const SERVICE_FEE = 50;
 
 // Referral
