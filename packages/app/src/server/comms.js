@@ -1,3 +1,4 @@
+import isEmpty from "is-empty";
 import Twilio from "twilio";
 import { twilio as config } from "@/env-config";
 import { SMS_SENDER_ID } from "@/constants";
@@ -80,3 +81,38 @@ export const call = (phoneNumber, fromPhoneNumber) => {
  * Get Twilio client
  */
 export const getClient = () => client;
+
+/**
+ * To force end session, hang up calls and close the session
+ * Hang up by getting the last call inititation interaction, and completing the corresponding calls for each participant
+ */
+export const endSession = async (sessionId) => {
+	// Close session
+	await proxyService.sessions(sessionId).update({ status: "closed" });
+
+	// Hang up
+	const interactions = await proxyService
+		.sessions(sessionId)
+		.interactions.list({ limit: 99999999 });
+	interactions.reverse();
+
+	const lastCallInitiation = interactions.find(
+		(interaction) =>
+			interaction.inboundResourceType === "call" &&
+			interaction.outboundResourceStatus === "initiated"
+	);
+	if (isEmpty(lastCallInitiation)) {
+		throw new Error("Call has never been initiated");
+	}
+
+	await Promise.all([
+		client
+			.calls(lastCallInitiation.inboundResourceSid)
+			.update({ status: "completed" }),
+		client
+			.calls(lastCallInitiation.outboundResourceSid)
+			.update({ status: "completed" })
+	]);
+
+	return true;
+};

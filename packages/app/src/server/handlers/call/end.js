@@ -66,8 +66,10 @@ export default async function endCallSession(req, res) {
 	const session = await service.sessions(sessionId).fetch();
 	req.log.info(`Session status`, { status: session.status });
 	if (force) {
-		// To force end session, hang up calls and close the session
-		// TODO: Create force end.
+		await comms.endSession(sessionId).catch((e) => {
+			req.log.error(`Could not end session`);
+			throw e;
+		});
 	} else if (session.status !== "closed") {
 		if (session.status === "failed") {
 			req.log.error(`Session failed`);

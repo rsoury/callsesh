@@ -24,11 +24,7 @@ import {
 } from "@/utils/common-prop-types";
 import * as routes from "@/routes";
 import { useSetUser } from "@/hooks/use-user";
-import {
-	ERROR_TYPES,
-	CALL_SESSION_USER_TYPE,
-	CALL_SESSION_STATUS
-} from "@/constants";
+import { ERROR_TYPES, CALL_SESSION_STATUS } from "@/constants";
 import handleException, { alerts } from "@/utils/handle-exception";
 import ssrUser from "@/utils/ssr-user";
 import { useUserRouteReferrer } from "@/hooks/use-route-referrer";
@@ -122,8 +118,30 @@ const ViewUser = ({ user, viewUser: viewUserBase, error }) => {
 
 	const handleEndSession = useCallback(
 		(done = () => {}) => {
-			console.log("end session...");
-			done();
+			request
+				.post(routes.api.endCall, { force: true })
+				.then(() => {
+					// Remove call session from user state
+					setUser({
+						...user,
+						callSession: {}
+					});
+
+					// Remove call session from view user state
+					setViewUser({
+						...viewUser,
+						callSession: {}
+					});
+
+					toaster.info(`You're call session has ended.`);
+				})
+				.catch((err) => {
+					handleException(err);
+					alerts.error();
+				})
+				.finally(() => {
+					done();
+				});
 		},
 		[user]
 	);
