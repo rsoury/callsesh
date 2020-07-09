@@ -1,10 +1,17 @@
+/* eslint-disable prefer-destructuring */
+
 import isEmpty from "is-empty";
 import Twilio from "twilio";
+import nanoid from "nanoid";
+
 import { twilio as config } from "@/env-config";
 import { SMS_SENDER_ID } from "@/constants";
 
-const client = Twilio(config.accountSid, config.authToken);
+const client = new Twilio(config.apiKey, config.apiSecret, {
+	accountSid: config.accountSid
+});
 const proxyService = client.proxy.services(config.proxyServiceSid);
+// const syncService = client.sync.services(config.syncServiceSid);
 
 /**
  * Create a Proxy session and add two participants to it.
@@ -115,4 +122,47 @@ export const endSession = async (sessionId) => {
 	]);
 
 	return true;
+};
+
+/**
+ * Chat and Sync services work by using a unique Twilio based session token to make connections
+ */
+// Access Token used for Video, IP Messaging, and Sync
+const AccessToken = Twilio.jwt.AccessToken;
+const ChatGrant = AccessToken.ChatGrant;
+const SyncGrant = AccessToken.SyncGrant;
+
+export const generateToken = (identity = 0) => {
+	const token = new AccessToken(
+		config.accountSid,
+		config.apiKey,
+		config.apiSecret
+	);
+
+	// Assign the provided identity or generate a random one
+	token.identity = identity || nanoid(32);
+
+	if (config.chatServiceSid) {
+		// Create a "grant" which enables a client to use IPM as a given user,
+		// on a given device
+		const chatGrant = new ChatGrant({
+			serviceSid: config.chatServiceSid
+		});
+		token.addGrant(chatGrant);
+	}
+
+	if (config.syncServiceSid) {
+		// Point to a particular Sync service, or use the account default to
+		// interact directly with Functions.
+		const syncGrant = new SyncGrant({
+			serviceSid: config.syncServiceSid || "default"
+		});
+		token.addGrant(syncGrant);
+	}
+
+	// Serialize the token to a JWT string and include it in a JSON response
+	return {
+		identity: token.identity,
+		token: token.toJwt()
+	};
 };

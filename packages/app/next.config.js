@@ -32,11 +32,13 @@ module.exports = (phase) => {
 	const serverEnv = {
 		SESSION_SECRET: process.env.SESSION_SECRET || "",
 		TWILIO_ACCOUNT_SID: process.env.TWILIO_ACCOUNT_SID || "",
-		TWILIO_AUTH_TOKEN: process.env.TWILIO_AUTH_TOKEN || "",
 		TWILIO_PROXY_SERVICE_SID: process.env.TWILIO_PROXY_SERVICE_SID || "",
+		TWILIO_SYNC_SERVICE_SID: process.env.TWILIO_SYNC_SERVICE_SID || "default",
+		TWILIO_API_KEY: process.env.TWILIO_API_KEY || "",
+		TWILIO_API_SECRET: process.env.TWILIO_API_SECRET || "",
 		AUTH0_CLIENT_SECRET: process.env.AUTH0_CLIENT_SECRET || "",
 		STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY || "",
-		CALL_SESSION_MANAGER_URL: process.env.CALL_SESSION_MANAGER_URL || ""
+		WORKFLOWS_URL: process.env.WORKFLOWS_URL || ""
 	};
 
 	let env = frontendEnv;

@@ -18,8 +18,10 @@ export const auth0 = {
 };
 export const twilio = {
 	accountSid: process.env.TWILIO_ACCOUNT_SID || "",
-	authToken: process.env.TWILIO_AUTH_TOKEN || "",
-	proxyServiceSid: process.env.TWILIO_PROXY_SERVICE_SID || ""
+	proxyServiceSid: process.env.TWILIO_PROXY_SERVICE_SID || "",
+	syncServiceSid: process.env.TWILIO_SYNC_SERVICE_SID || "default",
+	apiKey: process.env.TWILIO_API_KEY || "",
+	apiSecret: process.env.TWILIO_API_SECRET || ""
 };
 export const stripe = {
 	publicKey: process.env.STRIPE_PUBLIC_KEY || "",
