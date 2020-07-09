@@ -27,21 +27,24 @@ const listItemProps = {
 		ArtworkContainer: {
 			style: {
 				paddingBottom: "10px",
-				paddingLeft: "0px !important"
+				paddingLeft: "0px !important",
+				paddingRight: "10px",
+				width: "auto !important"
 			}
 		},
 		Content: {
 			style: {
 				height: "auto",
 				paddingBottom: "10px",
-				flexWrap: "wrap"
+				flexWrap: "wrap",
+				borderBottomWidth: "0px"
 			}
 		}
 	}
 };
 
 const ViewUserOperatorDetails = ({ viewUser }) => {
-	const [css] = useStyletron();
+	const [css, theme] = useStyletron();
 
 	const memberSince = new Intl.DateTimeFormat("en-US", {
 		month: "long",
@@ -49,34 +52,32 @@ const ViewUserOperatorDetails = ({ viewUser }) => {
 	}).format(new Date(viewUser.createdAt));
 
 	return (
-		<div>
-			<div className={css({ marginBottom: "20px" })}>
-				<Card
-					title="About me"
-					icon={UserIcon}
-					overrides={{
-						Root: {
-							style: {
-								borderRightWidth: "0px",
-								borderLeftWidth: "0px",
-								borderBottomWidth: "0px"
-							}
-						}
-					}}
-				>
-					<ListItem artwork={CalendarIcon} {...listItemProps}>
-						<ListItemLabel>
-							<Paragraph margin="0px">Member since {memberSince}</Paragraph>
-						</ListItemLabel>
-					</ListItem>
-					<ListItem artwork={MapIcon} {...listItemProps}>
-						<ListItemLabel>
-							<Paragraph margin="0px">
-								Based in {getName(viewUser.country)}
-							</Paragraph>
-						</ListItemLabel>
-					</ListItem>
-				</Card>
+		<div
+			className={css({
+				paddingRight: "10px",
+				[theme.mediaQuery.maxSmall]: {
+					paddingRight: "0px"
+				}
+			})}
+		>
+			<div
+				className={css({
+					marginBottom: "20px",
+					borderBottom: `1px solid ${theme.colors.borderOpaque}`
+				})}
+			>
+				<ListItem artwork={CalendarIcon} {...listItemProps}>
+					<ListItemLabel>
+						<Paragraph margin="0px">Member since {memberSince}</Paragraph>
+					</ListItemLabel>
+				</ListItem>
+				<ListItem artwork={MapIcon} {...listItemProps}>
+					<ListItemLabel>
+						<Paragraph margin="0px">
+							Based in {getName(viewUser.country)}
+						</Paragraph>
+					</ListItemLabel>
+				</ListItem>
 			</div>
 			<div>
 				<Card
@@ -87,7 +88,8 @@ const ViewUserOperatorDetails = ({ viewUser }) => {
 							style: {
 								borderRightWidth: "0px",
 								borderLeftWidth: "0px",
-								borderBottomWidth: "0px"
+								borderBottomWidth: "0px",
+								borderTopWidth: "0px"
 							}
 						}
 					}}

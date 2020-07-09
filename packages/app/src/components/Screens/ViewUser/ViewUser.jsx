@@ -23,23 +23,33 @@ const ViewUserScreen = ({ error, viewUser, onStartCallSession }) => {
 
 	if (isEmpty(error)) {
 		return (
-			<ScreenContainer id="callsesh-view-user">
-				<Introduction viewUser={viewUser} />
-				{isOperator ? (
-					<Grid gridGutters="0px">
-						<Cell span={[12, 5, 7]}>
-							<OperatorDetails viewUser={viewUser} />
-						</Cell>
-						<Cell span={[12, 3, 5]}>
-							<OperatorAction
-								viewUser={viewUser}
-								onStart={onStartCallSession}
-							/>
-						</Cell>
-					</Grid>
-				) : (
-					<Visitor />
-				)}
+			<ScreenContainer
+				id="callsesh-view-user"
+				className={css({
+					display: "flex",
+					flexDirection: "column"
+				})}
+			>
+				<div>
+					<Introduction viewUser={viewUser} />
+				</div>
+				<div className={css({ flexGrow: "1" })}>
+					{isOperator ? (
+						<Grid gridGutters="0px">
+							<Cell span={[12, 5, 7]}>
+								<OperatorDetails viewUser={viewUser} />
+							</Cell>
+							<Cell span={[12, 3, 5]}>
+								<OperatorAction
+									viewUser={viewUser}
+									onStart={onStartCallSession}
+								/>
+							</Cell>
+						</Grid>
+					) : (
+						<Visitor />
+					)}
+				</div>
 			</ScreenContainer>
 		);
 	}

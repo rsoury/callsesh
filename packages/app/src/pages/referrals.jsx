@@ -88,7 +88,7 @@ const Referrals = () => {
 								textAlign: "center",
 								maxWidth: "600px",
 								margin: "0 auto",
-								padding: "20px 0 100px 0"
+								padding: "20px 0 40px"
 							})}
 						>
 							<H3>
