@@ -428,6 +428,33 @@ const Profile = () => {
 					<div>
 						<Grid>
 							<Cell span={[12, 4, 6]}>
+								<LabelControl label="Profile Picture" noBg>
+									<div>
+										<Avatar
+											name="profilePicture"
+											size="scale4800"
+											src={user.picture}
+										/>
+										<div className={css({ paddingTop: "10px" })}>
+											<Button
+												onClick={() => setEditType(EDIT_TYPES.profilePicture)}
+												startEnhancer={() => <PictureIcon size={20} />}
+												size={BUTTON_SIZE.compact}
+											>
+												Edit Profile Picture
+											</Button>
+										</div>
+									</div>
+								</LabelControl>
+							</Cell>
+							<Cell span={[12, 4, 6]}>
+								<LabelControl
+									label="Phone Number"
+									startEnhancer={() => <PhoneIcon size={20} />}
+								>
+									<Paragraph margin="0">{user.phoneNumber}</Paragraph>
+								</LabelControl>
+								<div className={css({ padding: "2.5px 0" })} />
 								<LabelControl
 									label="First Name"
 									endEnhancer={() => (
@@ -438,8 +465,7 @@ const Profile = () => {
 								>
 									<Paragraph margin="0">{user.givenName}</Paragraph>
 								</LabelControl>
-							</Cell>
-							<Cell span={[12, 4, 6]}>
+								<div className={css({ padding: "2.5px 0" })} />
 								<LabelControl
 									label="Last Name"
 									endEnhancer={() => (
@@ -453,27 +479,6 @@ const Profile = () => {
 							</Cell>
 							<Cell span={12}>
 								<LabelControl
-									label="Username"
-									startEnhancer={() => <UserIcon size={20} />}
-									endEnhancer={() => (
-										<EditEnhancer
-											onClick={() => setEditType(EDIT_TYPES.username)}
-										/>
-									)}
-								>
-									<Paragraph margin="0">{user.username}</Paragraph>
-								</LabelControl>
-							</Cell>
-							<Cell span={[12, 4, 6]}>
-								<LabelControl
-									label="Phone Number"
-									startEnhancer={() => <PhoneIcon size={20} />}
-								>
-									<Paragraph margin="0">{user.phoneNumber}</Paragraph>
-								</LabelControl>
-							</Cell>
-							<Cell span={[12, 4, 6]}>
-								<LabelControl
 									label="Email"
 									startEnhancer={() => <EmailIcon size={20} />}
 									endEnhancer={() => (
@@ -483,6 +488,19 @@ const Profile = () => {
 									)}
 								>
 									<Paragraph margin="0">{user.email}</Paragraph>
+								</LabelControl>
+							</Cell>
+							<Cell span={12}>
+								<LabelControl
+									label="Username"
+									startEnhancer={() => <UserIcon size={20} />}
+									endEnhancer={() => (
+										<EditEnhancer
+											onClick={() => setEditType(EDIT_TYPES.username)}
+										/>
+									)}
+								>
+									<Paragraph margin="0">{user.username}</Paragraph>
 								</LabelControl>
 							</Cell>
 							<Cell span={[12, 4, 6]}>
@@ -515,26 +533,6 @@ const Profile = () => {
 													day: "numeric"
 											  }).format(new Date(user.dob))}
 									</Paragraph>
-								</LabelControl>
-							</Cell>
-							<Cell span={12}>
-								<LabelControl label="Profile Picture" noBg>
-									<div>
-										<Avatar
-											name="profilePicture"
-											size="scale4800"
-											src={user.picture}
-										/>
-										<div className={css({ paddingTop: "10px" })}>
-											<Button
-												onClick={() => setEditType(EDIT_TYPES.profilePicture)}
-												startEnhancer={() => <PictureIcon size={20} />}
-												size={BUTTON_SIZE.compact}
-											>
-												Edit Profile Picture
-											</Button>
-										</div>
-									</div>
 								</LabelControl>
 							</Cell>
 						</Grid>

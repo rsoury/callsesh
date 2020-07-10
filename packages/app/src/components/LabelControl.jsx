@@ -24,11 +24,14 @@ const LabelControl = ({
 	const [css, theme] = useStyletron();
 
 	const wrapperStyle = {};
+	const contentStyle = {};
 	if (StartEnhancer !== null) {
 		wrapperStyle.paddingLeft = "14px";
+		contentStyle.paddingLeft = "0px";
 	}
 	if (EndEnhancer !== null) {
 		wrapperStyle.paddingRight = "14px";
+		contentStyle.paddingRight = "0px";
 	}
 
 	return (
@@ -64,6 +67,9 @@ const LabelControl = ({
 						className={css({
 							flex: "1",
 							padding: "10px 14px",
+							maxWidth: "100%",
+							overflow: "hidden",
+							...contentStyle,
 							...style
 						})}
 					>
