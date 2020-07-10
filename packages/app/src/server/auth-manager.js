@@ -9,9 +9,9 @@ import mapKeys from "lodash/mapKeys";
 import camelCase from "lodash/camelCase";
 import pick from "lodash/pick";
 import ono from "@jsdevtools/ono";
-import nanoid from "nanoid";
 
 import { auth0 as config } from "@/env-config";
+import generateId from "@/utils/generate-id";
 
 const client = new ManagementClient({
 	domain: config.domain,
@@ -213,7 +213,7 @@ export const updateEmail = async (userId, email, emailIdentity) => {
  * Creates a simple means for Machine-Machine communication with Authentication
  */
 export const createOTP = async (id) => {
-	const token = nanoid(64);
+	const token = generateId(64);
 	await updateUser(id, {
 		metadata: {
 			app: {

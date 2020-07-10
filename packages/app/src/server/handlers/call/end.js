@@ -120,6 +120,12 @@ export default async function endCallSession(req, res) {
 		caller: callerUser.callSession
 	});
 
+	// Remove call session sync document
+	await comms
+		.getSyncService()
+		.documents(`CallSession:${callerUser.callSession.id}`)
+		.remove();
+
 	// Fetch call logs
 	const interactions = await service
 		.sessions(sessionId)

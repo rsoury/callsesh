@@ -10,7 +10,6 @@
 
 import isEmpty from "is-empty";
 import truncate from "lodash/truncate";
-import { nanoid } from "nanoid";
 import ono from "@jsdevtools/ono";
 import * as authManager from "@/server/auth-manager";
 import * as comms from "@/server/comms";
@@ -19,7 +18,11 @@ import stripe from "@/server/stripe";
 import { onNoMatch } from "@/server/middleware";
 import { getUser } from "@/server/middleware/auth";
 import isUserOperator from "@/utils/is-operator";
-import { ERROR_TYPES, CALL_SESSION_USER_TYPE } from "@/constants";
+import {
+	ERROR_TYPES,
+	CALL_SESSION_USER_TYPE,
+	CALL_SESSION_STATUS
+} from "@/constants";
 import checkCallSession from "@/utils/check-call-session";
 import { delayEndSession } from "@/server/workflows";
 
@@ -161,10 +164,10 @@ export default async function createCallSession(req, res) {
 		},
 		{
 			uniqueName: `Caller: ${truncate(user.nickname, {
-				length: 70
+				length: 75
 			})} and Operator: ${truncate(operatorUser.nickname, {
-				length: 70
-			})} - ${nanoid(20)}`
+				length: 75
+			})} - ${Date.now()}`
 		}
 	);
 
@@ -172,12 +175,17 @@ export default async function createCallSession(req, res) {
 		throw ono(new Error("No proxy phone number found for caller"), {
 			type: ERROR_TYPES.proxyPhoneNumberRequired,
 			context: {
-				callSessionId: user.callSession.id,
+				callSessionId: proxySession.sid,
 				callerId: user.id,
 				operatorId: operatorUser.id
 			}
 		});
 	}
+
+	// Create a sync document. Use the proxy session id to identify the document
+	await comms.createDocument(`CallSession:${proxySession.sid}`, {
+		status: CALL_SESSION_STATUS.pending
+	});
 
 	// Call session to return to authed user.
 	const callerCallSession = {

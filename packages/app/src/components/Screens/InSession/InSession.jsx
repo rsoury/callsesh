@@ -51,7 +51,9 @@ const InSessionScreen = ({
 	const [isLoadingMeter, setLoadingMeter] = useState(false);
 
 	const { callSession } = user;
-	const isPending = isEmpty(callSession.status);
+	const isInitiated =
+		!isEmpty(callSession.status) &&
+		callSession.status !== CALL_SESSION_STATUS.pending;
 	const isOperator = isUserOperator(user);
 
 	const handleEndSession = manageLoadingState(onEndSession, setEndingSession);
@@ -105,28 +107,7 @@ const InSessionScreen = ({
 						delay: 0.3
 					}}
 				>
-					{isPending ? (
-						<div
-							className={css({
-								textAlign: "center",
-								maxWidth: "300px",
-								margin: "0 auto",
-								display: "flex",
-								alignItems: "center",
-								flexDirection: "column"
-							})}
-						>
-							<Spinner $size={SPINNER_SIZE.large} />
-							<Paragraph marginTop="25px" color={theme.colors.contentTertiary}>
-								<strong>
-									Your call session has started.
-									<br />
-									You should receive an SMS with a phone number to call that
-									will connect you to your operator.
-								</strong>
-							</Paragraph>
-						</div>
-					) : (
+					{isInitiated ? (
 						<div
 							className={css({
 								display: "flex",
@@ -238,6 +219,40 @@ const InSessionScreen = ({
 								<ParagraphXSmall>
 									You will be charged for metered and talk duration.
 								</ParagraphXSmall>
+							)}
+						</div>
+					) : (
+						<div
+							className={css({
+								textAlign: "center",
+								maxWidth: "300px",
+								margin: "0 auto",
+								display: "flex",
+								alignItems: "center",
+								flexDirection: "column"
+							})}
+						>
+							<Spinner $size={SPINNER_SIZE.large} />
+							{isEmpty(callSession.status) && (
+								<Paragraph
+									marginTop="25px"
+									color={theme.colors.contentTertiary}
+								>
+									<strong>Connecting to your session...</strong>
+								</Paragraph>
+							)}
+							{callSession.status === CALL_SESSION_STATUS.pending && (
+								<Paragraph
+									marginTop="25px"
+									color={theme.colors.contentTertiary}
+								>
+									<strong>
+										Your call session has started.
+										<br />
+										You should receive an SMS with a phone number to call that
+										will connect you to your operator.
+									</strong>
+								</Paragraph>
 							)}
 						</div>
 					)}

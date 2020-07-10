@@ -2,7 +2,7 @@
 
 import isEmpty from "is-empty";
 import Twilio from "twilio";
-import nanoid from "nanoid";
+import generateId from "@/utils/generate-id";
 
 import { twilio as config } from "@/env-config";
 import { SMS_SENDER_ID } from "@/constants";
@@ -11,7 +11,7 @@ const client = new Twilio(config.apiKey, config.apiSecret, {
 	accountSid: config.accountSid
 });
 const proxyService = client.proxy.services(config.proxyServiceSid);
-// const syncService = client.sync.services(config.syncServiceSid);
+const syncService = client.sync.services(config.syncServiceSid);
 
 /**
  * Create a Proxy session and add two participants to it.
@@ -140,7 +140,7 @@ export const generateToken = (identity = 0) => {
 	);
 
 	// Assign the provided identity or generate a random one
-	token.identity = identity || nanoid(32);
+	token.identity = identity || generateId(32);
 
 	if (config.chatServiceSid) {
 		// Create a "grant" which enables a client to use IPM as a given user,
@@ -165,4 +165,39 @@ export const generateToken = (identity = 0) => {
 		identity: token.identity,
 		token: token.toJwt()
 	};
+};
+
+/**
+ * Get sync service helper
+ */
+export const getSyncService = () => proxyService;
+
+/**
+ * Create a Sync Document
+ */
+export const createDocument = (identifier, data = {}) => {
+	const params = {};
+
+	if (identifier) {
+		params.uniqueName = identifier;
+	}
+
+	if (!isEmpty(data)) {
+		params.data = data;
+	}
+
+	return syncService.documents.create(params);
+};
+
+/**
+ * Update a Sync Document
+ */
+export const updateDocument = (identifier, data = {}) => {
+	const params = {};
+
+	if (!isEmpty(data)) {
+		params.data = data;
+	}
+
+	return syncService.documents(identifier).update(params);
 };

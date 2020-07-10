@@ -8,6 +8,7 @@
 
 import * as comms from "@/server/comms";
 import { delayEndSession } from "@/server/workflows";
+import { CALL_SESSION_STATUS } from "@/constants";
 
 const expireSession = (sessionId) => {
 	// Overwrite expiry to 60 seconds -- end session in 60 seconds.
@@ -52,7 +53,11 @@ export default async function proxyCallbackHook(req, res) {
 		case "initiated":
 			// Give the call session an expiry of a day when initiating a call.
 			await prolongSession(interactionSessionSid);
-			// Update the outbound call to detect machine and hangup accordingly.
+
+			// Update sync document status to in-call
+			await comms.updateDocument(`CallSession:${interactionSessionSid}`, {
+				status: CALL_SESSION_STATUS.inCall
+			});
 
 			logger.info("Call inititated. Prolong call session");
 			break;
@@ -61,6 +66,10 @@ export default async function proxyCallbackHook(req, res) {
 		case "no-answer":
 			await expireSession(interactionSessionSid);
 			await delayEndSession(interactionSessionSid);
+			// Update sync document status to in-call
+			await comms.updateDocument(`CallSession:${interactionSessionSid}`, {
+				status: CALL_SESSION_STATUS.active
+			});
 			logger.info(
 				`Call ${outboundResourceStatus}. Expiry added to session for recovery. Inbound call marked completed to prevent voice bank.`
 			);

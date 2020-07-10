@@ -8,62 +8,23 @@
 import { useEffect, useContext, useCallback } from "react";
 import Router from "next/router";
 import isEmpty from "is-empty";
-// import { useRequest } from "@callsesh/utils";
-// import debounce from "lodash/debounce";
 import once from "lodash/once";
 import { toaster } from "baseui/toast";
+import SyncClient from "twilio-sync";
+import ono from "@jsdevtools/ono";
 
 import * as routes from "@/routes";
 import appendReturnUrl from "@/utils/append-return-url";
 import { UserContext } from "@/components/Providers/UserProvider";
-// import handleException, {
-// 	setUser as setErrorTrackingUser
-// } from "@/utils/handle-exception";
+import handleException from "@/utils/handle-exception";
 import stripTrailingSlash from "@/utils/strip-trailing-slash";
+import request from "@/utils/request";
 
 const toastRedirectToSession = once(() => {
 	toaster.info(
 		`You're currently in a call session! Please wait while we redirect you to the session...`
 	);
 });
-
-// const handleExceptionDebounced = debounce((...params) => {
-// 	handleException(...params);
-// }, 500);
-
-// We need to check whether user is registered. If not redirect to /register
-// const ensureUserRegistered = (user) => {
-// 	if (isEmpty(user)) {
-// 		return false;
-// 	}
-// 	const { isRegistered } = user;
-// 	if (!isRegistered) {
-// 		// Redirect to get started if not registered
-// 		if (window.location.pathname.indexOf(routes.page.register) !== 0) {
-// 			Router.push(appendReturnUrl(routes.page.register, true));
-// 			return false;
-// 		}
-// 	}
-// 	if (!isEmpty((user || {}).callSession)) {
-// 		const inSessionPathname = routes.build.user(user.callSession.with);
-// 		if (
-// 			stripTrailingSlash(window.location.pathname) !==
-// 			stripTrailingSlash(inSessionPathname)
-// 		) {
-// 			toastRedirectToSession();
-// 			Router.push(inSessionPathname);
-// 			return false;
-// 		}
-// 	}
-// 	return true;
-// };
-
-// Just a helper to wrap functions to call with user object.
-// const _resolveUser = (user) => {
-// 	ensureUserRegistered(user);
-// };
-
-// const resolveUser = debounce(_resolveUser, 500);
 
 /**
  * Helper function to set user state
@@ -74,6 +35,8 @@ export const useSetUser = () => {
 	return setUserState;
 };
 
+let syncClient;
+
 function useUser({ required } = {}) {
 	const {
 		user,
@@ -82,31 +45,6 @@ function useUser({ required } = {}) {
 		loading,
 		setUser: setUserState
 	} = useContext(UserContext);
-
-	// TODO: Will be replaced with Subscription to realtime socket channel
-	// useRequest(
-	// 	isEmpty((user || {}).callSession)
-	// 		? null
-	// 		: routes.build.callUser(user.callSession.with),
-	// 	{
-	// 		initialData: {},
-	// 		refreshInterval: 60 * 1000, // 60 seconds
-	// 		refreshWhenHidden: false,
-	// 		onSuccess({ data: { callSession } }) {
-	// 			setUserState({
-	// 				...user,
-	// 				callSession: callSession.caller
-	// 			});
-	// 		},
-	// 		onError(err) {
-	// 			handleExceptionDebounced(err);
-	// 			setUserState({
-	// 				...user,
-	// 				callSession: {}
-	// 			});
-	// 		}
-	// 	}
-	// );
 
 	const resolveUser = useCallback(() => {
 		if (isEmpty(user)) {
@@ -132,6 +70,59 @@ function useUser({ required } = {}) {
 				stripTrailingSlash(inSessionPathname)
 			) {
 				// Subscribe to call session channel
+				request
+					.get(routes.api.token)
+					.then(({ token }) => {
+						// Only define syncClient once
+						if (!isEmpty(syncClient)) {
+							return true;
+						}
+
+						syncClient = new SyncClient(token);
+
+						// Load updates for the call session document
+						syncClient.document(`CallSession:${callSession.id}`).then((doc) => {
+							console.log(doc);
+
+							setUserState({
+								...user,
+								callSession: {
+									...callSession,
+									...doc.value
+								}
+							});
+
+							doc.on("updated", (event) => {
+								console.log(event);
+
+								setUserState({
+									...user,
+									callSession: {
+										...callSession,
+										...event.value
+									}
+								});
+							});
+						});
+
+						// Handle new token update on access token expiry
+						syncClient.on("tokenAboutToExpire", () => {
+							request
+								.get(routes.api.token)
+								.then(({ token: newToken }) => {
+									syncClient.updateToken(newToken);
+								})
+								.catch((error) => {
+									handleException(ono(error, { onExpire: true }));
+								});
+						});
+					})
+					.catch((e) => {
+						handleException(e);
+						toaster.negative(
+							`Oops! There's been an error with the live connection to the session. Please refresh the page to try again.`
+						);
+					});
 
 				// EMULATE: Event retrieval
 				// setTimeout(() => {
