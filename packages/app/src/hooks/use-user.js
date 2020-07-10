@@ -116,6 +116,8 @@ function useUser({ required } = {}) {
 									handleException(ono(error, { onExpire: true }));
 								});
 						});
+
+						return true;
 					})
 					.catch((e) => {
 						handleException(e);

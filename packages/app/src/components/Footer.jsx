@@ -37,6 +37,12 @@ const Footer = () => {
 			text: "Callsesh Support",
 			href: getSupportEmail((user || {}).username),
 			standard: true
+		},
+		{
+			text: "Add to Home Screen",
+			href: `https://www.notion.so/webdoodle/A-step-by-step-guide-on-adding-Callsesh-to-your-mobile-home-screen-20a37538de0a4291836cbbcdb0004088`,
+			standard: true,
+			target: "_blank"
 		}
 	];
 

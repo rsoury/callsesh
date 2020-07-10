@@ -6,7 +6,6 @@ import { ListItem, ListItemLabel, ARTWORK_SIZES } from "baseui/list";
 import { getName } from "country-list";
 import {
 	MessageCircle as MessageIcon,
-	User as UserIcon,
 	Calendar as CalendarIcon,
 	Map as MapIcon
 } from "react-feather";
