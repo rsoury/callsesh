@@ -163,9 +163,11 @@ const ViewUserOperatorAction = ({ viewUser, onStart }) => {
 								)}
 							</Button>
 							<ParagraphXSmall marginTop="5px" marginBottom="0px">
-								A service fee of {fees.preAuthAmountText()} will be charged upon
-								initiating the call. Additional charges will apply only for time
-								spent in the call. Currency is in {viewUser.currency}.
+								You will be charged for metered and talk duration.
+								<br />A fee of {fees.preAuthAmountText()} will be charged on
+								successful calls.
+								<br />
+								Call currency is in {viewUser.currency}.
 							</ParagraphXSmall>
 						</div>
 					)}

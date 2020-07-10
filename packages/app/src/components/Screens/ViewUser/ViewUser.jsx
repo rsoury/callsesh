@@ -4,7 +4,6 @@ import isEmpty from "is-empty";
 import { useStyletron } from "baseui";
 import { Grid, Cell } from "baseui/layout-grid";
 
-import useUser from "@/hooks/use-user";
 import isUserOperator from "@/utils/is-operator";
 import ScreenContainer from "@/components/ScreenContainer";
 import { ViewUserProps } from "@/utils/common-prop-types";
@@ -17,9 +16,8 @@ import Visitor from "./Visitor";
 
 const ViewUserScreen = ({ error, viewUser, onStartCallSession }) => {
 	const [css] = useStyletron();
-	const [user] = useUser();
 
-	const isOperator = isUserOperator(user);
+	const isOperator = isUserOperator(viewUser);
 
 	if (isEmpty(error)) {
 		return (
@@ -30,7 +28,11 @@ const ViewUserScreen = ({ error, viewUser, onStartCallSession }) => {
 					flexDirection: "column"
 				})}
 			>
-				<div>
+				<div
+					className={css({
+						marginBottom: "20px"
+					})}
+				>
 					<Introduction viewUser={viewUser} />
 				</div>
 				<div className={css({ flexGrow: "1" })}>
