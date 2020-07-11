@@ -17,12 +17,13 @@ const reservedSpaces = ["blog"];
  * @return {boolean}
  */
 const isUsernameSpaceAvailable = async (username) => {
-	if (typeof window !== "undefined") {
+	if (typeof window !== "undefined" || typeof username !== "string") {
 		return false;
 	}
 
 	// Slugify and ensure output is the same
-	if (username !== slugify(username)) {
+	// Ensure username has a length >= 4
+	if (username !== slugify(username) || username.length < 4) {
 		return false;
 	}
 
