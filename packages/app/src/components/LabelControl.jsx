@@ -66,7 +66,10 @@ const LabelControl = ({
 					<div
 						className={css({
 							flex: "1",
-							padding: "10px 14px",
+							paddingTop: "10px",
+							paddingBottom: "10px",
+							paddingLeft: "14px",
+							paddingRight: "14px",
 							maxWidth: "100%",
 							overflow: "hidden",
 							...contentStyle,

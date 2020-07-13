@@ -182,11 +182,6 @@ export default async function createCallSession(req, res) {
 		});
 	}
 
-	// Create a sync document. Use the proxy session id to identify the document
-	await comms.createDocument(`CallSession:${proxySession.sid}`, {
-		status: CALL_SESSION_STATUS.pending
-	});
-
 	// Call session to return to authed user.
 	const callerCallSession = {
 		id: proxySession.sid,
@@ -198,6 +193,17 @@ export default async function createCallSession(req, res) {
 		with: user.username,
 		as: CALL_SESSION_USER_TYPE.operator
 	};
+
+	// Create a sync document. Use the proxy session id to identify the document
+	await comms.createDocument(`CallSession:${proxySession.sid}`, {
+		status: CALL_SESSION_STATUS.pending
+	});
+	// Create sync document for Live Operator user
+	await comms.createDocument(
+		`UserCallSession:${operatorUser.id}`,
+		operatorCallSession
+	);
+
 	// Store sessions against each use
 	await Promise.all([
 		authManager.updateUser(operatorUser.id, {

@@ -37,9 +37,10 @@ const Spinner = withStyle(StyledSpinnerNext, {
 
 const GoLiveCard = ({ ...props }) => {
 	const [css, theme] = useStyletron();
-	const [user, isUserLoading] = useUser();
+	const [user, isUserLoading, { setUser }] = useUser();
 	const [isLoading, setLoading] = useState(false);
-	const [isLive, setLive] = useState(user.isLive);
+
+	const { isLive } = user;
 
 	if (isUserLoading) {
 		return <LoadingCard {...cardProps} {...props} />;
@@ -52,7 +53,11 @@ const GoLiveCard = ({ ...props }) => {
 			.post(routes.api.live)
 			.then(({ data }) => data)
 			.then(({ value }) => {
-				setLive(value);
+				setUser({
+					...user,
+					isLive: value
+				});
+
 				if (value) {
 					toaster.info(
 						`You're now live! Copy your Operator Link and share the news to your Socials, Website, Newsletter, or anywhere you'd like.`

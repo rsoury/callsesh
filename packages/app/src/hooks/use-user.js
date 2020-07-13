@@ -19,11 +19,42 @@ import { UserContext } from "@/components/Providers/UserProvider";
 import handleException from "@/utils/handle-exception";
 import stripTrailingSlash from "@/utils/strip-trailing-slash";
 import request from "@/utils/request";
+import isUserOperator from "@/utils/is-operator";
 
 const toastRedirectToSession = once(() => {
 	toaster.info(
 		`You're currently in a call session! Please wait while we redirect you to the session...`
 	);
+});
+
+const getSyncClient = once(() => {
+	return request
+		.get(routes.api.token)
+		.then(({ data }) => data)
+		.then(({ token }) => {
+			// Only define syncClient once
+			const syncClient = new SyncClient(token);
+
+			// Handle new token update on access token expiry
+			syncClient.on("tokenAboutToExpire", () => {
+				request
+					.get(routes.api.token)
+					.then(({ token: newToken }) => {
+						syncClient.updateToken(newToken);
+					})
+					.catch((error) => {
+						handleException(ono(error, { onExpire: true }));
+					});
+			});
+
+			return syncClient;
+		})
+		.catch((e) => {
+			handleException(e);
+			toaster.negative(
+				`Oops! There's been an error with the live connection to the session. Please refresh the page to try again.`
+			);
+		});
 });
 
 /**
@@ -34,8 +65,6 @@ export const useSetUser = () => {
 
 	return setUserState;
 };
-
-let syncClient;
 
 function useUser({ required } = {}) {
 	const {
@@ -70,16 +99,8 @@ function useUser({ required } = {}) {
 				stripTrailingSlash(inSessionPathname)
 			) {
 				// Subscribe to call session channel
-				request
-					.get(routes.api.token)
-					.then(({ token }) => {
-						// Only define syncClient once
-						if (!isEmpty(syncClient)) {
-							return true;
-						}
-
-						syncClient = new SyncClient(token);
-
+				getSyncClient()
+					.then((syncClient) => {
 						// Load updates for the call session document
 						syncClient.document(`CallSession:${callSession.id}`).then((doc) => {
 							console.log(doc);
@@ -104,26 +125,9 @@ function useUser({ required } = {}) {
 								});
 							});
 						});
-
-						// Handle new token update on access token expiry
-						syncClient.on("tokenAboutToExpire", () => {
-							request
-								.get(routes.api.token)
-								.then(({ token: newToken }) => {
-									syncClient.updateToken(newToken);
-								})
-								.catch((error) => {
-									handleException(ono(error, { onExpire: true }));
-								});
-						});
-
-						return true;
 					})
-					.catch((e) => {
-						handleException(e);
-						toaster.negative(
-							`Oops! There's been an error with the live connection to the session. Please refresh the page to try again.`
-						);
+					.catch((err) => {
+						handleException(err);
 					});
 
 				// EMULATE: Event retrieval
@@ -146,6 +150,42 @@ function useUser({ required } = {}) {
 			return false;
 		}
 
+		// When the current user is not is a callSession but is a live operator, listen for callSession related events
+		if (isUserOperator(user) && user.isLive) {
+			// Subscribe to call session channel
+			getSyncClient().then((syncClient) => {
+				// Load updates for the call session document
+				syncClient
+					.document(`UserCallSession:${user.id}`)
+					.then((doc) => {
+						console.log(doc);
+
+						setUserState({
+							...user,
+							callSession: {
+								...user.callSession,
+								...doc.value
+							}
+						});
+
+						doc.on("updated", (event) => {
+							console.log(event);
+
+							setUserState({
+								...user,
+								callSession: {
+									...user.callSession,
+									...event.value
+								}
+							});
+						});
+					})
+					.catch((err) => {
+						handleException(err);
+					});
+			});
+		}
+
 		return true;
 	}, [user]);
 
@@ -159,11 +199,13 @@ function useUser({ required } = {}) {
 			}
 			return () => {};
 		}
+
 		// Start user fetch
 		let isMounted = true;
 
 		getUser().then((newUser) => {
 			// Only use the user if the component is still mounted
+			// -- in case the component unmounts between initial request and promise resolve.
 			if (isMounted) {
 				// When the user is not logged in but login is required
 				if (required && !newUser) {
@@ -177,7 +219,7 @@ function useUser({ required } = {}) {
 		return () => {
 			isMounted = false;
 		};
-	}, []);
+	}, [user]);
 
 	return [user, loading, { removeUser, getUser, setUser: setUserState }];
 }
