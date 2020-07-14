@@ -2,7 +2,7 @@ import { useStyletron } from "baseui";
 import { Label2 as Label } from "baseui/typography";
 import {
 	Link as LinkIcon,
-	PhoneForwarded as CallLinkIcon,
+	Phone as CallLinkIcon,
 	UserPlus as InviteLinkIcon
 } from "react-feather";
 import CopyToClipboard from "react-copy-to-clipboard";
