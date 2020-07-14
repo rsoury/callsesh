@@ -24,6 +24,7 @@ import {
 	CALL_SESSION_STATUS
 } from "@/constants";
 import checkCallSession from "@/utils/check-call-session";
+import * as syncDocumentName from "@/utils/get-sync-document-name";
 import { delayEndSession } from "@/server/workflows";
 
 import * as utils from "./utils";
@@ -194,15 +195,24 @@ export default async function createCallSession(req, res) {
 		as: CALL_SESSION_USER_TYPE.operator
 	};
 
+	// Update sync documents as listening for updates on the frontend would have already created them.
 	// Create a sync document. Use the proxy session id to identify the document
-	await comms.createDocument(`CallSession:${proxySession.sid}`, {
-		status: CALL_SESSION_STATUS.pending
-	});
-	// Create sync document for Live Operator user
-	await comms.createDocument(
-		`UserCallSession:${operatorUser.id}`,
-		operatorCallSession
-	);
+	await Promise.all([
+		// Create a sync document. Use the proxy session id to identify the document
+		comms.updateDocument(
+			syncDocumentName.getCallSessionDocument(proxySession.sid),
+			{
+				status: CALL_SESSION_STATUS.pending
+			}
+		),
+		// Create sync document for Live Operator user
+		comms.updateDocument(
+			syncDocumentName.getLiveOperatorDocument(operatorUser.id),
+			{
+				callSession: operatorCallSession
+			}
+		)
+	]);
 
 	// Store sessions against each use
 	await Promise.all([

@@ -19,8 +19,6 @@ const ViewUserIntroduction = ({ viewUser }) => {
 		ownerPronoun = "She's";
 	}
 
-	const minuteRate = fees.getMinuteRate(viewUser.hourlyRate);
-
 	const isOperator = isUserOperator(viewUser);
 
 	return (
@@ -68,10 +66,16 @@ const ViewUserIntroduction = ({ viewUser }) => {
 									<span>
 										offering <Highlight>{viewUser.purpose}</Highlight> over a
 										call session for{" "}
-										<Highlight noBreak>{minuteRate}/minute</Highlight>
+										<Highlight noBreak>
+											{fees.getMinuteRate(viewUser.hourlyRate)}/minute
+										</Highlight>
 									</span>
 								) : (
-									<span>making calls on Callsesh. You can too!</span>
+									<span>
+										making calls on Callsesh.
+										<br />
+										You can too!
+									</span>
 								)}
 							</span>
 						</Heading>

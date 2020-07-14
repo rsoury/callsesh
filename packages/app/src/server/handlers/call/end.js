@@ -23,6 +23,7 @@ import { getUser } from "@/server/middleware/auth";
 import { ERROR_TYPES, CALL_SESSION_USER_TYPE } from "@/constants";
 import handleException from "@/utils/handle-exception";
 import checkCallSession from "@/utils/check-call-session";
+import * as syncDocumentName from "@/utils/get-sync-document-name";
 
 import * as utils from "./utils";
 
@@ -121,14 +122,18 @@ export default async function endCallSession(req, res) {
 	});
 
 	// Remove call session sync document
-	await comms
-		.getSyncService()
-		.documents(`CallSession:${callerUser.callSession.id}`)
-		.remove();
-	await comms
-		.getSyncService()
-		.documents(`UserCallSession:${operatorUser.id}`)
-		.remove();
+	await Promise.all([
+		comms
+			.getSyncService()
+			.documents(
+				syncDocumentName.getCallSessionDocument(callerUser.callSession.id)
+			)
+			.remove(),
+		comms.updateDocument(
+			syncDocumentName.getLiveOperatorDocument(operatorUser.id),
+			{}
+		)
+	]);
 
 	// Fetch call logs
 	const interactions = await service

@@ -20,6 +20,7 @@ import handleException from "@/utils/handle-exception";
 import stripTrailingSlash from "@/utils/strip-trailing-slash";
 import request from "@/utils/request";
 import isUserOperator from "@/utils/is-operator";
+import * as syncDocumentName from "@/utils/get-sync-document-name";
 
 const toastRedirectToSession = once(() => {
 	toaster.info(
@@ -66,7 +67,7 @@ export const useSetUser = () => {
 	return setUserState;
 };
 
-// Define flags that prevent oversubscribing to realtime events
+// Create a way to restrict the amount of calls to a given Sync handler
 const subscriptions = [];
 const subscribe = (uniqueId, handler) => {
 	if (!isEmpty(uniqueId)) {
@@ -77,7 +78,8 @@ const subscribe = (uniqueId, handler) => {
 	}
 
 	return getSyncClient()
-		.then((client) => handler(client))
+		.then((client) => client.document(uniqueId))
+		.then((doc) => handler(doc))
 		.catch((e) => handleException(e));
 };
 
@@ -95,6 +97,7 @@ function useUser({ required } = {}) {
 			return false;
 		}
 
+		console.log(user);
 		const { isRegistered, callSession } = user;
 
 		// If user is not registered, redirect to register page.
@@ -114,35 +117,41 @@ function useUser({ required } = {}) {
 				stripTrailingSlash(inSessionPathname)
 			) {
 				// Subscribe to call session updates
-				subscribe("CallSession", (client) => {
-					// Load updates for the call session document
-					client
-						.document(`CallSession:${callSession.id}`)
-						.then((doc) => {
-							console.log(doc);
+				subscribe(
+					syncDocumentName.getCallSessionDocument(callSession.id),
+					(doc) => {
+						// Load updates for the call session document
+						console.log(doc);
+
+						setUserState({
+							...user,
+							callSession: {
+								...callSession,
+								...doc.value
+							}
+						});
+
+						doc.on("updated", (event) => {
+							console.log(event);
 
 							setUserState({
 								...user,
 								callSession: {
 									...callSession,
-									...doc.value
+									...event.value
 								}
 							});
+						});
 
-							doc.on("updated", (event) => {
-								console.log(event);
-
-								setUserState({
-									...user,
-									callSession: {
-										...callSession,
-										...event.value
-									}
-								});
+						// On call session end.
+						doc.on("removed", () => {
+							setUserState({
+								...user,
+								callSession: {}
 							});
-						})
-						.catch((e) => handleException(e));
-				});
+						});
+					}
+				);
 
 				// EMULATE: Event retrieval
 				// setTimeout(() => {
@@ -166,37 +175,20 @@ function useUser({ required } = {}) {
 
 		// When the current user is not is a callSession but is a live operator, listen for callSession related events
 		if (isUserOperator(user) && user.isLive) {
-			// Subscribe to operator user call session updates
-			subscribe("LiveOperator", (client) => {
-				console.log(subscriptions);
-				client
-					.document(`LiveOperator:${user.id}`)
-					.then((doc) => {
-						console.log(doc);
+			// Subscribe to LiveOperator updates
+			subscribe(syncDocumentName.getLiveOperatorDocument(user.id), (doc) => {
+				doc.on("updated", (event) => {
+					console.log("UPDATED!");
+					console.log(event);
 
-						setUserState({
-							...user,
-							callSession: {
-								...user.callSession,
-								...(doc.value.callSession || {})
-							}
-						});
-
-						doc.on("updated", (event) => {
-							console.log(event);
-
-							setUserState({
-								...user,
-								callSession: {
-									...user.callSession,
-									...(event.value.callSession || {})
-								}
-							});
-						});
-					})
-					.catch((err) => {
-						handleException(err);
+					setUserState({
+						...user,
+						callSession: {
+							...user.callSession,
+							...(event.value.callSession || {})
+						}
 					});
+				});
 			});
 		}
 
