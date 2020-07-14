@@ -64,7 +64,10 @@ const ViewUserOperatorAction = ({ viewUser, onStart }) => {
 				overrides={{
 					Root: {
 						style: {
-							borderRadius: theme.borders.radius300,
+							borderTopLeftRadius: theme.borders.radius300,
+							borderTopRightRadius: theme.borders.radius300,
+							borderBottomLeftRadius: theme.borders.radius300,
+							borderBottomRightRadius: theme.borders.radius300,
 							[theme.mediaQuery.maxSmall]: {
 								borderRightWidth: "0px",
 								borderLeftWidth: "0px",

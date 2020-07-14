@@ -163,7 +163,7 @@ export const generateToken = (identity = 0) => {
 	// Serialize the token to a JWT string and include it in a JSON response
 	return {
 		identity: token.identity,
-		token: token.toJwt()
+		data: token.toJwt()
 	};
 };
 

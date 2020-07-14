@@ -33,14 +33,14 @@ const getSyncClient = once(() => {
 		.then(({ data }) => data)
 		.then(({ token }) => {
 			// Only define syncClient once
-			const syncClient = new SyncClient(token);
+			const syncClient = new SyncClient(token.data);
 
 			// Handle new token update on access token expiry
 			syncClient.on("tokenAboutToExpire", () => {
 				request
 					.get(routes.api.token)
 					.then(({ token: newToken }) => {
-						syncClient.updateToken(newToken);
+						syncClient.updateToken(newToken.data);
 					})
 					.catch((error) => {
 						handleException(ono(error, { onExpire: true }));
@@ -64,6 +64,21 @@ export const useSetUser = () => {
 	const { setUser: setUserState } = useContext(UserContext);
 
 	return setUserState;
+};
+
+// Define flags that prevent oversubscribing to realtime events
+const subscriptions = [];
+const subscribe = (uniqueId, handler) => {
+	if (!isEmpty(uniqueId)) {
+		if (subscriptions.includes(uniqueId)) {
+			return null;
+		}
+		subscriptions.push(uniqueId);
+	}
+
+	return getSyncClient()
+		.then((client) => handler(client))
+		.catch((e) => handleException(e));
 };
 
 function useUser({ required } = {}) {
@@ -98,11 +113,12 @@ function useUser({ required } = {}) {
 				stripTrailingSlash(window.location.pathname) ===
 				stripTrailingSlash(inSessionPathname)
 			) {
-				// Subscribe to call session channel
-				getSyncClient()
-					.then((syncClient) => {
-						// Load updates for the call session document
-						syncClient.document(`CallSession:${callSession.id}`).then((doc) => {
+				// Subscribe to call session updates
+				subscribe("CallSession", (client) => {
+					// Load updates for the call session document
+					client
+						.document(`CallSession:${callSession.id}`)
+						.then((doc) => {
 							console.log(doc);
 
 							setUserState({
@@ -124,11 +140,9 @@ function useUser({ required } = {}) {
 									}
 								});
 							});
-						});
-					})
-					.catch((err) => {
-						handleException(err);
-					});
+						})
+						.catch((e) => handleException(e));
+				});
 
 				// EMULATE: Event retrieval
 				// setTimeout(() => {
@@ -152,11 +166,11 @@ function useUser({ required } = {}) {
 
 		// When the current user is not is a callSession but is a live operator, listen for callSession related events
 		if (isUserOperator(user) && user.isLive) {
-			// Subscribe to call session channel
-			getSyncClient().then((syncClient) => {
-				// Load updates for the call session document
-				syncClient
-					.document(`UserCallSession:${user.id}`)
+			// Subscribe to operator user call session updates
+			subscribe("LiveOperator", (client) => {
+				console.log(subscriptions);
+				client
+					.document(`LiveOperator:${user.id}`)
 					.then((doc) => {
 						console.log(doc);
 
@@ -164,7 +178,7 @@ function useUser({ required } = {}) {
 							...user,
 							callSession: {
 								...user.callSession,
-								...doc.value
+								...(doc.value.callSession || {})
 							}
 						});
 
@@ -175,7 +189,7 @@ function useUser({ required } = {}) {
 								...user,
 								callSession: {
 									...user.callSession,
-									...event.value
+									...(event.value.callSession || {})
 								}
 							});
 						});
