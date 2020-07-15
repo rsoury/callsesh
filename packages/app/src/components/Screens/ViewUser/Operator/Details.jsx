@@ -7,7 +7,7 @@ import { getName } from "country-list";
 import {
 	MessageCircle as MessageIcon,
 	Calendar as CalendarIcon,
-	Map as MapIcon
+	MapPin as MapIcon
 } from "react-feather";
 
 import Card from "@/components/Card";

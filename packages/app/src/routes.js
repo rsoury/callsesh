@@ -34,6 +34,9 @@ export const build = {
 	},
 	card(id) {
 		return `/api/cards/${id}`;
+	},
+	notify(id) {
+		return `/api/notify/${id}`;
 	}
 };
 

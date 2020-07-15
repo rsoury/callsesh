@@ -116,6 +116,32 @@ const ViewUser = ({ user, viewUser: viewUserBase, error }) => {
 		[user, viewUser]
 	);
 
+	// Handle notification toggle
+	const handleToggleNotify = useCallback(
+		(done = () => {}) => {
+			const { notified: notifiedUsers = [] } = viewUser;
+			const isNotified = notifiedUsers.includes(user.username);
+			const notifyRoute = routes.build.notify(viewUser.username);
+			(isNotified ? request.delete(notifyRoute) : request.post(notifyRoute))
+				.then(({ data }) => data)
+				.then(({ notified = [] }) => {
+					// Set current viewUser notified list to one retrieved from server
+					setViewUser({
+						...viewUser,
+						notified
+					});
+				})
+				.catch((err) => {
+					handleException(err);
+					alerts.error();
+				})
+				.finally(() => {
+					done();
+				});
+		},
+		[user, viewUser]
+	);
+
 	const handleEndSession = useCallback(
 		(done = () => {}) => {
 			request
@@ -212,7 +238,10 @@ const ViewUser = ({ user, viewUser: viewUserBase, error }) => {
 			<ViewUserScreen
 				error={error}
 				viewUser={viewUser}
-				onStartCallSession={handleStartCallSession}
+				actions={{
+					onStart: handleStartCallSession,
+					onToggleNotify: handleToggleNotify
+				}}
 			/>
 		</Layout>
 	);

@@ -14,7 +14,7 @@ import OperatorDetails from "./Operator/Details";
 import OperatorAction from "./Operator/Action";
 import Visitor from "./Visitor";
 
-const ViewUserScreen = ({ error, viewUser, onStartCallSession }) => {
+const ViewUserScreen = ({ error, viewUser, actions }) => {
 	const [css, theme] = useStyletron();
 
 	const isOperator = isUserOperator(viewUser);
@@ -41,14 +41,11 @@ const ViewUserScreen = ({ error, viewUser, onStartCallSession }) => {
 				<div className={css({ flexGrow: "1" })}>
 					{isOperator ? (
 						<Grid gridGutters="0px">
-							<Cell span={[12, 5, 7]}>
+							<Cell span={[12, 8, 6]}>
 								<OperatorDetails viewUser={viewUser} />
 							</Cell>
-							<Cell span={[12, 3, 5]}>
-								<OperatorAction
-									viewUser={viewUser}
-									onStart={onStartCallSession}
-								/>
+							<Cell span={[12, 8, 6]}>
+								<OperatorAction viewUser={viewUser} {...actions} />
 							</Cell>
 						</Grid>
 					) : (
@@ -72,12 +69,12 @@ const ViewUserScreen = ({ error, viewUser, onStartCallSession }) => {
 ViewUserScreen.propTypes = {
 	viewUser: ViewUserProps.isRequired,
 	error: PropTypes.object,
-	onStartCallSession: PropTypes.func
+	actions: PropTypes.object
 };
 
 ViewUserScreen.defaultProps = {
 	error: {},
-	onStartCallSession() {}
+	actions: {}
 };
 
 export default ViewUserScreen;
