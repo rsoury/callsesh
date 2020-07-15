@@ -1,7 +1,7 @@
 Outputs:
   NotificationsTopic:
     Description: "The ARN of the StateMachine Notifications Service"
-    Value: !Ref CSMNotificationsTopic
+    Value: !Ref CallseshWorkflowsNotificationsTopic
   CallseshDelay:
     Description: "The ARN of the CallseshDelay StateMachine"
     Value:
