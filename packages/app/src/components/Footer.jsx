@@ -90,7 +90,8 @@ const Footer = () => {
 					alignItems: "center",
 					justifyContent: "center",
 					[theme.mediaQuery.maxSmall]: {
-						flexDirection: "column"
+						flexDirection: "row",
+						flexWrap: "wrap"
 					},
 					...theme.typography.ParagraphXSmall
 				})}
@@ -113,10 +114,20 @@ const Footer = () => {
 					Project
 				</span>
 				&middot;
-				<nav>
+				<nav
+					className={css({
+						[theme.mediaQuery.maxSmall]: {
+							width: "100%"
+						}
+					})}
+				>
 					<ul
 						className={css({
-							...navListProps
+							...navListProps,
+							[theme.mediaQuery.maxSmall]: {
+								flexDirection: "row",
+								flexWrap: "wrap"
+							}
 						})}
 					>
 						{smallNav.map(({ text, ...props }) => (

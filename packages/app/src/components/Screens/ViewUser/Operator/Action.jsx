@@ -56,7 +56,8 @@ const ViewUserOperatorAction = ({ viewUser, onStart }) => {
 					borderBottom: "0",
 					borderLeft: "0",
 					backgroundColor: "#fff",
-					paddingBottom: "10px" // Padding prevent mobile UI covering content
+					paddingBottom: "10px", // Padding prevent mobile UI covering content
+					boxShadow: `0px 14px 60px -12px rgba(50, 50, 93, 0.45), 0 0 36px -18px rgba(0, 0, 0, 0.3), 0 5px 36px -8px rgba(0, 0, 0, 0.025)`
 				}
 			})}
 		>

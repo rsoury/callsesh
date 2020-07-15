@@ -205,7 +205,7 @@ const ViewUser = ({ user, viewUser: viewUserBase, error }) => {
 		<Layout
 			style={{
 				[theme.mediaQuery.maxSmall]: {
-					paddingBottom: "200px"
+					paddingBottom: "240px"
 				}
 			}}
 		>

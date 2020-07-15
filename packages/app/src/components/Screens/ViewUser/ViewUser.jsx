@@ -15,7 +15,7 @@ import OperatorAction from "./Operator/Action";
 import Visitor from "./Visitor";
 
 const ViewUserScreen = ({ error, viewUser, onStartCallSession }) => {
-	const [css] = useStyletron();
+	const [css, theme] = useStyletron();
 
 	const isOperator = isUserOperator(viewUser);
 
@@ -30,7 +30,10 @@ const ViewUserScreen = ({ error, viewUser, onStartCallSession }) => {
 			>
 				<div
 					className={css({
-						marginBottom: "20px"
+						marginBottom: "20px",
+						[theme.mediaQuery.maxSmall]: {
+							marginBottom: "0px"
+						}
 					})}
 				>
 					<Introduction viewUser={viewUser} />
