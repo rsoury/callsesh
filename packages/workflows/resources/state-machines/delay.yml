@@ -1,5 +1,5 @@
-id: Delay
-name: Delay-${opt:stage, self:provider.stage}
+id: CallseshDelay
+name: CallseshDelay-${opt:stage, self:provider.stage}
 events:
   - http:
       path: "/delay"

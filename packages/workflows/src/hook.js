@@ -18,16 +18,16 @@ export default async function fireWebhook(event) {
 		params.data = data;
 	}
 
-	logger(params, "Starting webhook request...");
+	logger.info(params, "Starting webhook request...");
 
 	try {
 		const response = await request(params).then(({ data: d }) => d);
 
-		logger("Webhook request successful");
+		logger.info({ response }, "Webhook request successful");
 
 		return response;
 	} catch (e) {
-		logger(e, "Webhook request errored");
+		logger.info(e, "Webhook request errored");
 		handleException(ono(e, params));
 
 		throw e;

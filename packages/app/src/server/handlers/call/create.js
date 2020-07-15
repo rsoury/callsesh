@@ -242,7 +242,7 @@ export default async function createCallSession(req, res) {
 		comms.sms(user.phoneNumber, utils.getUserSMSMessage(proxyPhoneNumber))
 	]);
 
-	await delayEndSession(proxySession.sid);
+	await delayEndSession(proxySession.sid, user.id);
 
 	// Response should be the proxy phone number
 	return res.json({

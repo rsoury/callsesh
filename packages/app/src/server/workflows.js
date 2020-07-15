@@ -44,25 +44,27 @@ export const delayRequest = (params) => {
  * Use OTP to authenticate webhook
  * Does not force close.
  */
-export const delayEndSession = async (sessionId) => {
-	// Get caller user from session -- find user with callSession
-	const usersInSession = await authManager.getClient().getUsers({
-		search_engine: "v3",
-		page: 0,
-		per_page: 10,
-		q: `app_metadata.callSession.id:"${sessionId}"`,
-		fields: ["user_id", "app_metadata"]
-	});
+export const delayEndSession = async (sessionId, userId = "") => {
+	if (isEmpty(userId)) {
+		// Get caller user from session -- find user with callSession
+		const usersInSession = await authManager.getClient().getUsers({
+			search_engine: "v3",
+			page: 0,
+			per_page: 10,
+			q: `app_metadata.callSession.id:"${sessionId}"`,
+			fields: ["user_id", "app_metadata"]
+		});
 
-	if (isEmpty(usersInSession)) {
-		throw new Error("No users in this session");
+		if (isEmpty(usersInSession)) {
+			throw new Error("No users in this session");
+		}
+
+		// Using raw auth0 response data
+		const callerUser = usersInSession.find(
+			(u) => u.app_metadata.callSession.as === CALL_SESSION_USER_TYPE.caller
+		);
+		userId = callerUser.user_id;
 	}
-
-	// Using raw auth0 response data
-	const callerUser = usersInSession.find(
-		(u) => u.app_metadata.callSession.as === CALL_SESSION_USER_TYPE.caller
-	);
-	const { user_id: userId } = callerUser;
 
 	const token = await authManager.createOTP(userId);
 	await delayRequest({
