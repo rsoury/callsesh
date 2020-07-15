@@ -249,8 +249,16 @@ const InSessionScreen = ({
 									<strong>
 										Your call session has started.
 										<br />
-										You should receive an SMS with a phone number to call that
-										will connect you to your operator.
+										{isOperator ? (
+											<span>
+												You are about to be called by {viewUser.nickname}!
+											</span>
+										) : (
+											<span>
+												You should receive an SMS with a phone number to call
+												that will connect you to your operator.
+											</span>
+										)}
 									</strong>
 								</Paragraph>
 							)}
