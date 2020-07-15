@@ -212,7 +212,7 @@ const ViewUser = ({ user, viewUser: viewUserBase, error }) => {
 			<ViewUserScreen
 				error={error}
 				viewUser={viewUser}
-				onStart={handleStartCallSession}
+				onStartCallSession={handleStartCallSession}
 			/>
 		</Layout>
 	);

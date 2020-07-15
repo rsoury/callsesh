@@ -21,6 +21,7 @@ import stripTrailingSlash from "@/utils/strip-trailing-slash";
 import request from "@/utils/request";
 import isUserOperator from "@/utils/is-operator";
 import * as syncDocumentName from "@/utils/get-sync-document-name";
+import { CALL_SESSION_STATUS } from "@/constants";
 
 const toastRedirectToSession = once(() => {
 	toaster.info(
@@ -120,14 +121,15 @@ function useUser({ required } = {}) {
 				subscribe(
 					syncDocumentName.getCallSessionDocument(callSession.id),
 					(doc) => {
-						// Load updates for the call session document
-						console.log(doc);
+						// Once subscribed, default callSession status to pending.
+						const { value = {} } = doc;
+						value.status = value.status || CALL_SESSION_STATUS.pending;
 
 						setUserState({
 							...user,
 							callSession: {
 								...callSession,
-								...doc.value
+								...value
 							}
 						});
 

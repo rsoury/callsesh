@@ -195,24 +195,14 @@ export default async function createCallSession(req, res) {
 		as: CALL_SESSION_USER_TYPE.operator
 	};
 
-	// Update sync documents as listening for updates on the frontend would have already created them.
-	// Create a sync document. Use the proxy session id to identify the document
-	await Promise.all([
-		// Create a sync document. Use the proxy session id to identify the document
-		comms.updateDocument(
-			syncDocumentName.getCallSessionDocument(proxySession.sid),
-			{
-				status: CALL_SESSION_STATUS.pending
-			}
-		),
-		// Create sync document for Live Operator user
-		comms.updateDocument(
-			syncDocumentName.getLiveOperatorDocument(operatorUser.id),
-			{
-				callSession: operatorCallSession
-			}
-		)
-	]);
+	// Create sync document for Live Operator user
+	// -- This document should have automatically been created on frontend once operator went live
+	await comms.updateDocument(
+		syncDocumentName.getLiveOperatorDocument(operatorUser.id),
+		{
+			callSession: operatorCallSession
+		}
+	);
 
 	// Store sessions against each use
 	await Promise.all([
