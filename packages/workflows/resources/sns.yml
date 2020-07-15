@@ -1,9 +1,10 @@
 Resources:
-  CSMNotificationsTopic:
+  CallseshWorkflowsNotificationsTopic:
     Type: AWS::SNS::Topic
     Properties:
-      DisplayName: "Callsesh Call Session Manager Notifications"
-      TopicName: CallseshCSMNotifications-${opt:stage, self:provider.stage}
+      DisplayName: "Callsesh Workflows Notifications"
+      TopicName:
+        CallseshWorkflowsNotifications-${opt:stage, self:provider.stage}
       Subscription:
         - Endpoint: "ryan@callsesh.com"
           Protocol: email
