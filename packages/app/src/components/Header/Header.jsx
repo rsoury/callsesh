@@ -147,7 +147,8 @@ const Header = () => {
 		<header
 			id="callsesh-header"
 			className={css({
-				overflow: "hidden"
+				overflow: "hidden",
+				position: "relative"
 			})}
 		>
 			{!isEmpty((user || {}).callSession) && <InCallTopBar />}

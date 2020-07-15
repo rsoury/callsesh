@@ -2,7 +2,6 @@
 
 import React, { createContext, useState, useEffect } from "react";
 import isEmpty from "is-empty";
-import debounce from "debounce-promise";
 import get from "lodash/get";
 
 import { ChildrenProps } from "@/utils/common-prop-types";
@@ -62,9 +61,6 @@ const UserContextProvider = ({ children }) => {
 		}
 	};
 
-	// Debounce to prevent duplicate fetches executed simultaneously.
-	const debouncedGetUser = debounce(getUser, 500);
-
 	// If user sourced from SSR, apply to third party services
 	useEffect(() => {
 		if (!isEmpty(user)) {
@@ -79,7 +75,7 @@ const UserContextProvider = ({ children }) => {
 				user,
 				setUser,
 				removeUser,
-				getUser: debouncedGetUser,
+				getUser,
 				loading
 			}}
 		>

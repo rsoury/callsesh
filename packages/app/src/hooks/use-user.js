@@ -23,12 +23,6 @@ import isUserOperator from "@/utils/is-operator";
 import * as syncDocumentName from "@/utils/get-sync-document-name";
 import { CALL_SESSION_STATUS } from "@/constants";
 
-const toastRedirectToSession = once(() => {
-	toaster.info(
-		`You're currently in a call session! Please wait while we redirect you to the session...`
-	);
-});
-
 const getSyncClient = once(() => {
 	return request
 		.get(routes.api.token)
@@ -98,7 +92,7 @@ function useUser({ required } = {}) {
 			return false;
 		}
 
-		console.log(user);
+		// console.log(user);
 		const { isRegistered, callSession } = user;
 
 		// If user is not registered, redirect to register page.
@@ -170,7 +164,6 @@ function useUser({ required } = {}) {
 
 				return true;
 			}
-			toastRedirectToSession();
 			Router.push(inSessionPathname);
 			return false;
 		}
@@ -227,7 +220,14 @@ function useUser({ required } = {}) {
 		return () => {
 			isMounted = false;
 		};
-	}, [user]);
+	}, []);
+
+	// Resolve user on user state change
+	useEffect(() => {
+		if (!loading && user) {
+			resolveUser();
+		}
+	}, [user, loading]);
 
 	return [user, loading, { removeUser, getUser, setUser: setUserState }];
 }
