@@ -53,7 +53,7 @@ export const sendLiveNotification = (
 		TemplateModel: {
 			picture: user.picture,
 			name: user.firstName,
-			view_user_url: `${publicUrl}/${user.username}`,
+			call_url: `${publicUrl}/${user.username}`,
 			purpose: user.purpose,
 			message: user.messageBroadcast
 		}
