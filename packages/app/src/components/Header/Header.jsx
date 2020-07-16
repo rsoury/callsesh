@@ -23,7 +23,7 @@ import appendReturnUrl from "@/utils/append-return-url";
 
 import Logo from "./Logo";
 import VerifyEmail from "./VerifyEmail";
-import InCallTopBar from "./InCallTopBar";
+import InSessionTopBar from "./InSessionTopBar";
 
 const NavItem = ({ label, href, ...props }) => (
 	<Link href={href} button {...props}>
@@ -151,7 +151,7 @@ const Header = () => {
 				position: "relative"
 			})}
 		>
-			{!isEmpty((user || {}).callSession) && <InCallTopBar />}
+			{!isEmpty((user || {}).callSession) && <InSessionTopBar />}
 			{!isLoading && !isEmpty(user) && !(user || {}).emailVerified && (
 				<VerifyEmail />
 			)}

@@ -17,13 +17,9 @@ import Layout from "@/components/Layout";
 import ViewUserScreen from "@/components/Screens/ViewUser";
 import InSessionScreen from "@/components/Screens/InSession";
 import request from "@/utils/request";
-import {
-	UserProps,
-	ViewUserProps,
-	ErrorPageProps
-} from "@/utils/common-prop-types";
+import { ViewUserProps, ErrorPageProps } from "@/utils/common-prop-types";
 import * as routes from "@/routes";
-import { useSetUser } from "@/hooks/use-user";
+import useUser, { useSetUser } from "@/hooks/use-user";
 import { ERROR_TYPES, CALL_SESSION_STATUS } from "@/constants";
 import handleException, { alerts } from "@/utils/handle-exception";
 import ssrUser from "@/utils/ssr-user";
@@ -31,15 +27,40 @@ import { useUserRouteReferrer } from "@/hooks/use-route-referrer";
 import checkCallSession from "@/utils/check-call-session";
 
 // We're referring to the currently viewed user, as the viewUser
-const ViewUser = ({ user, viewUser: viewUserBase, error }) => {
+const ViewUser = ({ viewUser: viewUserBase, error }) => {
 	const [, theme] = useStyletron();
 	const [viewUser, setViewUser] = useState(viewUserBase);
+	const [user] = useUser();
 	const setUser = useSetUser();
 	const [, setUserRouteReferrer] = useUserRouteReferrer();
 
 	const md = new MobileDetect(window.navigator.userAgent);
 
 	const { isSame: inSessionWithViewUser } = checkCallSession(user, viewUser);
+
+	// EMULATE: Add users into session
+	useEffect(() => {
+		if (isEmpty(error)) {
+			setTimeout(() => {
+				setUser({
+					...user,
+					callSession: {
+						id: "emulated-session",
+						as: "operator",
+						with: viewUser.username
+					}
+				});
+				setViewUser({
+					...viewUser,
+					callSession: {
+						id: "emulated-session",
+						as: "caller",
+						with: user.username
+					}
+				});
+			}, 1000);
+		}
+	}, []);
 
 	// Set current pathname to userRouteReferrer state if error is empty.
 	useEffect(() => {
@@ -248,13 +269,11 @@ const ViewUser = ({ user, viewUser: viewUserBase, error }) => {
 };
 
 ViewUser.propTypes = {
-	user: UserProps,
 	viewUser: ViewUserProps,
 	error: ErrorPageProps
 };
 
 ViewUser.defaultProps = {
-	user: {},
 	viewUser: {},
 	error: {
 		code: 404,
@@ -291,12 +310,6 @@ export async function getServerSideProps({
 					}
 				};
 			}
-
-			// EMULATE: Add current user to callsesion with View User
-			// viewUser.callSession = {
-			// 	as: CALL_SESSION_USER_TYPE.operator,
-			// 	with: "hello"
-			// };
 
 			return {
 				props: {

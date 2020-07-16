@@ -15,7 +15,7 @@ const InSessionWith = ({ name, picture }) => {
 				In session with
 			</UppercaseLabel>
 			<Avatar name={name} size="scale4800" src={picture} />
-			<Heading>
+			<Heading marginTop="10px">
 				<strong className={css({ fontWeight: 900 })}>{name}</strong>
 			</Heading>
 		</div>

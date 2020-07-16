@@ -45,7 +45,7 @@ const ViewUserIntroduction = ({ viewUser }) => {
 						})}
 					>
 						<Avatar
-							name={viewUser.nickname}
+							name={viewUser.givenName}
 							size="scale4800"
 							src={viewUser.picture}
 						/>

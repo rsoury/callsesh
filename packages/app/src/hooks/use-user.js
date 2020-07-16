@@ -117,7 +117,10 @@ function useUser({ required } = {}) {
 					(doc) => {
 						// Once subscribed, default callSession status to pending.
 						const { value = {} } = doc;
-						value.status = value.status || CALL_SESSION_STATUS.pending;
+						// value.status = value.status || CALL_SESSION_STATUS.pending;
+
+						// EMULATE: Default call session status
+						value.status = value.status || CALL_SESSION_STATUS.metering;
 
 						setUserState({
 							...user,

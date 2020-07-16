@@ -10,13 +10,10 @@ import {
 	MessageSquare as ChatIcon,
 	Clock as MeterIcon,
 	PauseCircle as StopMeterIcon,
-	Phone as CallIcon,
-	Info as InfoIcon
+	Phone as CallIcon
 } from "react-feather";
-import { KIND as NOTIFICATION_KIND } from "baseui/notification";
 
-import InCallTopBar from "@/components/Header/InCallTopBar";
-import Notice from "@/components/Notice";
+import InSessionTopBar from "@/components/Header/InSessionTopBar";
 import { ViewUserProps } from "@/utils/common-prop-types";
 import isUserOperator from "@/utils/is-operator";
 import useUser from "@/hooks/use-user";
@@ -78,7 +75,7 @@ const InSessionScreen = ({
 					zIndex: "10"
 				})}
 			>
-				<InCallTopBar />
+				<InSessionTopBar />
 			</div>
 			<div
 				className={css({
@@ -98,7 +95,7 @@ const InSessionScreen = ({
 					initial={{ opacity: 0, y: 10 }}
 					animate={{ opacity: 1, y: 0 }}
 				>
-					<With name={viewUser.nickname} picture={viewUser.picture} />
+					<With name={viewUser.givenName} picture={viewUser.picture} />
 				</motion.div>
 				<motion.div
 					initial={{ opacity: 0, y: 10 }}
@@ -116,25 +113,6 @@ const InSessionScreen = ({
 								flexDirection: "column"
 							})}
 						>
-							<div className={css({ marginBottom: "20px" })}>
-								{callSession.status === CALL_SESSION_STATUS.active && (
-									<Notice icon={InfoIcon}>
-										This session will end in a minute.
-										<br />
-										Call or start metering to continue the session.
-									</Notice>
-								)}
-								{callSession.status === CALL_SESSION_STATUS.inCall && (
-									<Notice kind={NOTIFICATION_KIND.positive} icon={CallIcon}>
-										You are currently in a call
-									</Notice>
-								)}
-								{callSession.status === CALL_SESSION_STATUS.metering && (
-									<Notice kind={NOTIFICATION_KIND.accent} icon={MeterIcon}>
-										The session is being metered
-									</Notice>
-								)}
-							</div>
 							<div
 								className={css({
 									display: "flex",
@@ -210,6 +188,7 @@ const InSessionScreen = ({
 										onClick={handleCall}
 										isLoading={isCalling}
 										startEnhancer={() => <CallIcon size={26} />}
+										disabled={callSession.status === CALL_SESSION_STATUS.inCall}
 									>
 										Call
 									</ActionButton>
@@ -251,7 +230,7 @@ const InSessionScreen = ({
 										<br />
 										{isOperator ? (
 											<span>
-												You are about to be called by {viewUser.nickname}!
+												You are about to be called by {viewUser.givenName}!
 											</span>
 										) : (
 											<span>

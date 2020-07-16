@@ -41,7 +41,7 @@ const Notice = ({ icon: Icon, kind, overrides, children, ...props }) => {
 			{() => (
 				<div className={css({ display: "flex", alignItems: "center" })}>
 					{Icon && (
-						<div className={css({ marginRight: "10px" })}>
+						<div className={css({ marginRight: "10px", display: "flex" })}>
 							<Icon size={24} />
 						</div>
 					)}
