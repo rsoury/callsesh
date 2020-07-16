@@ -208,16 +208,13 @@ const ViewUserOperatorAction = ({ viewUser, onStart, onToggleNotify }) => {
 									pointerEvents: isTogglingNotify ? "none" : "auto",
 									[theme.mediaQuery.maxSmall]: {
 										border: `3px solid ${theme.colors.backgroundSecondary}`
-									},
-									backgroundColor: isNotified
-										? theme.colors.backgroundSecondary
-										: "#fff"
+									}
 								}
 							}
 						}}
 						isLoading={isTogglingNotify}
 						size={BUTTON_SIZE.compact}
-						kind={BUTTON_KIND.minimal}
+						kind={isNotified ? BUTTON_KIND.primary : BUTTON_KIND.secondary}
 					>
 						{isNotified ? (
 							<span>Stop notifications</span>

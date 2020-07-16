@@ -5,9 +5,14 @@ import { Grid, Cell } from "baseui/layout-grid";
 import {
 	Star as StarIcon,
 	Map as MapIcon,
-	PhoneCall as OperatorIcon
+	PhoneCall as OperatorIcon,
+	Bell as NotifyIcon
 } from "react-feather";
-import { Button } from "baseui/button";
+import {
+	Button,
+	SIZE as BUTTON_SIZE,
+	KIND as BUTTON_KIND
+} from "baseui/button";
 import ChevronRight from "baseui/icon/chevron-right";
 import { PLACEMENT as TOOLTIP_PLACEMENT } from "baseui/tooltip";
 
@@ -95,9 +100,29 @@ const UserHomeScreen = () => {
 						}}
 					>
 						<Paragraph>
-							Callsesh Operators will share their links around the internet, and
-							on their <Highlight>social media</Highlight> profiles. If an
-							Operator is live, feel free to make a call.
+							Callsesh Operators will share their links around the internet, on
+							their <Highlight>social media or freelancer</Highlight> profiles.
+							If an Operator is live, feel free to make a call.
+							<span className={css({ display: "block", marginTop: "10px" })}>
+								You can also{" "}
+								<Button
+									startEnhancer={() => <NotifyIcon size={16} />}
+									overrides={{
+										BaseButton: {
+											style: {
+												pointerEvents: "none",
+												transform: "translateY(2.5px)",
+												margin: "0 5px"
+											}
+										}
+									}}
+									kind={BUTTON_KIND.secondary}
+									size={BUTTON_SIZE.mini}
+								>
+									Get notified
+								</Button>{" "}
+								when your Operator goes live.
+							</span>
 						</Paragraph>
 					</Card>
 				</Cell>
