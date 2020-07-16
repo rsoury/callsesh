@@ -18,11 +18,7 @@ import stripe from "@/server/stripe";
 import { onNoMatch } from "@/server/middleware";
 import { getUser } from "@/server/middleware/auth";
 import isUserOperator from "@/utils/is-operator";
-import {
-	ERROR_TYPES,
-	CALL_SESSION_USER_TYPE,
-	CALL_SESSION_STATUS
-} from "@/constants";
+import { ERROR_TYPES, CALL_SESSION_USER_TYPE } from "@/constants";
 import checkCallSession from "@/utils/check-call-session";
 import * as syncDocumentName from "@/utils/get-sync-document-name";
 import { delayEndSession } from "@/server/workflows";

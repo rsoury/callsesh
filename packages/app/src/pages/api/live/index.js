@@ -6,6 +6,7 @@ import getHandler from "@/server/middleware";
 import { requireAuthentication, getUser } from "@/server/middleware/auth";
 import * as authManager from "@/server/auth-manager";
 import isUserOperator from "@/utils/is-operator";
+import { delayLiveNotifications } from "@/server/workflows";
 
 const handler = getHandler();
 
@@ -31,6 +32,9 @@ handler.use(requireAuthentication).post(async (req, res) => {
 
 	if (newLiveValue) {
 		req.log.info("User is live!", { user: user.id });
+
+		// Fire delayed live notifications
+		await delayLiveNotifications(user.id);
 	} else {
 		req.log.info("User ended their live", { user: user.id });
 	}

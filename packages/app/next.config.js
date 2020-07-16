@@ -38,7 +38,8 @@ module.exports = (phase) => {
 		TWILIO_API_SECRET: process.env.TWILIO_API_SECRET || "",
 		AUTH0_CLIENT_SECRET: process.env.AUTH0_CLIENT_SECRET || "",
 		STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY || "",
-		WORKFLOWS_URL: process.env.WORKFLOWS_URL || ""
+		WORKFLOWS_URL: process.env.WORKFLOWS_URL || "",
+		POSTMARK_API_TOKEN: process.env.POSTMARK_API_TOKEN || ""
 	};
 
 	let env = frontendEnv;

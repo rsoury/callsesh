@@ -76,7 +76,8 @@ export const findUser = async (params, { withContext = false } = {}) => {
 			"name",
 			"user_metadata",
 			"app_metadata",
-			"picture"
+			"picture",
+			"identities"
 		].join(",");
 	}
 
@@ -97,21 +98,42 @@ export const findUser = async (params, { withContext = false } = {}) => {
 		user_id: userId,
 		user_metadata: userMetadata = {},
 		app_metadata: appMetadata = {},
+		identities,
 		...userData
 	} = users[0];
 	// Get publicly viewable call session data
 	const { callSession = {} } = appMetadata;
 
+	// Get email user data from identity
+	const emailAttributes = {
+		email: "",
+		emailVerified: false
+	};
+	const emailAttributesWithContext = {
+		emailIdentity: ""
+	};
+	const emailIdentity = identities.find(
+		({ connection }) => connection === "email"
+	);
+	if (!isEmpty(emailIdentity)) {
+		emailAttributes.email = emailIdentity.profileData.email;
+		emailAttributes.emailVerified = emailIdentity.profileData.email_verified;
+		emailAttributesWithContext.emailIdentity = emailIdentity.user_id;
+	}
+
 	const unformattedUser = withContext
 		? {
 				id: userId,
 				...userData,
+				...emailAttributes,
+				...emailAttributesWithContext,
 				...userMetadata,
 				...appMetadata,
 				callSession
 		  }
 		: {
 				...userData,
+				...emailAttributes,
 				...userMetadata,
 				callSession: pick(callSession, ["as", "with"])
 		  };

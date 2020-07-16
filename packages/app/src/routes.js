@@ -52,6 +52,7 @@ export const api = {
 	endCall: "/api/call/end",
 	cards: "/api/cards",
 	live: "/api/live",
+	liveNotify: "/api/live/notify",
 	usernameAvailable: "/api/username-available",
 	connect: {
 		start: "/api/connect",

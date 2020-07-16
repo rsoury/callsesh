@@ -75,3 +75,19 @@ export const delayEndSession = async (sessionId, userId = "") => {
 		}
 	});
 };
+
+/**
+ * Use Delay workflow to delay live notification in case a user doesn't stay live for more than a minute.
+ * Use OTP to authenticate webhook
+ * Does not force close.
+ */
+export const delayLiveNotifications = async (userId) => {
+	const token = await authManager.createOTP(userId);
+	await delayRequest({
+		url: `${publicUrl}${routes.api.liveNotify}`,
+		method: "POST",
+		headers: {
+			Authorization: `Bearer ${token}`
+		}
+	});
+};

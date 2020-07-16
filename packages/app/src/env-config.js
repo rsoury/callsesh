@@ -28,3 +28,6 @@ export const stripe = {
 	secretKey: process.env.STRIPE_SECRET_KEY || "",
 	connectId: process.env.STRIPE_CONNECT_ID || ""
 };
+export const postmark = {
+	apiToken: process.env.POSTMARK_API_TOKEN || ""
+};

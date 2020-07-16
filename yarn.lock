@@ -6237,6 +6237,20 @@ better-assert@~1.0.0:
   dependencies:
     callsite "1.0.0"
 
+better-queue-memory@^1.0.1:
+  version "1.0.4"
+  resolved "https://registry.yarnpkg.com/better-queue-memory/-/better-queue-memory-1.0.4.tgz#f390d6b30bb3b36aaf2ce52b37a483e8a7a81a22"
+  integrity sha512-SWg5wFIShYffEmJpI6LgbL8/3Dqhku7xI1oEiy6FroP9DbcZlG0ZDjxvPdP9t7hTGW40IpIcC6zVoGT1oxjOuA==
+
+better-queue@^3.8.10:
+  version "3.8.10"
+  resolved "https://registry.yarnpkg.com/better-queue/-/better-queue-3.8.10.tgz#1c93b9ec4cb3d1b72eb91d0efcb84fc80e8c6835"
+  integrity sha512-e3gwNZgDCnNWl0An0Tz6sUjKDV9m6aB+K9Xg//vYeo8+KiH8pWhLFxkawcXhm6FpM//GfD9IQv/kmvWCAVVpKA==
+  dependencies:
+    better-queue-memory "^1.0.1"
+    node-eta "^0.9.0"
+    uuid "^3.0.0"
+
 big.js@^5.2.2:
   version "5.2.2"
   resolved "https://registry.yarnpkg.com/big.js/-/big.js-5.2.2.tgz#65f0af382f578bcdc742bd9c281e9cb2d7768328"
@@ -15983,6 +15997,11 @@ node-dir@^0.1.17:
   dependencies:
     minimatch "^3.0.2"
 
+node-eta@^0.9.0:
+  version "0.9.0"
+  resolved "https://registry.yarnpkg.com/node-eta/-/node-eta-0.9.0.tgz#9fb0b099bcd2a021940e603c64254dc003d9a7a8"
+  integrity sha1-n7CwmbzSoCGUDmA8ZCVNwAPZp6g=
+
 node-fetch-npm@^2.0.2:
   version "2.0.4"
   resolved "https://registry.yarnpkg.com/node-fetch-npm/-/node-fetch-npm-2.0.4.tgz#6507d0e17a9ec0be3bec516958a497cec54bf5a4"
@@ -18168,6 +18187,13 @@ postcss@^7, postcss@^7.0.0, postcss@^7.0.1, postcss@^7.0.14, postcss@^7.0.16, po
     chalk "^2.4.2"
     source-map "^0.6.1"
     supports-color "^6.1.0"
+
+postmark@^2.5.4:
+  version "2.5.4"
+  resolved "https://registry.yarnpkg.com/postmark/-/postmark-2.5.4.tgz#91f648f3f9763bbf7c4acf3aae4e42b1ac576618"
+  integrity sha512-oQ8IZdTaw8r3OVtTHi+t/Wi295EeV6mmYpTxOznQsH5b6lFCc82eUmCIxS1o/j4AndCpHS9jTnJP+8ZTYX8s7w==
+  dependencies:
+    axios "^0.19.2"
 
 precinct@^6.2.0:
   version "6.3.1"
@@ -22843,7 +22869,7 @@ uuid@3.3.2:
   resolved "https://registry.yarnpkg.com/uuid/-/uuid-3.3.2.tgz#1b4af4955eb3077c501c23872fc6513811587131"
   integrity sha512-yXJmeNaw3DnnKAOKJE51sL/ZaYfWJRl1pK9dr19YFCu0ObS231AB1/LbqTKRAQ5kw8A90rA6fr4riOUpTZvQZA==
 
-uuid@^3.0.1, uuid@^3.2.1, uuid@^3.3.2, uuid@^3.4.0:
+uuid@^3.0.0, uuid@^3.0.1, uuid@^3.2.1, uuid@^3.3.2, uuid@^3.4.0:
   version "3.4.0"
   resolved "https://registry.yarnpkg.com/uuid/-/uuid-3.4.0.tgz#b23e4358afa8a202fe7a100af1f5f883f02007ee"
   integrity sha512-HjSDRw6gZE5JMggctHBcjVak08+KEVhSIiDzFnT9S9aegmp85S/bReBVTb4QTFaRNptJ9kuYaNhnbNEOkbKb/A==
