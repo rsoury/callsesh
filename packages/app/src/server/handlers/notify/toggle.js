@@ -7,7 +7,7 @@ import { getUser } from "@/server/middleware/auth";
 import * as authManager from "@/server/auth-manager";
 
 export default function toggleNotifications(toggleStatus = false) {
-	return async function (req, res) {
+	return async function toggleNotificationsRequestHandler(req, res) {
 		const { id: username } = req.query;
 
 		// Get current user
