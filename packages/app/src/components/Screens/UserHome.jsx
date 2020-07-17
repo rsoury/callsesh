@@ -14,7 +14,11 @@ import {
 	KIND as BUTTON_KIND
 } from "baseui/button";
 import ChevronRight from "baseui/icon/chevron-right";
-import { PLACEMENT as TOOLTIP_PLACEMENT } from "baseui/tooltip";
+import {
+	StatefulTooltip as Tooltip,
+	PLACEMENT as TOOLTIP_PLACEMENT
+} from "baseui/tooltip";
+import { Tag, VARIANT as TAG_VARIANT, KIND as TAG_KIND } from "baseui/tag";
 
 import Card from "@/components/Card";
 import isUserOperator from "@/utils/is-operator";
@@ -27,7 +31,7 @@ import Highlight from "@/components/Highlight";
 import useUser from "@/hooks/use-user";
 
 const UserHomeScreen = () => {
-	const [css] = useStyletron();
+	const [css, theme] = useStyletron();
 	const [user] = useUser();
 
 	const isOperator = isUserOperator(user);
@@ -35,8 +39,64 @@ const UserHomeScreen = () => {
 	return (
 		<div id="callsesh-user-home-screen" className={css({ maxWidth: "100%" })}>
 			<Grid gridGutters={16}>
-				<Cell span={12}>
-					<Heading>Welcome {user.givenName}!</Heading>
+				<Cell span={[12, 6, 8]}>
+					<Heading
+						className={css({
+							[theme.mediaQuery.maxSmall]: {
+								marginBottom: "0px"
+							}
+						})}
+					>
+						Welcome {user.givenName}!
+					</Heading>
+				</Cell>
+				<Cell span={[12, 2, 4]}>
+					<div
+						className={css({
+							display: "flex",
+							alignItems: "center",
+							width: "100%",
+							height: "100%",
+							justifyContent: "flex-end",
+							[theme.mediaQuery.maxSmall]: {
+								justifyContent: "flex-start",
+								paddingBottom: "40px"
+							}
+						})}
+					>
+						<Tag
+							kind={TAG_KIND.accent}
+							variant={TAG_VARIANT.solid}
+							closeable={false}
+							overrides={{
+								Root: {
+									style: {
+										marginLeft: "0px"
+									}
+								}
+							}}
+						>
+							Make calls
+						</Tag>
+						{isOperator ? (
+							<Tag
+								kind={TAG_KIND.accent}
+								variant={TAG_VARIANT.solid}
+								closeable={false}
+							>
+								Receive calls
+							</Tag>
+						) : (
+							<Tooltip
+								content={() => <div>Become an operator to receive calls</div>}
+								showArrow
+							>
+								<Tag kind={TAG_KIND.neutral} closeable={false}>
+									Receive calls
+								</Tag>
+							</Tooltip>
+						)}
+					</div>
 				</Cell>
 				{isOperator ? (
 					<>
