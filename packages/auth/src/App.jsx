@@ -12,6 +12,7 @@ import { shouldSignup } from "@/utils/auth";
 
 import Signup from "./Signup";
 import Login from "./Login";
+import CountryProvider from "./CountryProvider";
 
 let actionConsumed = false;
 
@@ -37,74 +38,76 @@ const App = ({ location, history }) => {
 	}, [location.pathname, history]);
 
 	return (
-		<ToasterContainer
-			placement={PLACEMENT.topRight}
-			autoHideDuration={10000}
-			overrides={{
-				Root: {
-					style: {
-						zIndex: "9999999"
+		<CountryProvider>
+			<ToasterContainer
+				placement={PLACEMENT.topRight}
+				autoHideDuration={10000}
+				overrides={{
+					Root: {
+						style: {
+							zIndex: "9999999"
+						}
 					}
-				}
-			}}
-		>
-			<main
-				id="callsesh-auth"
-				className={css({
-					display: "flex",
-					justifyContent: "center",
-					alignItems: "center",
-					minHeight: "100%",
-					width: "100%",
-					maxWidth: `800px`,
-					margin: "0 auto",
-					position: "relative"
-				})}
+				}}
 			>
-				<div className={css({ width: "100%" })}>
-					<Header />
-					<div
-						className={css({
-							maxWidth: "640px",
-							width: "100%",
-							margin: "0 auto"
-						})}
-					>
-						<Switch>
-							<Route exact path="/signup">
-								<Signup />
-							</Route>
-							<Route exact path="/">
-								<Login />
-							</Route>
-							<Route path="*">
-								<Redirect to="/" />
-							</Route>
-						</Switch>
-						<div>
-							<Paragraph
-								className={css({
-									maxWidth: "300px",
-									margin: "20px auto",
-									textAlign: "center"
-								})}
-							>
-								By registering, authenticating and using a Callsesh account, you
-								agree to our{" "}
-								<Link
-									to={tosUrl}
-									target="_blank"
-									rel="noopener noreferrer"
-									standard
+				<main
+					id="callsesh-auth"
+					className={css({
+						display: "flex",
+						justifyContent: "center",
+						alignItems: "center",
+						minHeight: "100%",
+						width: "100%",
+						maxWidth: `800px`,
+						margin: "0 auto",
+						position: "relative"
+					})}
+				>
+					<div className={css({ width: "100%" })}>
+						<Header />
+						<div
+							className={css({
+								maxWidth: "640px",
+								width: "100%",
+								margin: "0 auto"
+							})}
+						>
+							<Switch>
+								<Route exact path="/signup">
+									<Signup />
+								</Route>
+								<Route exact path="/">
+									<Login />
+								</Route>
+								<Route path="*">
+									<Redirect to="/" />
+								</Route>
+							</Switch>
+							<div>
+								<Paragraph
+									className={css({
+										maxWidth: "300px",
+										margin: "20px auto",
+										textAlign: "center"
+									})}
 								>
-									Terms of Service
-								</Link>
-							</Paragraph>
+									By registering, authenticating and using a Callsesh account,
+									you agree to our{" "}
+									<Link
+										to={tosUrl}
+										target="_blank"
+										rel="noopener noreferrer"
+										standard
+									>
+										Terms of Service
+									</Link>
+								</Paragraph>
+							</div>
 						</div>
 					</div>
-				</div>
-			</main>
-		</ToasterContainer>
+				</main>
+			</ToasterContainer>
+		</CountryProvider>
 	);
 };
 

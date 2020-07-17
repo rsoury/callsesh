@@ -61,6 +61,7 @@
 		"react-scripts": "3.4.1",
 		"styletron-engine-atomic": "^1.4.6",
 		"styletron-react": "^5.2.7",
+		"use-persisted-state": "^0.3.0",
 		"yup": "^0.29.0"
 	},
 	"devDependencies": {
