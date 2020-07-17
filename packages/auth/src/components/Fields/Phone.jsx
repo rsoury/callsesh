@@ -7,7 +7,6 @@ import { styled } from "baseui";
 import { FormControl } from "baseui/form-control";
 import {
 	PhoneInput,
-	COUNTRIES,
 	CountrySelectDropdown,
 	StyledFlag
 } from "baseui/phone-input";
@@ -18,9 +17,9 @@ import {
 import examplePhoneNumbers from "libphonenumber-js/examples.mobile.json";
 import isEmpty from "is-empty";
 import snakeCase from "lodash/snakeCase";
-import { useRequest, format } from "@callsesh/utils";
+import { format } from "@callsesh/utils";
 
-import { authConfig } from "@/env-config";
+import useCountry from "@/use-country";
 import getSpinner from "@/components/getSpinner";
 import onChangeIsNumber from "@/utils/on-change-is-number";
 
@@ -47,9 +46,6 @@ const FallbackFlag = ({ children, ...props }) => {
 	);
 };
 
-// A flag to prevent reset country to detected country on country change... as useEffect would do.
-let detected = false;
-
 const PhoneInputField = ({
 	field: { onChange, value, onBlur, ...field },
 	form: { setFieldValue },
@@ -65,14 +61,8 @@ const PhoneInputField = ({
 		}
 	}
 	const [text, setText] = useState(value);
-	const [country, setCountry] = useState(COUNTRIES.AU);
+	const [country, isCountryLoading, { setCountry }] = useCountry();
 	const [placeholder, setPlaceholder] = useState(placeholderProp);
-
-	// Use Auth0 native lookup
-	const { data: lookupData, isValidating: isLoadingLookup } = useRequest({
-		url: `https://${authConfig.auth0Domain}/user/geoloc/country`,
-		method: "GET"
-	});
 
 	const overrides = {
 		FlagContainer: {
@@ -100,24 +90,15 @@ const PhoneInputField = ({
 	};
 
 	useEffect(() => {
-		if (!detected) {
-			const { country_code: countryCode } = lookupData || {};
-			if (countryCode) {
-				const exampleNumber = getExampleNumber(
-					countryCode,
-					examplePhoneNumbers
-				);
-				const newPlaceholder = exampleNumber
-					.formatInternational()
-					.replace(country.dialCode, "")
-					.trim();
-				setPlaceholder(newPlaceholder);
-
-				setCountry(COUNTRIES[countryCode.toUpperCase()]);
-				detected = true;
-			}
+		if (country) {
+			const exampleNumber = getExampleNumber(country.id, examplePhoneNumbers);
+			const newPlaceholder = exampleNumber
+				.formatInternational()
+				.replace(country.dialCode, "")
+				.trim();
+			setPlaceholder(newPlaceholder);
 		}
-	}, [lookupData, country]);
+	}, [country]);
 
 	return (
 		<FormControl
@@ -158,8 +139,8 @@ const PhoneInputField = ({
 				text={text}
 				placeholder={placeholder}
 				overrides={overrides}
-				endEnhancer={isLoadingLookup && (() => <Spinner />)}
-				disabled={isLoadingLookup}
+				endEnhancer={isCountryLoading && (() => <Spinner />)}
+				disabled={isCountryLoading}
 			/>
 		</FormControl>
 	);
