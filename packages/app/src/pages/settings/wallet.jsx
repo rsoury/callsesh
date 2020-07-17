@@ -6,7 +6,11 @@
 import { useState, useEffect, useCallback } from "react";
 import { useStyletron } from "baseui";
 import { Grid, Cell } from "baseui/layout-grid";
-import { H5 as SmallHeading, Label2 as Label } from "baseui/typography";
+import {
+	H5 as SmallHeading,
+	Label2 as Label,
+	ParagraphMedium as Paragraph
+} from "baseui/typography";
 import isEmpty from "is-empty";
 import {
 	Button,
@@ -25,6 +29,7 @@ import { ListItem, ListItemLabel, ARTWORK_SIZES } from "baseui/list";
 import { Block } from "baseui/block";
 
 import PaymentCardIcon from "@/components/PaymentCardIcon";
+import Highlight from "@/components/Highlight";
 import Notice from "@/components/Notice";
 import Layout from "@/components/Layout";
 import useUser from "@/hooks/use-user";
@@ -182,7 +187,12 @@ const Wallet = () => {
 	return (
 		<Layout>
 			<ScreenContainer id="callsesh-wallet-settings">
-				<Header title="Wallet" />
+				<Header title="Wallet">
+					<Paragraph>
+						Add, remove and select the payment method to use when{" "}
+						<Highlight>making calls</Highlight>
+					</Paragraph>
+				</Header>
 				{isPageLoading ? (
 					<SettingsSkeleton />
 				) : (

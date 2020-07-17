@@ -5,7 +5,8 @@ import { StyledSpinnerNext, SIZE as SPINNER_SIZE } from "baseui/spinner";
 import {
 	PhoneCall as PhoneIcon,
 	Clock as MeterIcon,
-	Info as InfoIcon
+	Info as InfoIcon,
+	Loader as LoadingIcon
 } from "react-feather";
 import isEmpty from "is-empty";
 import { motion } from "framer-motion";
@@ -50,57 +51,65 @@ const InSessionTopBar = () => {
 		}
 	};
 
+	const status = statuses[user.callSession.status] || {};
+	if (isEmpty(status)) {
+		status.Icon = LoadingIcon;
+		status.content = "Your session is starting...";
+		status.variant = "warning100";
+		status.textColor = "#000";
+	}
+
+	status.variant = status.variant || "primary";
+	status.textColor = status.textColor || "#fff";
+
 	return (
 		<>
-			{typeof statuses[user.callSession.status] === "object" && (
-				<motion.div
-					initial={{ opacity: 0, y: -35 }}
-					animate={{ opacity: 1, y: 0 }}
+			<motion.div
+				initial={{ opacity: 0, y: -35 }}
+				animate={{ opacity: 1, y: 0 }}
+				className={css({
+					width: "100%",
+					backgroundColor: theme.colors[status.variant],
+					borderBottomLeftRadius: "4px",
+					borderBottomRightRadius: "4px",
+					display: "flex",
+					alignItems: "center",
+					justifyContent: "center",
+					color: status.textColor,
+					textAlign: "center",
+					position: "relative",
+					zIndex: "9999",
+					height: "35px",
+					padding: "5px",
+					transition: "background-color 0.25s, color 0.25s",
+					...theme.typography.ParagraphSmall
+				})}
+			>
+				<span
 					className={css({
-						width: "100%",
-						backgroundColor:
-							theme.colors[
-								statuses[user.callSession.status].variant || "primary"
-							],
-						borderBottomLeftRadius: "4px",
-						borderBottomRightRadius: "4px",
+						marginRight: "10px",
 						display: "flex",
-						alignItems: "center",
-						justifyContent: "center",
-						color: "#fff",
-						textAlign: "center",
-						position: "relative",
-						zIndex: "9999",
-						height: "35px",
-						padding: "5px",
-						...theme.typography.ParagraphSmall
+						alignItems: "center"
 					})}
 				>
-					<span
+					<status.Icon size={22} />
+				</span>
+				<Label
+					className={css({
+						display: "flex",
+						alignItems: "center"
+					})}
+				>
+					<strong
 						className={css({
-							marginRight: "10px",
-							display: "flex",
-							alignItems: "center"
+							transition: "color 0.25s",
+							color: status.textColor
 						})}
 					>
-						{(() => {
-							const { Icon } = statuses[user.callSession.status];
-							return <Icon size={22} />;
-						})()}
-					</span>
-					<Label
-						className={css({
-							display: "flex",
-							alignItems: "center",
-							color: "#fff"
-						})}
-					>
-						<strong className={css({ color: "#fff" })}>
-							{statuses[user.callSession.status].content}
-						</strong>
-					</Label>
-				</motion.div>
-			)}
+						{status.content}
+					</strong>
+				</Label>
+			</motion.div>
 			{shouldRedirectToSession && (
 				<div
 					className={css({
