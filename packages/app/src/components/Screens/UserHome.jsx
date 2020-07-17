@@ -1,33 +1,15 @@
 import React from "react";
 import { useStyletron } from "baseui";
-import { H1 as Heading, Paragraph2 as Paragraph } from "baseui/typography";
+import { H1 as Heading, ParagraphMedium as Paragraph } from "baseui/typography";
 import { Grid, Cell } from "baseui/layout-grid";
-import {
-	Star as StarIcon,
-	Map as MapIcon,
-	PhoneCall as OperatorIcon,
-	Bell as NotifyIcon
-} from "react-feather";
-import {
-	Button,
-	SIZE as BUTTON_SIZE,
-	KIND as BUTTON_KIND
-} from "baseui/button";
-import ChevronRight from "baseui/icon/chevron-right";
-import {
-	StatefulTooltip as Tooltip,
-	PLACEMENT as TOOLTIP_PLACEMENT
-} from "baseui/tooltip";
-import { Tag, VARIANT as TAG_VARIANT, KIND as TAG_KIND } from "baseui/tag";
+import { PLACEMENT as TOOLTIP_PLACEMENT } from "baseui/tooltip";
 
-import Card from "@/components/Card";
 import isUserOperator from "@/utils/is-operator";
-import * as routes from "@/routes";
 import PayoutsCard from "@/components/Cards/Payouts";
-import LinksCard from "@/components/Cards/Links";
 import GoLiveCard from "@/components/Cards/GoLive";
-import Link from "@/components/Link";
-import Highlight from "@/components/Highlight";
+import CallLinkCard from "@/components/Cards/CallLink";
+import InviteLinkCard from "@/components/Cards/InviteLink";
+import BecomeAnOperatorCard from "@/components/Cards/BecomeAnOperator";
 import useUser from "@/hooks/use-user";
 
 const UserHomeScreen = () => {
@@ -36,178 +18,69 @@ const UserHomeScreen = () => {
 
 	const isOperator = isUserOperator(user);
 
+	const cardOverrides = {
+		Root: {
+			style: {
+				borderTopRightRadius: theme.borders.radius300,
+				borderTopLeftRadius: theme.borders.radius300,
+				borderBottomRightRadius: theme.borders.radius300,
+				borderBottomLeftRadius: theme.borders.radius300
+			}
+		}
+	};
+
 	return (
 		<div id="callsesh-user-home-screen" className={css({ maxWidth: "100%" })}>
-			<Grid gridGutters={16}>
-				<Cell span={[12, 6, 8]}>
-					<Heading
-						className={css({
-							[theme.mediaQuery.maxSmall]: {
-								marginBottom: "0px"
-							}
-						})}
-					>
-						Welcome {user.givenName}!
-					</Heading>
-				</Cell>
-				<Cell span={[12, 2, 4]}>
-					<div
-						className={css({
-							display: "flex",
-							alignItems: "center",
-							width: "100%",
-							height: "100%",
-							justifyContent: "flex-end",
-							[theme.mediaQuery.maxSmall]: {
-								justifyContent: "flex-start",
-								paddingBottom: "40px"
-							}
-						})}
-					>
-						<Tag
-							kind={TAG_KIND.accent}
-							variant={TAG_VARIANT.solid}
-							closeable={false}
-							overrides={{
-								Root: {
-									style: {
-										marginLeft: "0px"
-									}
-								}
-							}}
-						>
-							Make calls
-						</Tag>
-						{isOperator ? (
-							<Tag
-								kind={TAG_KIND.accent}
-								variant={TAG_VARIANT.solid}
-								closeable={false}
-							>
-								Receive calls
-							</Tag>
-						) : (
-							<Tooltip
-								content={() => <div>Become an operator to receive calls</div>}
-								showArrow
-							>
-								<Tag kind={TAG_KIND.neutral} closeable={false}>
-									Receive calls
-								</Tag>
-							</Tooltip>
-						)}
-					</div>
+			<Grid>
+				<Cell span={12}>
+					<Heading>Welcome {user.givenName}!</Heading>
 				</Cell>
 				{isOperator ? (
 					<>
-						<Cell span={[12, 4, 6]}>
-							<GoLiveCard
-								overrides={{
-									Root: {
-										style: {
-											borderRightWidth: "0px",
-											borderLeftWidth: "0px",
-											borderBottomWidth: "0px"
-										}
-									}
-								}}
-							/>
+						<Cell span={12}>
+							<GoLiveCard overrides={cardOverrides} />
 						</Cell>
-						<Cell span={[12, 4, 6]}>
+						<Cell span={12}>
+							<CallLinkCard overrides={cardOverrides} />
+						</Cell>
+						<Cell span={12}>
 							<PayoutsCard
 								helpPlacement={TOOLTIP_PLACEMENT.left}
-								overrides={{
-									Root: {
-										style: {
-											borderRightWidth: "0px",
-											borderLeftWidth: "0px",
-											borderBottomWidth: "0px"
-										}
-									}
-								}}
+								overrides={cardOverrides}
 							/>
+						</Cell>
+						<Cell span={12}>
+							<InviteLinkCard overrides={cardOverrides} />
 						</Cell>
 					</>
 				) : (
-					<Cell span={12}>
-						<div className={css({ marginBottom: "30px" })}>
-							<Link href={routes.page.becomeAnOperator} button>
-								<Button
-									startEnhancer={() => <OperatorIcon size={22} />}
-									endEnhancer={() => <ChevronRight size={22} />}
-								>
-									Become an Operator
-								</Button>
-							</Link>
-						</div>
-					</Cell>
+					<>
+						<Cell span={12}>
+							<div
+								className={css({
+									padding: "20px",
+									borderTop: `1px solid ${theme.colors.borderOpaque}`,
+									borderBottom: `1px solid ${theme.colors.borderOpaque}`,
+									marginBottom: "30px"
+								})}
+							>
+								<Paragraph marginTop="0px" marginBottom="0px">
+									Get immediate assistance from Callsesh Operators across the
+									internet.
+									<br />
+									Use their Callsesh Call Link to visit their page. Get notified
+									when they go live and if they&apos;re live, make a call.
+								</Paragraph>
+							</div>
+						</Cell>
+						<Cell span={12}>
+							<InviteLinkCard overrides={cardOverrides} />
+						</Cell>
+						<Cell span={12}>
+							<BecomeAnOperatorCard overrides={cardOverrides} />
+						</Cell>
+					</>
 				)}
-				<Cell span={12}>
-					<LinksCard />
-				</Cell>
-				<Cell span={[12, 4, 6]}>
-					<Card
-						title="Where to find Operators?"
-						icon={MapIcon}
-						overrides={{
-							Root: {
-								style: {
-									borderRightWidth: "0px",
-									borderLeftWidth: "0px",
-									borderBottomWidth: "0px"
-								}
-							}
-						}}
-					>
-						<Paragraph>
-							Callsesh Operators will share their links around the internet, on
-							their <Highlight>social media or freelancer</Highlight> profiles.
-							If an Operator is live, feel free to make a call.
-							<span className={css({ display: "block", marginTop: "10px" })}>
-								You can also{" "}
-								<Button
-									startEnhancer={() => <NotifyIcon size={16} />}
-									overrides={{
-										BaseButton: {
-											style: {
-												pointerEvents: "none",
-												transform: "translateY(2.5px)",
-												margin: "0 5px"
-											}
-										}
-									}}
-									kind={BUTTON_KIND.secondary}
-									size={BUTTON_SIZE.mini}
-								>
-									Get notified
-								</Button>{" "}
-								when your Operator goes live.
-							</span>
-						</Paragraph>
-					</Card>
-				</Cell>
-				<Cell span={[12, 4, 6]}>
-					<Card
-						title="New to the world"
-						icon={StarIcon}
-						overrides={{
-							Root: {
-								style: {
-									borderRightWidth: "0px",
-									borderLeftWidth: "0px",
-									borderBottomWidth: "0px"
-								}
-							}
-						}}
-					>
-						<Paragraph>
-							Callsesh is a new platform and is currently in{" "}
-							<Highlight>Beta</Highlight>. If you experience any odd behaviour,
-							or would to like to offer your suggestion, please feel free to
-							contact Callsesh support.
-						</Paragraph>
-					</Card>
-				</Cell>
 			</Grid>
 		</div>
 	);

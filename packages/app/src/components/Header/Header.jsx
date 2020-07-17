@@ -15,6 +15,8 @@ import { Unstable_AppNavBar as AppNavBar } from "baseui/app-nav-bar";
 import Skeleton from "react-loading-skeleton";
 import { useRouter } from "next/router";
 import Url from "url-parse";
+import { Tag, KIND as TAG_KIND } from "baseui/tag";
+import { StatefulTooltip as Tooltip } from "baseui/tooltip";
 
 import Link from "@/components/Link";
 import * as routes from "@/routes";
@@ -157,9 +159,44 @@ const Header = () => {
 			)}
 			<AppNavBar
 				appDisplayName={
-					<Link href={routes.page.index} button pass>
-						<Logo />
-					</Link>
+					<div className={css({ display: "flex", alignItems: "flex-end" })}>
+						<Link href={routes.page.index} button pass>
+							<Logo />
+						</Link>
+						<Tooltip
+							content={() => (
+								<div className={css({ maxWidth: "280px" })}>
+									Callsesh is a new platform and is currently in{" "}
+									<strong>Beta</strong>. If you experience any odd behaviour, or
+									would to like to offer your suggestion, please feel free to
+									contact Callsesh support.
+								</div>
+							)}
+							showArrow
+						>
+							<div
+								className={css({
+									display: "flex",
+									transform: "translate(-5px, 10px)"
+								})}
+							>
+								<Tag
+									kind={TAG_KIND.accent}
+									closeable={false}
+									overrides={{
+										Root: {
+											style: {
+												marginTop: "0px",
+												marginBottom: "0px"
+											}
+										}
+									}}
+								>
+									Beta
+								</Tag>
+							</div>
+						</Tooltip>
+					</div>
 				}
 				onNavItemSelect={({ item: { item: { href, standard } = {} } }) => {
 					if (!isEmpty(href)) {

@@ -56,7 +56,7 @@ SettingsHeader.propTypes = {
 	children: ChildrenProps
 };
 
-SettingsHeader.defualtProps = {
+SettingsHeader.defaultProps = {
 	children: null
 };
 

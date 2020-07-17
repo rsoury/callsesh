@@ -26,8 +26,8 @@ const Link = ({
 	};
 
 	if (highlight) {
-		style.color = theme.colors.accent;
-		style[":hover"].color = theme.colors.accent600;
+		style.color = `${theme.colors.accent} !important`;
+		style[":hover"].color = `${theme.colors.accent600} !important`;
 	}
 
 	if (button) {
