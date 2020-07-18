@@ -40,10 +40,11 @@ const patchProperties = Object.keys(patchMap);
 export default async function updateUser(req, res) {
 	const user = await getUser(req, { withContext: true });
 
-	req.log.info("Patch user", { user: user.id });
+	const logger = req.log.child({ user: user.id });
+	logger.info("Patch user");
 
 	// Seperate user patch parameters from identity updates
-	const { email, ...requestBody } = req.body;
+	const { email, operator, ...requestBody } = req.body;
 
 	// Scope body to accepted properties
 	const bodyEntries = Object.entries(requestBody).filter(([property]) =>
@@ -65,6 +66,7 @@ export default async function updateUser(req, res) {
 	// Filter invalid entries.
 	const entries = validatedEntries.filter((entry) => Array.isArray(entry));
 
+	// Build out patch parameters
 	const patchParams = entries.reduce((patch, [property, value]) => {
 		const pmap = patchMap[property];
 		if (typeof pmap === "function") {
@@ -89,10 +91,7 @@ export default async function updateUser(req, res) {
 		patchParams.nickname = name;
 	}
 
-	// Check if username is set, and if so, does it already exist.
-
-	req.log.info("Patch params created", {
-		user: user.id,
+	logger.info("Patch params created", {
 		params: patchParams
 	});
 
@@ -112,7 +111,13 @@ export default async function updateUser(req, res) {
 				email,
 				emailVerified: false
 			};
-			req.log.info("Updated email identity", { user: user.id, email });
+			logger.info("Updated email identity", { email });
+		}
+
+		// Assign to Operator if provided
+		if (typeof operator === "boolean" && operator) {
+			await authManager.assignOperatorRole(user.id);
+			logger.info("Assign user to Operator role");
 		}
 
 		// Update update
@@ -120,14 +125,14 @@ export default async function updateUser(req, res) {
 			newUser = await updateAndGetUser(req, patchParams);
 			stripeUpdateParams.description = `Caller: ${name}`;
 			stripeUpdateParams.name = name;
-			req.log.info("Patch user data", { user: user.id });
+			logger.info("Patch user data");
 		}
 
 		// Register the same data against the stripe customer entity if it exists.
 		const { stripeCustomerId } = user;
 		if (!isEmpty(stripeCustomerId) && !isEmpty(stripeUpdateParams)) {
 			await stripe.customers.update(stripeCustomerId, stripeUpdateParams);
-			req.log.info("Patch stripe customer data", { user: user.id });
+			logger.info("Patch stripe customer data");
 		}
 
 		return res.json({

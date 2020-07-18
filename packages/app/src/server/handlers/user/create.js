@@ -30,7 +30,8 @@ export default async function createUser(req, res) {
 
 	const user = await getUser(req, { withContext: true });
 
-	req.log.info("Register user", { user: user.id });
+	const logger = req.log.child({ user: user.id });
+	logger.info("Register user");
 
 	const { stripeCustomerId, phoneNumber, country, currency } = user;
 
@@ -100,7 +101,7 @@ export default async function createUser(req, res) {
 	try {
 		// Update email identity
 		await authManager.updateEmail(user.id, email, user.emailIdentity);
-		req.log.info("Created email identity", { user: user.id, email });
+		logger.info("Created email identity", { email });
 
 		// Update operator details
 		if (operator) {
@@ -113,24 +114,13 @@ export default async function createUser(req, res) {
 			};
 
 			// Assign role to user.
-			const allRoles = await authManager
-				.getClient()
-				.getRoles({ per_page: 50, page: 0 });
-
-			await authManager.getClient().assignRolestoUser(
-				{ id: user.id },
-				{
-					roles: allRoles
-						.filter((role) => role.name.toLowerCase() === "operator")
-						.map((role) => role.id)
-				}
-			);
-			req.log.info("Assign user to Operator role", { user: user.id });
+			await authManager.assignOperatorRole(user.id);
+			logger.info("Assign user to Operator role");
 		}
 
 		// Update update
 		await authManager.updateUser(user.id, updateParams);
-		req.log.info("Update user data", { user: user.id, params: updateParams });
+		logger.info("Update user data", { params: updateParams });
 
 		// Register the same data against the stripe customer entity if it exists.
 		if (!isEmpty(stripeCustomerId)) {
@@ -140,7 +130,7 @@ export default async function createUser(req, res) {
 				name,
 				phone: phoneNumber
 			});
-			req.log.info("Update stripe customer data", { user: user.id });
+			logger.info("Update stripe customer data");
 		}
 
 		return res.json({

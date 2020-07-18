@@ -281,3 +281,16 @@ export const getUserByOTP = async (token, options) => {
 
 	return user;
 };
+
+export const assignOperatorRole = async (userId) => {
+	const allRoles = await client.getRoles({ per_page: 50, page: 0 });
+
+	await client.assignRolestoUser(
+		{ id: userId },
+		{
+			roles: allRoles
+				.filter((role) => role.name.toLowerCase() === "operator")
+				.map((role) => role.id)
+		}
+	);
+};

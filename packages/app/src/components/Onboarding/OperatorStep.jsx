@@ -9,6 +9,8 @@ import { ListItem, ListItemLabel, ARTWORK_SIZES } from "baseui/list";
 import {
 	PhoneOff as AnonPhoneIcon,
 	Send as PayoutsIcon,
+	Clock as MeterIcon,
+	MessageSquare as ChatIcon,
 	DollarSign as HourlyRateIcon
 } from "react-feather";
 import * as yup from "yup";
@@ -58,7 +60,7 @@ export const purposeOptions = [
 
 export const initialValues = {
 	operator: false,
-	hourlyRate: "",
+	hourlyRate: 0,
 	purpose: {
 		option: purposeOptions[0],
 		value: ""
@@ -96,7 +98,7 @@ export const schemaProperties = {
 
 export const validationSchema = yup.object().shape(schemaProperties);
 
-const OperatorStep = ({ values }) => {
+const OperatorStep = ({ noToggle, values }) => {
 	const [css, theme] = useStyletron();
 	const [user] = useUser();
 
@@ -111,7 +113,8 @@ const OperatorStep = ({ values }) => {
 						</strong>
 					</Heading>
 					<Subheader>
-						Make money offering your expertise, advice or time over phone calls!
+						Make money offering your assistance and collaborate through call
+						sessions!
 					</Subheader>
 					<div>
 						<ListItem artwork={AnonPhoneIcon} {...listItemProps}>
@@ -119,53 +122,65 @@ const OperatorStep = ({ values }) => {
 								Hidden phone numbers
 							</ListItemLabel>
 						</ListItem>
+						<ListItem artwork={MeterIcon} {...listItemProps}>
+							<ListItemLabel description="Continue charging for your time outside of your phone call.">
+								Meter your session
+							</ListItemLabel>
+						</ListItem>
+						<ListItem artwork={ChatIcon} {...listItemProps}>
+							<ListItemLabel description="Share links, files and messages to continue collaboration outside your phone call">
+								Chat with your caller
+							</ListItemLabel>
+						</ListItem>
 						<ListItem artwork={PayoutsIcon} {...listItemProps}>
-							<ListItemLabel description="Get paid directly into your bank account or payout method of choice">
+							<ListItemLabel description="Get paid directly into your bank account">
 								Payouts guaranteed
 							</ListItemLabel>
 						</ListItem>
 					</div>
 				</Cell>
 			</Grid>
-			<div className={css({ marginTop: "20px" })}>
-				<Grid>
-					<Cell span={12}>
-						<Card
-							overrides={{
-								Root: {
-									style: {
-										width: "100%",
-										transition: "border-color 0.25s, background-color 0.25s",
-										...(values.operator
-											? {
-													borderTopColor: theme.colors.accent,
-													borderBottomColor: theme.colors.accent,
-													borderRightColor: theme.colors.accent,
-													borderLeftColor: theme.colors.accent
-											  }
-											: {})
-									}
-								}
-							}}
-						>
-							<StyledBody>
-								<CheckboxField
-									name="operator"
-									label="Want to be a phone call operator?"
-									checkmarkType={CHECKBOX_STYLE_TYPE.toggle_round}
-									overrides={{
-										Label: {
-											style: {
-												fontWeight: "900"
-											}
+			{!noToggle && (
+				<div className={css({ marginTop: "20px" })}>
+					<Grid>
+						<Cell span={12}>
+							<Card
+								overrides={{
+									Root: {
+										style: {
+											width: "100%",
+											transition: "border-color 0.25s, background-color 0.25s",
+											...(values.operator
+												? {
+														borderTopColor: theme.colors.accent,
+														borderBottomColor: theme.colors.accent,
+														borderRightColor: theme.colors.accent,
+														borderLeftColor: theme.colors.accent
+												  }
+												: {})
 										}
-									}}
-								/>
-							</StyledBody>
-						</Card>
-					</Cell>
-				</Grid>
-			</div>
+									}
+								}}
+							>
+								<StyledBody>
+									<CheckboxField
+										name="operator"
+										label="Want to be a phone call operator?"
+										checkmarkType={CHECKBOX_STYLE_TYPE.toggle_round}
+										overrides={{
+											Label: {
+												style: {
+													fontWeight: "900"
+												}
+											}
+										}}
+									/>
+								</StyledBody>
+							</Card>
+						</Cell>
+					</Grid>
+				</div>
+			)}
 			{values.operator && (
 				<div className={css({ marginTop: "20px" })}>
 					<Grid>
@@ -245,11 +260,13 @@ OperatorStep.propTypes = {
 			value: PropTypes.string
 		}),
 		messageBroadcast: PropTypes.string
-	})
+	}),
+	noToggle: PropTypes.bool
 };
 
 OperatorStep.defaultProps = {
-	values: {}
+	values: {},
+	noToggle: false
 };
 
 export default OperatorStep;
