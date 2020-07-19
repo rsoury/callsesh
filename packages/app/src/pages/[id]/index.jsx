@@ -16,6 +16,7 @@ import * as authManager from "@/server/auth-manager";
 import Layout from "@/components/Layout";
 import ViewUserScreen from "@/components/Screens/ViewUser";
 import InSessionScreen from "@/components/Screens/InSession";
+import ChatScreen from "@/components/Screens/Chat";
 import request from "@/utils/request";
 import { ViewUserProps, ErrorPageProps } from "@/utils/common-prop-types";
 import * as routes from "@/routes";
@@ -33,6 +34,7 @@ const ViewUser = ({ viewUser: viewUserBase, error }) => {
 	const [user] = useUser();
 	const setUser = useSetUser();
 	const [, setUserRouteReferrer] = useUserRouteReferrer();
+	const [isChatOpen, setChatOpen] = useState(true);
 
 	const md = new MobileDetect(window.navigator.userAgent);
 
@@ -194,7 +196,11 @@ const ViewUser = ({ viewUser: viewUserBase, error }) => {
 	);
 
 	const handleOpenChat = useCallback(() => {
-		console.log("open chat...");
+		setChatOpen(true);
+	}, []);
+
+	const handleCloseChat = useCallback(() => {
+		setChatOpen(false);
 	}, []);
 
 	const handleCall = useCallback((done = () => {}) => {
@@ -237,6 +243,11 @@ const ViewUser = ({ viewUser: viewUserBase, error }) => {
 
 	// If users in session with each other, show full screen InSesssionScreen
 	if (inSessionWithViewUser) {
+		// If chat is open, render chat page
+		if (isChatOpen) {
+			return <ChatScreen viewUser={viewUser} onClose={handleCloseChat} />;
+		}
+
 		return (
 			<InSessionScreen
 				viewUser={viewUser}

@@ -2,6 +2,17 @@
 
 require("dotenv").config({ path: require("find-config")(".env") }); // eslint-disable-line
 const withSourceMaps = require("@zeit/next-source-maps")();
+const withPlugins = require("next-compose-plugins");
+const withTM = require("next-transpile-modules")([
+	"react-native-gifted-chat",
+	"react-native-lightbox",
+	"react-native-parsed-text",
+	"react-native-typing-animation",
+	"react-native-communications",
+	"react-native-iphone-x-helper",
+	"@expo/react-native-action-sheet",
+	"react-native"
+]);
 const {
 	PHASE_PRODUCTION_SERVER,
 	PHASE_DEVELOPMENT_SERVER
@@ -9,10 +20,11 @@ const {
 const SentryWebpackPlugin = require("@sentry/webpack-plugin");
 const filenamify = require("filenamify");
 const isEmpty = require("is-empty");
+
 const { alias } = require("./config/alias");
 const pkg = require("./package.json");
 
-module.exports = (phase) => {
+module.exports = (phase, ...nextParams) => {
 	// Explicitly define environment variables to be used at build time for both frontend and server
 	// dotenv.config should automatically configure process.env for local development
 
@@ -79,17 +91,19 @@ module.exports = (phase) => {
 			);
 
 			// Add alias to Webpack
-			Object.entries(alias).forEach(([key, value]) => {
-				config.resolve.alias[key] = value;
-			});
-
-			// Add react alias -- this allows us to link other projects without referencing duplicate react libraries.
-			config.resolve.alias.react = require.resolve("react");
-			config.resolve.alias.formik = require.resolve("formik");
+			const aliasToApply = {
+				...config.resolve.alias,
+				...alias,
+				// Add react alias -- this allows us to link other projects without referencing duplicate react libraries.
+				react: require.resolve("react"),
+				formik: require.resolve("formik"),
+				// Transform all direct `react-native` imports to `react-native-web`
+				"react-native$": "react-native-web"
+			};
 
 			if (!isServer) {
 				// Sentry alias
-				config.resolve.alias["@sentry/node"] = "@sentry/browser";
+				aliasToApply["@sentry/node"] = "@sentry/browser";
 
 				// Resolve node related dependencies.
 				config.node = {
@@ -102,6 +116,8 @@ module.exports = (phase) => {
 					child_process: "empty"
 				};
 			}
+
+			config.resolve.alias = aliasToApply;
 
 			// When all the Sentry configuration env variables are available/configured
 			// The Sentry webpack plugin gets pushed to the webpack plugins to build
@@ -131,6 +147,24 @@ module.exports = (phase) => {
 				use: "raw-loader"
 			});
 
+			// Add include/exclude config to babel for react-native-gifted-chat
+			// const giftedChatRegex = /node_modules[/\\](react-native-gifted-chat|react-native-lightbox|react-native-parsed-text|react-native-typing-animation|expo-av)/;
+			// const [babelRule, ...rules] = config.module.rules;
+			// const { exclude: nativeExclude } = babelRule;
+			// config.module.rules = [
+			// 	{
+			// 		...babelRule,
+			// 		include: [...babelRule.include, giftedChatRegex],
+			// 		exclude(path) {
+			// 			if (giftedChatRegex.test(path)) {
+			// 				return false;
+			// 			}
+			// 			return nativeExclude(path);
+			// 		}
+			// 	},
+			// 	...rules
+			// ];
+
 			return config;
 		},
 		target: "serverless",
@@ -138,5 +172,8 @@ module.exports = (phase) => {
 	};
 
 	// Next plugins expect a config object and respond with an object.
-	return withSourceMaps(nextConfig);
+	return withPlugins([withSourceMaps, withTM], nextConfig)(
+		phase,
+		...nextParams
+	);
 };

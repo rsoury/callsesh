@@ -37,7 +37,10 @@ module.exports = {
 			settings: {
 				"import/resolver": {
 					alias: {
-						map: Object.entries(appAlias)
+						map: [
+							...Object.entries(appAlias),
+							["react-native", "react-native-web"]
+						]
 					}
 				}
 			}

@@ -1,4 +1,4 @@
 module.exports = {
 	presets: ["next/babel"],
-	plugins: ["add-react-displayname"]
+	plugins: [["react-native-web", { commonjs: true }], "add-react-displayname"]
 };
