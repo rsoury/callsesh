@@ -147,24 +147,6 @@ module.exports = (phase, ...nextParams) => {
 				use: "raw-loader"
 			});
 
-			// Add include/exclude config to babel for react-native-gifted-chat
-			// const giftedChatRegex = /node_modules[/\\](react-native-gifted-chat|react-native-lightbox|react-native-parsed-text|react-native-typing-animation|expo-av)/;
-			// const [babelRule, ...rules] = config.module.rules;
-			// const { exclude: nativeExclude } = babelRule;
-			// config.module.rules = [
-			// 	{
-			// 		...babelRule,
-			// 		include: [...babelRule.include, giftedChatRegex],
-			// 		exclude(path) {
-			// 			if (giftedChatRegex.test(path)) {
-			// 				return false;
-			// 			}
-			// 			return nativeExclude(path);
-			// 		}
-			// 	},
-			// 	...rules
-			// ];
-
 			return config;
 		},
 		target: "serverless",

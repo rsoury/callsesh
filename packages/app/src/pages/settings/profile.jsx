@@ -427,7 +427,52 @@ const Profile = () => {
 				) : (
 					<div>
 						<Grid>
-							<Cell span={[12, 4, 6]}>
+							<Cell span={[12, 8, 8]}>
+								<LabelControl
+									label="First Name"
+									endEnhancer={() => (
+										<EditEnhancer
+											onClick={() => setEditType(EDIT_TYPES.firstName)}
+										/>
+									)}
+								>
+									<Paragraph margin="0">{user.givenName}</Paragraph>
+								</LabelControl>
+								<LabelControl
+									label="Last Name"
+									endEnhancer={() => (
+										<EditEnhancer
+											onClick={() => setEditType(EDIT_TYPES.lastName)}
+										/>
+									)}
+									caption="Your last name is hidden from public view"
+								>
+									<Paragraph margin="0">{user.familyName}</Paragraph>
+								</LabelControl>
+								<LabelControl
+									label="Username"
+									startEnhancer={() => <UserIcon size={20} />}
+									endEnhancer={() => (
+										<EditEnhancer
+											onClick={() => setEditType(EDIT_TYPES.username)}
+										/>
+									)}
+								>
+									<Paragraph margin="0">{user.username}</Paragraph>
+								</LabelControl>
+								<LabelControl
+									label="Gender"
+									startEnhancer={() => <GenderIcon size={20} />}
+									endEnhancer={() => (
+										<EditEnhancer
+											onClick={() => setEditType(EDIT_TYPES.gender)}
+										/>
+									)}
+								>
+									<Paragraph margin="0">{user.gender}</Paragraph>
+								</LabelControl>
+							</Cell>
+							<Cell span={[12, 8, 4]}>
 								<LabelControl label="Profile Picture" noBg>
 									<div>
 										<Avatar
@@ -447,37 +492,29 @@ const Profile = () => {
 									</div>
 								</LabelControl>
 							</Cell>
-							<Cell span={[12, 4, 6]}>
+						</Grid>
+						<Grid>
+							<Cell span={12}>
+								<div
+									className={css({
+										borderBottom: `1px solid ${theme.colors.borderOpaque}`,
+										marginBottom: "20px"
+									})}
+								>
+									<SmallHeading marginBottom="0px">Account</SmallHeading>
+									<Paragraph marginBottom="10px" marginTop="5px">
+										These settings are hidden and will never be publicy
+										available.
+									</Paragraph>
+								</div>
+							</Cell>
+							<Cell span={12}>
 								<LabelControl
 									label="Phone Number"
 									startEnhancer={() => <PhoneIcon size={20} />}
 								>
 									<Paragraph margin="0">{user.phoneNumber}</Paragraph>
 								</LabelControl>
-								<div className={css({ padding: "2.5px 0" })} />
-								<LabelControl
-									label="First Name"
-									endEnhancer={() => (
-										<EditEnhancer
-											onClick={() => setEditType(EDIT_TYPES.firstName)}
-										/>
-									)}
-								>
-									<Paragraph margin="0">{user.givenName}</Paragraph>
-								</LabelControl>
-								<div className={css({ padding: "2.5px 0" })} />
-								<LabelControl
-									label="Last Name"
-									endEnhancer={() => (
-										<EditEnhancer
-											onClick={() => setEditType(EDIT_TYPES.lastName)}
-										/>
-									)}
-								>
-									<Paragraph margin="0">{user.familyName}</Paragraph>
-								</LabelControl>
-							</Cell>
-							<Cell span={12}>
 								<LabelControl
 									label="Email"
 									startEnhancer={() => <EmailIcon size={20} />}
@@ -489,34 +526,6 @@ const Profile = () => {
 								>
 									<Paragraph margin="0">{user.email}</Paragraph>
 								</LabelControl>
-							</Cell>
-							<Cell span={12}>
-								<LabelControl
-									label="Username"
-									startEnhancer={() => <UserIcon size={20} />}
-									endEnhancer={() => (
-										<EditEnhancer
-											onClick={() => setEditType(EDIT_TYPES.username)}
-										/>
-									)}
-								>
-									<Paragraph margin="0">{user.username}</Paragraph>
-								</LabelControl>
-							</Cell>
-							<Cell span={[12, 4, 6]}>
-								<LabelControl
-									label="Gender"
-									startEnhancer={() => <GenderIcon size={20} />}
-									endEnhancer={() => (
-										<EditEnhancer
-											onClick={() => setEditType(EDIT_TYPES.gender)}
-										/>
-									)}
-								>
-									<Paragraph margin="0">{user.gender}</Paragraph>
-								</LabelControl>
-							</Cell>
-							<Cell span={[12, 4, 6]}>
 								<LabelControl
 									label="Date of birth"
 									startEnhancer={() => <CalendarIcon size={20} />}
@@ -539,16 +548,20 @@ const Profile = () => {
 						{isUserOperator(user) && (
 							<Grid>
 								<Cell span={12}>
-									<SmallHeading>Operator Profile</SmallHeading>
+									<div
+										className={css({
+											borderBottom: `1px solid ${theme.colors.borderOpaque}`,
+											marginBottom: "20px"
+										})}
+									>
+										<SmallHeading marginBottom="10px">Operator</SmallHeading>
+									</div>
 								</Cell>
 								<Cell span={12}>
 									<div
 										className={css({
-											padding: "15px 0 10px 0",
+											padding: "0 0 10px 0",
 											margin: "10px 0 20px",
-											borderTopWidth: "1px",
-											borderTopStyle: "solid",
-											borderTopColor: theme.colors.borderOpaque,
 											borderBottomWidth: "1px",
 											borderBottomStyle: "solid",
 											borderBottomColor: theme.colors.borderOpaque
