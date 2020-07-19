@@ -10,7 +10,13 @@ import {
 
 import { ChildrenProps } from "@/utils/common-prop-types";
 
-const InSessionActionButton = ({ variant, children, retain, ...props }) => {
+const InSessionActionButton = ({
+	variant,
+	children,
+	retain,
+	style,
+	...props
+}) => {
 	const [css, theme] = useStyletron();
 
 	const overrides = {
@@ -19,7 +25,8 @@ const InSessionActionButton = ({ variant, children, retain, ...props }) => {
 				marginRight: "20px",
 				marginLeft: "20px",
 				marginTop: "0",
-				marginBottom: "0"
+				marginBottom: "0",
+				...style
 			}
 		}
 	};
@@ -67,12 +74,14 @@ const InSessionActionButton = ({ variant, children, retain, ...props }) => {
 InSessionActionButton.propTypes = {
 	children: ChildrenProps.isRequired,
 	variant: PropTypes.string,
-	retain: PropTypes.bool
+	retain: PropTypes.bool,
+	style: PropTypes.object
 };
 
 InSessionActionButton.defaultProps = {
 	variant: "",
-	retain: false
+	retain: false,
+	style: {}
 };
 
 export default InSessionActionButton;

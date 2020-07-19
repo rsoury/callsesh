@@ -7,6 +7,8 @@ import { View } from "react-native";
 import useUser from "@/hooks/use-user";
 import { ViewUserProps } from "@/utils/common-prop-types";
 
+import Header from "./Header";
+
 // TODO: May need to use use-persisted-state to persist message data.
 
 const ChatScreen = ({ viewUser, onClose }) => {
@@ -36,18 +38,35 @@ const ChatScreen = ({ viewUser, onClose }) => {
 	}, []);
 
 	return (
-		<div id="callsesh-session-chat" className={css({ height: "100vh" })}>
-			<View style={{ width: "100%", height: "100%" }}>
-				<GiftedChat
-					messages={messages}
-					onSend={(messages) => onSend(messages)}
-					user={{
-						_id: user.id,
-						name: user.givenName
-					}}
-					inverted={false}
-				/>
-			</View>
+		<div
+			id="callsesh-session-chat"
+			className={css({
+				height: "100vh",
+				display: "flex",
+				flexDirection: "column"
+			})}
+		>
+			<Header
+				name={viewUser.givenName}
+				picture={viewUser.picture}
+				onClose={onClose}
+			/>
+			<div
+				id="callsesh-session-chat-container"
+				className={css({ flexGrow: "1" })}
+			>
+				<View style={{ width: "100%", height: "100%" }}>
+					<GiftedChat
+						messages={messages}
+						onSend={(messages) => onSend(messages)}
+						user={{
+							_id: user.id,
+							name: user.givenName
+						}}
+						inverted={false}
+					/>
+				</View>
+			</div>
 		</div>
 	);
 };
