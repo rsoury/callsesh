@@ -1,7 +1,6 @@
 import React from "react";
-import { useStyletron, withStyle } from "baseui";
-import { Label3 as Label, Paragraph2 as Paragraph } from "baseui/typography";
-import { StyledSpinnerNext, SIZE as SPINNER_SIZE } from "baseui/spinner";
+import { useStyletron } from "baseui";
+import { Label3 as Label } from "baseui/typography";
 import {
 	PhoneCall as PhoneIcon,
 	Clock as MeterIcon,
@@ -11,15 +10,11 @@ import {
 import isEmpty from "is-empty";
 import { motion } from "framer-motion";
 
+import FullscreenLoader from "@/components/FullscreenLoader";
 import useUser from "@/hooks/use-user";
 import stripTrailingSlash from "@/utils/strip-trailing-slash";
 import * as routes from "@/routes";
 import { CALL_SESSION_STATUS } from "@/constants";
-
-const Spinner = withStyle(StyledSpinnerNext, {
-	width: "40px",
-	height: "40px"
-});
 
 const InSessionTopBar = () => {
 	const [css, theme] = useStyletron();
@@ -111,48 +106,13 @@ const InSessionTopBar = () => {
 				</Label>
 			</motion.div>
 			{shouldRedirectToSession && (
-				<div
-					className={css({
-						position: "fixed",
-						top: "0px",
-						left: "0px",
-						right: "0px",
-						bottom: "0px",
-						backgroundColor: "#fff",
-						display: "flex",
-						alignItems: "center",
-						justifyContent: "center",
-						flexDirection: "column",
-						zIndex: "9995",
-						textAlign: "center"
-					})}
-				>
-					<motion.div
-						initial={{
-							opacity: 0,
-							y: 20
-						}}
-						animate={{
-							opacity: 1,
-							y: 0
-						}}
-						className={css({
-							display: "flex",
-							alignItems: "center",
-							justifyContent: "center",
-							flexDirection: "column"
-						})}
-					>
-						<Spinner $size={SPINNER_SIZE.large} />
-						<Paragraph marginTop="25px" color={theme.colors.contentTertiary}>
-							<strong>
-								You are in a call session!
-								<br />
-								Please wait while we redirect you to the session...
-							</strong>
-						</Paragraph>
-					</motion.div>
-				</div>
+				<FullscreenLoader>
+					<strong>
+						You are in a call session!
+						<br />
+						Please wait while we redirect you to the session...
+					</strong>
+				</FullscreenLoader>
 			)}
 		</>
 	);

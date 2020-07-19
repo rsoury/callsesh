@@ -2,15 +2,12 @@ import React, { useState, useEffect, useCallback } from "react";
 import { useStyletron } from "baseui";
 import PropTypes from "prop-types";
 import { GiftedChat } from "react-native-gifted-chat";
-import { View } from "react-native"; // eslint-disable-line
+import { View } from "react-native";
 
 import useUser from "@/hooks/use-user";
 import { ViewUserProps } from "@/utils/common-prop-types";
 
 // TODO: May need to use use-persisted-state to persist message data.
-// TODO: Update the gang at https://github.com/FaridSafi/react-native-gifted-chat/issues/1828
-// -- Describe usage of https://github.com/martpie/next-transpile-modules/
-// TODO: When successful, try without the App Registry ... despite the fact that I think it may be necessary
 
 const ChatScreen = ({ viewUser, onClose }) => {
 	const [css] = useStyletron();
