@@ -17,14 +17,17 @@ import {
 	SIZE as BUTTON_SIZE,
 	SHAPE as BUTTON_SHAPE
 } from "baseui/button";
+import { StatefulTooltip as Tooltip } from "baseui/tooltip";
 import {
 	Link as LinkIcon,
 	Twitter as TwitterIcon,
-	Github as GithubIcon,
+	GitHub as GithubIcon,
 	Facebook as FacebookIcon,
 	Instagram as InstagramIcon,
-	Linkedin as LinkedinIcon
+	Linkedin as LinkedinIcon,
+	Dribbble as DribbbleIcon
 } from "react-feather";
+import startCase from "lodash/startCase";
 
 const LinksInput = ({ label, caption, value, error, onChange, ...props }) => {
 	const [css, theme] = useStyletron();
@@ -54,15 +57,7 @@ const LinksInput = ({ label, caption, value, error, onChange, ...props }) => {
 		},
 		dribbble: {
 			placeholder: "https://dribbble.com/...",
-			Icon({ size }) {
-				return (
-					<img
-						src=""
-						alt="Dribble icon"
-						className={css({ maxWidth: `${size}px`, maxHeight: `${size}px` })}
-					/>
-				);
-			}
+			Icon: DribbbleIcon
 		},
 		facebook: {
 			placeholder: "https://www.facebook.com/...",
@@ -73,9 +68,12 @@ const LinksInput = ({ label, caption, value, error, onChange, ...props }) => {
 			Icon({ size }) {
 				return (
 					<img
-						src=""
+						src="/static/assets/socials/medium.svg"
 						alt="Medium icon"
-						className={css({ maxWidth: `${size}px`, maxHeight: `${size}px` })}
+						className={css({
+							maxWidth: `${size * 2}px`,
+							maxHeight: `${size * 2}px`
+						})}
 					/>
 				);
 			}
@@ -102,21 +100,26 @@ const LinksInput = ({ label, caption, value, error, onChange, ...props }) => {
 			)}
 			{
 				<div>
-					{activeInputs.map((inputType) => (
-						<Input
-							type="text"
-							placeholder={linkTypes[inputType].placeholder}
-							error={isEmpty(error) ? false : error[inputType]}
-							onChange={(e) => {
-								const { value: inputValue } = e.target;
-								if (inputValue.length < 250) {
-									value[inputType] = inputValue;
-									onChange(value);
-								}
-							}}
-							{...props}
-						/>
-					))}
+					{activeInputs.map((inputType) => {
+						const { placeholder, Icon } = linkTypes[inputType];
+
+						return (
+							<Input
+								type="text"
+								placeholder={placeholder}
+								error={isEmpty(error) ? false : error[inputType]}
+								startEnhancer={() => <Icon size={22} />}
+								onChange={(e) => {
+									const { value: inputValue } = e.target;
+									if (inputValue.length < 250) {
+										value[inputType] = inputValue;
+										onChange(value);
+									}
+								}}
+								{...props}
+							/>
+						);
+					})}
 				</div>
 			}
 			<div
@@ -131,20 +134,23 @@ const LinksInput = ({ label, caption, value, error, onChange, ...props }) => {
 				{Object.entries(linkTypes)
 					.filter(([key]) => !activeInputs.includes(key))
 					.map(([key, { Icon }]) => (
-						<Button
-							key={key}
-							size={BUTTON_SIZE.compact}
-							shape={BUTTON_SHAPE.pill}
-							overrides={{
-								BaseButton: {
-									style: {
-										marginRight: "10px"
+						<Tooltip content={() => <div>{startCase(key)}</div>} showArrow>
+							<Button
+								key={key}
+								size={BUTTON_SIZE.compact}
+								shape={BUTTON_SHAPE.pill}
+								overrides={{
+									BaseButton: {
+										style: {
+											marginRight: "10px",
+											color: "#fff"
+										}
 									}
-								}
-							}}
-						>
-							<Icon size={22} />
-						</Button>
+								}}
+							>
+								<Icon size={22} />
+							</Button>
+						</Tooltip>
 					))}
 			</div>
 		</div>
