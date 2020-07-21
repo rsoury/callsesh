@@ -80,18 +80,6 @@ const LinksInput = ({ label, caption, value, error, onChange, ...props }) => {
 				);
 			}
 		},
-		substack: {
-			placeholder: "https://....substack.com/",
-			Icon({ size }) {
-				return (
-					<img
-						src=""
-						alt="Substack icon"
-						className={css({ maxWidth: `${size}px`, maxHeight: `${size}px` })}
-					/>
-				);
-			}
-		},
 		instagram: {
 			placeholder: "https://instagram.com/...",
 			Icon: InstagramIcon

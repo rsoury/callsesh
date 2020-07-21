@@ -77,7 +77,6 @@ export const initialValues = {
 		dribbble: "",
 		facebook: "",
 		medium: "",
-		substack: "",
 		instagram: ""
 	}
 };
@@ -156,13 +155,6 @@ export const schemaProperties = {
 				"${path} must be a valid Medium URL",
 				validateSocialUrl("medium.com")
 			),
-		substack: yup.string().test(
-			"is-substack-url",
-			"${path} must be a valid Substack URL",
-			validateSocialUrl("substack.com", {
-				subdomain: true
-			})
-		),
 		instagram: yup
 			.string()
 			.test(
