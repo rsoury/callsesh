@@ -15,13 +15,16 @@ import {
 } from "react-feather";
 import * as yup from "yup";
 import isNumber from "is-number";
+import isUrl from "is-url";
 
 import SelectField from "@/components/Fields/Select";
 import TextField from "@/components/Fields/Text";
 import CheckboxField from "@/components/Fields/Checkbox";
 import MoneyField from "@/components/Fields/Money";
+import LinksField from "@/components/Fields/Links";
 import Emoji from "@/components/Emoji";
 import useUser from "@/hooks/use-user";
+import validateSocialUrl from "@/utils/validate-social-url";
 
 const listItemProps = {
 	artworkSize: ARTWORK_SIZES.MEDIUM,
@@ -65,7 +68,18 @@ export const initialValues = {
 		option: purposeOptions[0],
 		value: ""
 	},
-	messageBroadcast: ""
+	messageBroadcast: "",
+	links: {
+		website: "",
+		twitter: "",
+		github: "",
+		linkedin: "",
+		dribbble: "",
+		facebook: "",
+		medium: "",
+		substack: "",
+		instagram: ""
+	}
 };
 
 export const schemaProperties = {
@@ -93,7 +107,70 @@ export const schemaProperties = {
 	}),
 	messageBroadcast: yup
 		.string()
-		.when("operator", { is: true, then: (s) => s.required() })
+		.when("operator", { is: true, then: (s) => s.required() }),
+	links: yup.object().shape({
+		website: yup
+			.string()
+			.test("is-url", "${path} must be a valid URL", (value) =>
+				value ? isUrl(value) : true
+			),
+		twitter: yup
+			.string()
+			.test(
+				"is-twitter-url",
+				"${path} must be a valid Twitter URL",
+				validateSocialUrl("twitter.com")
+			),
+		github: yup
+			.string()
+			.test(
+				"is-github-url",
+				"${path} must be a valid Github URL",
+				validateSocialUrl("github.com")
+			),
+		linkedin: yup
+			.string()
+			.test(
+				"is-linkedin-url",
+				"${path} must be a valid LinkedIn URL",
+				validateSocialUrl("linkedin.com")
+			),
+		facebook: yup
+			.string()
+			.test(
+				"is-facebook-url",
+				"${path} must be a valid Facebook URL",
+				validateSocialUrl("facebook.com")
+			),
+		dribbble: yup
+			.string()
+			.test(
+				"is-dribbble-url",
+				"${path} must be a valid Dribbble URL",
+				validateSocialUrl("dribbble.com")
+			),
+		medium: yup
+			.string()
+			.test(
+				"is-medium-url",
+				"${path} must be a valid Medium URL",
+				validateSocialUrl("medium.com")
+			),
+		substack: yup.string().test(
+			"is-substack-url",
+			"${path} must be a valid Substack URL",
+			validateSocialUrl("substack.com", {
+				subdomain: true
+			})
+		),
+		instagram: yup
+			.string()
+			.test(
+				"is-instagram-url",
+				"${path} must be a valid Instagram URL",
+				validateSocialUrl("instagram.com")
+			)
+	})
 };
 
 export const validationSchema = yup.object().shape(schemaProperties);
@@ -231,7 +308,7 @@ const OperatorStep = ({ noToggle, values }) => {
 						<Cell span={12}>
 							<TextField
 								name="messageBroadcast"
-								label="Have a message for your callers? Could be your biography, or a note about your calls."
+								label="Have a message for your callers? Could be your biography, or a note about your calls"
 								placeholder="Hey! One thing you should know about me is..."
 								maxLength={240}
 								area
@@ -242,6 +319,13 @@ const OperatorStep = ({ noToggle, values }) => {
 										}
 									}
 								}}
+							/>
+						</Cell>
+						<Cell span={12}>
+							<LinksField
+								name="links"
+								label="Add your website and social URLs"
+								caption="Give a way for a callers to qualify you"
 							/>
 						</Cell>
 					</Grid>

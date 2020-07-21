@@ -48,6 +48,7 @@
 		"is-email": "^1.0.0",
 		"is-empty": "^1.2.0",
 		"is-number": "^7.0.0",
+		"is-url": "^1.2.4",
 		"libphonenumber-js": "^1.7.51",
 		"lodash": "^4.17.15",
 		"logrocket": "^1.0.7",

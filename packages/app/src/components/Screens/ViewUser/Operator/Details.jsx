@@ -7,12 +7,14 @@ import { getName } from "country-list";
 import {
 	MessageCircle as MessageIcon,
 	Calendar as CalendarIcon,
-	MapPin as MapIcon
+	MapPin as MapIcon,
+	User as UserIcon
 } from "react-feather";
 
 import Card from "@/components/Card";
 import { ViewUserProps } from "@/utils/common-prop-types";
 
+// TODO: Make icons smaller now that there is more information. Make more compact too?
 const listItemProps = {
 	artworkSize: ARTWORK_SIZES.MEDIUM,
 	overrides: {
@@ -65,16 +67,19 @@ const ViewUserOperatorDetails = ({ viewUser }) => {
 					borderBottom: `1px solid ${theme.colors.borderOpaque}`
 				})}
 			>
+				<ListItem artwork={UserIcon} {...listItemProps}>
+					<ListItemLabel>
+						<Paragraph margin="0px">{viewUser.username}</Paragraph>
+					</ListItemLabel>
+				</ListItem>
 				<ListItem artwork={CalendarIcon} {...listItemProps}>
 					<ListItemLabel>
-						<Paragraph margin="0px">Member since {memberSince}</Paragraph>
+						<Paragraph margin="0px">Joined {memberSince}</Paragraph>
 					</ListItemLabel>
 				</ListItem>
 				<ListItem artwork={MapIcon} {...listItemProps}>
 					<ListItemLabel>
-						<Paragraph margin="0px">
-							Based in {getName(viewUser.country)}
-						</Paragraph>
+						<Paragraph margin="0px">{getName(viewUser.country)}</Paragraph>
 					</ListItemLabel>
 				</ListItem>
 			</div>
