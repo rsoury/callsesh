@@ -61,9 +61,9 @@ export const getSession = async (req, ...params) => {
 		throw e;
 	});
 
-	// If session doesn't exist, but user is attached to request, could be an authenticated machine-to-machine request
+	// If session doesn't exist, but user is attached to request, is an authenticated machine-to-machine request
 	if (isEmpty(session) && !isEmpty(req.user)) {
-		// emulate session
+		// Manually create the session. Use session schema
 		session = {
 			user: {
 				name: req.user.name,
