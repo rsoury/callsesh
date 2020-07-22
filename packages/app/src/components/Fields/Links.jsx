@@ -38,8 +38,6 @@ const LinksInput = ({ label, caption, value, error, onChange, ...props }) => {
 		([key]) => !activeInputs.includes(key)
 	);
 
-	console.log(error);
-
 	return (
 		<div>
 			{label && <Label>{label}</Label>}

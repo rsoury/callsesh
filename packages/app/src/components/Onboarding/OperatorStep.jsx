@@ -89,7 +89,9 @@ export const initialValues = {
 export const schemaProperties = {
 	operator: yup.boolean().required(),
 	hourlyRate: yup.number().when("operator", {
-		is: true,
+		// If the value of "operator" exists, then check if its true, otherwise always return true
+		// "operator" will be undefined for profile settings where each properties is validated one at a time.
+		is: (value) => (typeof value === "undefined" ? true : value === true),
 		then: (s) =>
 			s
 				.test(
@@ -106,12 +108,19 @@ export const schemaProperties = {
 				label: yup.string(),
 				id: yup.string()
 			})
-			.when("operator", { is: true, then: (s) => s.required() }),
-		value: yup.string()
+			.when("operator", {
+				is: (value) => (typeof value === "undefined" ? true : value === true),
+				then: (s) => s.required()
+			}),
+		value: yup.string().when("option", {
+			is: (value) => value.id === "other",
+			then: (s) => s.required()
+		})
 	}),
-	messageBroadcast: yup
-		.string()
-		.when("operator", { is: true, then: (s) => s.required() }),
+	messageBroadcast: yup.string().when("operator", {
+		is: (value) => (typeof value === "undefined" ? true : value === true),
+		then: (s) => s.required()
+	}),
 	links: yup.object().shape({
 		website: yup
 			.string()

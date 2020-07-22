@@ -6,6 +6,7 @@
 
 import * as yup from "yup";
 import { format } from "@callsesh/utils";
+import set from "lodash/set";
 
 const validate = async (schema, values) => {
 	const errors = {};
@@ -13,7 +14,7 @@ const validate = async (schema, values) => {
 		await yup.object().shape(schema).validate(values);
 	} catch (err) {
 		console.error(err); // eslint-disable-line
-		errors[err.path] = format.message(err.errors[0]);
+		set(errors, err.path, format.message(err.errors[0]));
 	}
 	return errors;
 };
