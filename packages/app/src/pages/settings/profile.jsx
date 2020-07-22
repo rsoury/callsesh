@@ -50,6 +50,7 @@ import request from "@/utils/request";
 import TextField from "@/components/Fields/Text";
 import MoneyField from "@/components/Fields/Money";
 import SelectField from "@/components/Fields/Select";
+import LinksField from "@/components/Fields/Links";
 import FileUploaderField from "@/components/Fields/FileUploader";
 import DateField from "@/components/Fields/Date";
 import FeeCalculator from "@/components/FeeCalculator";
@@ -57,6 +58,7 @@ import isUserOperator from "@/utils/is-operator";
 import handleException, { alerts } from "@/utils/handle-exception";
 import ScreenContainer from "@/components/ScreenContainer";
 import Header from "@/components/Settings/Header";
+import { OPERATOR_LINK_TYPES } from "@/constants";
 
 const EDIT_TYPES = {
 	firstName: "firstName",
@@ -68,7 +70,8 @@ const EDIT_TYPES = {
 	hourlyRate: "hourlyRate",
 	profilePicture: "profilePicture",
 	purpose: "purpose",
-	messageBroadcast: "messageBroadcast"
+	messageBroadcast: "messageBroadcast",
+	links: "links"
 };
 
 const fieldGridProps = {
@@ -364,6 +367,30 @@ const getEditConfig = (user, type) => {
 						</Cell>
 					</Grid>
 				)
+			},
+			[EDIT_TYPES.links]: {
+				title: "Links",
+				validate(values) {
+					return validate(
+						{
+							[EDIT_TYPES.links]: operatorSchemaProperties.links
+						},
+						values
+					);
+				},
+				initialValue: user.links,
+				Component: (props) => (
+					<Grid {...fieldGridProps}>
+						<Cell span={12}>
+							<LinksField
+								{...props}
+								name={EDIT_TYPES.links}
+								label="Manage your website and social URLs"
+								caption="Give a way for a callers to qualify you"
+							/>
+						</Cell>
+					</Grid>
+				)
 			}
 		};
 	}
@@ -623,6 +650,42 @@ const Profile = () => {
 												__html: nl2br(user.messageBroadcast)
 											}}
 										/>
+									</LabelControl>
+								</Cell>
+								<Cell span={12}>
+									<LabelControl
+										label="Manage your website and social URLs"
+										endEnhancer={() => (
+											<EditEnhancer
+												onClick={() => setEditType(EDIT_TYPES.links)}
+											/>
+										)}
+									>
+										<div>
+											{Object.entries(user.links || {}).map(
+												([linkType, linkValue]) => {
+													const { Icon } = OPERATOR_LINK_TYPES[linkType];
+
+													return (
+														<LabelControl
+															noBg
+															startEnhancer={() => <Icon size={16} />}
+															overrides={{
+																ControlContainer: {
+																	style: {
+																		marginTop: "-10px",
+																		marginBottom: "-10px",
+																		marginLeft: "-10px"
+																	}
+																}
+															}}
+														>
+															<Paragraph margin="0">{linkValue}</Paragraph>
+														</LabelControl>
+													);
+												}
+											)}
+										</div>
 									</LabelControl>
 								</Cell>
 							</Grid>

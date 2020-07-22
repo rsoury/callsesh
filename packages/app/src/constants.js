@@ -1,3 +1,14 @@
+import {
+	Link as LinkIcon,
+	Twitter as TwitterIcon,
+	GitHub as GithubIcon,
+	Facebook as FacebookIcon,
+	Instagram as InstagramIcon,
+	Linkedin as LinkedinIcon,
+	Dribbble as DribbbleIcon
+} from "react-feather";
+import MediumIcon from "@/components/Icon/Medium";
+
 // Fees
 export const FEE_MULTIPLIER = 0.15;
 export const SERVICE_FEE = 50;
@@ -5,20 +16,6 @@ export const SERVICE_FEE = 50;
 // Referral
 export const OPERATOR_REFERRAL_MULTIPLIER = 0.05;
 export const OPERATOR_REFERRAL_EARNINGS_CAP = 50000 * 100; // 50,000
-
-// Caller Coupons
-export const COUPONS = [
-	{
-		id: "callerReferral",
-		name: "Caller Referral",
-		amount: 500
-	},
-	{
-		id: "newReferredCaller",
-		name: "New Caller",
-		amount: 2000
-	}
-];
 
 // SMS Sender Id
 export const SMS_SENDER_ID = "Callsesh";
@@ -61,4 +58,40 @@ export const ERROR_TYPES = {
 export const THREE_D_SECURE_MESSAGE_TYPES = {
 	complete: "3DS-authentication-complete",
 	failed: "3DS-authentication-failed"
+};
+
+// Operator Links
+export const OPERATOR_LINK_TYPES = {
+	website: {
+		placeholder: "https://website.com",
+		Icon: LinkIcon
+	},
+	twitter: {
+		placeholder: "https://twitter.com/...",
+		Icon: TwitterIcon
+	},
+	github: {
+		placeholder: "https://github.com/...",
+		Icon: GithubIcon
+	},
+	linkedin: {
+		placeholder: "https://linkedin.com/in/...",
+		Icon: LinkedinIcon
+	},
+	dribbble: {
+		placeholder: "https://dribbble.com/...",
+		Icon: DribbbleIcon
+	},
+	facebook: {
+		placeholder: "https://www.facebook.com/...",
+		Icon: FacebookIcon
+	},
+	medium: {
+		placeholder: "https://medium.com/...",
+		Icon: MediumIcon
+	},
+	instagram: {
+		placeholder: "https://instagram.com/...",
+		Icon: InstagramIcon
+	}
 };

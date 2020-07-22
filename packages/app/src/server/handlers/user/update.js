@@ -33,7 +33,8 @@ const patchMap = {
 		return patch;
 	},
 	purpose: "metadata.user.purpose",
-	messageBroadcast: "metadata.user.messageBroadcast"
+	messageBroadcast: "metadata.user.messageBroadcast",
+	links: "metadata.user.links"
 };
 const patchProperties = Object.keys(patchMap);
 

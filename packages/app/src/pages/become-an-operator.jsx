@@ -9,7 +9,6 @@ import { useStyletron } from "baseui";
 import { Button } from "baseui/button";
 import { Grid, Cell } from "baseui/layout-grid";
 import { toaster } from "baseui/toast";
-import Router from "next/router";
 import ono from "@jsdevtools/ono";
 
 import * as routes from "@/routes";

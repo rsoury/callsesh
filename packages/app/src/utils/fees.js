@@ -10,7 +10,6 @@ import Dinero from "dinero.js";
 import {
 	FEE_MULTIPLIER,
 	SERVICE_FEE,
-	COUPONS,
 	OPERATOR_REFERRAL_MULTIPLIER,
 	OPERATOR_REFERRAL_EARNINGS_CAP
 } from "@/constants";
@@ -141,17 +140,6 @@ export const applicationAmount = (
 		return amount;
 	}
 	return Dinero({ amount }).toFormat("$0.00");
-};
-
-/**
- * Method to get coupon by coupon id
- *
- * @param   {string}  couponId
- *
- * @return {Object}
- */
-export const getCoupon = (couponId) => {
-	return COUPONS.find(({ id }) => id === couponId);
 };
 
 /**

@@ -5,6 +5,7 @@ import { useStyletron } from "baseui";
 import PropTypes from "prop-types";
 import { Field } from "formik";
 import {
+	FormControl,
 	StyledLabel as Label,
 	StyledCaption as Caption
 } from "baseui/form-control";
@@ -15,109 +16,101 @@ import isEmpty from "is-empty";
 import {
 	Button,
 	SIZE as BUTTON_SIZE,
-	SHAPE as BUTTON_SHAPE
+	SHAPE as BUTTON_SHAPE,
+	KIND as BUTTON_KIND
 } from "baseui/button";
 import { StatefulTooltip as Tooltip } from "baseui/tooltip";
-import {
-	Link as LinkIcon,
-	Twitter as TwitterIcon,
-	GitHub as GithubIcon,
-	Facebook as FacebookIcon,
-	Instagram as InstagramIcon,
-	Linkedin as LinkedinIcon,
-	Dribbble as DribbbleIcon
-} from "react-feather";
 import startCase from "lodash/startCase";
+import CloseIcon from "baseui/icon/delete";
+import { OPERATOR_LINK_TYPES } from "@/constants";
 
 const LinksInput = ({ label, caption, value, error, onChange, ...props }) => {
-	const [css, theme] = useStyletron();
+	const [css] = useStyletron();
 	// An array to determine which inputs are showing.
 	// Should be those in value, and inputs shown after selecting add link
-	const activeInputs = useState(
-		isEmpty(value) ? ["website"] : Object.keys(value)
+	const [activeInputs, setActiveInputs] = useState(
+		isEmpty(Object.entries(value).filter(([, v]) => !isEmpty(v))) // Filter empty string values
+			? ["website"]
+			: Object.keys(value)
 	);
 
-	/* eslint-disable react/prop-types */
-	const linkTypes = {
-		website: {
-			placeholder: "https://website.com",
-			Icon: LinkIcon
-		},
-		twitter: {
-			placeholder: "https://twitter.com/...",
-			Icon: TwitterIcon
-		},
-		github: {
-			placeholder: "https://github.com/...",
-			Icon: GithubIcon
-		},
-		linkedin: {
-			placeholder: "https://linkedin.com/in/...",
-			Icon: LinkedinIcon
-		},
-		dribbble: {
-			placeholder: "https://dribbble.com/...",
-			Icon: DribbbleIcon
-		},
-		facebook: {
-			placeholder: "https://www.facebook.com/...",
-			Icon: FacebookIcon
-		},
-		medium: {
-			placeholder: "https://medium.com/...",
-			Icon({ size }) {
-				return (
-					<img
-						src="/static/assets/socials/medium.svg"
-						alt="Medium icon"
-						className={css({
-							maxWidth: `${size * 2}px`,
-							maxHeight: `${size * 2}px`
-						})}
-					/>
-				);
-			}
-		},
-		instagram: {
-			placeholder: "https://instagram.com/...",
-			Icon: InstagramIcon
-		}
-	};
-	/* eslint-enable react/prop-types */
+	const inactiveInputs = Object.entries(OPERATOR_LINK_TYPES).filter(
+		([key]) => !activeInputs.includes(key)
+	);
+
+	console.log(error);
 
 	return (
 		<div>
 			{label && <Label>{label}</Label>}
 			{isEmpty(error) && caption && <Caption>{caption}</Caption>}
 			{!isEmpty(error) && (
-				<Caption
-					overrides={{
-						color: theme.colors.negative
-					}}
-				>
-					Please ensure your links are valid URLs
-				</Caption>
+				<Caption $error>Please ensure your links are valid URLs</Caption>
 			)}
 			{
 				<div>
 					{activeInputs.map((inputType) => {
-						const { placeholder, Icon } = linkTypes[inputType];
+						const { placeholder, Icon } = OPERATOR_LINK_TYPES[inputType];
+
+						let errMessage = null;
+						if (!isEmpty(error)) {
+							errMessage = error[inputType] || null;
+							if (errMessage) {
+								errMessage = format.message(errMessage);
+							}
+						}
 
 						return (
-							<Input
-								type="text"
-								placeholder={placeholder}
-								error={isEmpty(error) ? false : error[inputType]}
-								startEnhancer={() => <Icon size={22} />}
-								onChange={(e) => {
-									const { value: inputValue } = e.target;
-									if (inputValue.length < 250) {
-										value[inputType] = inputValue;
-										onChange(value);
-									}
-								}}
-								{...props}
-							/>
+							<FormControl key={inputType} error={errMessage}>
+								<Input
+									type="text"
+									placeholder={placeholder}
+									error={!!errMessage}
+									startEnhancer={() => <Icon size={20} />}
+									endEnhancer={() => (
+										<Button
+											shape={BUTTON_SHAPE.round}
+											kind={BUTTON_KIND.secondary}
+											size={BUTTON_SIZE.mini}
+											onClick={() => {
+												const { [inputType]: dismiss, ...rest } = value;
+												onChange(rest);
+												setActiveInputs(
+													activeInputs.filter((type) => type !== inputType)
+												);
+											}}
+											overrides={{
+												BaseButton: {
+													props: {
+														tabIndex: "-1"
+													}
+												}
+											}}
+										>
+											<CloseIcon size={24} />
+										</Button>
+									)}
+									onChange={(e) => {
+										const { value: inputValue } = e.target;
+										if (inputValue.length <= 250) {
+											const { ...newValue } = value;
+											newValue[inputType] = inputValue;
+											onChange(newValue);
+										}
+									}}
+									overrides={{
+										EndEnhancer: {
+											style: {
+												paddingLeft: "5px",
+												paddingRight: "5px",
+												backgroundColor: "transparent"
+											}
+										}
+									}}
+									{...props}
+									value={value[inputType] || ""}
+								/>
+							</FormControl>
 						);
 					})}
 				</div>
@@ -125,33 +118,41 @@ const LinksInput = ({ label, caption, value, error, onChange, ...props }) => {
 			<div
 				className={css({
 					display: "flex",
-					alignItems: "center"
+					alignItems: "center",
+					flexWrap: "wrap",
+					margin: "10px 0"
 				})}
 			>
-				<div className={css({ display: "flex", marginRight: "10px" })}>
-					<Label>Add link: </Label>
-				</div>
-				{Object.entries(linkTypes)
-					.filter(([key]) => !activeInputs.includes(key))
-					.map(([key, { Icon }]) => (
-						<Tooltip content={() => <div>{startCase(key)}</div>} showArrow>
-							<Button
-								key={key}
-								size={BUTTON_SIZE.compact}
-								shape={BUTTON_SHAPE.pill}
-								overrides={{
-									BaseButton: {
-										style: {
-											marginRight: "10px",
-											color: "#fff"
-										}
+				{inactiveInputs.length > 0 && (
+					<div className={css({ display: "flex", marginRight: "10px" })}>
+						<Label>Add link: </Label>
+					</div>
+				)}
+				{inactiveInputs.map(([key, { Icon }]) => (
+					<Tooltip
+						key={key}
+						content={() => <div>{startCase(key)}</div>}
+						showArrow
+					>
+						<Button
+							size={BUTTON_SIZE.compact}
+							shape={BUTTON_SHAPE.round}
+							kind={BUTTON_KIND.secondary}
+							overrides={{
+								BaseButton: {
+									style: {
+										marginRight: "5px"
 									}
-								}}
-							>
-								<Icon size={22} />
-							</Button>
-						</Tooltip>
-					))}
+								}
+							}}
+							onClick={() => {
+								setActiveInputs([...activeInputs, key]);
+							}}
+						>
+							<Icon size={20} />
+						</Button>
+					</Tooltip>
+				))}
 			</div>
 		</div>
 	);
@@ -161,16 +162,30 @@ const LinksField = ({ name, ...props }) => {
 	return (
 		<Field name={name} id={snakeCase(name)}>
 			{({
-				field: { value, onChange, ...field },
+				field: { onChange, ...field },
 				meta,
-				form: { setFieldValue }
+				form: { setFieldValue, setFieldError }
 			}) => (
 				<LinksInput
 					{...props}
-					error={
-						meta.touched && meta.error ? () => format.message(meta.error) : null
-					}
-					onChange={(newValue) => setFieldValue(name, newValue)}
+					error={meta.touched && meta.error ? meta.error : null}
+					onChange={(newValue) => {
+						setFieldValue(name, newValue);
+						if (!isEmpty(meta.error) && typeof meta.error === "object") {
+							// Remove errors for properties that aren't in new value
+							const newValueKeys = Object.keys(newValue);
+							const newError = Object.entries(meta.error).reduce(
+								(result, [key, val]) => {
+									if (newValueKeys.includes(key)) {
+										result[key] = val;
+									}
+									return result;
+								},
+								{}
+							);
+							setFieldError(name, newError);
+						}
+					}}
 					{...field}
 				/>
 			)}
@@ -182,7 +197,7 @@ LinksInput.propTypes = {
 	label: PropTypes.string,
 	caption: PropTypes.string,
 	value: PropTypes.object, // An object of string key/values.
-	error: PropTypes.string,
+	error: PropTypes.object,
 	onChange: PropTypes.func
 };
 

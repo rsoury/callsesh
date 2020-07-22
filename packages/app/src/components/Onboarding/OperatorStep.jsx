@@ -38,13 +38,18 @@ const listItemProps = {
 		},
 		ArtworkContainer: {
 			style: {
-				paddingBottom: "10px"
+				paddingBottom: "10px",
+				justifyContent: "flex-start",
+				width: "30px",
+				minWidth: "30px",
+				marginRight: "10px"
 			}
 		},
 		Content: {
 			style: {
 				height: "auto",
-				paddingBottom: "10px"
+				paddingBottom: "10px",
+				paddingRight: "0px"
 			}
 		}
 	}
@@ -110,56 +115,56 @@ export const schemaProperties = {
 	links: yup.object().shape({
 		website: yup
 			.string()
-			.test("is-url", "${path} must be a valid URL", (value) =>
+			.test("is-url", "Must be a valid URL", (value) =>
 				value ? isUrl(value) : true
 			),
 		twitter: yup
 			.string()
 			.test(
 				"is-twitter-url",
-				"${path} must be a valid Twitter URL",
+				"Must be a valid Twitter URL",
 				validateSocialUrl("twitter.com")
 			),
 		github: yup
 			.string()
 			.test(
 				"is-github-url",
-				"${path} must be a valid Github URL",
+				"Must be a valid Github URL",
 				validateSocialUrl("github.com")
 			),
 		linkedin: yup
 			.string()
 			.test(
 				"is-linkedin-url",
-				"${path} must be a valid LinkedIn URL",
+				"Must be a valid LinkedIn URL",
 				validateSocialUrl("linkedin.com")
 			),
 		facebook: yup
 			.string()
 			.test(
 				"is-facebook-url",
-				"${path} must be a valid Facebook URL",
+				"Must be a valid Facebook URL",
 				validateSocialUrl("facebook.com")
 			),
 		dribbble: yup
 			.string()
 			.test(
 				"is-dribbble-url",
-				"${path} must be a valid Dribbble URL",
+				"Must be a valid Dribbble URL",
 				validateSocialUrl("dribbble.com")
 			),
 		medium: yup
 			.string()
 			.test(
 				"is-medium-url",
-				"${path} must be a valid Medium URL",
+				"Must be a valid Medium URL",
 				validateSocialUrl("medium.com")
 			),
 		instagram: yup
 			.string()
 			.test(
 				"is-instagram-url",
-				"${path} must be a valid Instagram URL",
+				"Must be a valid Instagram URL",
 				validateSocialUrl("instagram.com")
 			)
 	})
@@ -185,7 +190,7 @@ const OperatorStep = ({ noToggle, values }) => {
 						Make money offering your assistance and collaborate through call
 						sessions!
 					</Subheader>
-					<div>
+					<ul className={css({ margin: "0px", padding: "0px" })}>
 						<ListItem artwork={AnonPhoneIcon} {...listItemProps}>
 							<ListItemLabel description="We create a call session between you and your caller to hide your personal phone number.">
 								Hidden phone numbers
@@ -206,7 +211,7 @@ const OperatorStep = ({ noToggle, values }) => {
 								Payouts guaranteed
 							</ListItemLabel>
 						</ListItem>
-					</div>
+					</ul>
 				</Cell>
 			</Grid>
 			{!noToggle && (
@@ -269,7 +274,7 @@ const OperatorStep = ({ noToggle, values }) => {
 								<MoneyField
 									name="hourlyRate"
 									label="What is your hourly rate?"
-									startEnhancer={() => <HourlyRateIcon />}
+									startEnhancer={() => <HourlyRateIcon size={20} />}
 									endEnhancer={() => <span>/hour</span>}
 									caption={`Callers will be charged per second based on this rate. Currency is in ${user.currency}.`}
 									placeholder="30"
