@@ -18,7 +18,7 @@ import {
 	SHAPE as BUTTON_SHAPE,
 	KIND as BUTTON_KIND
 } from "baseui/button";
-import { Send as SendIcon } from "react-feather";
+import { Send as SendIcon, Smile as SmileIcon } from "react-feather";
 import isEmpty from "is-empty";
 import {
 	StatefulTooltip as Tooltip,
@@ -265,20 +265,37 @@ const ChatScreen = ({ viewUser, onClose }) => {
 							/>
 						)}
 						renderComposer={(props) => (
-							<Composer
-								{...props}
-								textInputStyle={{
-									borderRadius: "18px",
-									backgroundColor: `rgba(0, 0, 0, 0.05)`,
-									marginRight: "10px",
-									padding: "10px",
-									height: "auto",
-									lineHeight: "21px"
-								}}
-								textInputProps={{
-									ref: inputRef
-								}}
-							/>
+							<div
+								className={css({
+									display: "flex",
+									alignItems: "center",
+									width: "100%"
+								})}
+							>
+								<Composer
+									{...props}
+									textInputStyle={{
+										borderRadius: "18px",
+										backgroundColor: `rgba(0, 0, 0, 0.05)`,
+										marginRight: "10px",
+										padding: "10px",
+										height: "auto",
+										lineHeight: "21px"
+									}}
+									textInputProps={{
+										ref: inputRef
+									}}
+								/>
+								<div className={css({ display: "flex", marginRight: "10px" })}>
+									<Button
+										size={BUTTON_SIZE.compact}
+										shape={BUTTON_SHAPE.round}
+										kind={BUTTON_KIND.secondary}
+									>
+										<SmileIcon size={20} />
+									</Button>
+								</div>
+							</div>
 						)}
 						renderSend={(props) => (
 							<Send
