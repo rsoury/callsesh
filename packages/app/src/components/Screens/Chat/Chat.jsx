@@ -1,3 +1,5 @@
+/* eslint-disable no-underscore-dangle */
+
 import React, { useState, useEffect, useCallback } from "react";
 import { useStyletron, withStyle } from "baseui";
 import PropTypes from "prop-types";
@@ -6,7 +8,6 @@ import {
 	Send,
 	LoadEarlier,
 	Time,
-	MessageText,
 	InputToolbar,
 	Composer
 } from "react-native-gifted-chat";
@@ -18,16 +19,19 @@ import {
 	SHAPE as BUTTON_SHAPE,
 	KIND as BUTTON_KIND
 } from "baseui/button";
-import { Send as SendIcon, Smile as SmileIcon } from "react-feather";
+import { Send as SendIcon } from "react-feather";
 import isEmpty from "is-empty";
 import {
 	StatefulTooltip as Tooltip,
 	PLACEMENT as TOOLTIP_PLACEMENT
 } from "baseui/tooltip";
 import MobileDetect from "mobile-detect";
+import Autolink from "react-native-autolink";
 
 import useUser from "@/hooks/use-user";
 import { ViewUserProps } from "@/utils/common-prop-types";
+import Link from "@/components/Link";
+import * as routes from "@/routes";
 
 import Header from "./Header";
 import ChatEmpty from "./ChatEmpty";
@@ -59,30 +63,39 @@ const ChatScreen = ({ viewUser, onClose }) => {
 				text: "How's your experience with Gifted Chat?",
 				createdAt: new Date(),
 				user: {
-					_id: viewUser,
+					_id: viewUser.id,
 					name: viewUser.givenName,
 					avatar: viewUser.picture
-				}
+				},
+				sent: true,
+				received: true,
+				pending: false
 			},
 			{
 				_id: 2,
 				text: "How are you?",
 				createdAt: new Date(),
 				user: {
-					_id: viewUser,
+					_id: viewUser.id,
 					name: viewUser.givenName,
 					avatar: viewUser.picture
-				}
+				},
+				sent: true,
+				received: false,
+				pending: false
 			},
 			{
 				_id: 1,
 				text: "Hello developer",
 				createdAt: new Date(),
 				user: {
-					_id: viewUser,
+					_id: viewUser.id,
 					name: viewUser.givenName,
 					avatar: viewUser.picture
-				}
+				},
+				sent: false,
+				received: false,
+				pending: true
 			}
 		]);
 	}, []);
@@ -112,6 +125,7 @@ const ChatScreen = ({ viewUser, onClose }) => {
 				!event.metaKey
 			) {
 				sendRef.current.click();
+				input.blur();
 			}
 		};
 		if (!isEmpty(input)) {
@@ -132,11 +146,14 @@ const ChatScreen = ({ viewUser, onClose }) => {
 		};
 	}, [inputRef, sendRef]);
 
-	const handleSend = useCallback((newMessages = []) => {
-		setMessages((previousMessages) =>
-			GiftedChat.append(previousMessages, newMessages)
-		);
-	}, []);
+	const handleSend = useCallback(
+		(newMessages = []) => {
+			setMessages((previousMessages) =>
+				GiftedChat.append(previousMessages, newMessages)
+			);
+		},
+		[inputRef]
+	);
 
 	const handleLoadEarlier = useCallback(() => {
 		console.log("loading earlier...");
@@ -219,83 +236,114 @@ const ChatScreen = ({ viewUser, onClose }) => {
 							</Button>
 						)}
 						renderTime={() => null}
-						renderMessageText={(props) => (
-							<Tooltip
-								content={() => (
-									<div>
-										<Time
-											{...props}
-											timeTextStyle={styleLR({
-												...theme.typography.LabelXSmall,
-												color: "#fff",
-												margin: "0px",
-												padding: "0px",
-												fontWeight: 700
-											})}
-											containerStyle={styleLR({
-												marginLeft: 0,
-												marginBottom: 0,
-												marginRight: 0
-											})}
+						renderMessageText={({ currentMessage, ...props }) => {
+							const textColor =
+								currentMessage.user._id === user.id ? "#fff" : "#000";
+							return (
+								<Tooltip
+									content={() => (
+										<div>
+											<Time
+												{...{ currentMessage, ...props }}
+												timeTextStyle={styleLR({
+													...theme.typography.LabelXSmall,
+													color: "#fff",
+													margin: "0px",
+													padding: "0px",
+													fontWeight: 700
+												})}
+												containerStyle={styleLR({
+													marginLeft: 0,
+													marginBottom: 0,
+													marginRight: 0
+												})}
+											/>
+										</div>
+									)}
+									placement={TOOLTIP_PLACEMENT.left}
+									showArrow
+								>
+									<div
+										className={css({
+											display: "inline-block",
+											marginLeft: "14px",
+											marginRight: "14px",
+											marginTop: "5px",
+											marginBottom: "5px",
+											lineHeight: "21px"
+										})}
+									>
+										<Autolink
+											text={currentMessage.text}
+											stripPrefix={false}
+											stripTrailingSlash={false}
+											webFallback
+											renderLink={(text, match) => (
+												<Link
+													href={routes.build.externalLink(
+														match.getAnchorHref()
+													)}
+													target="_blank"
+													rel="noopener noreferrer"
+													standard
+													style={{
+														color: `${textColor} !important`
+													}}
+												>
+													<span
+														className={css({
+															...theme.typography.ParagraphMedium,
+															color: `${textColor} !important`,
+															fontSize: "15px"
+														})}
+													>
+														{text}
+													</span>
+												</Link>
+											)}
+											renderText={(text) => (
+												<span
+													className={css({
+														...theme.typography.ParagraphMedium,
+														color: `${textColor} !important`,
+														fontSize: "15px"
+													})}
+												>
+													{text}
+												</span>
+											)}
 										/>
 									</div>
-								)}
-								placement={TOOLTIP_PLACEMENT.left}
-								showArrow
-							>
-								<View>
-									<MessageText
-										{...props}
-										textStyle={styleLR({
-											display: "inline-block",
-											marginLeft: 7,
-											marginRight: 7,
-											marginTop: 2.5,
-											marginBottom: 2.5
-										})}
-									/>
-								</View>
-							</Tooltip>
-						)}
+								</Tooltip>
+							);
+						}}
 						renderChatEmpty={ChatEmpty}
 						renderInputToolbar={(props) => (
 							<InputToolbar
 								{...props}
-								containerStyle={{ border: "none", marginBottom: "5px" }}
+								containerStyle={{
+									border: "none",
+									paddingBottom: "5px",
+									paddingTop: "5px",
+									backgroundColor: "#fff"
+								}}
 							/>
 						)}
 						renderComposer={(props) => (
-							<div
-								className={css({
-									display: "flex",
-									alignItems: "center",
-									width: "100%"
-								})}
-							>
-								<Composer
-									{...props}
-									textInputStyle={{
-										borderRadius: "18px",
-										backgroundColor: `rgba(0, 0, 0, 0.05)`,
-										marginRight: "10px",
-										padding: "10px",
-										height: "auto",
-										lineHeight: "21px"
-									}}
-									textInputProps={{
-										ref: inputRef
-									}}
-								/>
-								<div className={css({ display: "flex", marginRight: "10px" })}>
-									<Button
-										size={BUTTON_SIZE.compact}
-										shape={BUTTON_SHAPE.round}
-										kind={BUTTON_KIND.secondary}
-									>
-										<SmileIcon size={20} />
-									</Button>
-								</div>
-							</div>
+							<Composer
+								{...props}
+								textInputStyle={{
+									borderRadius: "18px",
+									backgroundColor: `rgba(0, 0, 0, 0.05)`,
+									marginRight: "10px",
+									padding: "10px",
+									height: "auto",
+									lineHeight: "21px"
+								}}
+								textInputProps={{
+									ref: inputRef
+								}}
+							/>
 						)}
 						renderSend={(props) => (
 							<Send
@@ -326,11 +374,22 @@ const ChatScreen = ({ viewUser, onClose }) => {
 								</Button>
 							</Send>
 						)}
+						renderChatFooter={() => (
+							<div>
+								<div
+									className={css({ paddingTop: "15px", paddingBottom: "5px" })}
+								/>
+							</div>
+						)}
 						alwaysShowSend
 						maxComposerHeight={200}
+						minComposerHeight={40}
 						onInputTextChanged={(textValue) => {
 							setSendDisabled(isEmpty(textValue));
 						}}
+						parsePatterns={(linkStyle) => [
+							{ type: "url", style: linkStyle, onPress: () => {} } // override url clicks
+						]}
 					/>
 				</View>
 			</div>

@@ -11,7 +11,9 @@ const withTM = require("next-transpile-modules")([
 	"react-native-communications",
 	"react-native-iphone-x-helper",
 	"@expo/react-native-action-sheet",
-	"react-native"
+	"react-native",
+	"react-native-autolink",
+	"autolinker"
 ]);
 const {
 	PHASE_PRODUCTION_SERVER,
