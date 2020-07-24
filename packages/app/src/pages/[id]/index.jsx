@@ -17,6 +17,7 @@ import Layout from "@/components/Layout";
 import ViewUserScreen from "@/components/Screens/ViewUser";
 import InSessionScreen from "@/components/Screens/InSession";
 import ChatScreen from "@/components/Screens/Chat";
+import SessionPageTitle from "@/components/SessionPageTitle";
 import request from "@/utils/request";
 import { ViewUserProps, ErrorPageProps } from "@/utils/common-prop-types";
 import * as routes from "@/routes";
@@ -34,7 +35,7 @@ const ViewUser = ({ viewUser: viewUserBase, error }) => {
 	const [user] = useUser();
 	const setUser = useSetUser();
 	const [, setUserRouteReferrer] = useUserRouteReferrer();
-	const [isChatOpen, setChatOpen] = useState(true);
+	const [isChatOpen, setChatOpen] = useState(false);
 
 	const md = new MobileDetect(window.navigator.userAgent);
 
@@ -241,41 +242,46 @@ const ViewUser = ({ viewUser: viewUserBase, error }) => {
 		[user]
 	);
 
-	// If users in session with each other, show full screen InSesssionScreen
-	if (inSessionWithViewUser) {
-		// If chat is open, render chat page
-		if (isChatOpen) {
-			return <ChatScreen viewUser={viewUser} onClose={handleCloseChat} />;
-		}
-
-		return (
-			<InSessionScreen
-				viewUser={viewUser}
-				onEndSession={handleEndSession}
-				onOpenChat={handleOpenChat}
-				onCall={handleCall}
-				onToggleMeter={handleToggleMeter}
-			/>
-		);
-	}
-
+	// If users in session with each other, show full screen InSessionScreen
+	// If chat is open, render chat page
 	return (
-		<Layout
-			style={{
-				[theme.mediaQuery.maxSmall]: {
-					paddingBottom: "240px"
-				}
-			}}
+		<SessionPageTitle
+			name={viewUser.givenName}
+			status={user.callSession.status}
 		>
-			<ViewUserScreen
-				error={error}
-				viewUser={viewUser}
-				actions={{
-					onStart: handleStartCallSession,
-					onToggleNotify: handleToggleNotify
-				}}
-			/>
-		</Layout>
+			{inSessionWithViewUser ? (
+				<>
+					{isChatOpen ? (
+						<ChatScreen viewUser={viewUser} onClose={handleCloseChat} />
+					) : (
+						<InSessionScreen
+							viewUser={viewUser}
+							onEndSession={handleEndSession}
+							onOpenChat={handleOpenChat}
+							onCall={handleCall}
+							onToggleMeter={handleToggleMeter}
+						/>
+					)}
+				</>
+			) : (
+				<Layout
+					style={{
+						[theme.mediaQuery.maxSmall]: {
+							paddingBottom: "240px"
+						}
+					}}
+				>
+					<ViewUserScreen
+						error={error}
+						viewUser={viewUser}
+						actions={{
+							onStart: handleStartCallSession,
+							onToggleNotify: handleToggleNotify
+						}}
+					/>
+				</Layout>
+			)}
+		</SessionPageTitle>
 	);
 };
 
