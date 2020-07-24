@@ -9,7 +9,8 @@ import {
 	LoadEarlier,
 	Time,
 	InputToolbar,
-	Composer
+	Composer,
+	Bubble
 } from "react-native-gifted-chat";
 import { View } from "react-native";
 import { StyledSpinnerNext, SIZE as SPINNER_SIZE } from "baseui/spinner";
@@ -27,6 +28,8 @@ import {
 } from "baseui/tooltip";
 import MobileDetect from "mobile-detect";
 import Autolink from "react-native-autolink";
+import Check from "baseui/icon/check";
+import { motion } from "framer-motion";
 
 import useUser from "@/hooks/use-user";
 import { ViewUserProps } from "@/utils/common-prop-types";
@@ -56,48 +59,42 @@ const ChatScreen = ({ viewUser, onClose }) => {
 
 	const md = new MobileDetect(window.navigator.userAgent);
 
+	// EMULATE: Set initial messages
 	useEffect(() => {
-		setMessages([
-			{
-				_id: 3,
-				text: "How's your experience with Gifted Chat?",
-				createdAt: new Date(),
-				user: {
-					_id: viewUser.id,
-					name: viewUser.givenName,
-					avatar: viewUser.picture
+		setTimeout(() => {
+			setMessages([
+				{
+					_id: 3,
+					text: "How's your experience with Gifted Chat?",
+					createdAt: new Date(),
+					user: {
+						_id: viewUser.id,
+						name: viewUser.givenName,
+						avatar: viewUser.picture
+					}
 				},
-				sent: true,
-				received: true,
-				pending: false
-			},
-			{
-				_id: 2,
-				text: "How are you?",
-				createdAt: new Date(),
-				user: {
-					_id: viewUser.id,
-					name: viewUser.givenName,
-					avatar: viewUser.picture
+				{
+					_id: 2,
+					text: "How are you?",
+					createdAt: new Date(),
+					user: {
+						_id: viewUser.id,
+						name: viewUser.givenName,
+						avatar: viewUser.picture
+					}
 				},
-				sent: true,
-				received: false,
-				pending: false
-			},
-			{
-				_id: 1,
-				text: "Hello developer",
-				createdAt: new Date(),
-				user: {
-					_id: viewUser.id,
-					name: viewUser.givenName,
-					avatar: viewUser.picture
-				},
-				sent: false,
-				received: false,
-				pending: true
-			}
-		]);
+				{
+					_id: 1,
+					text: "Hello developer",
+					createdAt: new Date(),
+					user: {
+						_id: viewUser.id,
+						name: viewUser.givenName,
+						avatar: viewUser.picture
+					}
+				}
+			]);
+		}, 1000);
 	}, []);
 
 	// Mount listeners that auto focus the text input composer
@@ -146,11 +143,52 @@ const ChatScreen = ({ viewUser, onClose }) => {
 		};
 	}, [inputRef, sendRef]);
 
+	// useEffect(() => {
+	// 	console.log(messages);
+	// }, [messages]);
+
+	// Handle message send callback
 	const handleSend = useCallback(
 		(newMessages = []) => {
+			const msgs = newMessages.map((msg) => ({
+				...msg,
+				pending: true,
+				sent: false,
+				received: false
+			}));
 			setMessages((previousMessages) =>
-				GiftedChat.append(previousMessages, newMessages)
+				GiftedChat.append(previousMessages, msgs)
 			);
+
+			// EMULATE: update message status
+			setTimeout(() => {
+				setMessages((previousMessages) =>
+					previousMessages.map((msg) =>
+						isEmpty(newMessages.find(({ _id }) => msg._id === _id))
+							? msg
+							: {
+									...msg,
+									pending: false,
+									sent: true,
+									received: false
+							  }
+					)
+				);
+			}, 1000);
+			setTimeout(() => {
+				setMessages((previousMessages) =>
+					previousMessages.map((msg) =>
+						isEmpty(newMessages.find(({ _id }) => msg._id === _id))
+							? msg
+							: {
+									...msg,
+									pending: false,
+									sent: true,
+									received: true
+							  }
+					)
+				);
+			}, 2000);
 		},
 		[inputRef]
 	);
@@ -315,6 +353,61 @@ const ChatScreen = ({ viewUser, onClose }) => {
 										/>
 									</div>
 								</Tooltip>
+							);
+						}}
+						renderTicks={() => null}
+						renderBubble={({ currentMessage, ...props }) => {
+							return (
+								<motion.div
+									initial={{ opacity: 0, y: 10 }}
+									animate={{ opacity: 1, y: 0 }}
+									className={css({
+										display: "flex",
+										alignItems: "center",
+										position: "relative"
+									})}
+								>
+									{(currentMessage.sent || currentMessage.received) && (
+										<div
+											className={css({
+												display: "flex",
+												alignItems: "center",
+												position: "absolute",
+												left: "25px"
+											})}
+										>
+											{currentMessage.sent && (
+												<div
+													className={css({
+														display: "flex",
+														color: theme.colors.accent300,
+														marginRight: "-10px"
+													})}
+												>
+													<Check size={20} />
+												</div>
+											)}
+											{currentMessage.received && (
+												<div
+													className={css({
+														display: "flex",
+														color: theme.colors.accent300,
+														marginRight: "-10px"
+													})}
+												>
+													<Check size={20} />
+												</div>
+											)}
+										</div>
+									)}
+									<div
+										className={css({
+											opacity: currentMessage.pending ? "0.5" : "1"
+										})}
+									>
+										<Bubble {...{ currentMessage, ...props }} />
+									</div>
+								</motion.div>
 							);
 						}}
 						renderChatEmpty={ChatEmpty}
