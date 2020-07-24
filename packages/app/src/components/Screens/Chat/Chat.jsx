@@ -10,10 +10,12 @@ import {
 	Time,
 	InputToolbar,
 	Composer,
-	Bubble
+	Bubble,
+	Message
 } from "react-native-gifted-chat";
 import { View } from "react-native";
 import { StyledSpinnerNext, SIZE as SPINNER_SIZE } from "baseui/spinner";
+import { Avatar } from "baseui/avatar";
 import {
 	Button,
 	SIZE as BUTTON_SIZE,
@@ -54,6 +56,7 @@ const ChatScreen = ({ viewUser, onClose }) => {
 	const [user] = useUser();
 	const [messages, setMessages] = useState([]);
 	const [isSendDisabled, setSendDisabled] = useState(true); // by default, no text in input
+	const [lastMessageSeen, setLastMessageSeen] = useState("");
 	const inputRef = React.createRef();
 	const sendRef = React.createRef();
 
@@ -143,10 +146,6 @@ const ChatScreen = ({ viewUser, onClose }) => {
 		};
 	}, [inputRef, sendRef]);
 
-	// useEffect(() => {
-	// 	console.log(messages);
-	// }, [messages]);
-
 	// Handle message send callback
 	const handleSend = useCallback(
 		(newMessages = []) => {
@@ -154,7 +153,8 @@ const ChatScreen = ({ viewUser, onClose }) => {
 				...msg,
 				pending: true,
 				sent: false,
-				received: false
+				received: false,
+				seen: false
 			}));
 			setMessages((previousMessages) =>
 				GiftedChat.append(previousMessages, msgs)
@@ -189,6 +189,11 @@ const ChatScreen = ({ viewUser, onClose }) => {
 					)
 				);
 			}, 2000);
+			setTimeout(() => {
+				setLastMessageSeen(
+					newMessages.filter((msg) => msg.user._id === user.id)[0]._id
+				);
+			}, 3000);
 		},
 		[inputRef]
 	);
@@ -274,6 +279,30 @@ const ChatScreen = ({ viewUser, onClose }) => {
 							</Button>
 						)}
 						renderTime={() => null}
+						renderMessage={({ currentMessage, ...props }) => (
+							<div className={css({ position: "relative" })}>
+								<Message {...{ currentMessage, ...props }} />
+								{currentMessage.user._id === user.id &&
+									currentMessage._id === lastMessageSeen && (
+										<div
+											className={css({
+												position: "absolute",
+												right: "0px",
+												bottom: "0px",
+												display: "flex",
+												borderRadius: "100%",
+												border: `2px solid #fff`
+											})}
+										>
+											<Avatar
+												name={viewUser.givenName}
+												size="scale600"
+												src={viewUser.picture}
+											/>
+										</div>
+									)}
+							</div>
+						)}
 						renderMessageText={({ currentMessage, ...props }) => {
 							const textColor =
 								currentMessage.user._id === user.id ? "#fff" : "#000";
