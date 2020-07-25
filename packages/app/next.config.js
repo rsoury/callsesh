@@ -3,18 +3,6 @@
 require("dotenv").config({ path: require("find-config")(".env") }); // eslint-disable-line
 const withSourceMaps = require("@zeit/next-source-maps")();
 const withPlugins = require("next-compose-plugins");
-const withTM = require("next-transpile-modules")([
-	"react-native-gifted-chat",
-	"react-native-lightbox",
-	"react-native-parsed-text",
-	"react-native-typing-animation",
-	"react-native-communications",
-	"react-native-iphone-x-helper",
-	"@expo/react-native-action-sheet",
-	"react-native",
-	"react-native-autolink",
-	"autolinker"
-]);
 const {
 	PHASE_PRODUCTION_SERVER,
 	PHASE_DEVELOPMENT_SERVER
@@ -98,9 +86,7 @@ module.exports = (phase, ...nextParams) => {
 				...alias,
 				// Add react alias -- this allows us to link other projects without referencing duplicate react libraries.
 				react: require.resolve("react"),
-				formik: require.resolve("formik"),
-				// Transform all direct `react-native` imports to `react-native-web`
-				"react-native$": "react-native-web"
+				formik: require.resolve("formik")
 			};
 
 			if (!isServer) {
@@ -156,8 +142,5 @@ module.exports = (phase, ...nextParams) => {
 	};
 
 	// Next plugins expect a config object and respond with an object.
-	return withPlugins([withSourceMaps, withTM], nextConfig)(
-		phase,
-		...nextParams
-	);
+	return withPlugins([withSourceMaps], nextConfig)(phase, ...nextParams);
 };

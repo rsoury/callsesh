@@ -16,7 +16,6 @@ import * as authManager from "@/server/auth-manager";
 import Layout from "@/components/Layout";
 import ViewUserScreen from "@/components/Screens/ViewUser";
 import InSessionScreen from "@/components/Screens/InSession";
-import ChatScreen from "@/components/Screens/Chat";
 import SessionPageTitle from "@/components/SessionPageTitle";
 import request from "@/utils/request";
 import { ViewUserProps, ErrorPageProps } from "@/utils/common-prop-types";
@@ -35,7 +34,6 @@ const ViewUser = ({ viewUser: viewUserBase, error }) => {
 	const [user] = useUser();
 	const setUser = useSetUser();
 	const [, setUserRouteReferrer] = useUserRouteReferrer();
-	const [isChatOpen, setChatOpen] = useState(true);
 
 	const md = new MobileDetect(window.navigator.userAgent);
 
@@ -71,8 +69,6 @@ const ViewUser = ({ viewUser: viewUserBase, error }) => {
 			setUserRouteReferrer(window.location.pathname);
 		}
 	}, [error]);
-
-	// TODO: Implement a useEffect that on Chat open connects to Twilio Chat Socket once
 
 	const handleStartCallSession = useCallback(
 		debounce((done = () => {}) => {
@@ -199,11 +195,7 @@ const ViewUser = ({ viewUser: viewUserBase, error }) => {
 	);
 
 	const handleOpenChat = useCallback(() => {
-		setChatOpen(true);
-	}, []);
-
-	const handleCloseChat = useCallback(() => {
-		setChatOpen(false);
+		console.log("Open chat...");
 	}, []);
 
 	const handleCall = useCallback((done = () => {}) => {
@@ -252,19 +244,13 @@ const ViewUser = ({ viewUser: viewUserBase, error }) => {
 			status={user.callSession.status}
 		>
 			{inSessionWithViewUser ? (
-				<>
-					{isChatOpen ? (
-						<ChatScreen viewUser={viewUser} onClose={handleCloseChat} />
-					) : (
-						<InSessionScreen
-							viewUser={viewUser}
-							onEndSession={handleEndSession}
-							onOpenChat={handleOpenChat}
-							onCall={handleCall}
-							onToggleMeter={handleToggleMeter}
-						/>
-					)}
-				</>
+				<InSessionScreen
+					viewUser={viewUser}
+					onEndSession={handleEndSession}
+					onOpenChat={handleOpenChat}
+					onCall={handleCall}
+					onToggleMeter={handleToggleMeter}
+				/>
 			) : (
 				<Layout
 					style={{
