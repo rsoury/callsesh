@@ -1,5 +1,3 @@
-/* eslint-disable no-underscore-dangle */
-
 import React, { createContext, useState, useEffect } from "react";
 import isEmpty from "is-empty";
 import get from "lodash/get";

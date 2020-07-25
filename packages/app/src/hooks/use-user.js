@@ -1,5 +1,3 @@
-/* eslint-disable no-underscore-dangle */
-
 /**
  * Hook to manage state in context.
  * Manage router here.
@@ -112,45 +110,42 @@ function useUser({ required } = {}) {
 				stripTrailingSlash(inSessionPathname)
 			) {
 				// Subscribe to call session updates
-				subscribe(
-					syncDocumentName.getCallSessionDocument(callSession.id),
-					(doc) => {
-						// Once subscribed, default callSession status to pending.
-						const { value = {} } = doc;
-						// value.status = value.status || CALL_SESSION_STATUS.pending;
+				const callSessionSync = new CallSessionSync(callSession.id);
 
-						// EMULATE: Default call session status
-						value.status = value.status || CALL_SESSION_STATUS.metering;
+				callSessionSync.listen("onConnect", (value) => {
+					// EMULATE: Default call session status
+					value.status = value.status || CALL_SESSION_STATUS.metering;
 
-						setUserState({
-							...user,
-							callSession: {
-								...callSession,
-								...value
-							}
-						});
+					setUserState({
+						...user,
+						callSession: {
+							...callSession,
+							...value
+						}
+					});
+				});
 
-						doc.on("updated", (event) => {
-							console.log(event);
+				callSessionSync.listen("onUpdate", (event) => {
+					console.log(event);
 
-							setUserState({
-								...user,
-								callSession: {
-									...callSession,
-									...event.value
-								}
-							});
-						});
+					setUserState({
+						...user,
+						callSession: {
+							...callSession,
+							...event.value
+						}
+					});
+				});
 
-						// On call session end.
-						doc.on("removed", () => {
-							setUserState({
-								...user,
-								callSession: {}
-							});
-						});
-					}
-				);
+				// On call session end.
+				callSessionSync.listen("onRemove", () => {
+					setUserState({
+						...user,
+						callSession: {}
+					});
+				});
+
+				callSessionSync.start();
 
 				// EMULATE: Event retrieval
 				// setTimeout(() => {

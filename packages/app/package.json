@@ -83,7 +83,6 @@
 		"styletron-engine-atomic": "^1.4.6",
 		"styletron-react": "^5.2.7",
 		"twilio": "^3.47.0",
-		"twilio-chat": "^4.0.0",
 		"twilio-sync": "^0.12.2",
 		"url-parse": "^1.4.7",
 		"yup": "^0.29.0"

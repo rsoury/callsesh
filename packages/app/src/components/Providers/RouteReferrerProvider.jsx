@@ -1,5 +1,3 @@
-/* eslint-disable no-underscore-dangle */
-
 import React, { createContext, useState, useEffect } from "react";
 import Router, { useRouter } from "next/router";
 

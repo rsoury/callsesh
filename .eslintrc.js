@@ -74,6 +74,7 @@ module.exports = {
 		"no-console": ["warn"],
 		"no-unused-vars": ["error", { ignoreRestSiblings: true }],
 		"no-template-curly-in-string": 0,
+		"no-underscore-dangle": 0,
 		"class-methods-use-this": 0,
 		"no-param-reassign": 0,
 		"react/jsx-props-no-spreading": 0,
