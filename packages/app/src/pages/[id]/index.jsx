@@ -35,7 +35,7 @@ const ViewUser = ({ viewUser: viewUserBase, error }) => {
 	const [user] = useUser();
 	const setUser = useSetUser();
 	const [, setUserRouteReferrer] = useUserRouteReferrer();
-	const [isChatOpen, setChatOpen] = useState(false);
+	const [isChatOpen, setChatOpen] = useState(true);
 
 	const md = new MobileDetect(window.navigator.userAgent);
 
@@ -71,6 +71,8 @@ const ViewUser = ({ viewUser: viewUserBase, error }) => {
 			setUserRouteReferrer(window.location.pathname);
 		}
 	}, [error]);
+
+	// TODO: Implement a useEffect that on Chat open connects to Twilio Chat Socket once
 
 	const handleStartCallSession = useCallback(
 		debounce((done = () => {}) => {

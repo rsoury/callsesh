@@ -153,8 +153,7 @@ const ChatScreen = ({ viewUser, onClose }) => {
 				...msg,
 				pending: true,
 				sent: false,
-				received: false,
-				seen: false
+				received: false
 			}));
 			setMessages((previousMessages) =>
 				GiftedChat.append(previousMessages, msgs)
@@ -228,6 +227,7 @@ const ChatScreen = ({ viewUser, onClose }) => {
 							_id: user.id,
 							name: user.givenName
 						}}
+						isTyping
 						loadEarlier={!isEmpty(messages)}
 						onLoadEarlier={handleLoadEarlier}
 						renderLoading={() => (
