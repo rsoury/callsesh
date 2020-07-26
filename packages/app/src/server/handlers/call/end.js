@@ -23,7 +23,7 @@ import { getUser } from "@/server/middleware/auth";
 import { ERROR_TYPES, CALL_SESSION_USER_TYPE } from "@/constants";
 import handleException from "@/utils/handle-exception";
 import checkCallSession from "@/utils/check-call-session";
-import * as syncDocumentName from "@/utils/get-sync-document-name";
+import syncIds from "@/utils/sync/identifiers";
 
 import * as utils from "./utils";
 
@@ -125,14 +125,9 @@ export default async function endCallSession(req, res) {
 	await Promise.all([
 		comms
 			.getSyncService()
-			.documents(
-				syncDocumentName.getCallSessionDocument(callerUser.callSession.id)
-			)
+			.documents(syncIds.getCallSession(callerUser.callSession.id))
 			.remove(),
-		comms.updateDocument(
-			syncDocumentName.getLiveOperatorDocument(operatorUser.id),
-			{}
-		)
+		comms.updateDocument(syncIds.getLiveOperator(operatorUser.id), {})
 	]);
 
 	// Fetch call logs
@@ -144,10 +139,11 @@ export default async function endCallSession(req, res) {
 		amount: interactions.length
 	});
 
-	// Calc total duration
+	// Calc total metered duration
+	// Start with total talk duration
 	// Use a 8 second buffer -- prevents charge on accidental call/voice-message
-	const durationBuffer = 8;
-	const totalDuration = interactions.reduce((sum, interaction) => {
+	const talkDurationBuffer = 8;
+	const totalTalkDuration = interactions.reduce((sum, interaction) => {
 		if (
 			interaction.outboundResourceType === "call" &&
 			interaction.outboundResourceStatus === "completed"
@@ -157,7 +153,7 @@ export default async function endCallSession(req, res) {
 					const data = JSON.parse(interaction.data);
 					const duration = parseInt(data.duration, 10);
 					// Only total interactions with a valid duration. -- ie. no dropouts or no-answers
-					if (duration >= durationBuffer) {
+					if (duration >= talkDurationBuffer) {
 						sum += duration;
 					}
 				} catch (e) {
@@ -168,8 +164,36 @@ export default async function endCallSession(req, res) {
 		return sum;
 	}, 0);
 
-	req.log.info(`Total talk duration calculated`, {
-		duration: totalDuration
+	// Then total metered duration.
+	const { meterStamps = [] } = operatorUser.callSession;
+	// If the last meter stamp has not ended, end it using the current timestamp.
+	const lastStamp = meterStamps[meterStamps.length - 1];
+	if (Array.isArray(lastStamp) ? lastStamp.length === 1 : false) {
+		const stopMeterTs = Date.now();
+		meterStamps[meterStamps.length - 1].push(stopMeterTs);
+	}
+	const totalMeterDuration = meterStamps.reduce(
+		(sum, [startTimestamp, stopTimestamp]) => {
+			const difference = stopTimestamp - startTimestamp;
+			sum += difference / 1000; // to seconds
+			return sum;
+		},
+		0
+	);
+
+	// ROADMAP:
+	// Determine overlap duration -- Where a call is made during metering
+	// Iterate over interactions where the call has been completed and there is duration data to the call.
+	// Determine call start and stop timestamps for a given interaction using the call duration.
+	// If there is overlap with the meter timestamps, sum up the overlap
+
+	// Subtract talk duration from metered duration.
+	const totalDuration = totalMeterDuration + totalTalkDuration;
+
+	req.log.info(`Total metered duration calculated`, {
+		totalTalkDuration,
+		totalMeterDuration,
+		totalDuration
 	});
 
 	// Check if any talk time accrued.

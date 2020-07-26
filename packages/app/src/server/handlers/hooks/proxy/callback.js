@@ -10,25 +10,6 @@ import * as comms from "@/server/comms";
 import { delayEndSession } from "@/server/workflows";
 import { CALL_SESSION_STATUS } from "@/constants";
 
-const expireSession = (sessionId) => {
-	// Overwrite expiry to 60 seconds -- end session in 60 seconds.
-	// Behaves as a window to reinitiate the call.
-	const t = new Date();
-	t.setSeconds(t.getSeconds() + 60);
-	return comms.getProxyService().sessions(sessionId).update({
-		dateExpiry: t
-	});
-};
-
-const prolongSession = (sessionId) => {
-	// Add expiry of a day -- should be more than enough to conduct a phone call.
-	const t = new Date();
-	t.setDate(t.getDate() + 1);
-	return comms.getProxyService().sessions(sessionId).update({
-		dateExpiry: t
-	});
-};
-
 export default async function proxyCallbackHook(req, res) {
 	const {
 		outboundResourceType,
@@ -52,7 +33,7 @@ export default async function proxyCallbackHook(req, res) {
 	switch (outboundResourceStatus) {
 		case "initiated":
 			// Give the call session an expiry of a day when initiating a call.
-			await prolongSession(interactionSessionSid);
+			await comms.prolongSession(interactionSessionSid);
 
 			// Update sync document status to in-call
 			await comms.updateDocument(`CallSession:${interactionSessionSid}`, {
@@ -64,7 +45,8 @@ export default async function proxyCallbackHook(req, res) {
 		case "completed":
 		case "busy":
 		case "no-answer":
-			await expireSession(interactionSessionSid);
+			// Small window before closing behaves as a window to reinitiate the call.
+			await comms.expireSession(interactionSessionSid);
 			await delayEndSession(interactionSessionSid);
 			// Update sync document status to in-call
 			await comms.updateDocument(`CallSession:${interactionSessionSid}`, {

@@ -18,8 +18,8 @@ import handleException from "@/utils/handle-exception";
 import stripTrailingSlash from "@/utils/strip-trailing-slash";
 import request from "@/utils/request";
 import isUserOperator from "@/utils/is-operator";
-import * as syncDocumentName from "@/utils/get-sync-document-name";
 import { CALL_SESSION_STATUS } from "@/constants";
+import { LiveOperatorSync, CallSessionSync } from "@/utils/sync";
 
 const getSyncClient = once(() => {
 	return request
@@ -169,18 +169,17 @@ function useUser({ required } = {}) {
 		// When the current user is not is a callSession but is a live operator, listen for callSession related events
 		if (isUserOperator(user) && user.isLive) {
 			// Subscribe to LiveOperator updates
-			subscribe(syncDocumentName.getLiveOperatorDocument(user.id), (doc) => {
-				doc.on("updated", (event) => {
-					console.log("UPDATED!");
-					console.log(event);
+			const liveOperatorSync = new LiveOperatorSync(user.id);
+			liveOperatorSync.listen("onUpdate", (event) => {
+				console.log("UPDATED!");
+				console.log(event);
 
-					setUserState({
-						...user,
-						callSession: {
-							...user.callSession,
-							...(event.value.callSession || {})
-						}
-					});
+				setUserState({
+					...user,
+					callSession: {
+						...user.callSession,
+						...(event.value.callSession || {})
+					}
 				});
 			});
 		}

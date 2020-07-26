@@ -20,8 +20,8 @@ import { getUser } from "@/server/middleware/auth";
 import isUserOperator from "@/utils/is-operator";
 import { ERROR_TYPES, CALL_SESSION_USER_TYPE } from "@/constants";
 import checkCallSession from "@/utils/check-call-session";
-import * as syncDocumentName from "@/utils/get-sync-document-name";
 import { delayEndSession } from "@/server/workflows";
+import syncIds from "@/utils/sync/identifiers";
 
 import * as utils from "./utils";
 
@@ -193,12 +193,9 @@ export default async function createCallSession(req, res) {
 
 	// Create sync document for Live Operator user
 	// -- This document should have automatically been created on frontend once operator went live
-	await comms.updateDocument(
-		syncDocumentName.getLiveOperatorDocument(operatorUser.id),
-		{
-			callSession: operatorCallSession
-		}
-	);
+	await comms.updateDocument(syncIds.getLiveOperator(operatorUser.id), {
+		callSession: operatorCallSession
+	});
 
 	// Store sessions against each use
 	await Promise.all([

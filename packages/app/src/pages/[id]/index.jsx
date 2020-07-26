@@ -26,6 +26,7 @@ import handleException, { alerts } from "@/utils/handle-exception";
 import ssrUser from "@/utils/ssr-user";
 import { useUserRouteReferrer } from "@/hooks/use-route-referrer";
 import checkCallSession from "@/utils/check-call-session";
+import { CallSessionSync } from "@/utils/sync";
 
 // We're referring to the currently viewed user, as the viewUser
 const ViewUser = ({ viewUser: viewUserBase, error }) => {
@@ -228,10 +229,15 @@ const ViewUser = ({ viewUser: viewUserBase, error }) => {
 		(done = () => {}) => {
 			if (user.callSession.status === CALL_SESSION_STATUS.metering) {
 				// Stop the meter
+				CallSessionSync.stopMeter().finally(() => {
+					done();
+				});
 			} else {
 				// Start the meter
+				CallSessionSync.startMeter().finally(() => {
+					done();
+				});
 			}
-			done();
 		},
 		[user]
 	);

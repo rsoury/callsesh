@@ -1,9 +1,9 @@
 import getHandler from "@/server/middleware";
 import { requireAuthentication } from "@/server/middleware/auth";
-import startCallSessionMeter from "@/server/handlers/meter/start";
+import toggleCallSessionMeter from "@/server/handlers/meter";
 
 const handler = getHandler();
 
-handler.use(requireAuthentication).post(startCallSessionMeter);
+handler.use(requireAuthentication).post(toggleCallSessionMeter);
 
 export default handler;

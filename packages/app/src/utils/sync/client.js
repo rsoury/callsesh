@@ -13,6 +13,8 @@ import request from "@/utils/request";
 import handleException from "@/utils/handle-exception";
 import * as routes from "@/routes";
 
+export { default as syncIds } from "./identifiers";
+
 const getSyncClient = once(() => {
 	return request
 		.get(routes.api.token)
@@ -61,13 +63,4 @@ export const subscribe = (uniqueId, handler) => {
 		.then((client) => client.document(uniqueId))
 		.then((doc) => handler(doc))
 		.catch((e) => handleException(e));
-};
-
-export const syncIds = {
-	getLiveOperator(id) {
-		return `LiveOperator:${id}`;
-	},
-	getCallSession(id) {
-		return `CallSession:${id}`;
-	}
 };

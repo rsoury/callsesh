@@ -125,6 +125,34 @@ export const endSession = async (sessionId) => {
 };
 
 /**
+ * Overwrite expiry to 60 seconds -- end session in 60 seconds.
+ *
+ * @param   {string}  sessionId
+ * @return  {Promise}
+ */
+export const expireSession = (sessionId) => {
+	const t = new Date();
+	t.setSeconds(t.getSeconds() + 60);
+	return proxyService.sessions(sessionId).update({
+		dateExpiry: t
+	});
+};
+
+/**
+ * Add expiry of a day -- should be more than enough to conduct a phone call.
+ *
+ * @param   {string}  sessionId
+ * @return  {Promise}
+ */
+export const prolongSession = (sessionId) => {
+	const t = new Date();
+	t.setDate(t.getDate() + 1);
+	return proxyService.sessions(sessionId).update({
+		dateExpiry: t
+	});
+};
+
+/**
  * Chat and Sync services work by using a unique Twilio based session token to make connections
  */
 // Access Token used for Video, IP Messaging, and Sync

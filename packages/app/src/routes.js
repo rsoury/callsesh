@@ -53,6 +53,7 @@ export const api = {
 	user: "/api/user",
 	call: "/api/call",
 	endCall: "/api/call/end",
+	meter: "/api/call/meter",
 	cards: "/api/cards",
 	live: "/api/live",
 	liveNotify: "/api/live/notify",
