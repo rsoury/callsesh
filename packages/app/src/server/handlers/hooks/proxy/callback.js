@@ -7,6 +7,7 @@
  */
 
 import * as comms from "@/server/comms";
+import * as authManager from "@/server/auth-manager";
 import { delayEndSession } from "@/server/workflows";
 import { CALL_SESSION_STATUS } from "@/constants";
 
@@ -48,9 +49,12 @@ export default async function proxyCallbackHook(req, res) {
 			// Small window before closing behaves as a window to reinitiate the call.
 			await comms.expireSession(interactionSessionSid);
 			await delayEndSession(interactionSessionSid);
-			// Update sync document status to in-call
+			// Update sync document status back to active or metering
+			const status = CALL_SESSION_STATUS.active;
+			// Get the operator in the session to determine whether or not a meter is running
+			// TODO: Create a new method in AuthManager to also be used in @/server/workflows to getUserInSession where I can pass the user type and session id to get the user automatically formatted as per findUser.
 			await comms.updateDocument(`CallSession:${interactionSessionSid}`, {
-				status: CALL_SESSION_STATUS.active
+				status
 			});
 			logger.info(
 				`Call ${outboundResourceStatus}. Expiry added to session for recovery. Inbound call marked completed to prevent voice bank.`

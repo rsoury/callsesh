@@ -55,6 +55,8 @@
 		"logrocket-react": "^4.0.1",
 		"mobile-detect": "^1.4.4",
 		"modern-normalize": "^0.6.0",
+		"moment": "^2.27.0",
+		"moment-range": "^4.0.2",
 		"nanoid": "^3.1.9",
 		"next": "^9.4.4",
 		"next-connect": "^0.8.1",

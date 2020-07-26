@@ -17,6 +17,8 @@ import * as authManager from "@/server/auth-manager";
 import * as comms from "@/server/comms";
 import stripe, { isPayoutsEnabled } from "@/server/stripe";
 import * as fees from "@/utils/fees";
+import Moment from "moment";
+import { extendMoment } from "moment-range";
 
 import { onNoMatch } from "@/server/middleware";
 import { getUser } from "@/server/middleware/auth";
@@ -26,6 +28,8 @@ import checkCallSession from "@/utils/check-call-session";
 import syncIds from "@/utils/sync/identifiers";
 
 import * as utils from "./utils";
+
+const moment = extendMoment(Moment);
 
 const service = comms.getProxyService();
 
@@ -139,27 +143,42 @@ export default async function endCallSession(req, res) {
 		amount: interactions.length
 	});
 
+	// Convert interactions into formatted completed calls
+	const completedCalls = interactions
+		.map((interaction) => {
+			if (
+				interaction.outboundResourceType === "call" &&
+				interaction.outboundResourceStatus === "completed"
+			) {
+				if (!isEmpty(interaction.data)) {
+					try {
+						const data = JSON.parse(interaction.data);
+						const duration = parseInt(data.duration, 10);
+
+						return {
+							...interaction,
+							data: {
+								...data,
+								duration
+							}
+						};
+					} catch (e) {
+						// empty catch
+					}
+				}
+			}
+			return {};
+		})
+		.filter((result) => !isEmpty(result));
+
 	// Calc total metered duration
 	// Start with total talk duration
 	// Use a 8 second buffer -- prevents charge on accidental call/voice-message
 	const talkDurationBuffer = 8;
-	const totalTalkDuration = interactions.reduce((sum, interaction) => {
-		if (
-			interaction.outboundResourceType === "call" &&
-			interaction.outboundResourceStatus === "completed"
-		) {
-			if (!isEmpty(interaction.data)) {
-				try {
-					const data = JSON.parse(interaction.data);
-					const duration = parseInt(data.duration, 10);
-					// Only total interactions with a valid duration. -- ie. no dropouts or no-answers
-					if (duration >= talkDurationBuffer) {
-						sum += duration;
-					}
-				} catch (e) {
-					// empty catch
-				}
-			}
+	const talkDuration = completedCalls.reduce((sum, { data: { duration } }) => {
+		// Only total interactions with a valid duration. -- ie. no dropouts or no-answers
+		if (duration >= talkDurationBuffer) {
+			sum += duration;
 		}
 		return sum;
 	}, 0);
@@ -172,7 +191,7 @@ export default async function endCallSession(req, res) {
 		const stopMeterTs = Date.now();
 		meterStamps[meterStamps.length - 1].push(stopMeterTs);
 	}
-	const totalMeterDuration = meterStamps.reduce(
+	const meterDuration = meterStamps.reduce(
 		(sum, [startTimestamp, stopTimestamp]) => {
 			const difference = stopTimestamp - startTimestamp;
 			sum += difference / 1000; // to seconds
@@ -181,18 +200,36 @@ export default async function endCallSession(req, res) {
 		0
 	);
 
-	// ROADMAP:
 	// Determine overlap duration -- Where a call is made during metering
-	// Iterate over interactions where the call has been completed and there is duration data to the call.
-	// Determine call start and stop timestamps for a given interaction using the call duration.
-	// If there is overlap with the meter timestamps, sum up the overlap
+	// We want to capture the time during metering that collides with talk time.
+	// Iterate over completed calls, and use talk start/stop times to determine how much meter time is overlap
+	const overlapDuration = completedCalls.reduce(
+		(sum, { dateUpdated, data: { duration } }) => {
+			const completeTimestamp = Date.parse(dateUpdated);
+			// Start timestamp is the complete timestamp minus the duration in milliseconds
+			const talkRange = moment.range(
+				completeTimestamp - duration * 1000,
+				completeTimestamp
+			);
+
+			meterStamps.forEach((stamp) => {
+				const meterRange = moment.range(stamp[0], stamp[1]);
+				if (talkRange.overlaps(meterRange)) {
+					sum += talkRange.intersect(meterRange).valueOf();
+				}
+			});
+			return sum;
+		},
+		0
+	);
 
 	// Subtract talk duration from metered duration.
-	const totalDuration = totalMeterDuration + totalTalkDuration;
+	const totalDuration = meterDuration + talkDuration - overlapDuration;
 
 	req.log.info(`Total metered duration calculated`, {
-		totalTalkDuration,
-		totalMeterDuration,
+		talkDuration,
+		meterDuration,
+		overlapDuration,
 		totalDuration
 	});
 

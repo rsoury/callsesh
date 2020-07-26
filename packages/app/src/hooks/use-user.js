@@ -6,50 +6,14 @@
 import { useEffect, useContext, useCallback } from "react";
 import Router from "next/router";
 import isEmpty from "is-empty";
-import once from "lodash/once";
-import { toaster } from "baseui/toast";
-import SyncClient from "twilio-sync";
-import ono from "@jsdevtools/ono";
 
 import * as routes from "@/routes";
 import appendReturnUrl from "@/utils/append-return-url";
 import { UserContext } from "@/components/Providers/UserProvider";
-import handleException from "@/utils/handle-exception";
 import stripTrailingSlash from "@/utils/strip-trailing-slash";
-import request from "@/utils/request";
 import isUserOperator from "@/utils/is-operator";
 import { CALL_SESSION_STATUS } from "@/constants";
 import { LiveOperatorSync, CallSessionSync } from "@/utils/sync";
-
-const getSyncClient = once(() => {
-	return request
-		.get(routes.api.token)
-		.then(({ data }) => data)
-		.then(({ token }) => {
-			// Only define syncClient once
-			const syncClient = new SyncClient(token.data);
-
-			// Handle new token update on access token expiry
-			syncClient.on("tokenAboutToExpire", () => {
-				request
-					.get(routes.api.token)
-					.then(({ token: newToken }) => {
-						syncClient.updateToken(newToken.data);
-					})
-					.catch((error) => {
-						handleException(ono(error, { onExpire: true }));
-					});
-			});
-
-			return syncClient;
-		})
-		.catch((e) => {
-			handleException(e);
-			toaster.negative(
-				`Oops! There's been an error with the live connection to the session. Please refresh the page to try again.`
-			);
-		});
-});
 
 /**
  * Helper function to set user state
@@ -58,22 +22,6 @@ export const useSetUser = () => {
 	const { setUser: setUserState } = useContext(UserContext);
 
 	return setUserState;
-};
-
-// Create a way to restrict the amount of calls to a given Sync handler
-const subscriptions = [];
-const subscribe = (uniqueId, handler) => {
-	if (!isEmpty(uniqueId)) {
-		if (subscriptions.includes(uniqueId)) {
-			return null;
-		}
-		subscriptions.push(uniqueId);
-	}
-
-	return getSyncClient()
-		.then((client) => client.document(uniqueId))
-		.then((doc) => handler(doc))
-		.catch((e) => handleException(e));
 };
 
 function useUser({ required } = {}) {
