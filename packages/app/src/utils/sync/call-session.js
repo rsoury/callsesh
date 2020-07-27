@@ -5,7 +5,7 @@ import { CALL_SESSION_STATUS } from "@/constants";
 import * as routes from "@/routes";
 import handleException, { alerts } from "@/utils/handle-exception";
 
-import { syncIds, subscribe, callbackEvents, events } from "./client";
+import { syncIds, subscribe, events } from "./client";
 import SyncAbstract from "./abstract";
 
 class CallSessionSync extends SyncAbstract {
@@ -54,18 +54,15 @@ class CallSessionSync extends SyncAbstract {
 				});
 			});
 
-			// EMULATE: Default call session status
-			// value.status = value.status || CALL_SESSION_STATUS.metering;
-
-			callbackEvents.emit(this.callbackTypes.onConnect, value);
+			events.emit(this.callbackTypes.onConnect, value);
 
 			doc.on("updated", (event) => {
-				callbackEvents.emit(this.callbackTypes.onUpdate, event);
+				events.emit(this.callbackTypes.onUpdate, event);
 			});
 
 			// On call session end.
 			doc.on("removed", () => {
-				callbackEvents.emit(this.callbackTypes.onRemove);
+				events.emit(this.callbackTypes.onRemove);
 			});
 		});
 	}

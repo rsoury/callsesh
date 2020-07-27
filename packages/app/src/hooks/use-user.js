@@ -61,8 +61,9 @@ function useUser({ required } = {}) {
 				const callSessionSync = new CallSessionSync(callSession.id);
 
 				callSessionSync.listen("onConnect", (value) => {
-					// EMULATE: Default call session status
-					value.status = value.status || CALL_SESSION_STATUS.metering;
+					console.log(value);
+					// EMULATE: Set call session status to metering
+					value.status = CALL_SESSION_STATUS.metering;
 
 					setUserState({
 						...user,

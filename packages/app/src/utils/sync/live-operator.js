@@ -1,6 +1,6 @@
 import isEmpty from "is-empty";
 
-import { syncIds, subscribe, callbackEvents } from "./client";
+import { syncIds, subscribe, events } from "./client";
 import SyncAbstract from "./abstract";
 
 class LiveOperatorSync extends SyncAbstract {
@@ -24,10 +24,10 @@ class LiveOperatorSync extends SyncAbstract {
 
 	start() {
 		subscribe(syncIds.getLiveOperator(this._userId), (doc) => {
-			callbackEvents.emit(this.callbackTypes.onConnect, doc.value || {});
+			events.emit(this.callbackTypes.onConnect, doc.value || {});
 
 			doc.on("updated", (event) => {
-				callbackEvents.emit(this.callbackTypes.onUpdate, event);
+				events.emit(this.callbackTypes.onUpdate, event);
 			});
 		});
 	}

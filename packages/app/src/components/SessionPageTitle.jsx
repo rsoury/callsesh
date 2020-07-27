@@ -3,10 +3,9 @@ import PropTypes from "prop-types";
 import Head from "next/head";
 import isEmpty from "is-empty";
 
-import { ChildrenProps } from "@/utils/common-prop-types";
 import { CALL_SESSION_STATUS } from "@/constants";
 
-const SessionPageTitle = ({ children, status, name }) => {
+const SessionPageTitle = ({ status, name }) => {
 	const withName = isEmpty(name) ? "" : ` with ${name}`;
 	let statusTitle = `In Session`;
 	if (status === CALL_SESSION_STATUS.metering) {
@@ -16,20 +15,16 @@ const SessionPageTitle = ({ children, status, name }) => {
 	}
 
 	return (
-		<>
-			<Head>
-				<title>
-					Callsesh | {statusTitle}
-					{withName}
-				</title>
-			</Head>
-			{children}
-		</>
+		<Head>
+			<title>
+				Callsesh | {statusTitle}
+				{withName}
+			</title>
+		</Head>
 	);
 };
 
 SessionPageTitle.propTypes = {
-	children: ChildrenProps.isRequired,
 	status: PropTypes.string,
 	name: PropTypes.string
 };

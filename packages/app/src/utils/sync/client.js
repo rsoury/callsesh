@@ -47,8 +47,6 @@ const getSyncClient = once(() => {
 
 export const events = new EventEmitter();
 
-export const callbackEvents = new EventEmitter();
-
 // Create a way to restrict the amount of calls to a given Sync handler
 const subscriptions = [];
 export const subscribe = (uniqueId, handler) => {

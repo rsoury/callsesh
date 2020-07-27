@@ -173,6 +173,13 @@ const Header = () => {
 								</div>
 							)}
 							showArrow
+							overrides={{
+								Body: {
+									style: {
+										zIndex: "99999999"
+									}
+								}
+							}}
 						>
 							<div
 								className={css({

@@ -42,7 +42,7 @@ const ViewUser = ({ viewUser: viewUserBase, error }) => {
 
 	// EMULATE: Add users into session
 	useEffect(() => {
-		if (isEmpty(error)) {
+		if (isEmpty(error) && !isEmpty(user)) {
 			setTimeout(() => {
 				setUser({
 					...user,
@@ -251,10 +251,13 @@ const ViewUser = ({ viewUser: viewUserBase, error }) => {
 	// If users in session with each other, show full screen InSessionScreen
 	// If chat is open, render chat page
 	return (
-		<SessionPageTitle
-			name={viewUser.givenName}
-			status={user.callSession.status}
-		>
+		<>
+			{!isEmpty(user.callSession) && (
+				<SessionPageTitle
+					name={viewUser.givenName}
+					status={user.callSession.status}
+				/>
+			)}
 			{inSessionWithViewUser ? (
 				<InSessionScreen
 					viewUser={viewUser}
@@ -281,7 +284,7 @@ const ViewUser = ({ viewUser: viewUserBase, error }) => {
 					/>
 				</Layout>
 			)}
-		</SessionPageTitle>
+		</>
 	);
 };
 
