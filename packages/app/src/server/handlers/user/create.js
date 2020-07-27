@@ -10,6 +10,7 @@ import { onError } from "@/server/middleware";
 import { getUser } from "@/server/middleware/auth";
 import * as authManager from "@/server/auth-manager";
 import stripe from "@/server/stripe";
+import * as chat from "@/server/chat";
 import isUsernameAvailable from "@/server/utils/is-username-available";
 
 import { schemaProperties } from "./utils";
@@ -33,7 +34,7 @@ export default async function createUser(req, res) {
 	const logger = req.log.child({ user: user.id });
 	logger.info("Register user");
 
-	const { stripeCustomerId, phoneNumber, country, currency } = user;
+	const { stripeCustomerId, phoneNumber, country, currency, chatUser } = user;
 
 	const {
 		email,
@@ -102,6 +103,18 @@ export default async function createUser(req, res) {
 		// Update email identity
 		await authManager.updateEmail(user.id, email, user.emailIdentity);
 		logger.info("Created email identity", { email });
+
+		// Create a user in chat service if no chat user exists.
+		if (isEmpty(chatUser)) {
+			const {
+				user: { id: chatUserId },
+				password: chatUserPassword
+			} = await chat.createUser(user);
+			updateParams.metadata.app.chatUser = {
+				id: chatUserId,
+				password: chatUserPassword
+			};
+		}
 
 		// Update operator details
 		if (operator) {

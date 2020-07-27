@@ -41,6 +41,9 @@ module.exports = (phase, ...nextParams) => {
 		AUTH0_CLIENT_SECRET: process.env.AUTH0_CLIENT_SECRET || "",
 		STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY || "",
 		WORKFLOWS_URL: process.env.WORKFLOWS_URL || "",
+		CHAT_URL: process.env.CHAT_URL || "",
+		CHAT_USER: process.env.CHAT_USER || "",
+		CHAT_PASS: process.env.CHAT_PASS || "",
 		POSTMARK_API_TOKEN: process.env.POSTMARK_API_TOKEN || ""
 	};
 

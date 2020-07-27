@@ -10,6 +10,7 @@ import { onError } from "@/server/middleware";
 import { getUser, updateAndGetUser } from "@/server/middleware/auth";
 import * as authManager from "@/server/auth-manager";
 import stripe from "@/server/stripe";
+import * as chat from "@/server/chat";
 
 import { schemaProperties } from "./utils";
 
@@ -100,12 +101,11 @@ export default async function updateUser(req, res) {
 	// Works by constructing a patchParams object by iterating over the request body
 	try {
 		let newUser = user;
-		const stripeUpdateParams = {};
+		const isNewEmail = typeof email === "string" && isEmail(email);
 
 		// Update email identity
-		if (typeof email === "string" && isEmail(email)) {
+		if (isNewEmail) {
 			await authManager.updateEmail(user.id, email, user.emailIdentity);
-			stripeUpdateParams.email = email;
 			// Apply changes to newUser
 			newUser = {
 				...newUser,
@@ -124,16 +124,34 @@ export default async function updateUser(req, res) {
 		// Update update
 		if (!isEmpty(patchParams)) {
 			newUser = await updateAndGetUser(req, patchParams);
-			stripeUpdateParams.description = `Caller: ${name}`;
-			stripeUpdateParams.name = name;
 			logger.info("Patch user data");
 		}
 
 		// Register the same data against the stripe customer entity if it exists.
 		const { stripeCustomerId } = user;
-		if (!isEmpty(stripeCustomerId) && !isEmpty(stripeUpdateParams)) {
-			await stripe.customers.update(stripeCustomerId, stripeUpdateParams);
-			logger.info("Patch stripe customer data");
+		if (!isEmpty(stripeCustomerId)) {
+			const stripeUpdateParams = {};
+			if (patchParams.name) {
+				stripeUpdateParams.description = `Caller: ${name}`;
+				stripeUpdateParams.name = name;
+			}
+			if (isNewEmail) {
+				stripeUpdateParams.email = email;
+			}
+			if (!isEmpty(stripeUpdateParams)) {
+				await stripe.customers.update(stripeCustomerId, stripeUpdateParams);
+				logger.info("Patch stripe customer data");
+			}
+		}
+
+		// Register the same data against the rocket chat user
+		const { chatUser } = user;
+		if (!isEmpty(chatUser)) {
+			const chatUpdateParams = patchParams; // destructures in chat.updateUser method
+			if (isNewEmail) {
+				chatUpdateParams.email = email;
+			}
+			await chat.updateUser(chatUser.id, chatUpdateParams);
 		}
 
 		return res.json({

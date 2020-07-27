@@ -11,6 +11,11 @@ export const uploadcare = {
 };
 export const workflowsUrl = process.env.WORKFLOWS_URL || "";
 export const gaTrackingId = process.env.GA_TRACKING_ID || "";
+export const chat = {
+	url: process.env.CHAT_URL || "",
+	user: process.env.CHAT_USER || "",
+	pass: process.env.CHAT_PASS || ""
+};
 export const auth0 = {
 	domain: process.env.AUTH0_DOMAIN || "",
 	clientId: process.env.AUTH0_CLIENT_ID || "",
