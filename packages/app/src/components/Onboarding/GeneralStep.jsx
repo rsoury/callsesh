@@ -130,7 +130,7 @@ const GeneralStep = ({ setFieldValue, values }) => {
 	}, []);
 
 	return (
-		<div>
+		<div className={css({ paddingBottom: "100px" })}>
 			<Grid>
 				<Cell span={12}>
 					<Heading>

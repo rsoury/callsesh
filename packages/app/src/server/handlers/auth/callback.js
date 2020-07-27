@@ -3,6 +3,7 @@
  */
 
 import auth, { getUser } from "@/server/middleware/auth";
+import * as chat from "@/server/chat";
 
 export default async function authCallback(req, res) {
 	try {
@@ -16,8 +17,10 @@ export default async function authCallback(req, res) {
 			error.message === "state missing from the response"
 		) {
 			try {
-				const user = await getUser(req);
+				const user = await getUser(req, { withContext: true });
 				if ((user || {}).emailVerified) {
+					// Update chat user email verified status
+					await chat.updateUser(user.chatUser.id, { verified: true });
 					res.writeHead(302, {
 						Location: `/#email_verified=true`
 					});

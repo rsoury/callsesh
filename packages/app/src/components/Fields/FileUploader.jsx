@@ -45,7 +45,7 @@ const FileUploaderField = ({ name, label, caption, images, fileSizeLimit }) => {
 						publicKey={config.publicKey}
 						id={`${id}_widget`}
 						name={`${id}_widget`}
-						tabs="file camera instagram facebook url gdrive gphotos dropbox vk"
+						tabs="file camera instagram facebook url gdrive gphotos dropbox onedrive"
 						previewStep
 						clearable
 						imagesOnly={images}

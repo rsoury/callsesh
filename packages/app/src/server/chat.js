@@ -1,6 +1,7 @@
 import isEmpty from "is-empty";
 import { getRequest } from "@callsesh/utils";
 import ono from "@jsdevtools/ono";
+import pickBy from "lodash/pickBy";
 
 import { chat as config } from "@/env-config";
 import handleException from "@/utils/handle-exception";
@@ -21,30 +22,32 @@ const getAuthHeaders = (user, pass) => {
 			"X-Auth-Token": data.authToken,
 			"X-User-Id": data.userId
 		}))
-		.catch(handleException);
+		.catch((e) => {
+			handleException(e);
+
+			throw e;
+		});
 };
 
 /**
  * Accept user data to create user in chat service
  */
-export const createUser = async (user) => {
+export const createUser = async (email, name, username, metadata = {}) => {
 	const headers = await getAuthHeaders();
 	const password = generateId(64);
 	return request
 		.post(
 			"users.create",
 			{
-				email: user.email,
-				name: user.nickname,
+				email,
+				name,
 				password,
-				username: user.username,
+				username,
 				roles: ["user"],
 				joinDefaultChannels: false,
 				requirePasswordChange: false,
-				verified: true,
-				customFields: {
-					appId: user.id
-				}
+				verified: false,
+				customFields: metadata
 			},
 			{
 				headers
@@ -56,7 +59,7 @@ export const createUser = async (user) => {
 			password
 		}))
 		.catch((e) => {
-			handleException(ono(e, user));
+			handleException(ono(e, { email, name, username }));
 
 			throw e;
 		});
@@ -66,7 +69,12 @@ export const createUser = async (user) => {
  * Accept data to update user in chat service.
  */
 export const updateUser = async (userId, params = {}) => {
-	const { email, name, username, picture } = params;
+	const { picture, ...updateParams } = pickBy(
+		params,
+		(value, key) =>
+			["email", "name", "username", "picture", "verified"].includes(key) &&
+			!isEmpty(value)
+	);
 	const headers = await getAuthHeaders();
 	const requestPromises = [];
 	if (!isEmpty(picture)) {
@@ -75,7 +83,7 @@ export const updateUser = async (userId, params = {}) => {
 				.post(
 					`users.setAvatar`,
 					{
-						image: picture,
+						avatarUrl: picture,
 						userId
 					},
 					{
@@ -85,22 +93,19 @@ export const updateUser = async (userId, params = {}) => {
 				.then(({ data }) => data)
 		);
 	}
-	const updateParams = {};
-	if (!isEmpty(email)) {
-		updateParams.email = email;
-	}
-	if (!isEmpty(name)) {
-		updateParams.name = name;
-	}
-	if (!isEmpty(username)) {
-		updateParams.username = username;
-	}
 	if (!isEmpty(updateParams)) {
-		requestPromises
-			.push(request.post(`users.update`), {
-				...updateParams
-			})
-			.then(({ data }) => data);
+		requestPromises.push(
+			request
+				.post(
+					`users.update`,
+					{
+						userId,
+						data: updateParams
+					},
+					{ headers }
+				)
+				.then(({ data }) => data)
+		);
 	}
 	if (requestPromises.length > 0) {
 		return Promise.all(requestPromises).catch((e) => {

@@ -104,18 +104,6 @@ export default async function createUser(req, res) {
 		await authManager.updateEmail(user.id, email, user.emailIdentity);
 		logger.info("Created email identity", { email });
 
-		// Create a user in chat service if no chat user exists.
-		if (isEmpty(chatUser)) {
-			const {
-				user: { id: chatUserId },
-				password: chatUserPassword
-			} = await chat.createUser(user);
-			updateParams.metadata.app.chatUser = {
-				id: chatUserId,
-				password: chatUserPassword
-			};
-		}
-
 		// Update operator details
 		if (operator) {
 			updateParams.metadata.user = {
@@ -129,6 +117,22 @@ export default async function createUser(req, res) {
 			// Assign role to user.
 			await authManager.assignOperatorRole(user.id);
 			logger.info("Assign user to Operator role");
+		}
+
+		// Create a user in chat service if no chat user exists. Add chat user data to update-params
+		if (isEmpty(chatUser)) {
+			const {
+				user: { _id: chatUserId },
+				password: chatUserPassword
+			} = await chat.createUser(email, name, username, {
+				appId: user.id
+			});
+			await chat.updateUser(chatUserId, { picture: updateParams.picture });
+			updateParams.metadata.app.chatUser = {
+				id: chatUserId,
+				password: chatUserPassword
+			};
+			logger.info("Created chat user", { chatUserId });
 		}
 
 		// Update update

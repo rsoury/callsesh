@@ -152,6 +152,10 @@ export default async function updateUser(req, res) {
 				chatUpdateParams.email = email;
 			}
 			await chat.updateUser(chatUser.id, chatUpdateParams);
+			logger.info("Patch chat user data", {
+				chatUserId: chatUser.id,
+				chatUpdateParams
+			});
 		}
 
 		return res.json({
