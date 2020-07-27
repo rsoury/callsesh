@@ -215,7 +215,7 @@ export default async function endCallSession(req, res) {
 			meterStamps.forEach((stamp) => {
 				const meterRange = moment.range(stamp[0], stamp[1]);
 				if (talkRange.overlaps(meterRange)) {
-					sum += talkRange.intersect(meterRange).valueOf();
+					sum += talkRange.intersect(meterRange).valueOf() / 1000; // to seconds
 				}
 			});
 			return sum;

@@ -234,12 +234,18 @@ const ViewUser = ({ viewUser: viewUserBase, error }) => {
 				});
 			} else {
 				// Start the meter
-				CallSessionSync.startMeter().finally(() => {
-					done();
-				});
+				CallSessionSync.startMeter()
+					.then(() => {
+						toaster.info(
+							`${viewUser.givenName} has been notified that the meter has started!`
+						);
+					})
+					.finally(() => {
+						done();
+					});
 			}
 		},
-		[user]
+		[user, viewUser]
 	);
 
 	// If users in session with each other, show full screen InSessionScreen

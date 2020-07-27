@@ -7,9 +7,9 @@ import { ManagementClient } from "auth0";
 import * as yup from "yup";
 import mapKeys from "lodash/mapKeys";
 import camelCase from "lodash/camelCase";
-import pick from "lodash/pick";
 import ono from "@jsdevtools/ono";
 
+import { CALL_SESSION_USER_TYPE } from "@/constants";
 import { auth0 as config } from "@/env-config";
 import generateId from "@/utils/generate-id";
 
@@ -63,8 +63,83 @@ export const updateUser = (
 	return client.updateUser({ id }, params);
 };
 
+/**
+ * Take user and format
+ */
+const formatUser = async (rawUser, withContext = false) => {
+	// Now that we have a user, validate. Make sure the view user is registered
+	const {
+		user_id: userId,
+		user_metadata: userMetadata = {},
+		app_metadata: appMetadata = {},
+		identities,
+		...userData
+	} = rawUser;
+
+	// Get email user data from identity
+	const emailAttributes = {
+		email: "",
+		emailVerified: false
+	};
+	const emailAttributesWithContext = {
+		emailIdentity: ""
+	};
+	const emailIdentity = identities.find(
+		({ connection }) => connection === "email"
+	);
+	if (!isEmpty(emailIdentity)) {
+		emailAttributes.email = emailIdentity.profileData.email;
+		emailAttributes.emailVerified = emailIdentity.profileData.email_verified;
+		emailAttributesWithContext.emailIdentity = emailIdentity.user_id;
+	}
+
+	const unformattedUser = withContext
+		? {
+				id: userId,
+				...userData,
+				...emailAttributes,
+				...emailAttributesWithContext,
+				...userMetadata,
+				...appMetadata
+		  }
+		: {
+				...userData,
+				...emailAttributes,
+				...userMetadata,
+				callSession: appMetadata.callSession || {}
+		  };
+
+	const user = mapKeys(unformattedUser, (value, key) => camelCase(key));
+
+	try {
+		await viewUserSchema.validate(user);
+	} catch (e) {
+		console.error(e); // eslint-disable-line
+		return {};
+	}
+
+	// Get view user roles
+	const roles = await getUserRoles(userId);
+	user.roles = withContext
+		? roles
+		: roles.map((role) => ({
+				name: role.name,
+				description: role.description
+		  }));
+
+	return user;
+};
+
 // Accepts auth0 getUsers parameters with options
 export const findUser = async (params, { withContext = false } = {}) => {
+	// Set default params
+	params = {
+		search_engine: "v3",
+		page: 0,
+		per_page: 10,
+		...params
+	};
+
 	// If withContext is false, restrict retrieved fields.
 	if (!withContext) {
 		params.fields = [
@@ -93,78 +168,12 @@ export const findUser = async (params, { withContext = false } = {}) => {
 		throw ono(new Error("Multiple users found"), { params });
 	}
 
-	// Now that we have a user, validate. Make sure the view user is registered
-	const {
-		user_id: userId,
-		user_metadata: userMetadata = {},
-		app_metadata: appMetadata = {},
-		identities,
-		...userData
-	} = users[0];
-	// Get publicly viewable call session data
-	const { callSession = {} } = appMetadata;
-
-	// Get email user data from identity
-	const emailAttributes = {
-		email: "",
-		emailVerified: false
-	};
-	const emailAttributesWithContext = {
-		emailIdentity: ""
-	};
-	const emailIdentity = identities.find(
-		({ connection }) => connection === "email"
-	);
-	if (!isEmpty(emailIdentity)) {
-		emailAttributes.email = emailIdentity.profileData.email;
-		emailAttributes.emailVerified = emailIdentity.profileData.email_verified;
-		emailAttributesWithContext.emailIdentity = emailIdentity.user_id;
-	}
-
-	const unformattedUser = withContext
-		? {
-				id: userId,
-				...userData,
-				...emailAttributes,
-				...emailAttributesWithContext,
-				...userMetadata,
-				...appMetadata,
-				callSession
-		  }
-		: {
-				...userData,
-				...emailAttributes,
-				...userMetadata,
-				callSession: pick(callSession, ["as", "with"])
-		  };
-
-	const user = mapKeys(unformattedUser, (value, key) => camelCase(key));
-
-	try {
-		await viewUserSchema.validate(user);
-	} catch (e) {
-		console.error(e); // eslint-disable-line
-		return {};
-	}
-
-	// Get view user roles
-	const roles = await getUserRoles(userId);
-	user.roles = withContext
-		? roles
-		: roles.map((role) => ({
-				name: role.name,
-				description: role.description
-		  }));
-
-	return user;
+	return formatUser(users[0], withContext);
 };
 
 export const getUserByUsername = (username, options) => {
 	return findUser(
 		{
-			search_engine: "v3",
-			page: 0,
-			per_page: 10,
 			q: `app_metadata.usernamespace:"${username.toLowerCase()}"`
 		},
 		options
@@ -174,13 +183,36 @@ export const getUserByUsername = (username, options) => {
 export const getUserByPhoneNumber = (phoneNumber, options) => {
 	return findUser(
 		{
-			search_engine: "v3",
-			page: 0,
-			per_page: 10,
 			q: `phone_number:"${phoneNumber}"`
 		},
 		options
 	);
+};
+
+/**
+ * Get user in session by sessionId and user type
+ */
+export const getUserInSession = async (
+	sessionId,
+	userType = CALL_SESSION_USER_TYPE.caller
+) => {
+	const usersInSession = await client.getUsers({
+		search_engine: "v3",
+		page: 0,
+		per_page: 10,
+		q: `app_metadata.callSession.id:"${sessionId}"`
+	});
+
+	if (isEmpty(usersInSession)) {
+		throw new Error("No users in this session");
+	}
+
+	// Using raw auth0 response data
+	const rawUser = usersInSession.find(
+		(u) => u.app_metadata.callSession.as === userType
+	);
+
+	return formatUser(rawUser, true);
 };
 
 export const isUsernameAvailable = async (username) => {
@@ -267,9 +299,6 @@ export const consumeOTP = (id) =>
 export const getUserByOTP = async (token, options) => {
 	const { otp, ...user } = await findUser(
 		{
-			search_engine: "v3",
-			page: 0,
-			per_page: 10,
 			q: `app_metadata.otp:"${token}"`
 		},
 		options
