@@ -56,8 +56,8 @@ class CallSessionSync extends SyncAbstract {
 
 			events.emit(this.callbackTypes.onConnect, value);
 
-			doc.on("updated", (event) => {
-				events.emit(this.callbackTypes.onUpdate, event);
+			doc.on("updated", ({ value: eventValue = {}, ...event }) => {
+				events.emit(this.callbackTypes.onUpdate, eventValue, event);
 			});
 
 			// On call session end.

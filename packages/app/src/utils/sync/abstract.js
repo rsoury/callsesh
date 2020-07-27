@@ -14,7 +14,9 @@ class SyncAbstract {
 				).join(", ")}`
 			);
 		}
-		events.on(this.callbackTypes[callbackName], fn);
+		const eventName = this.callbackTypes[callbackName];
+		events.removeAllListeners(eventName);
+		events.on(eventName, fn);
 	}
 
 	start() {

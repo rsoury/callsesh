@@ -12,6 +12,7 @@ import appendReturnUrl from "@/utils/append-return-url";
 import { UserContext } from "@/components/Providers/UserProvider";
 import stripTrailingSlash from "@/utils/strip-trailing-slash";
 import isUserOperator from "@/utils/is-operator";
+import { CALL_SESSION_STATUS } from "@/constants";
 import { LiveOperatorSync, CallSessionSync } from "@/utils/sync";
 
 /**
@@ -60,6 +61,8 @@ function useUser({ required } = {}) {
 				const callSessionSync = new CallSessionSync(callSession.id);
 
 				callSessionSync.listen("onConnect", (value) => {
+					value.status = CALL_SESSION_STATUS.active;
+
 					setUserState({
 						...user,
 						callSession: {
@@ -69,14 +72,14 @@ function useUser({ required } = {}) {
 					});
 				});
 
-				callSessionSync.listen("onUpdate", (event) => {
-					console.log(event);
+				callSessionSync.listen("onUpdate", (value) => {
+					console.log(value);
 
 					setUserState({
 						...user,
 						callSession: {
 							...callSession,
-							...event.value
+							...value
 						}
 					});
 				});
