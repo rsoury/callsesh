@@ -174,7 +174,7 @@ const Header = () => {
 						kind: BUTTON_KIND.secondary,
 						shape: BUTTON_SHAPE.pill,
 						endEnhancer() {
-							return <ArrowRight size={18} />;
+							return <ArrowRight size={18} style={{ marginTop: "1px" }} />;
 						},
 						onClick() {
 							return null;
