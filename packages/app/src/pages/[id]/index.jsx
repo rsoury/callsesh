@@ -195,10 +195,6 @@ const ViewUser = ({ viewUser: viewUserBase, error }) => {
 		[user]
 	);
 
-	const handleOpenChat = useCallback(() => {
-		console.log("Open chat...");
-	}, []);
-
 	const handleCall = useCallback((done = () => {}) => {
 		// Send an SMS and Toast when desktop, otherwise trigger tel:
 		request
@@ -262,7 +258,6 @@ const ViewUser = ({ viewUser: viewUserBase, error }) => {
 				<InSessionScreen
 					viewUser={viewUser}
 					onEndSession={handleEndSession}
-					onOpenChat={handleOpenChat}
 					onCall={handleCall}
 					onToggleMeter={handleToggleMeter}
 				/>

@@ -18,6 +18,8 @@ import { ViewUserProps } from "@/utils/common-prop-types";
 import isUserOperator from "@/utils/is-operator";
 import useUser from "@/hooks/use-user";
 import { CALL_SESSION_STATUS } from "@/constants";
+import Link from "@/components/Link";
+import * as routes from "@/routes";
 
 // import Notice from "./Notice";
 import With from "./With";
@@ -178,12 +180,19 @@ const InSessionScreen = ({
 									>
 										End Session
 									</ActionButton>
-									<ActionButton
-										onClick={handleOpenChat}
-										startEnhancer={() => <ChatIcon size={26} />}
+									<Link
+										button
+										standard
+										newWindow
+										href={`${routes.page.chat}?with=${viewUser.username}`}
 									>
-										Chat
-									</ActionButton>
+										<ActionButton
+											onClick={handleOpenChat}
+											startEnhancer={() => <ChatIcon size={26} />}
+										>
+											Chat
+										</ActionButton>
+									</Link>
 									<ActionButton
 										onClick={handleCall}
 										isLoading={isCalling}

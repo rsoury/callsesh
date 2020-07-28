@@ -6,10 +6,12 @@ import ono from "@jsdevtools/ono";
 import isEmpty from "is-empty";
 
 import * as chat from "@/server/chat";
+import * as authManager from "@/server/auth-manager";
 import getHandler from "@/server/middleware";
 import { requireAuthentication, getUser } from "@/server/middleware/auth";
 import { chat as config } from "@/env-config";
 import handleException from "@/utils/handle-exception";
+import checkSession from "@/utils/check-call-session";
 
 const OpenChat = () => null;
 
@@ -38,18 +40,25 @@ export async function getServerSideProps({
 
 		let roomId = "";
 		if (!isEmpty(withUsername)) {
-			const { room = {} } = await chat
-				.getClient()
-				.post("im.create", {
-					username: user.username,
-					usernames: [withUsername]
-				})
-				.then(({ data: d }) => d)
-				.catch((e) => {
-					handleException(e);
-				});
-			if (room?.rid) {
-				roomId = room.rid;
+			// Check if withUsername is in a call session with the current user.
+			const withUser = await authManager.getUserByUsername(withUsername, {
+				withContext: true
+			});
+			const { isSame: isInSameSession } = checkSession(user, withUser);
+			if (isInSameSession) {
+				const { room = {} } = await chat
+					.getClient()
+					.post("im.create", {
+						username: user.username,
+						usernames: [withUsername]
+					})
+					.then(({ data: d }) => d)
+					.catch((e) => {
+						handleException(e);
+					});
+				if (room?.rid) {
+					roomId = room.rid;
+				}
 			}
 		}
 
