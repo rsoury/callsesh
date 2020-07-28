@@ -6,6 +6,8 @@
 import { useEffect } from "react";
 import ono from "@jsdevtools/ono";
 import isEmpty from "is-empty";
+import WebSocket from "isomorphic-ws";
+import Url from "url-parse";
 
 import * as chat from "@/server/chat";
 import getHandler from "@/server/middleware";
@@ -13,25 +15,56 @@ import { requireAuthentication, getUser } from "@/server/middleware/auth";
 import { chat as config } from "@/env-config";
 import handleException from "@/utils/handle-exception";
 import FullscreenLoader from "@/components/FullscreenLoader";
-import request from "@/utils/request";
+import generateId from "@/utils/generate-id";
+// import request from "@/utils/request";
 
 // eslint-disable-next-line
 const OpenChat = ({ token, roomId }) => {
 	useEffect(() => {
-		request
-			.post(`${config.url}/api/v1/login`, {
-				resume: token
-			})
-			.then(({ data }) => data)
-			.then(({ data = {} }) => {
-				const { authToken: resumeToken, userId } = data;
-				window.location.href = `${
-					config.url
-				}?resumeToken=${resumeToken}&userId=${userId}${
-					isEmpty(roomId) ? "" : `&rid=${roomId}`
-				}`;
+		const url = new Url(config.url);
+		const wsUrl = `${url.protocol === "https" ? "wss" : "ws"}://${
+			url.host
+		}/websocket`;
+		console.log(wsUrl);
+		const ws = new WebSocket(wsUrl);
+		ws.onopen = () => {
+			// login from frontend.
+			const uniqueId = generateId(32);
+			console.log(uniqueId);
+			ws.send({
+				msg: "method",
+				method: "login",
+				id: uniqueId,
+				params: [{ resume: token }]
 			});
+			console.log(`Login sent...`);
+		};
+
+		ws.onclose = () => {
+			console.log("disconnected");
+		};
+
+		ws.onmessage = (data) => {
+			console.log("Socket message:");
+			console.log(data);
+		};
 	}, []);
+
+	// useEffect(() => {
+	// 	request
+	// 		.post(`${config.url}/api/v1/login`, {
+	// 			resume: token
+	// 		})
+	// 		.then(({ data }) => data)
+	// 		.then(({ data = {} }) => {
+	// 			const { authToken: resumeToken, userId } = data;
+	// 			window.location.href = `${
+	// 				config.url
+	// 			}?resumeToken=${resumeToken}&userId=${userId}${
+	// 				isEmpty(roomId) ? "" : `&rid=${roomId}`
+	// 			}`;
+	// 		});
+	// }, []);
 
 	return (
 		<FullscreenLoader>
