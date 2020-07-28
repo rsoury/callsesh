@@ -94,13 +94,7 @@ const PayoutsCard = ({ ...props }) => {
 				</div>
 			) : (
 				<div>
-					<Link
-						href={PAYOUTS_SUBMISSION_FORM_URL}
-						target="_blank"
-						rel="noopener noreferrer"
-						standard
-						button
-					>
+					<Link href={PAYOUTS_SUBMISSION_FORM_URL} newWindow standard button>
 						<Button
 							startEnhancer={() => <FormIcon size={22} />}
 							endEnhancer={() => <ChevronRight size={22} />}

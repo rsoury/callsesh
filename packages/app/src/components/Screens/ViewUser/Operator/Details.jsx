@@ -103,7 +103,7 @@ const ViewUserOperatorDetails = ({ viewUser }) => {
 					<ListItem artwork={() => <LinkIcon size={20} />} {...listItemProps}>
 						<ListItemLabel>
 							<Paragraph margin="0px">
-								<Link href={website} target="_blank" standard highlight>
+								<Link href={website} newWindow standard highlight>
 									{website}
 								</Link>
 							</Paragraph>
@@ -130,7 +130,7 @@ const ViewUserOperatorDetails = ({ viewUser }) => {
 									placement={TOOLTIP_PLACEMENT.bottom}
 								>
 									<div className={css({ display: "flex", marginRight: "5px" })}>
-										<Link href={value} target="_blank" button standard>
+										<Link href={value} newWindow button standard>
 											<Button
 												size={BUTTON_SIZE.compact}
 												shape={BUTTON_SHAPE.round}

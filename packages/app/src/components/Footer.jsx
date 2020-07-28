@@ -42,7 +42,7 @@ const Footer = () => {
 			text: "Add to Home Screen",
 			href: `https://www.notion.so/webdoodle/A-step-by-step-guide-on-adding-Callsesh-to-your-mobile-home-screen-20a37538de0a4291836cbbcdb0004088`,
 			standard: true,
-			target: "_blank"
+			newWindow: true
 		}
 	];
 
@@ -104,8 +104,7 @@ const Footer = () => {
 					A{" "}
 					<Link
 						href="https://webdoodle.com.au/"
-						target="_blank"
-						rel="noopener noreferrer"
+						newWindow
 						standard
 						style={{ borderBottom: "1px solid" }}
 					>

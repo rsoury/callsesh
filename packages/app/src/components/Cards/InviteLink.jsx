@@ -35,7 +35,7 @@ const InviteLinkCard = ({ ...props }) => {
 		<Card {...cardProps} {...props}>
 			<Paragraph>
 				Invite others earn a commission on their sessions.{" "}
-				<Link href={routes.page.referrals} highlight standard target="_blank">
+				<Link href={routes.page.referrals} highlight standard newWindow>
 					Learn more
 				</Link>
 			</Paragraph>

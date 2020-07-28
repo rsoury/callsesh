@@ -11,23 +11,28 @@ const request = getRequest({
 	baseURL: `${config.url}/api/v1/`
 });
 
-const getAuthHeaders = (user, pass) => {
+export const login = (user, password) => {
 	return request
 		.post(`login`, {
-			user: user || config.user,
-			password: pass || config.pass
+			user,
+			password
 		})
 		.then(({ data }) => data)
-		.then(({ data }) => ({
-			"X-Auth-Token": data.authToken,
-			"X-User-Id": data.userId
-		}))
 		.catch((e) => {
 			handleException(e);
 
 			throw e;
 		});
 };
+
+export const getAuthHeaders = (user, pass) => {
+	return login(user || config.user, pass || config.pass).then(({ data }) => ({
+		"X-Auth-Token": data.authToken,
+		"X-User-Id": data.userId
+	}));
+};
+
+export const getClient = () => request;
 
 /**
  * Accept user data to create user in chat service

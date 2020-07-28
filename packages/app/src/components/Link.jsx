@@ -13,6 +13,7 @@ const Link = ({
 	style: styleProp,
 	pass,
 	button,
+	newWindow,
 	...props
 }) => {
 	const [css, theme] = useStyletron();
@@ -34,9 +35,22 @@ const Link = ({
 		style.textDecoration = "none !important";
 	}
 
+	let newWindowProps = {};
+	if (newWindow) {
+		newWindowProps = {
+			target: "_blank",
+			rel: "noopener noreferrer"
+		};
+	}
+
 	if (standard) {
 		return (
-			<StyledLink href={href} {...props} className={css(style)}>
+			<StyledLink
+				href={href}
+				{...newWindowProps}
+				{...props}
+				className={css(style)}
+			>
 				{children}
 			</StyledLink>
 		);
@@ -44,7 +58,7 @@ const Link = ({
 
 	return (
 		<NextLink href={href} passHref={pass}>
-			<StyledLink {...props} className={css(style)}>
+			<StyledLink {...newWindowProps} {...props} className={css(style)}>
 				{children}
 			</StyledLink>
 		</NextLink>
@@ -58,7 +72,8 @@ Link.propTypes = {
 	standard: PropTypes.bool,
 	style: PropTypes.object,
 	pass: PropTypes.bool, // Pass Href to child -- only for next link
-	button: PropTypes.bool // Whether or not to treat children like a button
+	button: PropTypes.bool, // Whether or not to treat children like a button
+	newWindow: PropTypes.bool // Whether or not to open in new window
 };
 
 Link.defaultProps = {
@@ -66,7 +81,8 @@ Link.defaultProps = {
 	standard: false,
 	style: {},
 	pass: false,
-	button: false
+	button: false,
+	newWindow: false
 };
 
 export default Link;

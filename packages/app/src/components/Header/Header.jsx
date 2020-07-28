@@ -2,13 +2,19 @@
 
 import React from "react";
 import { useStyletron } from "baseui";
-import { Button, KIND as BUTTON_KIND } from "baseui/button";
+import {
+	Button,
+	KIND as BUTTON_KIND,
+	SHAPE as BUTTON_SHAPE,
+	SIZE as BUTTON_SIZE
+} from "baseui/button";
 import {
 	CreditCard as WalletIcon,
 	User as ProfileIcon,
 	LogOut as LogoutIcon,
 	LogIn as LoginIcon,
-	Edit2 as SignupIcon
+	Edit2 as SignupIcon,
+	MessageSquare as ChatIcon
 } from "react-feather";
 import isEmpty from "is-empty";
 import { Unstable_AppNavBar as AppNavBar } from "baseui/app-nav-bar";
@@ -17,6 +23,7 @@ import { useRouter } from "next/router";
 import Url from "url-parse";
 import { Tag, KIND as TAG_KIND } from "baseui/tag";
 import { StatefulTooltip as Tooltip } from "baseui/tooltip";
+import ArrowRight from "baseui/icon/arrow-right";
 
 import Link from "@/components/Link";
 import * as routes from "@/routes";
@@ -27,43 +34,72 @@ import Logo from "./Logo";
 import VerifyEmail from "./VerifyEmail";
 import InSessionTopBar from "./InSessionTopBar";
 
-const NavItem = ({ label, href, ...props }) => (
-	<Link href={href} button {...props}>
-		{label}
-	</Link>
-);
+const NavItemPrimitive = ({ label, ...props }) => {
+	const [css, theme] = useStyletron();
 
-const getNavItemButton = ([, theme]) => ({
-	label,
-	href,
-	buttonKind,
-	...props
-}) => (
-	<Link href={href} button {...props}>
-		<Button
-			kind={buttonKind || BUTTON_KIND.tertiary}
-			overrides={{
-				BaseButton: {
-					style: {
-						width: "100%",
-						justifyContent: "flex-start",
-						[theme.mediaQuery.maxSmall]: {
-							backgroundColor: "rgba(0, 0, 0, 0)",
-							color: theme.colors.primary
-						}
-					}
-				}
-			}}
+	return (
+		<div
+			className={css({
+				marginRight: "-10px",
+				marginLeft: "-10px",
+				...theme.typography.LabelSmall,
+				fontSize: "15px"
+			})}
 		>
-			{label}
-		</Button>
-	</Link>
-);
+			<Link button {...props}>
+				{label}
+			</Link>
+		</div>
+	);
+};
+
+const NavItemButtonPrimitive = ({ label, buttonProps = {}, ...props }) => {
+	const [css, theme] = useStyletron();
+
+	return (
+		<div className={css({ marginRight: "-10px", marginLeft: "-10px" })}>
+			<Link button {...props}>
+				<Button
+					size={BUTTON_SIZE.compact}
+					{...buttonProps}
+					overrides={{
+						BaseButton: {
+							style: {
+								width: "100%",
+								justifyContent: "flex-start",
+								fontSize: "15px",
+								[theme.mediaQuery.maxMedium]: {
+									backgroundColor: "rgba(0, 0, 0, 0)",
+									color: theme.colors.primary,
+									paddingTop: "0px",
+									paddingRight: "0px",
+									paddingLeft: "0px",
+									paddingBottom: "0px",
+									fontSize: "inherit !important"
+								}
+							}
+						}
+					}}
+				>
+					{label}
+				</Button>
+			</Link>
+		</div>
+	);
+};
+
+const NavItem = (props) => <NavItemPrimitive {...props} />;
+
+const NavItemButton = (props) => <NavItemButtonPrimitive {...props} />;
 
 const NavItemLabel = ({ label }) => label;
 
+const getNavIcon = (Icon) => (props) => (
+	<Icon {...props} size={30} style={{ marginRight: "10px" }} />
+);
+
 const Header = () => {
-	const [css, theme] = useStyletron();
+	const [css] = useStyletron();
 	const [user, isLoading] = useUser();
 	const router = useRouter();
 
@@ -78,7 +114,8 @@ const Header = () => {
 						height: "72px",
 						display: "flex",
 						alignItems: "center",
-						justifyContent: "center"
+						justifyContent: "center",
+						marginRight: "-20px"
 					})}
 				>
 					<Skeleton height={45} width={100} />
@@ -86,24 +123,25 @@ const Header = () => {
 			)
 		}));
 	} else if (isEmpty(user)) {
-		const NavItemButton = getNavItemButton([css, theme]);
 		navProps.mainNav = [
 			{
-				icon: LoginIcon,
+				icon: getNavIcon(LoginIcon),
 				item: {
 					label: "Log In",
 					href: appendReturnUrl(routes.page.login),
-					standard: true
+					standard: true,
+					buttonProps: {
+						kind: BUTTON_KIND.tertiary
+					}
 				},
 				mapItemToNode: NavItemButton,
 				mapItemToString: NavItemLabel
 			},
 			{
-				icon: SignupIcon,
+				icon: getNavIcon(SignupIcon),
 				item: {
 					label: "Sign Up",
 					href: appendReturnUrl(routes.page.signup),
-					buttonKind: BUTTON_KIND.primary,
 					standard: true
 				},
 				mapItemToNode: NavItemButton,
@@ -116,7 +154,7 @@ const Header = () => {
 		navProps.userImgUrl = user.picture;
 		navProps.userNav = [
 			{
-				icon: LogoutIcon,
+				icon: getNavIcon(LogoutIcon),
 				item: {
 					label: "Logout",
 					href: routes.page.logout,
@@ -128,13 +166,34 @@ const Header = () => {
 		];
 		navProps.mainNav = [
 			{
-				icon: ProfileIcon,
+				icon: getNavIcon(ChatIcon),
+				item: {
+					label: "Chat",
+					href: routes.page.chat,
+					buttonProps: {
+						kind: BUTTON_KIND.secondary,
+						shape: BUTTON_SHAPE.pill,
+						endEnhancer() {
+							return <ArrowRight size={18} />;
+						},
+						onClick() {
+							return null;
+						}
+					},
+					standard: true,
+					newWindow: true
+				},
+				mapItemToNode: NavItemButton,
+				mapItemToString: NavItemLabel
+			},
+			{
+				icon: getNavIcon(ProfileIcon),
 				item: { label: "Profile", href: routes.page.settings.profile },
 				mapItemToNode: NavItem,
 				mapItemToString: NavItemLabel
 			},
 			{
-				icon: WalletIcon,
+				icon: getNavIcon(WalletIcon),
 				item: {
 					label: "Wallet",
 					href: routes.page.settings.wallet

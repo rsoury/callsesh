@@ -22,7 +22,8 @@ export const page = {
 	},
 	becomeAnOperator: "/become-an-operator",
 	referrals: "/referrals",
-	faq: "/faq"
+	faq: "/faq",
+	chat: "/chat"
 };
 
 export const build = {

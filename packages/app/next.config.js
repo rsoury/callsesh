@@ -29,7 +29,8 @@ module.exports = (phase, ...nextParams) => {
 		STRIPE_CONNECT_ID: process.env.STRIPE_CONNECT_ID || "",
 		SENTRY_DSN: process.env.SENTRY_DSN || "",
 		UPLOADCARE_PUBLIC_KEY: process.env.UPLOADCARE_PUBLIC_KEY || "",
-		GA_TRACKING_ID: process.env.GA_TRACKING_ID || ""
+		GA_TRACKING_ID: process.env.GA_TRACKING_ID || "",
+		CHAT_URL: process.env.CHAT_URL || ""
 	};
 	const serverEnv = {
 		SESSION_SECRET: process.env.SESSION_SECRET || "",
@@ -41,7 +42,6 @@ module.exports = (phase, ...nextParams) => {
 		AUTH0_CLIENT_SECRET: process.env.AUTH0_CLIENT_SECRET || "",
 		STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY || "",
 		WORKFLOWS_URL: process.env.WORKFLOWS_URL || "",
-		CHAT_URL: process.env.CHAT_URL || "",
 		CHAT_USER: process.env.CHAT_USER || "",
 		CHAT_PASS: process.env.CHAT_PASS || "",
 		POSTMARK_API_TOKEN: process.env.POSTMARK_API_TOKEN || ""

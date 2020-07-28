@@ -56,7 +56,7 @@ const CallLinkCard = ({ ...props }) => {
 			</CopyToClipboard>
 			<ParagraphXSmall>
 				Or you can visit your call link here{" "}
-				<Link href={operatorLink} standard target="_blank" highlight>
+				<Link href={operatorLink} standard newWindow highlight>
 					<strong>{operatorLink}</strong>
 				</Link>
 			</ParagraphXSmall>
