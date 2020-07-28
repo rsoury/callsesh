@@ -264,7 +264,9 @@ const Header = () => {
 						</Tooltip>
 					</div>
 				}
-				onNavItemSelect={({ item: { item: { href, standard } = {} } }) => {
+				onNavItemSelect={({
+					item: { item: { href, standard, newWindow } = {} }
+				}) => {
 					if (!isEmpty(href)) {
 						if (typeof href === "object") {
 							return router.push(href);
@@ -281,6 +283,9 @@ const Header = () => {
 										query: url.query
 									});
 								}
+							}
+							if (newWindow) {
+								return window.open(href);
 							}
 							window.location.href = href;
 						}
