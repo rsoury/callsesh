@@ -58,7 +58,7 @@
 		"moment": "^2.27.0",
 		"moment-range": "^4.0.2",
 		"nanoid": "^3.1.9",
-		"next": "^9.4.4",
+		"next": "^9.5.0",
 		"next-connect": "^0.8.1",
 		"next-seo": "^4.7.1",
 		"nl2br": "^0.0.3",
