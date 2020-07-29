@@ -1,0 +1,3 @@
+chat.callsesh.webdoodle.com.au {
+	reverse_proxy 127.0.0.1:3000
+}
