@@ -472,7 +472,6 @@ const Profile = () => {
 											onClick={() => setEditType(EDIT_TYPES.lastName)}
 										/>
 									)}
-									caption="Your last name is hidden from public view"
 								>
 									<Paragraph margin="0">{user.familyName}</Paragraph>
 								</LabelControl>

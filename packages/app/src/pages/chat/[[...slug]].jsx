@@ -4,6 +4,7 @@
 
 import ono from "@jsdevtools/ono";
 import isEmpty from "is-empty";
+import Url from "url-parse";
 
 import * as chat from "@/server/chat";
 import * as authManager from "@/server/auth-manager";
@@ -20,7 +21,7 @@ const handler = getHandler();
 export async function getServerSideProps({
 	req,
 	res,
-	query: { with: withUsername = "" }
+	query: { slug, with: withUsername = "", path }
 }) {
 	handler.use(requireAuthentication);
 	try {
@@ -38,6 +39,24 @@ export async function getServerSideProps({
 		);
 		const token = data.authToken || "";
 
+		// If deep linking to a room by the chat service, use rid query param
+		if (Array.isArray(slug)) {
+			if (slug[0] === "room") {
+				const redirectUrl = new Url(`${config.url}/home`, true);
+				redirectUrl.set("query", {
+					...redirectUrl.query,
+					resumeToken: token,
+					userId: user.chatUser.id,
+					return_url: path
+				});
+				res.writeHead(302, {
+					Location: redirectUrl.href
+				});
+				res.end();
+				return { props: {} };
+			}
+		}
+
 		let roomId = "";
 		if (!isEmpty(withUsername)) {
 			// Check if withUsername is in a call session with the current user.
@@ -48,10 +67,15 @@ export async function getServerSideProps({
 			if (isInSameSession) {
 				const { room = {} } = await chat
 					.getClient()
-					.post("im.create", {
-						username: user.username,
-						usernames: [withUsername]
-					})
+					.post(
+						"im.create",
+						{
+							username: withUsername
+						},
+						{
+							headers: chat.getAuthHeaderParams(user.chatUser.id, token)
+						}
+					)
 					.then(({ data: d }) => d)
 					.catch((e) => {
 						handleException(e);
@@ -62,10 +86,18 @@ export async function getServerSideProps({
 			}
 		}
 
+		const redirectUrl = new Url(`${config.url}/home`, true);
+		const qs = {
+			...redirectUrl.query,
+			resumeToken: token,
+			userId: user.chatUser.id
+		};
+		if (!isEmpty(roomId)) {
+			qs.return_url = `/direct/${roomId}`;
+		}
+		redirectUrl.set("query", qs);
 		res.writeHead(302, {
-			Location: `${config.url}/home?resumeToken=${token}&userId=${
-				user.chatUser.id
-			}${isEmpty(roomId) ? "" : `&rid=${roomId}`}`
+			Location: redirectUrl.href
 		});
 		res.end();
 		return { props: {} };

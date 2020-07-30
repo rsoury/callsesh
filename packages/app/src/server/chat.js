@@ -25,11 +25,15 @@ export const login = (user, password) => {
 		});
 };
 
+export const getAuthHeaderParams = (userId, authToken) => ({
+	"X-Auth-Token": authToken,
+	"X-User-Id": userId
+});
+
 export const getAuthHeaders = (user, pass) => {
-	return login(user || config.user, pass || config.pass).then(({ data }) => ({
-		"X-Auth-Token": data.authToken,
-		"X-User-Id": data.userId
-	}));
+	return login(user || config.user, pass || config.pass).then(({ data }) =>
+		getAuthHeaderParams(data.userId, data.authToken)
+	);
 };
 
 export const getClient = () => request;
