@@ -43,20 +43,34 @@
 	display: none !important;
 }
 
-#login-card .rc-button.register {
+#login-card .rc-button.register,
+#login-card .rc-button.forgot-password {
 	display: none !important;
 }
 
-#login-card {
+body:not(.admin_show_form) #login-card {
 	display: none !important;
 }
 
 .login-terms {
-	margin-top: 30px;
+	margin-top: 30px !important;
 }
 
 /* Chat Window */
 /* Remove Directory Icon */
 header.sidebar__header button[aria-label="Directory"]{
+	display: none !important;
+}
+
+/* Channel name */
+#rocket-chat .messages-container .rc-header__name {
+	font-weight: 900 !important;
+}
+#rocket-chat .messages-container .rc-header__name .rc-header__username {
+	font-weight: 400 !important;
+}
+
+/* Page Specific */
+body.account-profile-page .rcx-field__hint{
 	display: none !important;
 }

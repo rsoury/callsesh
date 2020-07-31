@@ -19,6 +19,7 @@ import stripe, { isPayoutsEnabled } from "@/server/stripe";
 import * as fees from "@/utils/fees";
 import Moment from "moment";
 import { extendMoment } from "moment-range";
+import * as chat from "@/server/chat";
 
 import { onNoMatch } from "@/server/middleware";
 import { getUser } from "@/server/middleware/auth";
@@ -64,7 +65,8 @@ export default async function endCallSession(req, res) {
 
 	req.log.info(`Counterpart user found - start ending call session`, {
 		sessionId,
-		...utils.logParams(counterpartUser)
+		userId: counterpartUser.id,
+		username: counterpartUser.username
 	});
 
 	// Ensure the status is closed before ending -- for automatic call session ending
@@ -98,16 +100,16 @@ export default async function endCallSession(req, res) {
 			? user
 			: counterpartUser;
 
-	req.log.info(`Users retrieved from applications`, {
-		operator: operatorUser.username,
-		caller: callerUser.username
-	});
+	// Create a logger using users set with roles.
+	const logger = req.log.child(utils.logParams(operatorUser, callerUser));
+
+	logger.info(`Users retrieved from applications`);
 
 	// Check if users are still in a call session together with appropriate roles
 	// ie. Call session could have already ended, and new sessions could be in place.
 	const { isSame: valid } = checkCallSession(callerUser, operatorUser);
 	if (!valid) {
-		req.log.warn(`Call session is invalid`, { sessionId });
+		logger.warn(`Call session is invalid`, { sessionId });
 		return res.status(400).json({
 			success: false,
 			code: 400
@@ -120,7 +122,7 @@ export default async function endCallSession(req, res) {
 		authManager.endCallSession(callerUser.id)
 	]);
 
-	req.log.info(`User call sessions reset`, {
+	logger.info(`User call sessions reset`, {
 		operator: operatorUser.callSession,
 		caller: callerUser.callSession
 	});
@@ -139,7 +141,7 @@ export default async function endCallSession(req, res) {
 		.sessions(sessionId)
 		.interactions.list({ limit: 99999999 });
 
-	req.log.info(`Interactions retrieved for session`, {
+	logger.info(`Interactions retrieved for session`, {
 		amount: interactions.length
 	});
 
@@ -226,7 +228,7 @@ export default async function endCallSession(req, res) {
 	// Subtract talk duration from metered duration.
 	const totalDuration = meterDuration + talkDuration - overlapDuration;
 
-	req.log.info(`Total metered duration calculated`, {
+	logger.info(`Total metered duration calculated`, {
 		talkDuration,
 		meterDuration,
 		overlapDuration,
@@ -242,10 +244,10 @@ export default async function endCallSession(req, res) {
 					cancellation_reason: "abandoned"
 				}
 			);
-			req.log.debug(`Cancelled payment intent`, { cancelledPayment });
-			req.log.info(`Cancelling payment...`);
+			logger.debug(`Cancelled payment intent`, { cancelledPayment });
+			logger.info(`Cancelling payment...`);
 		}
-		req.log.info(`Call session ended with insufficient talk time.`);
+		logger.info(`Call session ended with insufficient talk time.`);
 		return res.json({
 			success: true
 		});
@@ -329,7 +331,7 @@ export default async function endCallSession(req, res) {
 				}
 			}
 		});
-		req.log.info({ payoutAmount }, `Pending payout amount updated`);
+		logger.info(`Pending payout amount updated`, { payoutAmount });
 	}
 
 	// Cancel pre-auth payment intent. Create new payment intent with chargeParams
@@ -342,13 +344,13 @@ export default async function endCallSession(req, res) {
 	// Payments will be captured manually for now.
 	const payment = await stripe.paymentIntents.create(chargeParams);
 
-	req.log.debug(`Successful payment intent`, {
+	logger.debug(`Successful payment intent`, {
 		payment,
 		cancelledPayment,
 		chargeParams
 	});
 
-	req.log.info(`Charge payment create with latest call session details.`, {
+	logger.info(`Charge payment create with latest call session details.`, {
 		chargeAmount,
 		applicationFee
 	});
@@ -371,18 +373,15 @@ export default async function endCallSession(req, res) {
 				}
 			}
 		});
-		req.log.info(
-			{
-				earnings,
-				referralFee,
-				newEarnings,
-				referrerUser: {
-					username: referrerUser.username,
-					name: referrerUser.nickname
-				}
-			},
-			`Updated the referral user's earnings`
-		);
+		logger.info(`Updated the referral user's earnings`, {
+			earnings,
+			referralFee,
+			newEarnings,
+			referrerUser: {
+				username: referrerUser.username,
+				name: referrerUser.nickname
+			}
+		});
 	}
 
 	// Notify both parties in the session with a call summary via text.
@@ -429,6 +428,32 @@ export default async function endCallSession(req, res) {
 			].join("\n") // new line: https://stackoverflow.com/questions/24218945/how-do-i-add-a-line-break-in-my-twilio-sms-message
 		)
 	]);
+
+	// Ensure both users can remain in contact over chat by ensuring direct message session is created.
+	if (!isEmpty(user.chatUser.id)) {
+		const { data: { authToken: chatAuthToken = "" } = {} } = await chat.login(
+			user.username,
+			user.chatUser.password
+		);
+		const { room = {} } = await chat
+			.getClient()
+			.post(
+				"im.create",
+				{
+					username: counterpartUser.username
+				},
+				{
+					headers: chat.getAuthHeaderParams(user.chatUser.id, chatAuthToken)
+				}
+			)
+			.then(({ data: d }) => d)
+			.catch((e) => {
+				handleException(e);
+			});
+		logger.info(`User direct message session ensured`, { room });
+	} else {
+		logger.warn(`No chat user exists for user`);
+	}
 
 	return res.json({
 		success: true
