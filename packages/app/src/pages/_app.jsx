@@ -41,9 +41,7 @@ const theme = {
 };
 
 const Container = styled("div", {
-	maxWidth: "1024px",
-	margin: "0 auto",
-	width: "100%"
+	position: "relative"
 });
 
 class App extends NextApp {

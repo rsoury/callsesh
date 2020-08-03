@@ -4,8 +4,7 @@ import { Grid, Cell } from "baseui/layout-grid";
 import {
 	Button,
 	SIZE as BUTTON_SIZE,
-	KIND as BUTTON_KIND,
-	SHAPE as BUTTON_SHAPE
+	KIND as BUTTON_KIND
 } from "baseui/button";
 // import { Play as PlayIcon } from "react-feather";
 import {
@@ -28,11 +27,23 @@ const HeroSection = () => {
 			id="hero"
 			className={css({
 				position: "relative",
-				padding: "75px 0"
+				padding: "25px 0 50px"
 			})}
 		>
 			<Grid gridGutter={16}>
-				<Cell span={12}>
+				<Cell span={[12, 2, 4]}>
+					<img
+						src="/static/assets/woman-on-laptop-in-coffee-shop.jpg"
+						alt="woman-on-laptop-in-coffee-shop"
+						className={css({
+							objectFit: "cover",
+							height: "100%",
+							borderRadius: theme.borders.radius400,
+							width: "100%"
+						})}
+					/>
+				</Cell>
+				<Cell span={[12, 6, 8]}>
 					<div
 						className={css({
 							height: "100%",
@@ -42,8 +53,8 @@ const HeroSection = () => {
 							justifyContent: "center",
 							position: "relative",
 							zIndex: "100",
-							textAlign: "center",
-							padding: "0 0 75px 0"
+							// textAlign: "center",
+							padding: "50px 0 50px 0"
 						})}
 					>
 						<h1
@@ -72,17 +83,30 @@ const HeroSection = () => {
 						<div
 							className={css({
 								width: "100%",
-								marginBottom: "30px"
+								marginBottom: "20px"
 							})}
 						>
 							<SignupActionButton />
 						</div>
-						<div className={css({ textAlign: "center", width: "100%" })}>
+						<div className={css({ width: "100%" })}>
 							<Button
-								kind={BUTTON_KIND.secondary}
+								kind={BUTTON_KIND.minimal}
 								size={BUTTON_SIZE.large}
-								shape={BUTTON_SHAPE.pill}
-								endEnhancer={() => <PlayIcon size={20} />}
+								endEnhancer={() => (
+									<div
+										className={css({
+											width: "28px",
+											height: "28px",
+											backgroundColor: theme.colors.borderOpaque,
+											display: "flex",
+											alignItems: "center",
+											justifyContent: "center",
+											borderRadius: "100%"
+										})}
+									>
+										<PlayIcon size={24} />
+									</div>
+								)}
 								onClick={() => setShowingVideo(true)}
 							>
 								How it works?
@@ -90,34 +114,6 @@ const HeroSection = () => {
 						</div>
 					</div>
 				</Cell>
-				{/* <Cell span={12}>
-					<div
-						className={css({
-							display: "flex",
-							alignItems: "center",
-							justifyContent: "center",
-							textAlign: "center"
-						})}
-					>
-						<div
-							className={css({
-								display: "inline-flex",
-								padding: "10px",
-								backgroundColor: theme.colors.accent
-							})}
-						>
-							<iframe
-								title="Callsesh - How it works - Youtube Video"
-								width="560"
-								height="315"
-								src="https://www.youtube-nocookie.com/embed/_gOmJp6eCF4"
-								frameBorder=""
-								allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
-								allowFullscreen
-							/>
-						</div>
-					</div>
-				</Cell> */}
 			</Grid>
 			<Modal
 				onClose={() => setShowingVideo(false)}
@@ -125,12 +121,19 @@ const HeroSection = () => {
 				isOpen={isShowingVideo}
 				animate
 				autoFocus
-				size={MODAL_SIZE.full}
+				size={MODAL_SIZE.auto}
 				role={MODAL_ROLE.dialog}
 				overrides={{
 					Root: {
 						style: {
 							zIndex: "999"
+						}
+					},
+					Close: {
+						style: {
+							zIndex: "100",
+							borderRadius: "100px",
+							backgroundColor: "#fff"
 						}
 					}
 				}}
@@ -138,8 +141,8 @@ const HeroSection = () => {
 				<ModalBody>
 					<iframe
 						title="Callsesh - How it works - Youtube Video"
-						width="100%"
-						height="100%"
+						width="560"
+						height="315"
 						src="https://www.youtube-nocookie.com/embed/_gOmJp6eCF4"
 						frameBorder=""
 						allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
