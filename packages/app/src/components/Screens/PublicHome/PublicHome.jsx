@@ -5,6 +5,8 @@
 import React from "react";
 import { useStyletron } from "baseui";
 
+import Layout from "@/components/Layout";
+
 import HeroSection from "./Sections/Hero";
 import HowSection from "./Sections/How";
 
@@ -12,10 +14,15 @@ const PublicHomeScreen = () => {
 	const [css] = useStyletron();
 
 	return (
-		<div id="callsesh-public-home-screen" className={css({ maxWidth: "100%" })}>
-			<HeroSection />
-			<HowSection />
-		</div>
+		<Layout>
+			<div
+				id="callsesh-public-home-screen"
+				className={css({ maxWidth: "100%" })}
+			>
+				<HeroSection />
+				<HowSection />
+			</div>
+		</Layout>
 	);
 };
 

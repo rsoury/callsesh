@@ -10,11 +10,10 @@ import ssrUser from "@/utils/ssr-user";
 const Index = ({ user }) => {
 	const isAuthenticated = !isEmpty(user);
 
-	return (
-		<Layout>
-			{isAuthenticated ? <UserHomeScreen /> : <PublicHomeScreen />}
-		</Layout>
-	);
+	if (isAuthenticated) {
+		return <UserHomeScreen />;
+	}
+	return <PublicHomeScreen />;
 };
 
 export function getServerSideProps({

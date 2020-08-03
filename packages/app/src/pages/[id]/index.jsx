@@ -4,7 +4,6 @@
  */
 
 import { useEffect, useState, useCallback } from "react";
-import { useStyletron } from "baseui";
 import isEmpty from "is-empty";
 import debounce from "lodash/debounce";
 import { toaster } from "baseui/toast";
@@ -13,7 +12,6 @@ import MobileDetect from "mobile-detect";
 import ono from "@jsdevtools/ono";
 import * as authManager from "@/server/auth-manager";
 
-import Layout from "@/components/Layout";
 import ViewUserScreen from "@/components/Screens/ViewUser";
 import InSessionScreen from "@/components/Screens/InSession";
 import SessionPageTitle from "@/components/SessionPageTitle";
@@ -30,7 +28,6 @@ import { CallSessionSync } from "@/utils/sync";
 
 // We're referring to the currently viewed user, as the viewUser
 const ViewUser = ({ viewUser: viewUserBase, error }) => {
-	const [, theme] = useStyletron();
 	const [viewUser, setViewUser] = useState(viewUserBase);
 	const [user] = useUser();
 	const setUser = useSetUser();
@@ -262,22 +259,14 @@ const ViewUser = ({ viewUser: viewUserBase, error }) => {
 					onToggleMeter={handleToggleMeter}
 				/>
 			) : (
-				<Layout
-					style={{
-						[theme.mediaQuery.maxSmall]: {
-							paddingBottom: "240px"
-						}
+				<ViewUserScreen
+					error={error}
+					viewUser={viewUser}
+					actions={{
+						onStart: handleStartCallSession,
+						onToggleNotify: handleToggleNotify
 					}}
-				>
-					<ViewUserScreen
-						error={error}
-						viewUser={viewUser}
-						actions={{
-							onStart: handleStartCallSession,
-							onToggleNotify: handleToggleNotify
-						}}
-					/>
-				</Layout>
+				/>
 			)}
 		</>
 	);

@@ -5,6 +5,7 @@ import { useStyletron } from "baseui";
 import { Grid, Cell } from "baseui/layout-grid";
 
 import isUserOperator from "@/utils/is-operator";
+import Layout from "@/components/Layout";
 import ScreenContainer from "@/components/ScreenContainer";
 import { ViewUserProps } from "@/utils/common-prop-types";
 
@@ -19,50 +20,56 @@ const ViewUserScreen = ({ error, viewUser, actions }) => {
 
 	const isOperator = isUserOperator(viewUser);
 
-	if (isEmpty(error)) {
-		return (
-			<ScreenContainer
-				id="callsesh-view-user"
-				className={css({
-					display: "flex",
-					flexDirection: "column"
-				})}
-			>
-				<div
+	return (
+		<Layout
+			style={{
+				[theme.mediaQuery.maxSmall]: {
+					paddingBottom: "240px"
+				}
+			}}
+		>
+			{isEmpty(error) ? (
+				<ScreenContainer
+					id="callsesh-view-user"
 					className={css({
-						marginBottom: "20px",
-						[theme.mediaQuery.maxSmall]: {
-							marginBottom: "0px"
-						}
+						display: "flex",
+						flexDirection: "column"
 					})}
 				>
-					<Introduction viewUser={viewUser} />
-				</div>
-				<div className={css({ flexGrow: "1" })}>
-					{isOperator ? (
-						<Grid gridGutters="0px">
-							<Cell span={[12, 8, 6]}>
-								<OperatorDetails viewUser={viewUser} />
-							</Cell>
-							<Cell span={[12, 8, 6]}>
-								<OperatorAction viewUser={viewUser} {...actions} />
-							</Cell>
-						</Grid>
-					) : (
-						<Visitor />
-					)}
-				</div>
-			</ScreenContainer>
-		);
-	}
-
-	return (
-		<ScreenContainer
-			id="callsesh-view-user-error"
-			className={css({ margin: "auto" })}
-		>
-			<ErrorView error={error} />
-		</ScreenContainer>
+					<div
+						className={css({
+							marginBottom: "20px",
+							[theme.mediaQuery.maxSmall]: {
+								marginBottom: "0px"
+							}
+						})}
+					>
+						<Introduction viewUser={viewUser} />
+					</div>
+					<div className={css({ flexGrow: "1" })}>
+						{isOperator ? (
+							<Grid gridGutters="0px">
+								<Cell span={[12, 8, 6]}>
+									<OperatorDetails viewUser={viewUser} />
+								</Cell>
+								<Cell span={[12, 8, 6]}>
+									<OperatorAction viewUser={viewUser} {...actions} />
+								</Cell>
+							</Grid>
+						) : (
+							<Visitor />
+						)}
+					</div>
+				</ScreenContainer>
+			) : (
+				<ScreenContainer
+					id="callsesh-view-user-error"
+					className={css({ margin: "auto" })}
+				>
+					<ErrorView error={error} />
+				</ScreenContainer>
+			)}
+		</Layout>
 	);
 };
 

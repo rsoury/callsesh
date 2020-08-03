@@ -31,7 +31,7 @@ const HeroSection = () => {
 			})}
 		>
 			<Grid gridGutter={16}>
-				<Cell span={[12, 2, 4]}>
+				<Cell span={[12, 3, 4]}>
 					<img
 						src="/static/assets/woman-on-laptop-in-coffee-shop.jpg"
 						alt="woman-on-laptop-in-coffee-shop"
@@ -39,11 +39,14 @@ const HeroSection = () => {
 							objectFit: "cover",
 							height: "100%",
 							borderRadius: theme.borders.radius400,
-							width: "100%"
+							width: "100%",
+							[theme.mediaQuery.maxSmall]: {
+								display: "none"
+							}
 						})}
 					/>
 				</Cell>
-				<Cell span={[12, 6, 8]}>
+				<Cell span={[12, 5, 8]}>
 					<div
 						className={css({
 							height: "100%",
@@ -54,7 +57,7 @@ const HeroSection = () => {
 							position: "relative",
 							zIndex: "100",
 							// textAlign: "center",
-							padding: "50px 0 50px 0"
+							padding: "75px 0"
 						})}
 					>
 						<h1
