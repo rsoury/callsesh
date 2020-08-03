@@ -8,7 +8,7 @@ import glob from "glob-promise";
 import uniq from "lodash/uniq";
 import slugify from "@/utils/slugify";
 
-const reservedSpaces = ["blog"];
+const reservedSpaces = ["blog", "solutions", "pages", "page", "info"];
 
 /**
  *
