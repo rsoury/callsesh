@@ -12,30 +12,29 @@ import kebabCase from "lodash/kebabCase";
 const HowSection = () => {
 	const [css, theme] = useStyletron();
 
-	const containerStyle = {
-		padding: "10px",
-		borderLeft: `3px solid ${theme.colors.primary}`,
-		marginBottom: "20px"
-	};
+	console.log(theme.mediaQuery);
 
 	return (
 		<div
 			className={css({
 				display: "flex",
 				alignItems: "center",
-				[theme.mediaQuery.maxSmall]: {
-					flexWrap: "wrap"
-				}
+				position: "relative",
+				flexDirection: "column",
+				margin: "20px 0"
 			})}
 		>
 			<div
 				className={css({
-					width: "60%",
-					position: "relative",
-					paddingRight: "20px",
+					width: "calc(100% - 450px)",
+					maxWidth: "600px",
+					minWidth: "350px",
+					margin: "0 auto",
+					"@media screen and (max-width: 850px) and (min-width: 600px)": {
+						opacity: 0.5
+					},
 					[theme.mediaQuery.maxSmall]: {
-						width: "100%",
-						paddingRight: "0px"
+						width: "100%"
 					}
 				})}
 			>
@@ -45,51 +44,68 @@ const HowSection = () => {
 					className={css({ width: "100%" })}
 				/>
 			</div>
-			<div
-				className={css({
-					width: "40%",
-					[theme.mediaQuery.maxSmall]: {
-						width: "100%"
+			{[
+				{
+					Icon: PhoneIcon,
+					title: "Accept phone calls",
+					caption: "Every solution starts as a communicated problem.",
+					style: {
+						top: "0px",
+						left: "0px",
+						textAlign: "right"
 					}
-				})}
-			>
-				{[
-					{
-						Icon: PhoneIcon,
-						title: "Accept phone calls",
-						caption: "Every solution starts as a communicated problem."
-					},
-					{
-						Icon: MeterIcon,
-						title: "Keep the meter running",
-						caption:
-							"Not all problems are the same. Continue metering your time outside of the phone call."
-					},
-					{
-						Icon: ChatIcon,
-						title: "Chat",
-						caption: "Send messages, links, files, secrets and more."
-					},
-					{
-						Icon: PaymentIcon,
-						title: "Get Paid",
-						caption: "Payment acceptance and payouts completely managed."
+				},
+				{
+					Icon: MeterIcon,
+					title: "Keep the meter running",
+					caption:
+						"Not all problems are the same. Continue metering your time outside of the phone call.",
+					style: {
+						top: "0px",
+						right: "0px"
 					}
-				].map(({ Icon, title, caption }) => (
-					<div
-						key={kebabCase(title.toLowerCase())}
-						className={css({
-							...containerStyle
-						})}
-					>
-						<Icon size={24} />
-						<Label marginBottom="5px" marginTop="5px">
-							<strong>{title}</strong>
-						</Label>
-						<LabelMedium opacity="0.8">{caption}</LabelMedium>
-					</div>
-				))}
-			</div>
+				},
+				{
+					Icon: ChatIcon,
+					title: "Chat",
+					caption: "Send messages, links, files, secrets and more.",
+					style: {
+						bottom: "0px",
+						right: "0px"
+					}
+				},
+				{
+					Icon: PaymentIcon,
+					title: "Get Paid",
+					caption: "Payment acceptance and payouts completely managed.",
+					style: {
+						bottom: "0px",
+						left: "0px",
+						textAlign: "right"
+					}
+				}
+			].map(({ Icon, title, caption, style = {} }) => (
+				<div
+					key={kebabCase(title.toLowerCase())}
+					className={css({
+						width: "250px",
+						position: "absolute",
+						...style,
+						[theme.mediaQuery.maxSmall]: {
+							position: "relative",
+							width: "100%",
+							marginBottom: "30px",
+							textAlign: "left"
+						}
+					})}
+				>
+					<Icon size={24} />
+					<Label marginBottom="5px" marginTop="5px">
+						<strong>{title}</strong>
+					</Label>
+					<LabelMedium opacity="0.8">{caption}</LabelMedium>
+				</div>
+			))}
 		</div>
 	);
 };
