@@ -27,7 +27,7 @@ const HeroSection = () => {
 			id="hero"
 			className={css({
 				position: "relative",
-				padding: "25px 0 50px"
+				padding: "25px 0 75px"
 			})}
 		>
 			<Grid gridGutter={16}>

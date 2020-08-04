@@ -157,13 +157,15 @@ const HowSection = () => {
 		<section id="how-it-works">
 			<Background
 				color={theme.colors.warning50}
-				className={css({
-					padding: "50px 0",
+				style={{
 					borderTop: `3px solid ${theme.colors.primary}`
+				}}
+				className={css({
+					padding: "50px 0"
 				})}
 			>
 				<Grid gridGutter={16}>
-					<Cell span={[12, 3, 4]}>
+					<Cell span={12}>
 						<div
 							className={css({
 								height: "100%",
@@ -171,10 +173,11 @@ const HowSection = () => {
 								alignItems: "flex-start",
 								flexDirection: "column",
 								justifyContent: "center",
-								position: "relative"
+								position: "relative",
+								textAlign: "center"
 							})}
 						>
-							<Heading marginTop="0px">
+							<Heading marginTop="0px" marginLeft="auto" marginRight="auto">
 								<strong className={css({ fontWeight: "900" })}>
 									Rapid value delivery made seamless
 								</strong>
@@ -189,7 +192,7 @@ const HowSection = () => {
 							</Paragraph>
 						</div>
 					</Cell>
-					<Cell span={[12, 5, 8]}>
+					<Cell span={12}>
 						<AgileProjectLifeCycle />
 					</Cell>
 				</Grid>
@@ -241,8 +244,9 @@ const HowSection = () => {
 						))}
 					</Cell>
 					<Cell span={[12, 5, 8]}>
-						{features.map(({ image, content }, index) => (
+						{features.map(({ title, image, content }, index) => (
 							<motion.div
+								key={kebabCase(title.toLowerCase())}
 								animate={
 									selectedFeature === index
 										? {

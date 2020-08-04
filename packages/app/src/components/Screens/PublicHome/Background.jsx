@@ -4,7 +4,7 @@ import { useStyletron } from "baseui";
 
 import { ChildrenProps } from "@/utils/common-prop-types";
 
-const Background = ({ color, children, ...props }) => {
+const Background = ({ color, children, style, ...props }) => {
 	const [css] = useStyletron();
 
 	return (
@@ -18,7 +18,8 @@ const Background = ({ color, children, ...props }) => {
 						width: "200vw",
 						left: "-50vw",
 						right: "-50vw",
-						backgroundColor: color
+						backgroundColor: color,
+						...style
 					})}
 				/>
 				<div className={css({ position: "relative", zIndex: "2" })}>
@@ -31,7 +32,12 @@ const Background = ({ color, children, ...props }) => {
 
 Background.propTypes = {
 	color: PropTypes.string.isRequired,
+	style: PropTypes.object,
 	children: ChildrenProps.isRequired
+};
+
+Background.defaultProps = {
+	style: {}
 };
 
 export default Background;
