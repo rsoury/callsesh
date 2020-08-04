@@ -61,7 +61,10 @@ function useUser({ required } = {}) {
 				const callSessionSync = new CallSessionSync(callSession.id);
 
 				callSessionSync.listen("onConnect", (value) => {
-					value.status = CALL_SESSION_STATUS.active;
+					value.status = value.status || CALL_SESSION_STATUS.active;
+
+					// EMULATE: Start session connect status in metering
+					// value.status = CALL_SESSION_STATUS.metering;
 
 					setUserState({
 						...user,
@@ -93,19 +96,6 @@ function useUser({ required } = {}) {
 				});
 
 				callSessionSync.start();
-
-				// EMULATE: Event retrieval
-				// setTimeout(() => {
-				// 	setUserState({
-				// 		...user,
-				// 		callSession: {
-				// 			...callSession,
-				// 			// status: "in-call"
-				// 			status: "active"
-				// 			// status: "metering"
-				// 		}
-				// 	});
-				// }, 1000);
 
 				return true;
 			}

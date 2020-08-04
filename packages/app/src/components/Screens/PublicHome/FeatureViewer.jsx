@@ -16,6 +16,13 @@ const FeatureViewer = () => {
 	const [css, theme] = useStyletron();
 	const [selectedFeature, setSelectedFeatured] = useState(0);
 
+	const imageStyle = {
+		borderRadius: theme.borders.radius400,
+		height: "100%",
+		width: "100%",
+		boxShadow: "-10px 10px 30px rgba(0, 0, 0, 0.1)"
+	};
+
 	const features = [
 		{
 			title: "Freelance",
@@ -33,12 +40,9 @@ const FeatureViewer = () => {
 			image: (
 				<img
 					src="/static/assets/features/freelance.jpg"
-					alt="Freelancer: Set your own schedule and rates"
+					alt="Freelancer and Freelancing: Set your own schedule and rates"
 					className={css({
-						borderRadius: theme.borders.radius400,
-						height: "100%",
-						width: "100%",
-						boxShadow: "-10px 10px 30px rgba(0, 0, 0, 0.1)"
+						...imageStyle
 					})}
 				/>
 			)
@@ -82,12 +86,10 @@ const FeatureViewer = () => {
 			),
 			image: (
 				<img
-					src="/static/assets/features/freelance.jpg"
-					alt="Freelancer: Set your own schedule and rates"
+					src="/static/assets/features/metering.jpg"
+					alt="Freelancer and Freelancing: Meter your time and get paid"
 					className={css({
-						borderRadius: theme.borders.radius400,
-						height: "100%",
-						width: "100%"
+						...imageStyle
 					})}
 				/>
 			)
@@ -97,21 +99,50 @@ const FeatureViewer = () => {
 			content: (
 				<Paragraph marginTop="0px">
 					Messages, links, files, voice and more can be exchanged through the
-					Callsesh Chat. Get out of email and communicate with your clients as
-					you would with your teammates. Retain your contacts after your session
-					has finished and organise follow up call sessions.
+					full featured Callsesh Chat.
+					<br />
+					Search chat history to pickup where you left off. <br />
+					Get out of email and communicate with your clients as you would with
+					your teammates. Retain your contacts after your session has finished
+					and organise follow up call sessions.
 				</Paragraph>
 			),
 			image: (
-				<img
-					src="/static/assets/features/freelance.jpg"
-					alt="Freelancer: Set your own schedule and rates"
+				<div
 					className={css({
-						borderRadius: theme.borders.radius400,
-						height: "100%",
-						width: "100%"
+						display: "flex",
+						flexDirection: "column",
+						transform: "scale(1.2) translateY(50px)"
 					})}
-				/>
+				>
+					<img
+						src="/static/assets/features/chat-full.jpg"
+						alt="Freelancer and Freelancing: Chat with your clients"
+						className={css({
+							...imageStyle,
+							height: "auto",
+							width: "100%"
+						})}
+					/>
+					<div
+						className={css({
+							display: "flex",
+							alignItems: "flex-start",
+							justifyContent: "flex-end"
+						})}
+					>
+						<img
+							src="/static/assets/features/chat-search.jpg"
+							alt="Freelancer and Freelancing: Search Chat history to pickup where you left off."
+							className={css({
+								...imageStyle,
+								height: "auto",
+								width: "45%",
+								marginTop: "-80px"
+							})}
+						/>
+					</div>
+				</div>
 			)
 		},
 		{
@@ -125,12 +156,10 @@ const FeatureViewer = () => {
 			),
 			image: (
 				<img
-					src="/static/assets/features/freelance.jpg"
-					alt="Freelancer: Set your own schedule and rates"
+					src="/static/assets/features/payments.jpg"
+					alt="Freelancer and Freelancing: Setup your payment method to make calls"
 					className={css({
-						borderRadius: theme.borders.radius400,
-						height: "100%",
-						width: "100%"
+						...imageStyle
 					})}
 				/>
 			)
@@ -146,12 +175,10 @@ const FeatureViewer = () => {
 			),
 			image: (
 				<img
-					src="/static/assets/features/freelance.jpg"
-					alt="Freelancer: Set your own schedule and rates"
+					src="/static/assets/features/payouts.jpg"
+					alt="Freelancer and Freelancing: Manage your payouts with Stripe"
 					className={css({
-						borderRadius: theme.borders.radius400,
-						height: "100%",
-						width: "100%"
+						...imageStyle
 					})}
 				/>
 			)
@@ -209,6 +236,7 @@ const FeatureViewer = () => {
 				</Cell>
 				<Cell span={[12, 5, 8]}>
 					<div className={css({ position: "relative", height: "800px" })}>
+						<div className={css({ paddingBottom: "150%" })} />
 						{features.map(({ title, image, content }, index) => (
 							<div
 								key={kebabCase(title.toLowerCase())}
@@ -256,8 +284,8 @@ const FeatureViewer = () => {
 										className={css({
 											display: "flex",
 											flexGrow: "1",
-											width: "100%",
-											margin: "-60px 20px 0"
+											margin: "-60px 20px 0",
+											width: "100%"
 										})}
 										animate={
 											selectedFeature === index
