@@ -9,6 +9,7 @@ import Layout from "@/components/Layout";
 
 import HeroSection from "./Sections/Hero";
 import HowSection from "./Sections/How";
+import FeaturesSection from "./Sections/Features";
 
 const PublicHomeScreen = () => {
 	const [css] = useStyletron();
@@ -21,6 +22,7 @@ const PublicHomeScreen = () => {
 			>
 				<HeroSection />
 				<HowSection />
+				<FeaturesSection />
 			</div>
 		</Layout>
 	);
