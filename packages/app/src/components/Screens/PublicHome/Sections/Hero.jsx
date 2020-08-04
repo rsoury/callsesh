@@ -38,8 +38,8 @@ const HeroSection = () => {
 						className={css({
 							objectFit: "cover",
 							height: "100%",
-							borderRadius: theme.borders.radius400,
 							width: "100%",
+							boxShadow: `-10px 10px 0 ${theme.colors.warning400}`,
 							[theme.mediaQuery.maxSmall]: {
 								display: "none"
 							}
