@@ -77,7 +77,7 @@ const UseCasesSection = () => {
 							]
 						}
 					].map(({ Icon, title, points }) => (
-						<Cell span={[12, 2, 4]} key={kebabCase(title.toLowerCase())}>
+						<Cell span={[12, 8, 4]} key={kebabCase(title.toLowerCase())}>
 							<div
 								className={css({
 									display: "flex",

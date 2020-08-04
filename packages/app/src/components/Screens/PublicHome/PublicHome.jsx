@@ -11,6 +11,7 @@ import HeroSection from "./Sections/Hero";
 import HowSection from "./Sections/How";
 import FeaturesSection from "./Sections/Features";
 import UseCasesSection from "./Sections/UseCases";
+import CallToAction from "./Sections/CallToAction";
 
 const PublicHomeScreen = () => {
 	const [css] = useStyletron();
@@ -25,6 +26,7 @@ const PublicHomeScreen = () => {
 				<HowSection />
 				<FeaturesSection />
 				<UseCasesSection />
+				<CallToAction />
 			</div>
 		</Layout>
 	);
