@@ -43,11 +43,10 @@ const CredebilitySection = () => {
 							})}
 						>
 							<Paragraph marginTop="0px" marginBottom="10px">
-								&ldquo;Atomised work has been disregarded due to the overhead of
+								&ldquo;Atomised work is disregarded due to the overhead of
 								securing the transaction. Callsesh removes the overhead.
 								Engagement, Collaboration and Payments rolled into one seamless
-								experience speeding up time to value. Complement your workflow
-								and gain a competitive advantage.&rdquo;
+								experience speeding up time to value.&rdquo;
 								<br />
 								<span
 									className={css({
