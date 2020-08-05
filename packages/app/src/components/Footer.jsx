@@ -1,5 +1,10 @@
 import React from "react";
 import { useStyletron } from "baseui";
+import {
+	Youtube as YoutubeIcon,
+	Facebook as FacebookIcon,
+	Instagram as InstagramIcon
+} from "react-feather";
 
 import { page as pageRoutes } from "@/routes";
 import Link from "@/components/Link";
@@ -69,6 +74,48 @@ const Footer = () => {
 						...navListProps
 					})}
 				>
+					<li className={css({ margin: "10px" })}>
+						<div
+							className={css({
+								display: "flex",
+								alignItems: "center",
+								justifyContent: "space-between"
+							})}
+						>
+							{[
+								{
+									title: "Callsesh Facebook",
+									href: "https://www.facebook.com/callsesh",
+									Icon: FacebookIcon
+								},
+								{
+									title: "Callsesh Instagram",
+									href: "https://www.instagram.com/callsesh/",
+									Icon: InstagramIcon
+								},
+								{
+									title: "Callsesh Youtube",
+									href:
+										"https://www.youtube.com/channel/UCZzu7-fmT4daZZcvYSVGMCghttps://www.facebook.com/callsesh",
+									Icon: YoutubeIcon
+								}
+							].map(({ title, href, Icon }, index) => (
+								<Link
+									key={title}
+									title={title}
+									style={{
+										display: "flex",
+										marginLeft: index === 0 ? "0px" : "10px"
+									}}
+									href={href}
+									standard
+									newWindow
+								>
+									<Icon size={22} />
+								</Link>
+							))}
+						</div>
+					</li>
 					{nav.map(({ text, ...props }) => (
 						<li
 							key={text.toLowerCase()}

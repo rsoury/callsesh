@@ -84,7 +84,7 @@ const CredebilitySection = () => {
 						</div>
 					</div>
 				</Cell>
-				<Cell span={12}>
+				{/* <Cell span={12}>
 					<div
 						className={css({
 							margin: "20px 0",
@@ -102,7 +102,7 @@ const CredebilitySection = () => {
 							})}
 						/>
 					</div>
-				</Cell>
+				</Cell> */}
 			</Grid>
 		</section>
 	);
