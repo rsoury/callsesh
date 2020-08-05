@@ -2,11 +2,13 @@ import isEmpty from "is-empty";
 import { getRequest } from "@callsesh/utils";
 import ono from "@jsdevtools/ono";
 
-import { workflowsUrl, publicUrl } from "@/env-config";
+import { workflowsUrl, publicUrl, publicProxyUrl } from "@/env-config";
 import handleException from "@/utils/handle-exception";
 import * as authManager from "@/server/auth-manager";
 import * as routes from "@/routes";
 import { CALL_SESSION_USER_TYPE } from "@/constants";
+
+const getUrl = (pathname) => `${publicProxyUrl || publicUrl}${pathname}`;
 
 const request = getRequest({
 	baseURL: workflowsUrl
@@ -56,7 +58,7 @@ export const delayEndSession = async (sessionId, userId = "") => {
 
 	const token = await authManager.createOTP(userId);
 	await delayRequest({
-		url: `${publicUrl}${routes.api.endCall}`,
+		url: getUrl(routes.api.endCall),
 		method: "POST",
 		headers: {
 			Authorization: `Bearer ${token}`
@@ -72,7 +74,7 @@ export const delayEndSession = async (sessionId, userId = "") => {
 export const delayLiveNotifications = async (userId) => {
 	const token = await authManager.createOTP(userId);
 	await delayRequest({
-		url: `${publicUrl}${routes.api.liveNotify}`,
+		url: getUrl(routes.api.liveNotify),
 		method: "POST",
 		headers: {
 			Authorization: `Bearer ${token}`

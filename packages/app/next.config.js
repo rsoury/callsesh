@@ -44,7 +44,8 @@ module.exports = (phase, ...nextParams) => {
 		WORKFLOWS_URL: process.env.WORKFLOWS_URL || "",
 		CHAT_USER: process.env.CHAT_USER || "",
 		CHAT_PASS: process.env.CHAT_PASS || "",
-		POSTMARK_API_TOKEN: process.env.POSTMARK_API_TOKEN || ""
+		POSTMARK_API_TOKEN: process.env.POSTMARK_API_TOKEN || "",
+		PUBLIC_PROXY_URL: process.env.PUBLIC_PROXY_URL || ""
 	};
 
 	let env = frontendEnv;

@@ -3,6 +3,9 @@ import { Client as Postmark } from "postmark";
 
 import { postmark as config, publicUrl } from "@/env-config";
 
+// const defaultFrom = "info@callsesh.com";
+const defaultFrom = "test@towster.co";
+
 const client = new Postmark(config.apiToken);
 
 export const getClient = () => client;
@@ -14,7 +17,7 @@ export const sendEmail = (
 	to,
 	subject,
 	body,
-	{ from = "info@callsesh.com", useHtml = true } = {}
+	{ from = defaultFrom, useHtml = true } = {}
 ) => {
 	const params = {
 		From: from,
@@ -36,10 +39,7 @@ export const sendEmail = (
 /**
  * Use Postmark to send emails
  */
-export const sendLiveNotification = (
-	user,
-	{ from = "info@callsesh.com" } = {}
-) => {
+export const sendLiveNotification = (user, { from = defaultFrom } = {}) => {
 	if (isEmpty(user.email)) {
 		throw new Error("User email does not exist");
 	}

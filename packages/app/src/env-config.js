@@ -1,6 +1,7 @@
 export const isProd = process.env.NODE_ENV === "production";
 export const logLevel = process.env.LOG_LEVEL || "info";
 export const publicUrl = process.env.PUBLIC_URL || "";
+export const publicProxyUrl = process.env.PUBLIC_PROXY_URL || "";
 export const sessionSecret = process.env.SESSION_SECRET || "";
 export const sentry = {
 	dsn: process.env.SENTRY_DSN || "",
