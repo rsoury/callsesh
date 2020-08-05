@@ -12,6 +12,7 @@ import HowSection from "./Sections/How";
 import FeaturesSection from "./Sections/Features";
 import UseCasesSection from "./Sections/UseCases";
 import CallToAction from "./Sections/CallToAction";
+import CredebilitySection from "./Sections/Credebility";
 
 const PublicHomeScreen = () => {
 	const [css] = useStyletron();
@@ -26,6 +27,7 @@ const PublicHomeScreen = () => {
 				<HowSection />
 				<FeaturesSection />
 				<UseCasesSection />
+				<CredebilitySection />
 				<CallToAction />
 			</div>
 		</Layout>

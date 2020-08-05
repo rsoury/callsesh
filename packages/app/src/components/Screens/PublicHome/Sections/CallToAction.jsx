@@ -16,6 +16,8 @@ const UseCasesSection = () => {
 					borderRadius: theme.borders.radius300,
 					backgroundColor: theme.colors.accent50,
 					padding: "75px 0px",
+					position: "relative",
+					zIndex: "5",
 					[theme.mediaQuery.maxMedium]: {
 						padding: "50px 25px"
 					}

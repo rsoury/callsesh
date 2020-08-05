@@ -14,6 +14,10 @@ import PhoneMockup from "@/components/PhoneMockup";
 
 const demoSlides = [
 	{
+		name: "Willis",
+		src: "/static/assets/demo/willis.jpg"
+	},
+	{
 		name: "Brendan",
 		src: "/static/assets/demo/brendan.jpg"
 	},
@@ -24,10 +28,6 @@ const demoSlides = [
 	{
 		name: "Christie",
 		src: "/static/assets/demo/christie.jpg"
-	},
-	{
-		name: "Willis",
-		src: "/static/assets/demo/willis.jpg"
 	},
 	{
 		name: "Samantha",

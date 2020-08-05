@@ -22,9 +22,19 @@ const UseCasesSection = () => {
 	return (
 		<section id="use-cases">
 			<Background
-				color={theme.colors.positive50}
+				color="#fff"
 				style={{
-					borderTop: `3px solid ${theme.colors.primary}`
+					borderTop: `3px solid ${theme.colors.primary}`,
+					borderBottom: `3px solid ${theme.colors.primary}`,
+					":after": {
+						content: '""',
+						position: "absolute",
+						bottom: "0px",
+						left: "0px",
+						right: "0px",
+						height: "6px",
+						backgroundColor: theme.colors.warning
+					}
 				}}
 				className={css({
 					padding: "50px 0"
