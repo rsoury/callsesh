@@ -4,10 +4,13 @@ import pick from "lodash/pick";
 
 import { publicUrl } from "@/env-config";
 import { page as pageRoutes } from "@/routes";
+import getHandler from "@/server/middleware";
 
 const Sitemap = () => null;
 
 let sitemap = null;
+
+const handler = getHandler();
 
 export async function getServerSideProps({ req, res }) {
 	if (!req || !res) {
@@ -15,6 +18,8 @@ export async function getServerSideProps({ req, res }) {
 			props: {}
 		};
 	}
+	await handler.apply(req, res);
+
 	res.setHeader("Content-Type", "application/xml");
 	res.setHeader("Content-Encoding", "gzip");
 
@@ -50,7 +55,7 @@ export async function getServerSideProps({ req, res }) {
 		res.write(resp);
 		res.end();
 	} catch (error) {
-		console.log(error);
+		req.log.error(error);
 		res.statusCode = 500;
 		res.write("Could not generate sitemap.");
 		res.end();

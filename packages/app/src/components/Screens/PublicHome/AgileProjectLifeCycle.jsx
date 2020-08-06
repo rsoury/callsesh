@@ -12,8 +12,6 @@ import kebabCase from "lodash/kebabCase";
 const HowSection = () => {
 	const [css, theme] = useStyletron();
 
-	console.log(theme.mediaQuery);
-
 	return (
 		<div
 			className={css({

@@ -3,6 +3,8 @@
 	// Redirect to return_url if provided
 	var params = new URLSearchParams(window.location.search);
 	const returnUrl = params.get("return_url");
+	const removeCacheValue = params.get("remove_cache");
+	const removeCache = removeCacheValue === "true" || removeCacheValue === true;
 
 	if (typeof returnUrl === "string" && !!returnUrl) {
 		window.location.href = returnUrl;
@@ -34,4 +36,10 @@
 	window.addEventListener("locationchange", function () {
 		mapPathToBodyClass();
 	});
+
+	// Remove cookies if params says so
+	if (removeCache) {
+		document.cookie = "rc_uid= ; expires = Thu, 01 Jan 1970 00:00:00 GMT";
+		document.cookie = "rc_token= ; expires = Thu, 01 Jan 1970 00:00:00 GMT";
+	}
 })();

@@ -78,9 +78,15 @@ const VerifyEmail = () => {
 				overrides={{
 					Root: {
 						style: {
-							borderColor: theme.colors.warning100,
+							borderTopColor: theme.colors.warning100,
+							borderRightColor: theme.colors.warning100,
+							borderLeftColor: theme.colors.warning100,
+							borderBottomColor: theme.colors.warning100,
 							backgroundColor: theme.colors.warning100,
-							borderRadius: theme.borders.radius300
+							borderTopLeftRadius: theme.borders.radius300,
+							borderTopRightRadius: theme.borders.radius300,
+							borderBottomLeftRadius: theme.borders.radius300,
+							borderBottomRightRadius: theme.borders.radius300
 						}
 					}
 				}}

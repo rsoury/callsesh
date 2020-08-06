@@ -13,6 +13,7 @@ import { requireAuthentication, getUser } from "@/server/middleware/auth";
 import { chat as config } from "@/env-config";
 import handleException from "@/utils/handle-exception";
 import checkSession from "@/utils/check-call-session";
+import { formatError } from "@/utils/request";
 
 const OpenChat = () => null;
 
@@ -47,7 +48,8 @@ export async function getServerSideProps({
 					...redirectUrl.query,
 					resumeToken: token,
 					userId: user.chatUser.id,
-					return_url: path
+					return_url: path,
+					remove_cache: true
 				});
 				res.writeHead(302, {
 					Location: redirectUrl.href
@@ -89,6 +91,7 @@ export async function getServerSideProps({
 		const redirectUrl = new Url(`${config.url}/home`, true);
 		const qs = {
 			...redirectUrl.query,
+			remove_cache: true,
 			resumeToken: token,
 			userId: user.chatUser.id
 		};
@@ -104,11 +107,11 @@ export async function getServerSideProps({
 	} catch (e) {
 		req.log.error(
 			`Could not authenticate with chat service`,
-			ono(e, { withUsername })
+			ono(formatError(e), { withUsername })
 		);
 
 		res.writeHead(302, {
-			Location: `/`
+			Location: `/?chat_error=true`
 		});
 		res.end();
 		return { props: {} };

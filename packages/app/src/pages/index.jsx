@@ -1,6 +1,5 @@
 import isEmpty from "is-empty";
 
-import Layout from "@/components/Layout";
 import UserHomeScreen from "@/components/Screens/UserHome";
 import PublicHomeScreen from "@/components/Screens/PublicHome";
 import * as routes from "@/routes";

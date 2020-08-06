@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useStyletron } from "baseui";
 import { H1 as Heading, ParagraphMedium as Paragraph } from "baseui/typography";
 import { Grid, Cell } from "baseui/layout-grid";
@@ -6,6 +6,8 @@ import { PLACEMENT as TOOLTIP_PLACEMENT } from "baseui/tooltip";
 import { motion } from "framer-motion";
 import { Button, SHAPE as BUTTON_SHAPE } from "baseui/button";
 import ArrowRight from "baseui/icon/arrow-right";
+import { toaster } from "baseui/toast";
+import { useRouter } from "next/router";
 
 import isUserOperator from "@/utils/is-operator";
 import Link from "@/components/Link";
@@ -21,6 +23,7 @@ import * as routes from "@/routes";
 const UserHomeScreen = () => {
 	const [css, theme] = useStyletron();
 	const [user] = useUser();
+	const router = useRouter();
 
 	const isOperator = isUserOperator(user);
 
@@ -34,6 +37,15 @@ const UserHomeScreen = () => {
 			}
 		}
 	};
+
+	useEffect(() => {
+		if (
+			!user.emailVerified &&
+			(router.query.chat_error === true || router.query.chat_error === "true")
+		) {
+			toaster.negative(`Your email must be verified to access Callsesh Chat`);
+		}
+	}, []);
 
 	return (
 		<Layout

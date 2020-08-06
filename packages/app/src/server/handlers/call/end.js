@@ -74,7 +74,7 @@ export default async function endCallSession(req, res) {
 	req.log.info(`Session status`, { status: session.status });
 	if (force) {
 		await comms.endSession(sessionId).catch((e) => {
-			req.log.error(`Could not end session`);
+			req.log.error(`Could not end session`, ono(e, { sessionId }));
 			throw e;
 		});
 	} else if (session.status !== "closed") {

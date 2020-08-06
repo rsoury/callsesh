@@ -23,7 +23,7 @@ const BecomeAnOperatorCard = ({ ...props }) => {
 				Have customers or an audience that would benefit from your service,
 				skills, talent, or advice?
 				<br />
-				Offer your immediate assistance through metered calls and sessions.
+				Offer your immediate assistance through metered call sessions.
 			</Paragraph>
 			<div className={css({ margin: "10px 0" })}>
 				<Link href={routes.page.becomeAnOperator} button>

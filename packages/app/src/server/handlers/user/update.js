@@ -4,6 +4,7 @@
 
 import isEmpty from "is-empty";
 import set from "lodash/set";
+import get from "lodash/get";
 import isEmail from "is-email";
 
 import { onError } from "@/server/middleware";
@@ -147,10 +148,12 @@ export default async function updateUser(req, res) {
 		// Register the same data against the rocket chat user
 		const { chatUser } = user;
 		if (!isEmpty(chatUser)) {
-			const chatUpdateParams = patchParams; // destructures in chat.updateUser method
-			if (isNewEmail) {
-				chatUpdateParams.email = email;
-			}
+			const chatUpdateParams = {
+				name: patchParams.name,
+				picture: patchParams.picture,
+				username: get(patchParams, "metadata.user.username"),
+				email: isNewEmail ? email : undefined
+			};
 			await chat.updateUser(chatUser.id, chatUpdateParams);
 			logger.info("Patch chat user data", {
 				chatUserId: chatUser.id,

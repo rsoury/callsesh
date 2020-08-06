@@ -38,9 +38,6 @@ export const build = {
 	},
 	notify(id) {
 		return `/api/notify/${id}`;
-	},
-	externalLink(url) {
-		return `/l?url=${url}`;
 	}
 };
 
