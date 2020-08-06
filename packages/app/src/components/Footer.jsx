@@ -130,7 +130,6 @@ const Footer = () => {
 			</nav>
 			<div
 				className={css({
-					marginTop: "20px",
 					opacity: "0.8",
 					textAlign: "center",
 					display: "flex",
@@ -138,7 +137,8 @@ const Footer = () => {
 					justifyContent: "center",
 					[theme.mediaQuery.maxSmall]: {
 						flexDirection: "row",
-						flexWrap: "wrap"
+						flexWrap: "wrap",
+						marginTop: "20px"
 					},
 					...theme.typography.ParagraphXSmall
 				})}

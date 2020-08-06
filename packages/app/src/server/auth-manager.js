@@ -93,21 +93,21 @@ const formatUser = async (rawUser, withContext = false) => {
 		emailAttributesWithContext.emailIdentity = emailIdentity.user_id;
 	}
 
-	const unformattedUser = withContext
-		? {
-				id: userId,
-				...userData,
-				...emailAttributes,
-				...emailAttributesWithContext,
-				...userMetadata,
-				...appMetadata
-		  }
-		: {
-				...userData,
-				...emailAttributes,
-				...userMetadata,
-				callSession: appMetadata.callSession || {}
-		  };
+	const unformattedUser = {
+		id: userId,
+		...userData,
+		...emailAttributes,
+		...userMetadata,
+		...(withContext
+			? {
+					...emailAttributesWithContext,
+					...appMetadata
+			  }
+			: {
+					callSession: appMetadata.callSession || {},
+					notified: appMetadata.notified || []
+			  })
+	};
 
 	const user = mapKeys(unformattedUser, (value, key) => camelCase(key));
 
@@ -303,8 +303,6 @@ export const getUserByOTP = async (token, options) => {
 		},
 		options
 	);
-
-	console.log(user);
 
 	if (!isEmpty(user)) {
 		await consumeOTP(user.id);

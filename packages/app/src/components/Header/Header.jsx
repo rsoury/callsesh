@@ -24,6 +24,7 @@ import Url from "url-parse";
 import { Tag, KIND as TAG_KIND, VARIANT as TAG_VARIANT } from "baseui/tag";
 import { StatefulTooltip as Tooltip } from "baseui/tooltip";
 import ArrowRight from "baseui/icon/arrow-right";
+import { motion } from "framer-motion";
 
 import Link from "@/components/Link";
 import * as routes from "@/routes";
@@ -270,35 +271,49 @@ const Header = () => {
 								</div>
 							</Tooltip>
 						</div>
-						{isUserOperator(user) && (user || {}).isLive && (
-							<Tag
-								kind={TAG_KIND.primary}
-								variant={TAG_VARIANT.solid}
-								closeable={false}
-								overrides={{
-									Root: {
-										style: {
-											marginTop: "0px",
-											marginBottom: "0px"
-										}
-									}
+						{isUserOperator(user) && !!(user || {}).isLive && (
+							<motion.div
+								initial={{
+									x: -20,
+									opacity: 0
+								}}
+								animate={{
+									x: 0,
+									opacity: 1
 								}}
 							>
-								<div className={css({ display: "flex", alignItems: "center" })}>
-									<div
-										className={css({
-											width: "10px",
-											height: "10px",
-											backgroundColor: theme.colors.negative300,
-											borderRadius: "100%",
-											marginRight: "5px"
-										})}
-									/>
-									<strong>
-										<span className={css({ color: "#fff" })}>Live</span>
-									</strong>
-								</div>
-							</Tag>
+								<Tag
+									kind={TAG_KIND.primary}
+									variant={TAG_VARIANT.solid}
+									closeable={false}
+									overrides={{
+										Root: {
+											style: {
+												marginTop: "0px",
+												marginBottom: "0px"
+											}
+										}
+									}}
+								>
+									<span
+										className={css({ display: "flex", alignItems: "center" })}
+									>
+										<span
+											className={css({
+												display: "block",
+												width: "10px",
+												height: "10px",
+												backgroundColor: theme.colors.negative300,
+												borderRadius: "100%",
+												marginRight: "5px"
+											})}
+										/>
+										<strong>
+											<span className={css({ color: "#fff" })}>Live</span>
+										</strong>
+									</span>
+								</Tag>
+							</motion.div>
 						)}
 					</div>
 				}

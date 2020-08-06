@@ -25,11 +25,13 @@ handler.use(requireAuthentication).post(async (req, res) => {
 
 	// Check if user is live
 	if (!user.isLive) {
-		return res.status(400).json({
+		const resp = {
 			success: false,
 			code: 400,
 			message: "User is not live"
-		});
+		};
+		req.log.info(resp.message);
+		return res.status(400).json(resp);
 	}
 
 	const logger = req.log.child({ liveUser: user.username });
@@ -48,11 +50,13 @@ handler.use(requireAuthentication).post(async (req, res) => {
 		: ts - lastNotificationTime > notificationBuffer;
 
 	if (!safeToContinue) {
-		return res.status(400).json({
+		const resp = {
 			success: false,
 			code: 400,
-			message: "Notifications already sent today"
-		});
+			message: "Notifications already sent"
+		};
+		logger.info(resp.message);
+		return res.status(400).json(resp);
 	}
 
 	const q = new Queue(

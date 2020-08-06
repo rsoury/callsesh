@@ -5,7 +5,7 @@ import { useStyletron } from "baseui";
 const Pulse = ({ circleColor, pulseColor, ...props }) => {
 	const [css, theme] = useStyletron();
 
-	circleColor = circleColor || theme.colors.negative;
+	circleColor = circleColor || theme.colors.negative300;
 	pulseColor = pulseColor || theme.colors.negative200;
 
 	const circleStyle = {

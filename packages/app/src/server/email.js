@@ -3,8 +3,7 @@ import { Client as Postmark } from "postmark";
 
 import { postmark as config, publicUrl } from "@/env-config";
 
-// const defaultFrom = "info@callsesh.com";
-const defaultFrom = "test@towster.co";
+const defaultFrom = "info@callsesh.com";
 
 const client = new Postmark(config.apiToken);
 

@@ -68,13 +68,13 @@ export const getSession = async (req, ...params) => {
 			user: {
 				name: req.user.name,
 				nickname: req.user.nickname,
-				family_name: req.user.family_name,
-				given_name: req.user.given_name,
+				family_name: req.user.familyName,
+				given_name: req.user.givenName,
 				picture: req.user.picture,
-				updated_at: req.user.updated_at,
-				sub: req.user.user_id
+				updated_at: null,
+				sub: req.user.id
 			},
-			createdAt: req.user.created_at
+			createdAt: req.user.createdAt
 		};
 
 		if (req.log) {

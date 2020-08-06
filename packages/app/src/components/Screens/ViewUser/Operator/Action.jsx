@@ -191,8 +191,7 @@ const ViewUserOperatorAction = ({ viewUser, onStart, onToggleNotify }) => {
 					</StyledAction>
 				</BaseCard>
 			</div>
-			{/* {isAuthenticated && !isSameUser && ( */}
-			{isAuthenticated && (
+			{isAuthenticated && !isSameUser && (
 				<div className={css({ marginTop: "10px" })}>
 					<Button
 						startEnhancer={
