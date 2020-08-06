@@ -203,14 +203,14 @@ export const generateToken = (identity = 0) => {
 /**
  * Create a Sync Document
  */
-export const createDocument = (identifier, data = {}) => {
+export const createDocument = (identifier, data) => {
 	const params = {};
 
 	if (identifier) {
 		params.uniqueName = identifier;
 	}
 
-	if (!isEmpty(data)) {
+	if (typeof data !== "undefined") {
 		params.data = data;
 	}
 
@@ -219,13 +219,47 @@ export const createDocument = (identifier, data = {}) => {
 
 /**
  * Update a Sync Document
+ *
+ * Don't throw an error if the document hasn't been created... unless forcing throw errors.
  */
-export const updateDocument = (identifier, data = {}) => {
+export const updateDocument = async (
+	identifier,
+	data,
+	{ throwErrors = false } = {}
+) => {
 	const params = {};
 
-	if (!isEmpty(data)) {
+	if (typeof data !== "undefined") {
 		params.data = data;
 	}
 
-	return syncService.documents(identifier).update(params);
+	try {
+		const resp = await syncService.documents(identifier).update(params);
+		return resp;
+	} catch (e) {
+		if (e.status !== 404 || throwErrors) {
+			throw e;
+		}
+	}
+
+	return null;
+};
+
+/**
+ * Remove a Sync Document
+ */
+export const removeDocument = async (
+	identifier,
+	{ throwErrors = false } = {}
+) => {
+	try {
+		const resp = await syncService.documents(identifier).remove();
+		return resp;
+	} catch (e) {
+		if (e.status !== 404 || throwErrors) {
+			throw e;
+		}
+	}
+
+	return null;
 };

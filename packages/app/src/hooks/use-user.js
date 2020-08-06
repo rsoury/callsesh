@@ -4,7 +4,7 @@
  */
 
 import { useEffect, useContext, useCallback } from "react";
-import Router from "next/router";
+import { useRouter } from "next/router";
 import isEmpty from "is-empty";
 
 import * as routes from "@/routes";
@@ -12,7 +12,6 @@ import appendReturnUrl from "@/utils/append-return-url";
 import { UserContext } from "@/components/Providers/UserProvider";
 import stripTrailingSlash from "@/utils/strip-trailing-slash";
 import isUserOperator from "@/utils/is-operator";
-import { CALL_SESSION_STATUS } from "@/constants";
 import { LiveOperatorSync, CallSessionSync } from "@/utils/sync";
 
 /**
@@ -32,6 +31,7 @@ function useUser({ required } = {}) {
 		loading,
 		setUser: setUserState
 	} = useContext(UserContext);
+	const router = useRouter();
 
 	const resolveUser = useCallback(() => {
 		if (isEmpty(user)) {
@@ -44,8 +44,8 @@ function useUser({ required } = {}) {
 		// If user is not registered, redirect to register page.
 		if (!isRegistered) {
 			// Redirect to get started if not registered
-			if (window.location.pathname.indexOf(routes.page.register) !== 0) {
-				Router.push(appendReturnUrl(routes.page.register, true));
+			if (router.asPath.indexOf(routes.page.register) !== 0) {
+				router.push(appendReturnUrl(routes.page.register, true));
 				return false;
 			}
 		}
@@ -54,7 +54,7 @@ function useUser({ required } = {}) {
 		if (!isEmpty(callSession)) {
 			const inSessionPathname = routes.build.user(callSession.with);
 			if (
-				stripTrailingSlash(window.location.pathname) ===
+				stripTrailingSlash(router.asPath) ===
 				stripTrailingSlash(inSessionPathname)
 			) {
 				// Subscribe to call session updates
@@ -97,7 +97,7 @@ function useUser({ required } = {}) {
 
 				return true;
 			}
-			Router.push(inSessionPathname);
+			router.push(inSessionPathname);
 			return false;
 		}
 
@@ -107,13 +107,26 @@ function useUser({ required } = {}) {
 			// Subscribe to LiveOperator updates
 			const liveOperatorSync = new LiveOperatorSync(user.id);
 			liveOperatorSync.listen("onUpdate", (event) => {
+				const newCallSession = {
+					...user.callSession,
+					...(event.value?.callSession || {})
+				};
+
 				setUserState({
 					...user,
-					callSession: {
-						...user.callSession,
-						...(event.value?.callSession || {})
-					}
+					callSession: newCallSession
 				});
+
+				// If the current user is already on the view user page, reload the page, otherwise there will be automatic redirect in logic for callSession state.
+				if (!isEmpty(newCallSession)) {
+					const inSessionPathname = routes.build.user(newCallSession.with);
+					if (
+						stripTrailingSlash(router.asPath) ===
+						stripTrailingSlash(inSessionPathname)
+					) {
+						router.reload();
+					}
+				}
 			});
 
 			liveOperatorSync.start();

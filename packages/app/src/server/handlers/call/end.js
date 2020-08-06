@@ -130,10 +130,7 @@ export default async function endCallSession(req, res) {
 
 	// Remove call session sync document
 	await Promise.all([
-		comms
-			.getSyncService()
-			.documents(syncIds.getCallSession(callerUser.callSession.id))
-			.remove(),
+		comms.removeDocument(syncIds.getCallSession(callerUser.callSession.id)),
 		comms.updateDocument(syncIds.getLiveOperator(operatorUser.id), {})
 	]);
 
@@ -248,7 +245,7 @@ export default async function endCallSession(req, res) {
 			logger.debug(`Cancelled payment intent`, { cancelledPayment });
 			logger.info(`Cancelling payment...`);
 		}
-		logger.info(`Call session ended with insufficient talk time.`);
+		logger.info(`Call session ended with insufficient metered time`);
 		return res.json({
 			success: true
 		});
