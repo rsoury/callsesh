@@ -32,12 +32,20 @@ handler.use(requireAuthentication).post(async (req, res) => {
 		});
 	}
 
+	const logger = req.log.child({ liveUser: user.username });
+
 	const { notified = [], lastNotificationTime } = user;
-	const oneDay = 60 * 60 * 24 * 1000;
+	logger.info(`Preparing notification for going live...`, {
+		notified,
+		lastNotificationTime
+	});
+
+	// const notificationBuffer = 60 * 60 * 24 * 1000; // 1 day
+	const notificationBuffer = 60 * 60 * 3 * 1000; // 3 hours
 	const ts = Date.now();
 	const safeToContinue = isEmpty(lastNotificationTime)
 		? true
-		: ts - lastNotificationTime > oneDay;
+		: ts - lastNotificationTime > notificationBuffer;
 
 	if (!safeToContinue) {
 		return res.status(400).json({
@@ -54,8 +62,20 @@ handler.use(requireAuthentication).post(async (req, res) => {
 					withContext: true
 				})
 				.then((userToNotify) => {
-					req.log.info(userToNotify);
-					return email.sendLiveNotification(userToNotify);
+					const logParams = {
+						id: userToNotify.id,
+						username: userToNotify.username,
+						email: userToNotify.email
+					};
+					if (!userToNotify.emailVerified) {
+						logger.warning(
+							`Email not verified. Cannot notify that user is live`,
+							logParams
+						);
+						return false;
+					}
+					logger.info(`Notify email that user is live`, logParams);
+					return email.sendLiveNotification(userToNotify.email, user);
 				})
 				.then(() => {
 					done(null, usernameToNotify);
@@ -68,15 +88,15 @@ handler.use(requireAuthentication).post(async (req, res) => {
 	);
 
 	q.on("task_finish", (taskId, result) => {
-		req.log.info(`Successfully notified user`, { taskId, username: result });
+		logger.info(`Successfully notified user`, { taskId, username: result });
 	});
 	q.on("task_failed", (taskId, err) => {
 		handleException(err);
-		req.log.error(`An error occurred sending live notification`, {
+		logger.error(`An error occurred sending live notification`, {
 			taskId,
 			username: err.usernameToNotify
 		});
-		req.log.error(err);
+		logger.error(err);
 	});
 
 	notified.forEach((username) => {

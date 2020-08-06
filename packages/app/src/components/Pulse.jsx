@@ -3,7 +3,10 @@ import PropTypes from "prop-types";
 import { useStyletron } from "baseui";
 
 const Pulse = ({ circleColor, pulseColor, ...props }) => {
-	const [css] = useStyletron();
+	const [css, theme] = useStyletron();
+
+	circleColor = circleColor || theme.colors.negative;
+	pulseColor = pulseColor || theme.colors.negative200;
 
 	const circleStyle = {
 		fill: pulseColor,
@@ -81,8 +84,8 @@ Pulse.propTypes = {
 };
 
 Pulse.defaultProps = {
-	circleColor: "#FF664B",
-	pulseColor: "#f00"
+	circleColor: "",
+	pulseColor: ""
 };
 
 export default Pulse;

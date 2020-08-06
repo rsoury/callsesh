@@ -5,7 +5,7 @@ import { useStyletron } from "baseui";
 const logoUrl = "/static/logo/callsesh-text-logo.png";
 
 const Logo = ({ width, style }) => {
-	const [css] = useStyletron();
+	const [css, theme] = useStyletron();
 
 	return (
 		<div
@@ -21,7 +21,13 @@ const Logo = ({ width, style }) => {
 				src={logoUrl}
 				alt="callsesh logo"
 				title="callsesh"
-				className={css({ width: "100%", maxWidth: width })}
+				className={css({
+					width,
+					maxWidth: width,
+					[theme.mediaQuery.maxMedium]: {
+						width: "100%"
+					}
+				})}
 			/>
 		</div>
 	);

@@ -39,23 +39,27 @@ export const sendEmail = (
 /**
  * Use Postmark to send emails
  */
-export const sendLiveNotification = (user, { from = defaultFrom } = {}) => {
-	if (isEmpty(user.email)) {
+export const sendLiveNotification = (
+	to,
+	liveUser,
+	{ from = defaultFrom } = {}
+) => {
+	if (isEmpty(to)) {
 		throw new Error("User email does not exist");
 	}
 
 	const params = {
 		From: from,
-		To: user.email,
+		To: to,
 		TrackOpens: true,
 		TrackLinks: "HtmlAndText",
 		TemplateAlias: "live-user-notification",
 		TemplateModel: {
-			picture: user.picture,
-			name: user.givenName,
-			call_url: `${publicUrl}/${user.username}`,
-			purpose: user.purpose,
-			message: user.messageBroadcast
+			picture: liveUser.picture,
+			name: liveUser.givenName,
+			call_url: `${publicUrl}/${liveUser.username}`,
+			purpose: liveUser.purpose,
+			message: liveUser.messageBroadcast
 		}
 	};
 

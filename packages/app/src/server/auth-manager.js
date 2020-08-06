@@ -304,6 +304,8 @@ export const getUserByOTP = async (token, options) => {
 		options
 	);
 
+	console.log(user);
+
 	if (!isEmpty(user)) {
 		await consumeOTP(user.id);
 	}

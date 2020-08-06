@@ -63,7 +63,7 @@ export const getSession = async (req, ...params) => {
 
 	// If session doesn't exist, but user is attached to request, is an authenticated machine-to-machine request
 	if (isEmpty(session) && !isEmpty(req.user)) {
-		// Manually create the session. Use session schema
+		// Create the session with user data from OTP. Use Auth0 session schema
 		session = {
 			user: {
 				name: req.user.name,
@@ -76,6 +76,10 @@ export const getSession = async (req, ...params) => {
 			},
 			createdAt: req.user.created_at
 		};
+
+		if (req.log) {
+			req.log.info(`Session created with user data`, { session });
+		}
 	}
 
 	return session;
@@ -91,6 +95,9 @@ export const requireAuthentication = nextConnect().use(
 		// Check machine-machine authentication
 		const authToken = (req.headers.authorization || "").slice(7); // Remove "Bearer "
 		if (!isEmpty(authToken)) {
+			if (req.log) {
+				req.log.info(`Authenticating user with OTP`, { authToken });
+			}
 			let user = await authManager.getUserByOTP(authToken);
 			if (!isProd && isEmpty(user)) {
 				try {

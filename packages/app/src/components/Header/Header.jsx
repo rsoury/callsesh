@@ -21,7 +21,7 @@ import { Unstable_AppNavBar as AppNavBar } from "baseui/app-nav-bar";
 import Skeleton from "react-loading-skeleton";
 import { useRouter } from "next/router";
 import Url from "url-parse";
-import { Tag, KIND as TAG_KIND } from "baseui/tag";
+import { Tag, KIND as TAG_KIND, VARIANT as TAG_VARIANT } from "baseui/tag";
 import { StatefulTooltip as Tooltip } from "baseui/tooltip";
 import ArrowRight from "baseui/icon/arrow-right";
 
@@ -29,6 +29,7 @@ import Link from "@/components/Link";
 import * as routes from "@/routes";
 import useUser from "@/hooks/use-user";
 import appendReturnUrl from "@/utils/append-return-url";
+import isUserOperator from "@/utils/is-operator";
 
 import Logo from "./Logo";
 import VerifyEmail from "./VerifyEmail";
@@ -99,7 +100,7 @@ const getNavIcon = (Icon) => (props) => (
 );
 
 const Header = () => {
-	const [css] = useStyletron();
+	const [css, theme] = useStyletron();
 	const [user, isLoading] = useUser();
 	const router = useRouter();
 
@@ -218,50 +219,87 @@ const Header = () => {
 			)}
 			<AppNavBar
 				appDisplayName={
-					<div className={css({ display: "flex", alignItems: "flex-end" })}>
-						<Link href={routes.page.index} button pass>
-							<Logo />
-						</Link>
-						<Tooltip
-							content={() => (
-								<div className={css({ maxWidth: "280px" })}>
-									Callsesh is a new platform and is currently in{" "}
-									<strong>Beta</strong>. If you experience any odd behaviour, or
-									would to like to offer your suggestion, please feel free to
-									contact Callsesh support.
-								</div>
-							)}
-							showArrow
-							overrides={{
-								Body: {
-									style: {
-										zIndex: "99999999"
-									}
-								}
-							}}
+					<div className={css({ display: "flex", alignItems: "center" })}>
+						<div
+							className={css({
+								display: "flex",
+								alignItems: "flex-end"
+							})}
 						>
-							<div
-								className={css({
-									display: "flex",
-									transform: "translate(-5px, 10px)"
-								})}
-							>
-								<Tag
-									kind={TAG_KIND.accent}
-									closeable={false}
-									overrides={{
-										Root: {
-											style: {
-												marginTop: "0px",
-												marginBottom: "0px"
-											}
+							<Link href={routes.page.index} button pass>
+								<Logo />
+							</Link>
+							<Tooltip
+								content={() => (
+									<div className={css({ maxWidth: "280px" })}>
+										Callsesh is a new platform and is currently in{" "}
+										<strong>Beta</strong>. If you experience any odd behaviour,
+										or would to like to offer your suggestion, please feel free
+										to contact Callsesh support.
+									</div>
+								)}
+								showArrow
+								overrides={{
+									Body: {
+										style: {
+											zIndex: "99999999"
 										}
-									}}
+									}
+								}}
+							>
+								<div
+									className={css({
+										display: "flex",
+										transform: "translate(-5px, 10px)"
+									})}
 								>
-									Beta
-								</Tag>
-							</div>
-						</Tooltip>
+									<Tag
+										kind={TAG_KIND.accent}
+										closeable={false}
+										overrides={{
+											Root: {
+												style: {
+													marginTop: "0px",
+													marginBottom: "0px"
+												}
+											}
+										}}
+									>
+										Beta
+									</Tag>
+								</div>
+							</Tooltip>
+						</div>
+						{isUserOperator(user) && (user || {}).isLive && (
+							<Tag
+								kind={TAG_KIND.primary}
+								variant={TAG_VARIANT.solid}
+								closeable={false}
+								overrides={{
+									Root: {
+										style: {
+											marginTop: "0px",
+											marginBottom: "0px"
+										}
+									}
+								}}
+							>
+								<div className={css({ display: "flex", alignItems: "center" })}>
+									<div
+										className={css({
+											width: "10px",
+											height: "10px",
+											backgroundColor: theme.colors.negative300,
+											borderRadius: "100%",
+											marginRight: "5px"
+										})}
+									/>
+									<strong>
+										<span className={css({ color: "#fff" })}>Live</span>
+									</strong>
+								</div>
+							</Tag>
+						)}
 					</div>
 				}
 				onNavItemSelect={({
