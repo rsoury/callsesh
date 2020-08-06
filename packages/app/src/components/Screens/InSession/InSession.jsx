@@ -14,6 +14,7 @@ import {
 } from "react-feather";
 
 import InSessionTopBar from "@/components/Header/InSessionTopBar";
+import Layout from "@/components/Layout";
 import { ViewUserProps } from "@/utils/common-prop-types";
 import isUserOperator from "@/utils/is-operator";
 import useUser from "@/hooks/use-user";
@@ -61,200 +62,204 @@ const InSessionScreen = ({
 	const handleToggleMeter = manageLoadingState(onToggleMeter, setLoadingMeter);
 
 	return (
-		<main
-			id="callsesh-in-session"
-			className={css({
-				position: "relative",
-				backgroundColor: "#fff"
-			})}
-		>
+		<Layout noHeader noFooter>
 			<div
+				id="callsesh-in-session"
 				className={css({
-					position: "absolute",
-					top: "0px",
-					left: "0px",
-					right: "0px",
-					zIndex: "10"
+					position: "relative",
+					backgroundColor: "#fff"
 				})}
 			>
-				<InSessionTopBar />
-			</div>
-			<div
-				className={css({
-					minHeight: "100vh",
-					display: "flex",
-					alignItems: "center",
-					justifyContent: "center",
-					flexDirection: "column",
-					paddingLeft: "10px",
-					paddingRight: "10px",
-					[theme.mediaQuery.small]: {
-						paddingTop: "12.5px"
-					}
-				})}
-			>
-				<motion.div
-					initial={{ opacity: 0, y: 10 }}
-					animate={{ opacity: 1, y: 0 }}
+				<div
+					className={css({
+						position: "absolute",
+						top: "0px",
+						left: "0px",
+						right: "0px",
+						zIndex: "10"
+					})}
 				>
-					<With name={viewUser.givenName} picture={viewUser.picture} />
-				</motion.div>
-				<motion.div
-					initial={{ opacity: 0, y: 10 }}
-					animate={{ opacity: 1, y: 0 }}
-					transition={{
-						delay: 0.3
-					}}
+					<InSessionTopBar />
+				</div>
+				<div
+					className={css({
+						minHeight: "100vh",
+						display: "flex",
+						alignItems: "center",
+						justifyContent: "center",
+						flexDirection: "column",
+						paddingLeft: "10px",
+						paddingRight: "10px",
+						[theme.mediaQuery.small]: {
+							paddingTop: "12.5px"
+						}
+					})}
 				>
-					{isInitiated ? (
-						<div
-							className={css({
-								display: "flex",
-								alignItems: "center",
-								justifyContent: "center",
-								flexDirection: "column"
-							})}
-						>
+					<motion.div
+						initial={{ opacity: 0, y: 10 }}
+						animate={{ opacity: 1, y: 0 }}
+					>
+						<With name={viewUser.givenName} picture={viewUser.picture} />
+					</motion.div>
+					<motion.div
+						initial={{ opacity: 0, y: 10 }}
+						animate={{ opacity: 1, y: 0 }}
+						transition={{
+							delay: 0.3
+						}}
+					>
+						{isInitiated ? (
 							<div
 								className={css({
 									display: "flex",
 									alignItems: "center",
 									justifyContent: "center",
-									flexDirection: "column",
-									padding: "20px 0"
+									flexDirection: "column"
 								})}
 							>
-								{isOperator && (
-									<div
-										className={css({
-											display: "flex",
-											flexDirection: "column",
-											alignItems: "center",
-											paddingBottom: "20px",
-											textAlign: "center"
-										})}
-									>
-										<ActionButton
-											onClick={handleToggleMeter}
-											startEnhancer={
-												callSession.status === CALL_SESSION_STATUS.metering
-													? () => <StopMeterIcon size={30} />
-													: () => <MeterIcon size={26} />
-											}
-											variant={
-												callSession.status === CALL_SESSION_STATUS.metering
-													? "accent"
-													: ""
-											}
-											retain
-											isLoading={isLoadingMeter}
-										>
-											{callSession.status === CALL_SESSION_STATUS.metering
-												? `Stop the meter`
-												: `Start the meter`}
-										</ActionButton>
-										{callSession.status === CALL_SESSION_STATUS.metering ? (
-											<ParagraphXSmall>
-												Calling will stop the meter.
-											</ParagraphXSmall>
-										) : (
-											<ParagraphXSmall>
-												Use to end the call and continue charging for the
-												duration of the session.
-											</ParagraphXSmall>
-										)}
-									</div>
-								)}
 								<div
 									className={css({
 										display: "flex",
 										alignItems: "center",
-										justifyContent: "space-between"
+										justifyContent: "center",
+										flexDirection: "column",
+										padding: "20px 0"
 									})}
 								>
-									<ActionButton
-										onClick={handleEndSession}
-										startEnhancer={() => <EndSessionIcon size={26} />}
-										variant="negative"
-										isLoading={isEndingSession}
-									>
-										End Session
-									</ActionButton>
-									<Link
-										button
-										standard
-										newWindow
-										href={`${routes.page.chat}?with=${viewUser.username}`}
+									{isOperator && (
+										<div
+											className={css({
+												display: "flex",
+												flexDirection: "column",
+												alignItems: "center",
+												paddingBottom: "20px",
+												textAlign: "center"
+											})}
+										>
+											<ActionButton
+												onClick={handleToggleMeter}
+												startEnhancer={
+													callSession.status === CALL_SESSION_STATUS.metering
+														? () => <StopMeterIcon size={30} />
+														: () => <MeterIcon size={26} />
+												}
+												variant={
+													callSession.status === CALL_SESSION_STATUS.metering
+														? "accent"
+														: ""
+												}
+												retain
+												isLoading={isLoadingMeter}
+											>
+												{callSession.status === CALL_SESSION_STATUS.metering
+													? `Stop the meter`
+													: `Start the meter`}
+											</ActionButton>
+											{callSession.status === CALL_SESSION_STATUS.metering ? (
+												<ParagraphXSmall>
+													Calling will stop the meter.
+												</ParagraphXSmall>
+											) : (
+												<ParagraphXSmall>
+													Use to end the call and continue charging for the
+													duration of the session.
+												</ParagraphXSmall>
+											)}
+										</div>
+									)}
+									<div
+										className={css({
+											display: "flex",
+											alignItems: "center",
+											justifyContent: "space-between"
+										})}
 									>
 										<ActionButton
-											onClick={handleOpenChat}
-											startEnhancer={() => <ChatIcon size={26} />}
+											onClick={handleEndSession}
+											startEnhancer={() => <EndSessionIcon size={26} />}
+											variant="negative"
+											isLoading={isEndingSession}
 										>
-											Chat
+											End Session
 										</ActionButton>
-									</Link>
-									<ActionButton
-										onClick={handleCall}
-										isLoading={isCalling}
-										startEnhancer={() => <CallIcon size={26} />}
-										disabled={callSession.status === CALL_SESSION_STATUS.inCall}
-									>
-										Call
-									</ActionButton>
+										<Link
+											button
+											standard
+											newWindow
+											href={`${routes.page.chat}?with=${viewUser.username}`}
+										>
+											<ActionButton
+												onClick={handleOpenChat}
+												startEnhancer={() => <ChatIcon size={26} />}
+											>
+												Chat
+											</ActionButton>
+										</Link>
+										<ActionButton
+											onClick={handleCall}
+											isLoading={isCalling}
+											startEnhancer={() => <CallIcon size={26} />}
+											disabled={
+												callSession.status === CALL_SESSION_STATUS.inCall
+											}
+										>
+											Call
+										</ActionButton>
+									</div>
 								</div>
+								{!isOperator && (
+									<ParagraphXSmall>
+										You will be charged for metered and talk duration.
+									</ParagraphXSmall>
+								)}
 							</div>
-							{!isOperator && (
-								<ParagraphXSmall>
-									You will be charged for metered and talk duration.
-								</ParagraphXSmall>
-							)}
-						</div>
-					) : (
-						<div
-							className={css({
-								textAlign: "center",
-								maxWidth: "300px",
-								margin: "0 auto",
-								display: "flex",
-								alignItems: "center",
-								flexDirection: "column"
-							})}
-						>
-							<Spinner $size={SPINNER_SIZE.large} />
-							{isEmpty(callSession.status) && (
-								<Paragraph
-									marginTop="25px"
-									color={theme.colors.contentTertiary}
-								>
-									<strong>Connecting to your session...</strong>
-								</Paragraph>
-							)}
-							{callSession.status === CALL_SESSION_STATUS.pending && (
-								<Paragraph
-									marginTop="25px"
-									color={theme.colors.contentTertiary}
-								>
-									<strong>
-										Your call session has started.
-										<br />
-										{isOperator ? (
-											<span>
-												You are about to be called by {viewUser.givenName}!
-											</span>
-										) : (
-											<span>
-												You should receive an SMS with a phone number to call
-												that will connect you to your operator.
-											</span>
-										)}
-									</strong>
-								</Paragraph>
-							)}
-						</div>
-					)}
-				</motion.div>
+						) : (
+							<div
+								className={css({
+									textAlign: "center",
+									maxWidth: "300px",
+									margin: "0 auto",
+									display: "flex",
+									alignItems: "center",
+									flexDirection: "column"
+								})}
+							>
+								<Spinner $size={SPINNER_SIZE.large} />
+								{isEmpty(callSession.status) && (
+									<Paragraph
+										marginTop="25px"
+										color={theme.colors.contentTertiary}
+									>
+										<strong>Connecting to your session...</strong>
+									</Paragraph>
+								)}
+								{callSession.status === CALL_SESSION_STATUS.pending && (
+									<Paragraph
+										marginTop="25px"
+										color={theme.colors.contentTertiary}
+									>
+										<strong>
+											Your call session has started.
+											<br />
+											{isOperator ? (
+												<span>
+													You are about to be called by {viewUser.givenName}!
+												</span>
+											) : (
+												<span>
+													You should receive an SMS with a phone number to call
+													that will connect you to your operator.
+												</span>
+											)}
+										</strong>
+									</Paragraph>
+								)}
+							</div>
+						)}
+					</motion.div>
+				</div>
 			</div>
-		</main>
+		</Layout>
 	);
 };
 

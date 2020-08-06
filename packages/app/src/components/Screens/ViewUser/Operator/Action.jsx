@@ -182,9 +182,9 @@ const ViewUserOperatorAction = ({ viewUser, onStart, onToggleNotify }) => {
 									)}
 								</Button>
 								<ParagraphXSmall marginTop="5px" marginBottom="0px">
-									You will be charged for metered and talk duration. A fee of{" "}
-									{fees.preAuthAmountText()} will be charged on successful
-									calls. Call currency is in {viewUser.currency}.
+									You will be charged only for metered and talk duration. A fee
+									of {fees.preAuthAmountText()} will be charged on successful
+									sessions. Currency is in {viewUser.currency}.
 								</ParagraphXSmall>
 							</div>
 						)}

@@ -35,7 +35,8 @@ const moment = extendMoment(Moment);
 const service = comms.getProxyService();
 
 export default async function endCallSession(req, res) {
-	const { force = false } = req.body;
+	// Receives a force boolean and timestamp to use for meter ending.
+	const { force = false, ts } = req.body;
 
 	const user = await getUser(req, { withContext: true });
 
@@ -190,7 +191,7 @@ export default async function endCallSession(req, res) {
 	// If the last meter stamp has not ended, end it using the current timestamp.
 	const lastStamp = meterStamps[meterStamps.length - 1];
 	if (Array.isArray(lastStamp) ? lastStamp.length === 1 : false) {
-		const stopMeterTs = Date.now();
+		const stopMeterTs = typeof ts === "number" && ts > 0 ? ts : Date.now();
 		meterStamps[meterStamps.length - 1].push(stopMeterTs);
 	}
 	const meterDuration = meterStamps.reduce(

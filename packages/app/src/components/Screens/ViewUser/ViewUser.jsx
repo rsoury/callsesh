@@ -20,15 +20,15 @@ const ViewUserScreen = ({ error, viewUser, actions }) => {
 
 	const isOperator = isUserOperator(viewUser);
 
-	return (
-		<Layout
-			style={{
-				[theme.mediaQuery.maxSmall]: {
-					paddingBottom: "240px"
-				}
-			}}
-		>
-			{isEmpty(error) ? (
+	if (isEmpty(error)) {
+		return (
+			<Layout
+				style={{
+					[theme.mediaQuery.maxSmall]: {
+						paddingBottom: "240px"
+					}
+				}}
+			>
 				<ScreenContainer
 					id="callsesh-view-user"
 					className={css({
@@ -61,14 +61,23 @@ const ViewUserScreen = ({ error, viewUser, actions }) => {
 						)}
 					</div>
 				</ScreenContainer>
-			) : (
-				<ScreenContainer
-					id="callsesh-view-user-error"
-					className={css({ margin: "auto" })}
-				>
-					<ErrorView error={error} />
-				</ScreenContainer>
-			)}
+			</Layout>
+		);
+	}
+
+	return (
+		<Layout
+			bodyStyle={{
+				display: "flex",
+				alignItems: "center"
+			}}
+		>
+			<ScreenContainer
+				id="callsesh-view-user-error"
+				className={css({ margin: "auto" })}
+			>
+				<ErrorView error={error} />
+			</ScreenContainer>
 		</Layout>
 	);
 };

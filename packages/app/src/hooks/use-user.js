@@ -61,8 +61,6 @@ function useUser({ required } = {}) {
 				const callSessionSync = new CallSessionSync(callSession.id);
 
 				callSessionSync.listen("onConnect", (value) => {
-					value.status = value.status || CALL_SESSION_STATUS.active;
-
 					// EMULATE: Start session connect status in metering
 					// value.status = CALL_SESSION_STATUS.metering;
 
@@ -103,22 +101,22 @@ function useUser({ required } = {}) {
 			return false;
 		}
 
-		// When the current user is not is a callSession but is a live operator, listen for callSession related events
+		// When the current user is not in a callSession but is a live operator, listen for callSession related events
+		// This will update state with the call session data, redirecting the operator to the call session and then listening to further updates on the given call session sync.
 		if (isUserOperator(user) && user.isLive) {
 			// Subscribe to LiveOperator updates
 			const liveOperatorSync = new LiveOperatorSync(user.id);
 			liveOperatorSync.listen("onUpdate", (event) => {
-				console.log("UPDATED!");
-				console.log(event);
-
 				setUserState({
 					...user,
 					callSession: {
 						...user.callSession,
-						...(event.value.callSession || {})
+						...(event.value?.callSession || {})
 					}
 				});
 			});
+
+			liveOperatorSync.start();
 		}
 
 		return true;

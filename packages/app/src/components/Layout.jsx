@@ -8,7 +8,16 @@ import { ChildrenProps } from "@/utils/common-prop-types";
 
 const maxWidthSize = 1024;
 
-const Layout = ({ children, style, fullWidth }) => {
+const Layout = ({
+	children,
+	style,
+	fullWidth,
+	noHeader,
+	noFooter,
+	bodyStyle,
+	headerStyle,
+	footerStyle
+}) => {
 	const [css] = useStyletron();
 
 	return (
@@ -27,18 +36,19 @@ const Layout = ({ children, style, fullWidth }) => {
 				className={css({
 					maxWidth: `${maxWidthSize}px`,
 					margin: "0 auto",
-					width: "100%"
+					width: "100%",
+					...headerStyle
 				})}
 			>
-				<Header />
+				{!noHeader && <Header />}
 			</div>
 			<div
 				className={css({
 					flexGrow: 1,
-					display: "flex",
 					maxWidth: fullWidth ? "none" : `${maxWidthSize}px`,
 					margin: "0 auto",
-					width: "100%"
+					width: "100%",
+					...bodyStyle
 				})}
 			>
 				{children}
@@ -47,10 +57,11 @@ const Layout = ({ children, style, fullWidth }) => {
 				className={css({
 					maxWidth: `${maxWidthSize}px`,
 					margin: "0 auto",
-					width: "100%"
+					width: "100%",
+					...footerStyle
 				})}
 			>
-				<Footer />
+				{!noFooter && <Footer />}
 			</div>
 		</main>
 	);
@@ -59,12 +70,22 @@ const Layout = ({ children, style, fullWidth }) => {
 Layout.propTypes = {
 	children: ChildrenProps.isRequired,
 	style: PropTypes.object,
-	fullWidth: PropTypes.bool
+	fullWidth: PropTypes.bool,
+	noHeader: PropTypes.bool,
+	noFooter: PropTypes.bool,
+	bodyStyle: PropTypes.object,
+	headerStyle: PropTypes.object,
+	footerStyle: PropTypes.object
 };
 
 Layout.defaultProps = {
 	style: {},
-	fullWidth: false
+	fullWidth: false,
+	noHeader: false,
+	noFooter: false,
+	bodyStyle: {},
+	headerStyle: {},
+	footerStyle: {}
 };
 
 export default Layout;

@@ -14,6 +14,16 @@ const proxyService = client.proxy.services(config.proxyServiceSid);
 const syncService = client.sync.services(config.syncServiceSid);
 
 /**
+ * Get proxy service helper
+ */
+export const getProxyService = () => proxyService;
+
+/**
+ * Get sync service helper
+ */
+export const getSyncService = () => syncService;
+
+/**
  * Create a Proxy session and add two participants to it.
  *
  * @var  {Object} caller   { name, phoneNumber }
@@ -49,11 +59,6 @@ export const createSession = async (caller, operator, sessionParams = {}) => {
 		operator: operatorParticipant
 	};
 };
-
-/**
- * Get proxy service helper
- */
-export const getProxyService = () => proxyService;
 
 /**
  * SMS Helper
@@ -194,11 +199,6 @@ export const generateToken = (identity = 0) => {
 		data: token.toJwt()
 	};
 };
-
-/**
- * Get sync service helper
- */
-export const getSyncService = () => proxyService;
 
 /**
  * Create a Sync Document
