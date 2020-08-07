@@ -24,6 +24,11 @@ export const getProxyService = () => proxyService;
 export const getSyncService = () => syncService;
 
 /**
+ * Get Twilio client
+ */
+export const getClient = () => client;
+
+/**
  * Create a Proxy session and add two participants to it.
  *
  * @var  {Object} caller   { name, phoneNumber }
@@ -90,9 +95,25 @@ export const call = (phoneNumber, fromPhoneNumber) => {
 };
 
 /**
- * Get Twilio client
+ * Retrieve the last call initiation interaction
+ * Used to determine whether or a call has been made or to get inbound/outbound resources
+ *
+ * @param   {string}  sessionId  Proxy Session SID
+ *
+ * @return  {Object}             Interaction object
  */
-export const getClient = () => client;
+export const getLastCallInitiation = async (sessionId) => {
+	const interactions = await proxyService
+		.sessions(sessionId)
+		.interactions.list({ limit: 99999999 });
+	interactions.reverse();
+
+	return interactions.find(
+		(interaction) =>
+			interaction.inboundResourceType === "call" &&
+			interaction.outboundResourceStatus === "initiated"
+	);
+};
 
 /**
  * To force end session, hang up calls and close the session
@@ -103,16 +124,7 @@ export const endSession = async (sessionId) => {
 	await proxyService.sessions(sessionId).update({ status: "closed" });
 
 	// Hang up
-	const interactions = await proxyService
-		.sessions(sessionId)
-		.interactions.list({ limit: 99999999 });
-	interactions.reverse();
-
-	const lastCallInitiation = interactions.find(
-		(interaction) =>
-			interaction.inboundResourceType === "call" &&
-			interaction.outboundResourceStatus === "initiated"
-	);
+	const lastCallInitiation = await getLastCallInitiation(sessionId);
 	if (!isEmpty(lastCallInitiation)) {
 		await Promise.all([
 			client

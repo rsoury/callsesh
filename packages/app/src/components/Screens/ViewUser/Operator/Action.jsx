@@ -166,7 +166,7 @@ const ViewUserOperatorAction = ({ viewUser, onStart, onToggleNotify }) => {
 									</span>
 									<HelpTooltip
 										size={18}
-										text="Only charged if your call session was successfully connected"
+										text="Only charged if your call session is successfully connected"
 									>
 										<span>
 											Service fee: <strong>{fees.preAuthAmountText()}</strong>

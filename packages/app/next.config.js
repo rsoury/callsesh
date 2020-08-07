@@ -86,8 +86,8 @@ module.exports = (phase, ...nextParams) => {
 			twilioClient.proxy
 				.services(env.TWILIO_PROXY_SERVICE_SID)
 				.update({
-					callbackUrl: `${env.PUBLIC_PROXY_URL}/api/hooks/call-session`
-					// interceptCallbackUrl: `${env.PUBLIC_PROXY_URL}/api/hooks/call-session/intercept`
+					callbackUrl: `${env.PUBLIC_PROXY_URL}/api/hooks/call-session`,
+					interceptCallbackUrl: `${env.PUBLIC_PROXY_URL}/api/hooks/call-session/intercept`
 				})
 				.then(() => {
 					console.log(
