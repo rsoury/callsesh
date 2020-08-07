@@ -102,17 +102,24 @@ export const call = (phoneNumber, fromPhoneNumber) => {
  *
  * @return  {Object}             Interaction object
  */
-export const getLastCallInitiation = async (sessionId) => {
+export const getLastCall = async (sessionId) => {
 	const interactions = await proxyService
 		.sessions(sessionId)
 		.interactions.list({ limit: 99999999 });
-	interactions.reverse();
 
-	return interactions.find(
+	const completedCalls = interactions.filter(
 		(interaction) =>
 			interaction.inboundResourceType === "call" &&
-			interaction.outboundResourceStatus === "initiated"
+			interaction.outboundResourceType === "call" &&
+			interaction.outboundResourceStatus === "completed"
 	);
+	completedCalls.reverse();
+
+	if (isEmpty(completedCalls)) {
+		return null;
+	}
+
+	return completedCalls[0];
 };
 
 /**
@@ -123,17 +130,25 @@ export const endSession = async (sessionId) => {
 	// Close session
 	await proxyService.sessions(sessionId).update({ status: "closed" });
 
-	// Hang up
-	const lastCallInitiation = await getLastCallInitiation(sessionId);
-	if (!isEmpty(lastCallInitiation)) {
-		await Promise.all([
-			client
-				.calls(lastCallInitiation.inboundResourceSid)
-				.update({ status: "completed" }),
-			client
-				.calls(lastCallInitiation.outboundResourceSid)
-				.update({ status: "completed" })
-		]);
+	// Interate over interactions until you get both (or one/none) call resources
+	const interactions = await proxyService
+		.sessions(sessionId)
+		.interactions.list({ limit: 99999999 });
+	const callResources = interactions.reduce((resources, interaction) => {
+		if (!resources.includes(interaction.inboundResourceSid)) {
+			resources.push(interaction.inboundResourceSid);
+		}
+		if (!resources.includes(interaction.outboundResourceSid)) {
+			resources.push(interaction.outboundResourceSid);
+		}
+		return resources;
+	}, []);
+	const promises = [];
+	callResources.forEach((resource) => {
+		promises.push(client.calls(resource).update({ status: "completed" }));
+	});
+	if (!isEmpty(promises)) {
+		await Promise.all(promises);
 	}
 
 	return true;

@@ -19,14 +19,15 @@ import stripe, { isPayoutsEnabled } from "@/server/stripe";
 import * as fees from "@/utils/fees";
 import Moment from "moment";
 import { extendMoment } from "moment-range";
-import * as chat from "@/server/chat";
 
+import * as chat from "@/server/chat";
 import { onNoMatch } from "@/server/middleware";
 import { getUser } from "@/server/middleware/auth";
 import { ERROR_TYPES, CALL_SESSION_USER_TYPE } from "@/constants";
 import handleException from "@/utils/handle-exception";
 import checkCallSession from "@/utils/check-call-session";
 import syncIds from "@/utils/sync/identifiers";
+import { publicUrl } from "@/env-config";
 
 import * as utils from "./utils";
 
@@ -340,22 +341,34 @@ export default async function endCallSession(req, res) {
 	}
 
 	// Cancel pre-auth payment intent. Create new payment intent with chargeParams
-	const cancelledPayment = await stripe.paymentIntents.cancel(
-		callerUser.callSession.preAuthorisation,
-		{
-			cancellation_reason: "duplicate"
-		}
-	);
-	// Payments will be captured manually for now.
+	try {
+		const cancelledPayment = await stripe.paymentIntents.cancel(
+			callerUser.callSession.preAuthorisation,
+			{
+				cancellation_reason: "duplicate"
+			}
+		);
+		logger.info(`Successfully cancelled pre-authorisation`, {
+			payment: cancelledPayment.id
+		});
+	} catch (e) {
+		logger.error(
+			`Failed to cancel pre-authorisation. Could be already cancelled.`,
+			e
+		);
+	}
+
+	// Create the payment for the session
 	const payment = await stripe.paymentIntents.create(chargeParams);
 
 	logger.debug(`Successful payment intent`, {
 		payment,
-		cancelledPayment,
 		chargeParams
 	});
 
-	logger.info(`Charge payment create with latest call session details.`, {
+	logger.info(`Payment created with latest call session`, {
+		payment: payment.id,
+		serviceFee: fees.preAuthAmount(),
 		chargeAmount,
 		applicationFee
 	});
@@ -412,17 +425,19 @@ export default async function endCallSession(req, res) {
 
 		if (pendingPayoutAmount > 0) {
 			operatorSummary.push(
-				`You also have ${fees.format(pendingPayoutAmount)} pending payout.`
+				`You also have ${fees.format(
+					pendingPayoutAmount
+				)} pending payout. Pending payouts are paid at the start each month.`
 			);
 		}
 	} else {
 		operatorSummary.push(
-			`You now have a ${fees.format(newPendingPayoutAmount)} pending payout.`
+			`You now have a ${fees.format(
+				newPendingPayoutAmount
+			)} pending payout. Pending payouts are paid at the start each month.`
 		);
 	}
-	operatorSummary.push(
-		`Pending payouts are paid at the start each month. You can manage your payouts at https://www.callsesh.com`
-	);
+	operatorSummary.push(`You can manage your payouts at ${publicUrl}`);
 	await Promise.all([
 		// Operator
 		comms.sms(operatorUser.phoneNumber, operatorSummary.join(" ")),

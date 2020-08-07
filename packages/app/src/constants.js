@@ -11,7 +11,7 @@ import MediumIcon from "@/components/Icon/Medium";
 
 // Fees
 export const FEE_MULTIPLIER = 0.15;
-export const SERVICE_FEE = 60;
+export const SERVICE_FEE = 100;
 
 // Referral
 export const OPERATOR_REFERRAL_MULTIPLIER = 0.05;

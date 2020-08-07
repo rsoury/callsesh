@@ -42,13 +42,14 @@ export default async function proxyInterceptHook(req, res) {
 
 		// Check if user is the operator.
 		if (user.callSession.as === CALL_SESSION_USER_TYPE.operator) {
-			// Check if a call has been initiated previously.
-			const lastCallInitiation = await comms.getLastCallInitiation(
-				interactionSessionSid
-			);
+			// Check if a call has been completed previously -- ie. is the operator calling back.
+			const lastCall = await comms.getLastCall(interactionSessionSid);
+
 			// If not, throw an error. This prevents the Operator from making the first call.
-			if (isEmpty(lastCallInitiation)) {
+			if (isEmpty(lastCall)) {
 				throw new Error("Operator cannot make the first call in a session");
+			} else {
+				req.log.info(`Operator safe to proceed with call`);
 			}
 		}
 
