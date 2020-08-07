@@ -279,7 +279,7 @@ export default async function createCallSession(req, res) {
 		// Notify operator of an incoming caller.
 		comms.sms(
 			operatorUser.phoneNumber,
-			`You have a caller! ${user.givenName} will call you from ${proxyPhoneNumber}. Check your session at ${publicUrl}`
+			`You have a Callsesh caller! ${user.givenName} will call you from ${proxyPhoneNumber}. Check your session at ${publicUrl}`
 		),
 		// Notify caller with proxy phone number
 		comms.sms(

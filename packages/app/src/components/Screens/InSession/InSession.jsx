@@ -4,13 +4,19 @@ import isEmpty from "is-empty";
 import { useStyletron, withStyle } from "baseui";
 import { Paragraph2 as Paragraph, ParagraphXSmall } from "baseui/typography";
 import { StyledSpinnerNext, SIZE as SPINNER_SIZE } from "baseui/spinner";
+import {
+	Button,
+	SHAPE as BUTTON_SHAPE,
+	KIND as BUTTON_KIND
+} from "baseui/button";
 import { motion } from "framer-motion";
 import {
 	PhoneOff as EndSessionIcon,
 	MessageSquare as ChatIcon,
 	Clock as MeterIcon,
 	PauseCircle as StopMeterIcon,
-	Phone as CallIcon
+	Phone as CallIcon,
+	XCircle as CancelSessionIcon
 } from "react-feather";
 
 import InSessionTopBar from "@/components/Header/InSessionTopBar";
@@ -150,21 +156,12 @@ const InSessionScreen = ({
 												}
 												retain
 												isLoading={isLoadingMeter}
+												disabled={isEndingSession}
 											>
 												{callSession.status === CALL_SESSION_STATUS.metering
 													? `Stop the meter`
 													: `Start the meter`}
 											</ActionButton>
-											{callSession.status === CALL_SESSION_STATUS.metering ? (
-												<ParagraphXSmall>
-													Calling will stop the meter.
-												</ParagraphXSmall>
-											) : (
-												<ParagraphXSmall>
-													Use to end the call and continue charging for the
-													duration of the session.
-												</ParagraphXSmall>
-											)}
 										</div>
 									)}
 									<div
@@ -187,10 +184,14 @@ const InSessionScreen = ({
 											standard
 											newWindow
 											href={`${routes.page.chat}?with=${viewUser.username}`}
+											style={{
+												pointerEvents: isEndingSession ? "none" : "auto"
+											}}
 										>
 											<ActionButton
 												onClick={handleOpenChat}
 												startEnhancer={() => <ChatIcon size={26} />}
+												disabled={isEndingSession}
 											>
 												Chat
 											</ActionButton>
@@ -200,7 +201,8 @@ const InSessionScreen = ({
 											isLoading={isCalling}
 											startEnhancer={() => <CallIcon size={26} />}
 											disabled={
-												callSession.status === CALL_SESSION_STATUS.inCall
+												callSession.status === CALL_SESSION_STATUS.inCall ||
+												isEndingSession
 											}
 										>
 											Call
@@ -254,6 +256,17 @@ const InSessionScreen = ({
 										</strong>
 									</Paragraph>
 								)}
+								<div className={css({ marginTop: "10px" })}>
+									<Button
+										onClick={handleEndSession}
+										startEnhancer={() => <CancelSessionIcon size={24} />}
+										isLoading={isEndingSession}
+										kind={BUTTON_KIND.secondary}
+										shape={BUTTON_SHAPE.pill}
+									>
+										Cancel Session
+									</Button>
+								</div>
 							</div>
 						)}
 					</motion.div>

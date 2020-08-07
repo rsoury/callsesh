@@ -254,6 +254,20 @@ export default async function endCallSession(req, res) {
 			});
 		}
 		logger.info(`Call session ended with insufficient metered time`);
+
+		await Promise.all([
+			// Operator
+			comms.sms(
+				operatorUser.phoneNumber,
+				`Your session with ${callerUser.givenName} was cancelled.`
+			),
+			// Caller
+			comms.sms(
+				callerUser.phoneNumber,
+				`Your session with ${operatorUser.givenName} was cancelled.`
+			)
+		]);
+
 		return res.json({
 			success: true
 		});
@@ -417,7 +431,9 @@ export default async function endCallSession(req, res) {
 		})
 		.filter((s) => !isEmpty(s))
 		.join(" ");
-	const operatorSummary = [`This call went for ${readableDuration}.`];
+	const operatorSummary = [
+		`Your session with ${callerUser.givenName} went for ${readableDuration}.`
+	];
 	if (payoutsEnabled) {
 		operatorSummary.push(
 			`You will be paid ${fees.format(chargeAmount - applicationFee)}.`
@@ -445,9 +461,11 @@ export default async function endCallSession(req, res) {
 		comms.sms(
 			callerUser.phoneNumber,
 			[
-				`This call went for ${readableDuration} and metered ${fees.format(
+				`Your session with ${
+					operatorUser.givenName
+				} went for ${readableDuration} and metered ${fees.format(
 					totalChargeAmount
-				)}. A receipt has been emailed to you.`,
+				)}.`,
 				`We hope you're happy with the call! Have issues? Contact Callsesh support.`
 			].join("\n") // new line: https://stackoverflow.com/questions/24218945/how-do-i-add-a-line-break-in-my-twilio-sms-message
 		)

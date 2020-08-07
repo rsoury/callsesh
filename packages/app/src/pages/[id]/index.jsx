@@ -39,28 +39,28 @@ const ViewUser = ({ viewUser: viewUserBase, error }) => {
 	const { isSame: inSessionWithViewUser } = checkCallSession(user, viewUser);
 
 	// EMULATE: Add users into session
-	// useEffect(() => {
-	// 	if (isEmpty(error) && !isEmpty(user)) {
-	// 		setTimeout(() => {
-	// 			setUser({
-	// 				...user,
-	// 				callSession: {
-	// 					id: "emulated-session",
-	// 					as: "operator",
-	// 					with: viewUser.username
-	// 				}
-	// 			});
-	// 			setViewUser({
-	// 				...viewUser,
-	// 				callSession: {
-	// 					id: "emulated-session",
-	// 					as: "caller",
-	// 					with: user.username
-	// 				}
-	// 			});
-	// 		}, 1000);
-	// 	}
-	// }, []);
+	useEffect(() => {
+		if (isEmpty(error) && !isEmpty(user)) {
+			setTimeout(() => {
+				setUser({
+					...user,
+					callSession: {
+						id: "emulated-session",
+						as: "operator",
+						with: viewUser.username
+					}
+				});
+				setViewUser({
+					...viewUser,
+					callSession: {
+						id: "emulated-session",
+						as: "caller",
+						with: user.username
+					}
+				});
+			}, 1000);
+		}
+	}, []);
 
 	// Set current pathname to userRouteReferrer state if error is empty.
 	useEffect(() => {
@@ -190,10 +190,6 @@ const ViewUser = ({ viewUser: viewUserBase, error }) => {
 						...viewUser,
 						callSession: {}
 					});
-
-					toaster.positive(
-						`Your session has ended. Thanks for using Callsesh!`
-					);
 				})
 				.catch((err) => {
 					handleException(err);

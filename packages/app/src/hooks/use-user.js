@@ -6,6 +6,7 @@
 import { useEffect, useContext, useCallback } from "react";
 import { useRouter } from "next/router";
 import isEmpty from "is-empty";
+import { toaster } from "baseui/toast";
 
 import * as routes from "@/routes";
 import appendReturnUrl from "@/utils/append-return-url";
@@ -91,6 +92,10 @@ function useUser({ required } = {}) {
 						...user,
 						callSession: {}
 					});
+
+					toaster.positive(
+						`Your session has ended. Thank you for using Callsesh!`
+					);
 				});
 
 				callSessionSync.start();

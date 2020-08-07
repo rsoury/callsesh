@@ -95,34 +95,6 @@ export const call = (phoneNumber, fromPhoneNumber) => {
 };
 
 /**
- * Retrieve the last call initiation interaction
- * Used to determine whether or a call has been made or to get inbound/outbound resources
- *
- * @param   {string}  sessionId  Proxy Session SID
- *
- * @return  {Object}             Interaction object
- */
-export const getLastCall = async (sessionId) => {
-	const interactions = await proxyService
-		.sessions(sessionId)
-		.interactions.list({ limit: 99999999 });
-
-	const completedCalls = interactions.filter(
-		(interaction) =>
-			interaction.inboundResourceType === "call" &&
-			interaction.outboundResourceType === "call" &&
-			interaction.outboundResourceStatus === "completed"
-	);
-	completedCalls.reverse();
-
-	if (isEmpty(completedCalls)) {
-		return null;
-	}
-
-	return completedCalls[0];
-};
-
-/**
  * To force end session, hang up calls and close the session
  * Hang up by getting the last call inititation interaction, and completing the corresponding calls for each participant
  */
