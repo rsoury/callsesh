@@ -174,30 +174,34 @@ const ViewUser = ({ viewUser: viewUserBase, error }) => {
 	const handleEndSession = useCallback(
 		(done = () => {}) => {
 			const ts = Date.now();
-
-			// Remove call session from user state
-			setUser({
-				...user,
-				callSession: {}
-			});
-
-			// Remove call session from view user state
-			setViewUser({
-				...viewUser,
-				callSession: {}
-			});
+			toaster.info(`Ending your session with ${viewUser.givenName}...`);
 
 			request
 				.post(routes.api.endCall, { force: true, ts })
 				.then(() => {
-					toaster.info(`You're call session has ended.`);
+					// Remove call session from user state
+					setUser({
+						...user,
+						callSession: {}
+					});
+
+					// Remove call session from view user state
+					setViewUser({
+						...viewUser,
+						callSession: {}
+					});
+
+					toaster.positive(
+						`Your session has ended. Thanks for using Callsesh!`
+					);
 				})
 				.catch((err) => {
 					handleException(err);
 					alerts.error();
+				})
+				.finally(() => {
+					done();
 				});
-
-			done();
 		},
 		[user]
 	);

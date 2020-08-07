@@ -73,22 +73,27 @@ export default async function endCallSession(req, res) {
 	// Ensure the status is closed before ending -- for automatic call session ending
 	const session = await service.sessions(sessionId).fetch();
 	req.log.info(`Session status`, { status: session.status });
-	if (force) {
-		await comms.endSession(sessionId).catch((e) => {
-			req.log.error(`Could not end session`, ono(e, { sessionId }));
-			throw e;
-		});
-	} else if (session.status !== "closed") {
-		if (session.status === "failed") {
-			req.log.error(`Session failed`);
-			// Capture an exception for further investigation
-			handleException(ono(new Error("Session failed"), { sessionId }));
-		}
+	if (session.status !== "closed") {
+		if (force) {
+			req.log.info(`Force ending session`);
+			await comms.endSession(sessionId).catch((e) => {
+				req.log.error(`Could not end session`, ono(e, { sessionId }));
+				throw e;
+			});
+		} else {
+			if (session.status === "failed") {
+				req.log.error(`Session failed`);
+				// Capture an exception for further investigation
+				handleException(ono(new Error("Session failed"), { sessionId }));
+			} else {
+				req.log.info(`Session not ready to end`);
+			}
 
-		return res.status(400).json({
-			success: false,
-			code: 400
-		});
+			return res.status(400).json({
+				success: false,
+				code: 400
+			});
+		}
 	}
 
 	// Determine role of each user, as both roles can call this API endpoint handler
@@ -392,8 +397,12 @@ export default async function endCallSession(req, res) {
 		.split(":")
 		.map((value, index) => {
 			const intVal = parseInt(value, 10);
-			return `${intVal} ${timeTypes[index]}${intVal > 1 ? "s" : ""}`;
+			if (intVal > 0) {
+				return `${intVal} ${timeTypes[index]}${intVal > 1 ? "s" : ""}`;
+			}
+			return "";
 		})
+		.filter((s) => !isEmpty(s))
 		.join(" ");
 	const operatorSummary = [`This call went for ${readableDuration}.`];
 	if (payoutsEnabled) {

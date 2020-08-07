@@ -94,7 +94,7 @@ export const getMinuteRate = (hourlyRate, returnInt = false) => {
  * @return  {string|number}
  */
 export const getSecondRate = (hourlyRate, returnInt = false) => {
-	const rate = Dinero({ amount: hourlyRate }).divide(60 / 60);
+	const rate = Dinero({ amount: hourlyRate }).divide(60 * 60); // divide hourlyRate by 3600 (3600 seconds in an hour)
 	if (returnInt) {
 		return rate.toRoundedUnit(2) * 100;
 	}
