@@ -10,9 +10,13 @@ const {
 const SentryWebpackPlugin = require("@sentry/webpack-plugin");
 const filenamify = require("filenamify");
 const isEmpty = require("is-empty");
+const Twilio = require("twilio");
+const chalk = require("chalk");
 
 const { alias } = require("./config/alias");
 const pkg = require("./package.json");
+
+const isProd = process.env.NODE_ENV === "production";
 
 module.exports = (phase, ...nextParams) => {
 	// Explicitly define environment variables to be used at build time for both frontend and server
@@ -59,13 +63,47 @@ module.exports = (phase, ...nextParams) => {
 	Object.entries(env).forEach(([key, value]) => {
 		if (isEmpty(value)) {
 			console.log(
-				`WARNING: ${key} is a required environment variable. The application may not behave as expected.`
+				chalk.yellow(
+					`WARNING: ${key} is a required environment variable. The application may not behave as expected.`
+				)
 			);
 		}
 	});
 
 	// Print PUBLIC_URL for reference
-	console.log(`Application public url: ${env.PUBLIC_URL}`);
+	console.log(chalk.cyan(`Application public url: ${env.PUBLIC_URL}`));
+	if (env.PUBLIC_PROXY_URL) {
+		console.log(chalk.cyan(`Application proxy url: ${env.PUBLIC_PROXY_URL}`));
+		// If in development, set the proxy service callback and intercept automatically.
+		if (phase === PHASE_DEVELOPMENT_SERVER && !isProd) {
+			const twilioClient = new Twilio(
+				env.TWILIO_API_KEY,
+				env.TWILIO_API_SECRET,
+				{
+					accountSid: env.TWILIO_ACCOUNT_SID
+				}
+			);
+			twilioClient.proxy
+				.services(env.TWILIO_PROXY_SERVICE_SID)
+				.update({
+					callbackUrl: `${env.PUBLIC_PROXY_URL}/api/hooks/call-session`,
+					interceptCallbackUrl: `${env.PUBLIC_PROXY_URL}/api/hooks/call-session/intercept`
+				})
+				.then(() => {
+					console.log(
+						chalk.green(
+							`Successfully updated the Development Proxy Callback URLs`
+						)
+					);
+				})
+				.catch((e) => {
+					console.log(
+						chalk.red(`FAILED to update the Development Proxy Callback URLs`)
+					);
+					console.error(e);
+				});
+		}
+	}
 
 	const nextConfig = {
 		// Explicitly define environment variables to be used at build time.
