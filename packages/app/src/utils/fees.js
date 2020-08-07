@@ -113,11 +113,14 @@ export const getSecondRate = (hourlyRate, returnInt = false) => {
  */
 export const chargeAmount = (hourlyRate, secondDuration, returnInt = false) => {
 	const secondRate = getSecondRate(hourlyRate, true);
-	const amount = secondRate * secondDuration;
+	const amount = Dinero({ amount: secondRate }).multiply(
+		secondDuration,
+		"HALF_UP"
+	);
 	if (returnInt) {
-		return amount;
+		return amount.toRoundedUnit(2) * 100;
 	}
-	return Dinero({ amount }).toFormat("$0.00");
+	return amount.toFormat("$0.00");
 };
 
 /**
@@ -135,11 +138,14 @@ export const applicationAmount = (
 	returnInt = false
 ) => {
 	const amountToCharge = chargeAmount(hourlyRate, secondDuration, true);
-	const amount = amountToCharge * FEE_MULTIPLIER;
+	const amount = Dinero({ amount: amountToCharge }).multiply(
+		FEE_MULTIPLIER,
+		"HALF_UP"
+	);
 	if (returnInt) {
-		return amount;
+		return amount.toRoundedUnit(2) * 100;
 	}
-	return Dinero({ amount }).toFormat("$0.00");
+	return amount.toFormat("$0.00");
 };
 
 /**
@@ -156,19 +162,22 @@ export const operatorReferralAmount = (
 	if (earnings >= OPERATOR_REFERRAL_EARNINGS_CAP) {
 		return 0;
 	}
-	let amount = amountToCharge * OPERATOR_REFERRAL_MULTIPLIER;
-	const difference = OPERATOR_REFERRAL_EARNINGS_CAP - earnings;
-	if (amount > difference) {
+	let amount = Dinero({ amount: amountToCharge }).multiply(
+		OPERATOR_REFERRAL_MULTIPLIER
+	);
+	const difference = Dinero({
+		amount: OPERATOR_REFERRAL_EARNINGS_CAP - earnings
+	});
+	if (amount.greaterThan(difference)) {
 		// Cap amount to difference if greater
 		amount = difference;
 	}
 
 	// Use Dinero to round money value to keep consistent rounding
 	if (returnInt) {
-		return Dinero({ amount }).toRoundedUnit(2) * 100;
+		return amount.toRoundedUnit(2) * 100;
 	}
-
-	return Dinero({ amount }).toFormat("$0.00");
+	return amount.toFormat("$0.00");
 };
 
 /**

@@ -84,7 +84,7 @@ export default async function createCallSession(req, res) {
 				// Notify caller with proxy phone number
 				await comms.sms(
 					user.phoneNumber,
-					utils.getUserSMSMessage(proxyPhoneNumber)
+					utils.getUserSMSMessage(proxyPhoneNumber, operatorUser.givenName)
 				);
 
 				return res.json({
@@ -279,10 +279,13 @@ export default async function createCallSession(req, res) {
 		// Notify operator of an incoming caller.
 		comms.sms(
 			operatorUser.phoneNumber,
-			`You have a caller named ${user.givenName}! You should receive a call within a minute. If you do not, this means the caller has abandoned the session.`
+			`You have a caller! ${user.givenName} will call you from ${proxyPhoneNumber}. Check your session at ${publicUrl}`
 		),
 		// Notify caller with proxy phone number
-		comms.sms(user.phoneNumber, utils.getUserSMSMessage(proxyPhoneNumber))
+		comms.sms(
+			user.phoneNumber,
+			utils.getUserSMSMessage(proxyPhoneNumber, operatorUser.givenName)
+		)
 	]);
 
 	await delayEndSession(proxySession.sid, user.id);

@@ -53,7 +53,7 @@ export const delayEndSession = async (sessionId, userId = "") => {
 			sessionId,
 			CALL_SESSION_USER_TYPE.caller
 		);
-		userId = callerUser.userId;
+		userId = callerUser.id;
 	}
 
 	const token = await authManager.createOTP(userId);

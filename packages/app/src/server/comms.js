@@ -113,18 +113,16 @@ export const endSession = async (sessionId) => {
 			interaction.inboundResourceType === "call" &&
 			interaction.outboundResourceStatus === "initiated"
 	);
-	if (isEmpty(lastCallInitiation)) {
-		throw new Error("Call has never been initiated");
+	if (!isEmpty(lastCallInitiation)) {
+		await Promise.all([
+			client
+				.calls(lastCallInitiation.inboundResourceSid)
+				.update({ status: "completed" }),
+			client
+				.calls(lastCallInitiation.outboundResourceSid)
+				.update({ status: "completed" })
+		]);
 	}
-
-	await Promise.all([
-		client
-			.calls(lastCallInitiation.inboundResourceSid)
-			.update({ status: "completed" }),
-		client
-			.calls(lastCallInitiation.outboundResourceSid)
-			.update({ status: "completed" })
-	]);
 
 	return true;
 };

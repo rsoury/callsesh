@@ -71,7 +71,7 @@ export default async function getCallSession(req, res) {
 				// Notify caller with proxy phone number
 				await comms.sms(
 					callerUser.phoneNumber,
-					utils.getUserSMSMessage(proxyPhoneNumber)
+					utils.getUserSMSMessage(proxyPhoneNumber, operatorUser.givenName)
 				);
 			}
 

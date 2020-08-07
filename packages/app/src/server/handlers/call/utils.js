@@ -19,8 +19,10 @@ export const logParams = (operatorUser = {}, callerUser = {}) => ({
 	callerUser: { id: callerUser.id || "", username: callerUser.username || "" }
 });
 
-export const getUserSMSMessage = (proxyPhoneNumber) =>
-	`Call your operator using this number: ${proxyPhoneNumber}. This number will be unavailable in a minute.`;
+export const getUserSMSMessage = (proxyPhoneNumber, name) =>
+	`Call ${proxyPhoneNumber} to connect with ${
+		name || "your operator"
+	}! This number will be unavailable in a minute.`;
 
 export const isSessionValid = async (sessionId) => {
 	// Retrieve session and check if its still open (ie. not failed or closed).
