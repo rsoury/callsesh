@@ -7,7 +7,8 @@ import ArrowRight from "baseui/icon/arrow-right";
 import {
 	Button,
 	SIZE as BUTTON_SIZE,
-	KIND as BUTTON_KIND
+	KIND as BUTTON_KIND,
+	SHAPE as BUTTON_SHAPE
 } from "baseui/button";
 import {
 	PhoneCall as PhoneIcon,
@@ -22,6 +23,7 @@ import * as fees from "@/utils/fees";
 import useUser from "@/hooks/use-user";
 import Link from "@/components/Link";
 import Highlight from "@/components/Highlight";
+import HelpTooltip from "@/components/HelpTooltip";
 import { ViewUserProps } from "@/utils/common-prop-types";
 import checkCallSession from "@/utils/check-call-session";
 import * as routes from "@/routes";
@@ -57,7 +59,15 @@ const ViewUserOperatorAction = ({ viewUser, onStart, onToggleNotify }) => {
 	};
 
 	return (
-		<div>
+		<div
+			className={css({
+				maxWidth: "500px",
+				margin: "0 auto",
+				[theme.mediaQuery.maxSmall]: {
+					maxWidth: "none"
+				}
+			})}
+		>
 			<div
 				className={css({
 					position: "relative !important",
@@ -94,7 +104,7 @@ const ViewUserOperatorAction = ({ viewUser, onStart, onToggleNotify }) => {
 						}
 					}}
 				>
-					<StyledBody>
+					<StyledBody className={css({ marginBottom: theme.sizing.scale200 })}>
 						{viewUser.isLive && inSessionWithViewUser && (
 							<div>
 								<Label>
@@ -146,6 +156,25 @@ const ViewUserOperatorAction = ({ viewUser, onStart, onToggleNotify }) => {
 						)}
 						{isAuthenticated && viewUser.isLive && (
 							<div>
+								<ParagraphXSmall
+									marginTop="0px"
+									marginBottom={theme.sizing.scale400}
+								>
+									<span>
+										You will be charged only for metered and talk duration.
+									</span>
+									<HelpTooltip
+										size={18}
+										text="Only charged if your call session was successfully connected"
+									>
+										<span>
+											Service fee: <strong>{fees.preAuthAmountText()}</strong>
+										</span>
+									</HelpTooltip>
+									<span>
+										Currency: <strong>{viewUser.currency}</strong>
+									</span>
+								</ParagraphXSmall>
 								<Button
 									startEnhancer={
 										viewUserInSession && !inSessionWithViewUser
@@ -181,18 +210,13 @@ const ViewUserOperatorAction = ({ viewUser, onStart, onToggleNotify }) => {
 										</span>
 									)}
 								</Button>
-								<ParagraphXSmall marginTop="5px" marginBottom="0px">
-									You will be charged only for metered and talk duration. A fee
-									of {fees.preAuthAmountText()} will be charged on successful
-									sessions. Currency is in {viewUser.currency}.
-								</ParagraphXSmall>
 							</div>
 						)}
 					</StyledAction>
 				</BaseCard>
 			</div>
 			{isAuthenticated && !isSameUser && (
-				<div className={css({ marginTop: "10px" })}>
+				<div className={css({ marginTop: "10px", textAlign: "center" })}>
 					<Button
 						startEnhancer={
 							isNotified
@@ -203,17 +227,16 @@ const ViewUserOperatorAction = ({ viewUser, onStart, onToggleNotify }) => {
 						overrides={{
 							BaseButton: {
 								style: {
-									width: "100%",
 									pointerEvents: isTogglingNotify ? "none" : "auto",
-									[theme.mediaQuery.maxSmall]: {
-										border: `3px solid ${theme.colors.backgroundSecondary}`
-									}
+									paddingRight: "20px",
+									paddingLeft: "20px"
 								}
 							}
 						}}
 						isLoading={isTogglingNotify}
 						size={BUTTON_SIZE.compact}
 						kind={isNotified ? BUTTON_KIND.primary : BUTTON_KIND.secondary}
+						shape={BUTTON_SHAPE.pill}
 					>
 						{isNotified ? (
 							<span>Stop notifications</span>

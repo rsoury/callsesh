@@ -22,6 +22,8 @@ import { ERROR_TYPES, CALL_SESSION_USER_TYPE } from "@/constants";
 import checkCallSession from "@/utils/check-call-session";
 import { delayEndSession } from "@/server/workflows";
 import syncIds from "@/utils/sync/identifiers";
+import stripe from "@/server/stripe";
+import * as fees from "@/utils/fees";
 
 import * as utils from "./utils";
 
@@ -146,6 +148,54 @@ export default async function createCallSession(req, res) {
 
 	logger.info(`User is a customer`);
 
+	// Initiate PreAuthorisation to ensure payment method associated with Caller is valid
+	let preAuthorisation = null;
+	try {
+		// The payment intent can error if authentication is required
+		// -- setup intent is in use to prevent this, but not guaranteed
+		const customer = await stripe.customers.retrieve(user.stripeCustomerId);
+		const paymentMethodId = customer.invoice_settings.default_payment_method;
+		const preAuthParams = {
+			amount: fees.preAuthAmount(),
+			currency: operatorUser.currency,
+			customer: stripeCustomerId,
+			payment_method: paymentMethodId,
+			description: "Call session pre-authorisation",
+			metadata: {
+				callSessionId: callSession.id,
+				callerName: user.nickname,
+				callerUsername: user.username,
+				operatorName: operatorUser.nickname,
+				operatorUsername: operatorUser.username
+			},
+			statement_descriptor_suffix: `OP: ${truncate(
+				operatorUser.givenName,
+				18
+			)}`,
+			off_session: true,
+			confirm: true,
+			error_on_requires_action: true,
+			capture_method: "manual"
+		};
+		preAuthorisation = await stripe.paymentIntents.create(preAuthParams);
+
+		logger.info(`Pre-authorisation complete`, { id: preAuth.id });
+	} catch (e) {
+		// SMS Caller of issue with payment too.
+		await comms.sms(
+			user.phoneNumber,
+			`There seems to have been an issue with your payment method. Please configure or add a new payment method through your Callsesh Wallet. ${publicUrl}${routes.page.settings.wallet}`
+		);
+
+		logger.error(`Pre-authorisation failed`, e);
+
+		return res.status(utils.customerErrResponse.code).json({
+			...utils.customerErrResponse,
+			type: ERROR_TYPES.paymentMethodInvalid,
+			message: "Payment method invalid"
+		});
+	}
+
 	// Create the proxy call session
 	const {
 		session: proxySession,
@@ -209,7 +259,10 @@ export default async function createCallSession(req, res) {
 		authManager.updateUser(user.id, {
 			metadata: {
 				app: {
-					callSession: callerCallSession
+					callSession: {
+						...callerCallSession,
+						preAuthorisation: preAuthorisation.id
+					}
 				}
 			}
 		})

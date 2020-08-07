@@ -104,6 +104,12 @@ const ViewUser = ({ viewUser: viewUserBase, error }) => {
 							);
 							Router.push(routes.page.settings.wallet);
 							break;
+						case ERROR_TYPES.paymentMethodInvalid:
+							toaster.negative(
+								`Your selected payment method is not valid or has insufficient funds. Please wait while we redirect you to your wallet...`
+							);
+							Router.push(routes.page.settings.wallet);
+							break;
 						case ERROR_TYPES.operatorUnavailable:
 							toaster.negative(
 								`A call cannot be made. The operator is unavailable.`

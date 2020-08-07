@@ -2,16 +2,12 @@ import React from "react";
 import PropTypes from "prop-types";
 import { Card as BaseCard, StyledBody, StyledAction } from "baseui/card";
 import { useStyletron } from "baseui";
-import { HelpCircle as HelpIcon } from "react-feather";
-import {
-	StatefulTooltip as Tooltip,
-	PLACEMENT as TOOLTIP_PLACEMENT
-} from "baseui/tooltip";
+import { PLACEMENT as TOOLTIP_PLACEMENT } from "baseui/tooltip";
 import { Button } from "baseui/button";
-import { Block } from "baseui/block";
 
 import { ChildrenProps } from "@/utils/common-prop-types";
 import UppercaseLabel from "@/components/UppercaseLabel";
+import HelpTooltip from "@/components/HelpTooltip";
 
 const Card = ({
 	title,
@@ -64,25 +60,11 @@ const Card = ({
 				<div>
 					{actionText && <Button {...actionProps}>{actionText}</Button>}
 					{helpText && (
-						<div
-							className={css({
-								display: "flex",
-								justifyContent: "flex-end",
-								marginLeft: "10px"
-							})}
-						>
-							<Tooltip
-								content={() => <Block maxWidth="250px">{helpText}</Block>}
-								showArrow
-								renderAll
-								autoFocus
-								placement={helpPlacement}
-							>
-								<div className={css({ display: "flex" })}>
-									<HelpIcon size={20} />
-								</div>
-							</Tooltip>
-						</div>
+						<HelpTooltip
+							text={helpText}
+							placement={helpPlacement}
+							style={{ marginLeft: "10px", justifyContent: "flex-end" }}
+						/>
 					)}
 				</div>
 			</div>

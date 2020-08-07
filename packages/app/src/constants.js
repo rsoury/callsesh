@@ -11,7 +11,7 @@ import MediumIcon from "@/components/Icon/Medium";
 
 // Fees
 export const FEE_MULTIPLIER = 0.15;
-export const SERVICE_FEE = 50;
+export const SERVICE_FEE = 60;
 
 // Referral
 export const OPERATOR_REFERRAL_MULTIPLIER = 0.05;
@@ -44,6 +44,7 @@ export const ERROR_TYPES = {
 	userBlocked: "UserBlocked",
 	// Call session
 	paymentMethodRequired: "PaymentMethodRequired",
+	paymentMethodInvalid: "PaymentMethodInvalid",
 	callSessionRequired: "CallSessionRequired",
 	// Operator
 	operatorRequired: "OperatorRequired",
