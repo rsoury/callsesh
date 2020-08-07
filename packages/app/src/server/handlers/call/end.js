@@ -243,7 +243,9 @@ export default async function endCallSession(req, res) {
 				}
 			);
 			logger.debug(`Cancelled payment intent`, { cancelledPayment });
-			logger.info(`Cancelling payment...`);
+			logger.info(`Cancelling payment...`, {
+				id: callerUser.callSession.preAuthorisation
+			});
 		}
 		logger.info(`Call session ended with insufficient metered time`);
 		return res.json({

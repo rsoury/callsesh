@@ -1,7 +1,11 @@
 import React, { useState } from "react";
 import PropTypes from "prop-types";
 import { useStyletron } from "baseui";
-import { Label1 as Label, ParagraphXSmall } from "baseui/typography";
+import {
+	Label1 as Label,
+	ParagraphSmall,
+	ParagraphXSmall
+} from "baseui/typography";
 import { Card as BaseCard, StyledBody, StyledAction } from "baseui/card";
 import ArrowRight from "baseui/icon/arrow-right";
 import {
@@ -111,9 +115,6 @@ const ViewUserOperatorAction = ({ viewUser, onStart, onToggleNotify }) => {
 									<Highlight type="positive">
 										You&apos;re in call session with {viewUser.givenName}
 									</Highlight>
-									<ParagraphXSmall marginTop="5px" marginBottom="0px">
-										The call session will end a minute after you hangup.
-									</ParagraphXSmall>
 								</Label>
 							</div>
 						)}
@@ -129,10 +130,10 @@ const ViewUserOperatorAction = ({ viewUser, onStart, onToggleNotify }) => {
 								<Label>
 									<strong>{viewUser.givenName} is not available.</strong>
 								</Label>
-								<ParagraphXSmall marginTop="5px" marginBottom="0px">
-									Check back another time or follow their socials for an
-									announcement on when they will be live.
-								</ParagraphXSmall>
+								<ParagraphSmall marginTop="5px" marginBottom="0px">
+									Get email notifications using the button below or follow their
+									socials for an announcement.
+								</ParagraphSmall>
 							</div>
 						)}
 					</StyledBody>

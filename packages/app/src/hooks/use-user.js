@@ -155,7 +155,7 @@ function useUser({ required } = {}) {
 			if (isMounted) {
 				// When the user is not logged in but login is required
 				if (required && !newUser) {
-					Router.replace(routes.page.login);
+					router.replace(routes.page.login);
 					return;
 				}
 				resolveUser();

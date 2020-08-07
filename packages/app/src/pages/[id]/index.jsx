@@ -7,7 +7,7 @@ import { useEffect, useState, useCallback } from "react";
 import isEmpty from "is-empty";
 import debounce from "lodash/debounce";
 import { toaster } from "baseui/toast";
-import Router from "next/router";
+import { useRouter } from "next/router";
 import MobileDetect from "mobile-detect";
 import ono from "@jsdevtools/ono";
 import * as authManager from "@/server/auth-manager";
@@ -32,6 +32,7 @@ const ViewUser = ({ viewUser: viewUserBase, error }) => {
 	const [user] = useUser();
 	const setUser = useSetUser();
 	const [, setUserRouteReferrer] = useUserRouteReferrer();
+	const router = useRouter();
 
 	const md = new MobileDetect(window.navigator.userAgent);
 
@@ -102,18 +103,20 @@ const ViewUser = ({ viewUser: viewUserBase, error }) => {
 							toaster.info(
 								`A payment method is required to make calls. Please wait while we redirect you to your wallet...`
 							);
-							Router.push(routes.page.settings.wallet);
+							router.push(routes.page.settings.wallet);
 							break;
 						case ERROR_TYPES.paymentMethodInvalid:
 							toaster.negative(
 								`Your selected payment method is not valid or has insufficient funds. Please wait while we redirect you to your wallet...`
 							);
-							Router.push(routes.page.settings.wallet);
+							router.push(routes.page.settings.wallet);
 							break;
 						case ERROR_TYPES.operatorUnavailable:
 							toaster.negative(
 								`A call cannot be made. The operator is unavailable.`
 							);
+							// Reload the page her to ensure latest view user status to displayed.
+							router.reload();
 							break;
 						case ERROR_TYPES.operatorBusy:
 							toaster.negative(
