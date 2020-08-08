@@ -31,7 +31,8 @@ export const CALL_SESSION_STATUS = {
 	pending: "pending", // The call session is pending a call
 	active: "active", // The call session is active and will timeout unless called or metered
 	inCall: "in-call", // The call session is in call
-	metering: "metering" // The call session is being metered
+	metering: "metering", // The call session is being metered
+	ending: "ending" // The call session is ending
 };
 
 // Payouts

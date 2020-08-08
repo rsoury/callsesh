@@ -176,11 +176,10 @@ const ViewUser = ({ viewUser: viewUserBase, error }) => {
 
 	const handleEndSession = useCallback(
 		(done = () => {}) => {
-			const ts = Date.now();
 			toaster.info(`Ending your session with ${viewUser.givenName}...`);
 
-			request
-				.post(routes.api.endCall, { force: true, ts })
+			// End the session
+			CallSessionSync.end()
 				.then(() => {
 					// Remove call session from user state
 					setUser({
@@ -193,10 +192,6 @@ const ViewUser = ({ viewUser: viewUserBase, error }) => {
 						...viewUser,
 						callSession: {}
 					});
-				})
-				.catch((err) => {
-					handleException(err);
-					alerts.error();
 				})
 				.finally(() => {
 					done();

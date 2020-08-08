@@ -43,6 +43,11 @@ const InSessionTopBar = () => {
 			Icon: MeterIcon,
 			content: `The session is being metered`,
 			variant: "accent"
+		},
+		[CALL_SESSION_STATUS.ending]: {
+			Icon: InfoIcon,
+			content: `Ending session...`,
+			variant: "negative"
 		}
 	};
 

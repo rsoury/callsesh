@@ -14,6 +14,7 @@ import { UserContext } from "@/frontend/components/Providers/UserProvider";
 import stripTrailingSlash from "@/utils/strip-trailing-slash";
 import isUserOperator from "@/utils/is-operator";
 import { LiveOperatorSync, CallSessionSync } from "@/frontend/utils/sync";
+import { CALL_SESSION_STATUS } from "@/constants";
 
 /**
  * Helper function to set user state
@@ -63,7 +64,7 @@ function useUser({ required } = {}) {
 
 				callSessionSync.listen("onConnect", (value) => {
 					// EMULATE: Start session connect status in metering
-					// value.status = CALL_SESSION_STATUS.metering;
+					// value.status = CALL_SESSION_STATUS.ending;
 
 					setUserState({
 						...user,

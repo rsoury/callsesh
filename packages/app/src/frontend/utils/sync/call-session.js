@@ -54,6 +54,13 @@ class CallSessionSync extends SyncAbstract {
 				});
 			});
 
+			events.on("end", () => {
+				doc.mutate((remoteValue) => {
+					remoteValue.status = CALL_SESSION_STATUS.ending;
+					return remoteValue;
+				});
+			});
+
 			events.emit(this.callbackTypes.onConnect, value);
 
 			doc.on("updated", ({ value: eventValue = {}, ...event }) => {
@@ -65,6 +72,23 @@ class CallSessionSync extends SyncAbstract {
 				events.emit(this.callbackTypes.onRemove);
 			});
 		});
+	}
+
+	/**
+	 * End the session
+	 *
+	 * @return  {[type]}  [return description]
+	 */
+	static end() {
+		events.emit("end");
+		const ts = Date.now();
+
+		return request
+			.post(routes.api.endCall, { force: true, ts })
+			.catch((err) => {
+				handleException(err);
+				alerts.error();
+			});
 	}
 
 	/**

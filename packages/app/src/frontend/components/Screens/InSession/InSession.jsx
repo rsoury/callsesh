@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import isEmpty from "is-empty";
 import { useStyletron, withStyle } from "baseui";
@@ -55,17 +55,27 @@ const InSessionScreen = ({
 	const [isCalling, setCalling] = useState(false);
 	const [isEndingSession, setEndingSession] = useState(false);
 	const [isLoadingMeter, setLoadingMeter] = useState(false);
+	const [isInitiated, setInitiated] = useState(false);
 
 	const { callSession } = user;
-	const isInitiated =
-		!isEmpty(callSession.status) &&
-		callSession.status !== CALL_SESSION_STATUS.pending;
 	const isOperator = isUserOperator(user);
 
 	const handleEndSession = manageLoadingState(onEndSession, setEndingSession);
 	const handleOpenChat = onOpenChat;
 	const handleCall = manageLoadingState(onCall, setCalling);
 	const handleToggleMeter = manageLoadingState(onToggleMeter, setLoadingMeter);
+
+	useEffect(() => {
+		if (
+			[
+				CALL_SESSION_STATUS.active,
+				CALL_SESSION_STATUS.inCall,
+				CALL_SESSION_STATUS.metering
+			].includes(callSession.status)
+		) {
+			setInitiated(true);
+		}
+	}, [callSession]);
 
 	return (
 		<Layout noHeader noFooter>
@@ -138,8 +148,11 @@ const InSessionScreen = ({
 												display: "flex",
 												flexDirection: "column",
 												alignItems: "center",
+												textAlign: "center",
 												paddingBottom: "20px",
-												textAlign: "center"
+												width: "100%",
+												marginBottom: "20px",
+												borderBottom: `1px solid rgb(240, 240, 240)`
 											})}
 										>
 											<ActionButton
@@ -254,6 +267,14 @@ const InSessionScreen = ({
 												</span>
 											)}
 										</strong>
+									</Paragraph>
+								)}
+								{callSession.status === CALL_SESSION_STATUS.ending && (
+									<Paragraph
+										marginTop="25px"
+										color={theme.colors.contentTertiary}
+									>
+										<strong>Your call session is ending...</strong>
 									</Paragraph>
 								)}
 								<div className={css({ marginTop: "10px" })}>
