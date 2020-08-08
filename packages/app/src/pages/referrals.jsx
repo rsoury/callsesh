@@ -2,9 +2,9 @@ import { useStyletron } from "baseui";
 import { H3, Paragraph2 as Paragraph } from "baseui/typography";
 import { Grid, Cell } from "baseui/layout-grid";
 
-import Layout from "@/components/Layout";
-import SignupActionButton from "@/components/SignupActionButton";
-import Highlight from "@/components/Highlight";
+import Layout from "@/frontend/components/Layout";
+import SignupActionButton from "@/frontend/components/SignupActionButton";
+import Highlight from "@/frontend/components/Highlight";
 
 const Referrals = () => {
 	const [css, theme] = useStyletron();

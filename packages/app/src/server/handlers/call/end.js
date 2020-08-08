@@ -26,7 +26,7 @@ import { getUser } from "@/server/middleware/auth";
 import { ERROR_TYPES, CALL_SESSION_USER_TYPE } from "@/constants";
 import handleException from "@/utils/handle-exception";
 import checkCallSession from "@/utils/check-call-session";
-import syncIds from "@/utils/sync/identifiers";
+import syncIds from "@/utils/sync-identifiers";
 import { publicUrl } from "@/env-config";
 
 import * as utils from "./utils";

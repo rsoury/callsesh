@@ -21,7 +21,7 @@ import isUserOperator from "@/utils/is-operator";
 import { ERROR_TYPES, CALL_SESSION_USER_TYPE } from "@/constants";
 import checkCallSession from "@/utils/check-call-session";
 import { delayEndSession } from "@/server/workflows";
-import syncIds from "@/utils/sync/identifiers";
+import syncIds from "@/utils/sync-identifiers";
 import * as fees from "@/utils/fees";
 import { publicUrl } from "@/env-config";
 import * as routes from "@/routes";

@@ -12,10 +12,10 @@ import {
 	KIND as BUTTON_KIND
 } from "baseui/button";
 
-import ScreenContainer from "@/components/ScreenContainer";
-import Layout from "@/components/Layout";
-import Highlight from "@/components/Highlight";
-import Link from "@/components/Link";
+import ScreenContainer from "@/frontend/components/ScreenContainer";
+import Layout from "@/frontend/components/Layout";
+import Highlight from "@/frontend/components/Highlight";
+import Link from "@/frontend/components/Link";
 import * as routes from "@/routes";
 
 const Faq = () => {

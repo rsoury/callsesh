@@ -29,35 +29,35 @@ import ono from "@jsdevtools/ono";
 import { toaster } from "baseui/toast";
 import * as fees from "@/utils/fees";
 
-import Layout from "@/components/Layout";
-import LabelControl from "@/components/LabelControl";
-import EditEnhancer from "@/components/Settings/EditEnhancer";
-import EditModal from "@/components/Settings/EditModal";
-import useUser from "@/hooks/use-user";
+import Layout from "@/frontend/components/Layout";
+import LabelControl from "@/frontend/components/LabelControl";
+import EditEnhancer from "@/frontend/components/Settings/EditEnhancer";
+import EditModal from "@/frontend/components/Settings/EditModal";
+import useUser from "@/frontend/hooks/use-user";
 import {
 	schemaProperties as generalSchemaProperties,
 	genderOptions
-} from "@/components/Onboarding/GeneralStep";
+} from "@/frontend/components/Onboarding/GeneralStep";
 import {
 	schemaProperties as operatorSchemaProperties,
 	purposeOptions
-} from "@/components/Onboarding/OperatorStep";
-import validate from "@/utils/settings-validate";
-import SettingsSkeleton from "@/components/Settings/Skeleton";
+} from "@/frontend/components/Onboarding/OperatorStep";
+import validate from "@/frontend/utils/settings-validate";
+import SettingsSkeleton from "@/frontend/components/Settings/Skeleton";
 import * as routes from "@/routes";
 import { publicUrl } from "@/env-config";
 import request from "@/utils/request";
-import TextField from "@/components/Fields/Text";
-import MoneyField from "@/components/Fields/Money";
-import SelectField from "@/components/Fields/Select";
-import LinksField from "@/components/Fields/Links";
-import FileUploaderField from "@/components/Fields/FileUploader";
-import DateField from "@/components/Fields/Date";
-import FeeCalculator from "@/components/FeeCalculator";
+import TextField from "@/frontend/components/Fields/Text";
+import MoneyField from "@/frontend/components/Fields/Money";
+import SelectField from "@/frontend/components/Fields/Select";
+import LinksField from "@/frontend/components/Fields/Links";
+import FileUploaderField from "@/frontend/components/Fields/FileUploader";
+import DateField from "@/frontend/components/Fields/Date";
+import FeeCalculator from "@/frontend/components/FeeCalculator";
 import isUserOperator from "@/utils/is-operator";
 import handleException, { alerts } from "@/utils/handle-exception";
-import ScreenContainer from "@/components/ScreenContainer";
-import Header from "@/components/Settings/Header";
+import ScreenContainer from "@/frontend/components/ScreenContainer";
+import Header from "@/frontend/components/Settings/Header";
 import { OPERATOR_LINK_TYPES } from "@/constants";
 
 const EDIT_TYPES = {

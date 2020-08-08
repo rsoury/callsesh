@@ -7,7 +7,7 @@ import {
 	Linkedin as LinkedinIcon,
 	Dribbble as DribbbleIcon
 } from "react-feather";
-import MediumIcon from "@/components/Icon/Medium";
+import MediumIcon from "@/frontend/components/Icon/Medium";
 
 // Fees
 export const FEE_MULTIPLIER = 0.15;

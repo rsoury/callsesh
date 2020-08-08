@@ -28,18 +28,18 @@ import Skeleton from "react-loading-skeleton";
 import { ListItem, ListItemLabel, ARTWORK_SIZES } from "baseui/list";
 import { Block } from "baseui/block";
 
-import PaymentCardIcon from "@/components/PaymentCardIcon";
-import Highlight from "@/components/Highlight";
-import Notice from "@/components/Notice";
-import Layout from "@/components/Layout";
-import useUser from "@/hooks/use-user";
-import SettingsSkeleton from "@/components/Settings/Skeleton";
+import PaymentCardIcon from "@/frontend/components/PaymentCardIcon";
+import Highlight from "@/frontend/components/Highlight";
+import Notice from "@/frontend/components/Notice";
+import Layout from "@/frontend/components/Layout";
+import useUser from "@/frontend/hooks/use-user";
+import SettingsSkeleton from "@/frontend/components/Settings/Skeleton";
 import * as routes from "@/routes";
 import request from "@/utils/request";
-import CreditCard from "@/components/CreditCard";
+import CreditCard from "@/frontend/components/CreditCard";
 import handleException, { alerts } from "@/utils/handle-exception";
-import ScreenContainer from "@/components/ScreenContainer";
-import Header from "@/components/Settings/Header";
+import ScreenContainer from "@/frontend/components/ScreenContainer";
+import Header from "@/frontend/components/Settings/Header";
 
 const Wallet = () => {
 	const [css, theme] = useStyletron();

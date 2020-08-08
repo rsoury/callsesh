@@ -15,8 +15,8 @@ import * as routes from "@/routes";
 import OperatorOnboarding, {
 	initialValues,
 	validationSchema
-} from "@/components/Onboarding/OperatorStep";
-import { FormContainer } from "@/components/Onboarding/FormLayout";
+} from "@/frontend/components/Onboarding/OperatorStep";
+import { FormContainer } from "@/frontend/components/Onboarding/FormLayout";
 import isUserOperator from "@/utils/is-operator";
 import request from "@/utils/request";
 import handleException, { alerts } from "@/utils/handle-exception";

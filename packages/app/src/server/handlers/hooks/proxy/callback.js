@@ -10,7 +10,7 @@ import * as comms from "@/server/comms";
 import * as authManager from "@/server/auth-manager";
 import { delayEndSession } from "@/server/workflows";
 import { CALL_SESSION_STATUS, CALL_SESSION_USER_TYPE } from "@/constants";
-import syncIds from "@/utils/sync/identifiers";
+import syncIds from "@/utils/sync-identifiers";
 import isOperatorMeterActive from "@/utils/is-operator-meter-active";
 
 export default async function proxyCallbackHook(req, res) {

@@ -1,9 +1,9 @@
 import isEmpty from "is-empty";
 
-import UserHomeScreen from "@/components/Screens/UserHome";
-import PublicHomeScreen from "@/components/Screens/PublicHome";
+import UserHomeScreen from "@/frontend/components/Screens/UserHome";
+import PublicHomeScreen from "@/frontend/components/Screens/PublicHome";
 import * as routes from "@/routes";
-import { UserProps } from "@/utils/common-prop-types";
+import { UserProps } from "@/frontend/utils/common-prop-types";
 import ssrUser from "@/utils/ssr-user";
 
 const Index = ({ user }) => {

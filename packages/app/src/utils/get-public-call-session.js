@@ -5,6 +5,9 @@
 import pickBy from "lodash/pickBy";
 
 const getPublicCallSession = (callSession) =>
-	pickBy(callSession, (value, key) => !["id"].includes(key));
+	pickBy(
+		callSession,
+		(value, key) => !["id", "preAuthorisation"].includes(key)
+	);
 
 export default getPublicCallSession;

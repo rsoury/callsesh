@@ -12,19 +12,22 @@ import MobileDetect from "mobile-detect";
 import ono from "@jsdevtools/ono";
 import * as authManager from "@/server/auth-manager";
 
-import ViewUserScreen from "@/components/Screens/ViewUser";
-import InSessionScreen from "@/components/Screens/InSession";
-import SessionPageTitle from "@/components/SessionPageTitle";
+import ViewUserScreen from "@/frontend/components/Screens/ViewUser";
+import InSessionScreen from "@/frontend/components/Screens/InSession";
+import SessionPageTitle from "@/frontend/components/SessionPageTitle";
 import request from "@/utils/request";
-import { ViewUserProps, ErrorPageProps } from "@/utils/common-prop-types";
+import {
+	ViewUserProps,
+	ErrorPageProps
+} from "@/frontend/utils/common-prop-types";
 import * as routes from "@/routes";
-import useUser, { useSetUser } from "@/hooks/use-user";
+import useUser, { useSetUser } from "@/frontend/hooks/use-user";
 import { ERROR_TYPES, CALL_SESSION_STATUS } from "@/constants";
 import handleException, { alerts } from "@/utils/handle-exception";
 import ssrUser from "@/utils/ssr-user";
-import { useUserRouteReferrer } from "@/hooks/use-route-referrer";
+import { useUserRouteReferrer } from "@/frontend/hooks/use-route-referrer";
 import checkCallSession from "@/utils/check-call-session";
-import { CallSessionSync } from "@/utils/sync";
+import { CallSessionSync } from "@/frontend/utils/sync";
 
 // We're referring to the currently viewed user, as the viewUser
 const ViewUser = ({ viewUser: viewUserBase, error }) => {

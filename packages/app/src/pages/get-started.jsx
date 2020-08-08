@@ -8,19 +8,19 @@ import Url from "url-parse";
 import ono from "@jsdevtools/ono";
 
 import * as routes from "@/routes";
-import FormLayout from "@/components/Onboarding/FormLayout";
+import FormLayout from "@/frontend/components/Onboarding/FormLayout";
 import GeneralStep, {
 	initialValues as generalInitialValues,
 	validationSchema as generalValidationSchema
-} from "@/components/Onboarding/GeneralStep";
+} from "@/frontend/components/Onboarding/GeneralStep";
 import OperatorStep, {
 	initialValues as operatorInitialValues,
 	validationSchema as operatorValidationSchema
-} from "@/components/Onboarding/OperatorStep";
+} from "@/frontend/components/Onboarding/OperatorStep";
 import CallerStep, {
 	initialValues as callerInitialValues,
 	validationSchema as callerValidationSchema
-} from "@/components/Onboarding/CallerStep";
+} from "@/frontend/components/Onboarding/CallerStep";
 import request from "@/utils/request";
 import handleException, { alerts } from "@/utils/handle-exception";
 import ssrUser from "@/utils/ssr-user";
