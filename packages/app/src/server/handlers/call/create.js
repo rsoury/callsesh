@@ -156,7 +156,7 @@ export default async function createCallSession(req, res) {
 		// -- setup intent is in use to prevent this, but not guaranteed
 		const paymentMethodId = customer.invoice_settings.default_payment_method;
 		const preAuthParams = {
-			amount: fees.preAuthAmount(),
+			amount: fees.preAuth().toInt(),
 			currency: operatorUser.currency,
 			customer: user.stripeCustomerId,
 			payment_method: paymentMethodId,

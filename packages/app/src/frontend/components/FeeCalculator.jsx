@@ -35,7 +35,9 @@ const FeeCalculator = ({ hourlyRate }) => {
 					>
 						<LabelSmall>
 							Callsesh fees are{" "}
-							<strong>{fees.applicationRate(hourlyRate)} / hour</strong>
+							<strong>
+								{fees.getRate(hourlyRate).forApplication().toString()} / hour
+							</strong>
 						</LabelSmall>
 						<div className={css({ marginLeft: "10px", display: "flex" })}>
 							<HelpIcon size={18} />
@@ -49,7 +51,10 @@ const FeeCalculator = ({ hourlyRate }) => {
 						color: `${theme.colors.accent} !important`
 					})}
 				>
-					You will be paid <strong>{fees.payoutRate(hourlyRate)} / hour</strong>
+					You will be paid{" "}
+					<strong>
+						{fees.getRate(hourlyRate).forPayout().toString()} / hour
+					</strong>
 				</LabelSmall>
 			</div>
 		</div>

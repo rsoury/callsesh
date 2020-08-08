@@ -48,7 +48,7 @@ const ViewUserOperatorAction = ({ viewUser, onStart, onToggleNotify }) => {
 		isSame: inSessionWithViewUser
 	} = checkCallSession(user, viewUser);
 
-	const minuteRate = fees.getMinuteRate(viewUser.hourlyRate);
+	const minuteRate = fees.getRate(viewUser.hourlyRate).toMinute().toString();
 
 	const isNotified = (viewUser.notified || []).includes(user.username);
 
@@ -169,7 +169,7 @@ const ViewUserOperatorAction = ({ viewUser, onStart, onToggleNotify }) => {
 										text="Only charged if your call session is successfully connected"
 									>
 										<span>
-											Service fee: <strong>{fees.preAuthAmountText()}</strong>
+											Service fee: <strong>{fees.preAuth().toString()}</strong>
 										</span>
 									</HelpTooltip>
 									<span>

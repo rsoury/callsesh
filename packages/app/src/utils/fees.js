@@ -14,171 +14,105 @@ import {
 	OPERATOR_REFERRAL_EARNINGS_CAP
 } from "@/constants";
 
-/**
- * Calc application's rate based on hourly rate
- *
- * @param   {number}  hourlyRate
- * @param   {boolean}  returnInt
- *
- * @return  {number|string}
- */
-export const applicationRate = (hourlyRate, returnInt = false) => {
-	if (isEmpty(hourlyRate) || !isNumber(hourlyRate)) {
-		if (returnInt) {
-			return 0;
-		}
-		return "0.00";
-	}
-	const rate = Dinero({ amount: hourlyRate }).multiply(FEE_MULTIPLIER);
-	if (returnInt) {
-		return rate.toRoundedUnit(2) * 100;
-	}
-	return rate.toFormat("$0.00");
+const wrapDinero = (dineroVar) => {
+	dineroVar.toString = function toString() {
+		return this.toFormat("$0.00");
+	};
+	dineroVar.toInt = function toInt() {
+		return this.toRoundedUnit(2) * 100;
+	};
+	return dineroVar;
 };
 
 /**
- * Calc payout rate based on hourly rate
- *
- * @param   {number}  hourlyRate
- * @param   {boolean}  returnInt
- *
- * @return  {number|string}
+ * Single function to manage hourlyRate
  */
-export const payoutRate = (hourlyRate, returnInt = false) => {
-	if (isEmpty(hourlyRate) || !isNumber(hourlyRate)) {
-		if (returnInt) {
-			return 0;
+export function getRate(hourlyRate) {
+	return {
+		/**
+		 * Calc application's rate based on hourly rate
+		 */
+		forApplication() {
+			if (isEmpty(hourlyRate) || !isNumber(hourlyRate)) {
+				return wrapDinero(Dinero({ amount: 0 }));
+			}
+			const rate = Dinero({ amount: hourlyRate }).multiply(FEE_MULTIPLIER);
+			return wrapDinero(rate);
+		},
+		/**
+		 * Calc payout rate based on hourly rate
+		 */
+		forPayout() {
+			if (isEmpty(hourlyRate) || !isNumber(hourlyRate)) {
+				return wrapDinero(Dinero({ amount: 0 }));
+			}
+			const rate = Dinero({ amount: hourlyRate }).multiply(1 - FEE_MULTIPLIER);
+			return wrapDinero(rate);
+		},
+		/**
+		 * Get minute rate based on hourly rate
+		 */
+		toMinute() {
+			const rate = Dinero({ amount: hourlyRate }).divide(60);
+			return wrapDinero(rate);
+		},
+		/**
+		 * Get second rate based on hourly rate
+		 */
+		toSecond() {
+			const rate = Dinero({ amount: hourlyRate }).divide(60 * 60); // divide hourlyRate by 3600 (3600 seconds in an hour)
+			return wrapDinero(rate);
 		}
-		return "0.00";
-	}
-	const rate = Dinero({ amount: hourlyRate }).multiply(1 - FEE_MULTIPLIER);
-	if (returnInt) {
-		return rate.toRoundedUnit(2) * 100;
-	}
-	return rate.toFormat("$0.00");
-};
+	};
+}
+
+export function getAmount(hourlyRate, secondDuration) {
+	return {
+		/**
+		 * Calc charge amount based on hourlyRate and call duration -- duration in seconds
+		 * Produces amount in cents.
+		 */
+		forCharge() {
+			const amount = Dinero({ amount: hourlyRate })
+				.multiply(secondDuration, "HALF_UP")
+				.divide(60 * 60);
+			return wrapDinero(amount);
+		},
+		/**
+		 * Calc application amount based on hourlyRate and call duration -- duration in seconds
+		 */
+		forApplication() {
+			const amount = this.forCharge().multiply(FEE_MULTIPLIER, "HALF_UP");
+			return wrapDinero(amount);
+		},
+		/**
+		 * Calc operator referral amount based on an amount parameter
+		 *
+		 * If earnings come under the cap, get the difference between the cap and earnings.
+		 * If the referralFee is greater than than the difference, use the difference as referralFee, otherwise use the referralFee in total
+		 */
+		forOperatorReferral(earnings = 0) {
+			if (earnings >= OPERATOR_REFERRAL_EARNINGS_CAP) {
+				return 0;
+			}
+			let amount = this.forCharge().multiply(OPERATOR_REFERRAL_MULTIPLIER);
+			const difference = Dinero({
+				amount: OPERATOR_REFERRAL_EARNINGS_CAP - earnings
+			});
+			if (amount.greaterThan(difference)) {
+				// Cap amount to difference if greater
+				amount = difference;
+			}
+
+			return wrapDinero(amount);
+		}
+	};
+}
 
 /**
  * Get service fee for pre auth
  */
-export const preAuthAmount = () => SERVICE_FEE;
-
-/**
- * Get service fee in text format
- */
-export const preAuthAmountText = () =>
-	Dinero({ amount: SERVICE_FEE }).toFormat("$0.00");
-
-/**
- * Get minute rate based on hourly rate
- *
- * @param   {number}  hourlyRate
- * @param   {boolean}  returnInt
- *
- * @return  {number|string}
- */
-export const getMinuteRate = (hourlyRate, returnInt = false) => {
-	const rate = Dinero({ amount: hourlyRate }).divide(60);
-	if (returnInt) {
-		return rate.toRoundedUnit(2) * 100;
-	}
-	return rate.toFormat("$0.00");
-};
-
-/**
- * Get second rate based on hourly rate
- *
- * @param   {number}  hourlyRate
- * @param   {boolean}  returnInt
- *
- * @return  {string|number}
- */
-export const getSecondRate = (hourlyRate, returnInt = false) => {
-	const rate = Dinero({ amount: hourlyRate }).divide(60 * 60); // divide hourlyRate by 3600 (3600 seconds in an hour)
-	if (returnInt) {
-		return rate.toRoundedUnit(2) * 100;
-	}
-	return rate.toFormat("$0.00");
-};
-
-/**
- * Calc charge amount based on hourlyRate and call duration -- duration in seconds
- * Produces amount in cents.
- *
- * @param   {number}  hourlyRate
- * @param   {number}  secondDuration
- * @param   {boolean}  returnFloat
- *
- * @return  {number|string}
- */
-export const chargeAmount = (hourlyRate, secondDuration, returnInt = false) => {
-	const secondRate = getSecondRate(hourlyRate, true);
-	const amount = Dinero({ amount: secondRate }).multiply(
-		secondDuration,
-		"HALF_UP"
-	);
-	if (returnInt) {
-		return amount.toRoundedUnit(2) * 100;
-	}
-	return amount.toFormat("$0.00");
-};
-
-/**
- * Calc application amount based on hourlyRate and call duration -- duration in seconds
- *
- * @param   {number}  hourlyRate
- * @param   {number}  secondDuration
- * @param   {boolean} returnInt
- *
- * @return  {number|string}
- */
-export const applicationAmount = (
-	hourlyRate,
-	secondDuration,
-	returnInt = false
-) => {
-	const amountToCharge = chargeAmount(hourlyRate, secondDuration, true);
-	const amount = Dinero({ amount: amountToCharge }).multiply(
-		FEE_MULTIPLIER,
-		"HALF_UP"
-	);
-	if (returnInt) {
-		return amount.toRoundedUnit(2) * 100;
-	}
-	return amount.toFormat("$0.00");
-};
-
-/**
- * Calc operator referral amount based on an amount parameter
- *
- * If earnings come under the cap, get the difference between the cap and earnings.
- * If the referralFee is greater than than the difference, use the difference as referralFee, otherwise use the referralFee in total
- */
-export const operatorReferralAmount = (
-	amountToCharge,
-	earnings = 0,
-	returnInt = false
-) => {
-	if (earnings >= OPERATOR_REFERRAL_EARNINGS_CAP) {
-		return 0;
-	}
-	let amount = Dinero({ amount: amountToCharge }).multiply(
-		OPERATOR_REFERRAL_MULTIPLIER
-	);
-	const difference = Dinero({
-		amount: OPERATOR_REFERRAL_EARNINGS_CAP - earnings
-	});
-	if (amount.greaterThan(difference)) {
-		// Cap amount to difference if greater
-		amount = difference;
-	}
-
-	// Use Dinero to round money value to keep consistent rounding
-	if (returnInt) {
-		return amount.toRoundedUnit(2) * 100;
-	}
-	return amount.toFormat("$0.00");
-};
+export const preAuth = () => wrapDinero(Dinero({ amount: SERVICE_FEE }));
 
 /**
  * Takes a string, applies zero-decimal format, and round using Dinero

@@ -236,6 +236,7 @@ export default async function endCallSession(req, res) {
 	logger.info(`Total metered duration calculated`, {
 		talkDuration,
 		meterDuration,
+		meterStamps,
 		overlapDuration,
 		totalDuration
 	});
@@ -282,8 +283,9 @@ export default async function endCallSession(req, res) {
 	} = operatorUser;
 
 	// Quantify the caller charge amount of session based on operator hourly rate
-	const chargeAmount = fees.chargeAmount(hourlyRate, totalDuration, true);
-	const totalChargeAmount = chargeAmount + fees.preAuthAmount();
+	const amount = fees.getAmount(hourlyRate, totalDuration);
+	const chargeAmount = amount.forCharge().toInt();
+	const totalChargeAmount = chargeAmount + fees.preAuth().toInt();
 	// If referrer exists, calc referral fee
 	let referralFee = 0;
 	let referrerUser;
@@ -295,11 +297,10 @@ export default async function endCallSession(req, res) {
 			withContext: true
 		});
 		const { referrals: { earnings } = {} } = referrerUser;
-		referralFee = fees.operatorReferralAmount(chargeAmount, earnings, true);
+		referralFee = amount.forOperatorReferral(earnings).toInt();
 	}
 	// Get application fee
-	const applicationFee =
-		fees.applicationAmount(hourlyRate, totalDuration, true) - referralFee;
+	const applicationFee = amount.forApplication().toInt() - referralFee;
 
 	const customer = await stripe.customers.retrieve(callerUser.stripeCustomerId);
 	const paymentMethodId = customer.invoice_settings.default_payment_method;
@@ -339,7 +340,7 @@ export default async function endCallSession(req, res) {
 		// We should be including the existing payout amount into this transfer, however, Stripe only allows payouts equal/upto to the amount of the transaction
 		// In the future, there should be a check to see if transfers are available for this user. -- Stripe Transfers are restricted in that the connected account (Operator) and Caller must be in the same region
 		chargeParams.application_fee_amount =
-			applicationFee + fees.preAuthAmount() + referralFee;
+			applicationFee + fees.preAuth().toInt() + referralFee;
 		chargeParams.transfer_data = {
 			destination: stripeConnectId
 		};
@@ -383,7 +384,7 @@ export default async function endCallSession(req, res) {
 
 	logger.info(`Payment created with latest call session`, {
 		payment: payment.id,
-		serviceFee: fees.preAuthAmount(),
+		serviceFee: fees.preAuth().toInt(),
 		chargeAmount,
 		applicationFee
 	});

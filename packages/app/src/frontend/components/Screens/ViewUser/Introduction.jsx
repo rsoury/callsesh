@@ -67,7 +67,8 @@ const ViewUserIntroduction = ({ viewUser }) => {
 										offering <Highlight>{viewUser.purpose}</Highlight> over a
 										call session for{" "}
 										<Highlight noBreak>
-											{fees.getMinuteRate(viewUser.hourlyRate)}/minute
+											{fees.getRate(viewUser.hourlyRate).toMinute().toString()}
+											/minute
 										</Highlight>
 									</span>
 								) : (
