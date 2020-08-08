@@ -41,6 +41,7 @@ export default async function endCallSession(req, res) {
 
 	const user = await getUser(req, { withContext: true });
 
+	// This here will be returned if a delay end session runs after a force end session.
 	if (isEmpty(user.callSession)) {
 		return res.status(400).json({
 			success: false,
