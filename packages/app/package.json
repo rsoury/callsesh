@@ -35,7 +35,6 @@
 		"baseui": "^9.93.0",
 		"better-queue": "^3.8.10",
 		"country-list": "^2.2.0",
-		"debounce-promise": "^3.1.2",
 		"devices.css": "^0.1.15",
 		"dinero.js": "^1.8.1",
 		"eventemitter3": "^4.0.4",
@@ -49,7 +48,6 @@
 		"is-empty": "^1.2.0",
 		"is-number": "^7.0.0",
 		"is-url": "^1.2.4",
-		"isomorphic-ws": "^4.0.1",
 		"libphonenumber-js": "^1.7.51",
 		"lodash": "^4.17.15",
 		"logrocket": "^1.0.7",
@@ -89,7 +87,6 @@
 		"twilio": "^3.47.0",
 		"twilio-sync": "^0.12.2",
 		"url-parse": "^1.4.7",
-		"ws": "^7.3.1",
 		"yup": "^0.29.0"
 	},
 	"devDependencies": {
