@@ -1,11 +1,7 @@
 import React, { useState } from "react";
 import PropTypes from "prop-types";
 import { useStyletron } from "baseui";
-import {
-	Label1 as Label,
-	ParagraphSmall,
-	ParagraphXSmall
-} from "baseui/typography";
+import { Label1 as Label, ParagraphSmall } from "baseui/typography";
 import { Card as BaseCard, StyledBody, StyledAction } from "baseui/card";
 import ArrowRight from "baseui/icon/arrow-right";
 import {
@@ -22,12 +18,13 @@ import {
 	BellOff as RemoveNotifyIcon
 } from "react-feather";
 import isEmpty from "is-empty";
-import * as fees from "@/utils/fees";
+import { Tag } from "baseui/tag";
+import { StatefulTooltip as Tooltip } from "baseui/tooltip";
 
+import * as fees from "@/utils/fees";
 import useUser from "@/frontend/hooks/use-user";
 import Link from "@/frontend/components/Link";
 import Highlight from "@/frontend/components/Highlight";
-import HelpTooltip from "@/frontend/components/HelpTooltip";
 import { ViewUserProps } from "@/frontend/utils/common-prop-types";
 import checkCallSession from "@/utils/check-call-session";
 import * as routes from "@/routes";
@@ -157,25 +154,47 @@ const ViewUserOperatorAction = ({ viewUser, onStart, onToggleNotify }) => {
 						)}
 						{isAuthenticated && viewUser.isLive && (
 							<div>
-								<ParagraphXSmall
-									marginTop="0px"
-									marginBottom={theme.sizing.scale400}
+								<div
+									className={css({
+										marginLeft: "-5px",
+										marginRight: "-5px",
+										marginBottom: theme.sizing.scale400
+									})}
 								>
-									<span>
-										You will be charged only for metered and talk duration.
-									</span>
-									<HelpTooltip
-										size={18}
-										text="Only charged if your call session is successfully connected"
+									<Tooltip
+										showArrow
+										content={() => (
+											<div>
+												Only charged if your call session is successfully
+												connected
+											</div>
+										)}
 									>
-										<span>
-											Service fee: <strong>{fees.preAuth().toString()}</strong>
+										<span
+											className={css({
+												display: "inline-block"
+											})}
+										>
+											<Tag closeable={false}>
+												<span>
+													Service Fee:{" "}
+													<strong>{fees.preAuth().toString()}</strong>
+												</span>
+											</Tag>
 										</span>
-									</HelpTooltip>
-									<span>
-										Currency: <strong>{viewUser.currency}</strong>
+									</Tooltip>
+									<span
+										className={css({
+											display: "inline-block"
+										})}
+									>
+										<Tag closeable={false}>
+											<span>
+												Currency: <strong>{viewUser.currency}</strong>
+											</span>
+										</Tag>
 									</span>
-								</ParagraphXSmall>
+								</div>
 								<Button
 									startEnhancer={
 										viewUserInSession && !inSessionWithViewUser

@@ -33,6 +33,10 @@ import { useUserRouteReferrer } from "@/frontend/hooks/use-route-referrer";
 import { CallSessionSync } from "@/frontend/utils/sync";
 
 let startSessionTimeout = null; // instantiate outside of the component... no re-render should reinstantiate
+const setSessionTimeout = (cb) => {
+	startSessionTimeout = setTimeout(cb, CALL_SESSION_START_TIMEOUT);
+	return startSessionTimeout;
+};
 
 // We're referring to the currently viewed user, as the viewUser
 const ViewUser = ({ viewUser: viewUserBase, error }) => {
@@ -73,11 +77,6 @@ const ViewUser = ({ viewUser: viewUserBase, error }) => {
 		}
 	}, [error]);
 
-	const setSessionTimeout = () =>
-		new Promise((resolve) => {
-			setTimeout(resolve, CALL_SESSION_START_TIMEOUT);
-		});
-
 	const handleStartCallSession = useCallback(
 		(done = () => {}) => {
 			// Add to an undoable session state
@@ -91,80 +90,77 @@ const ViewUser = ({ viewUser: viewUserBase, error }) => {
 
 			// Set a timeout before starting the call session to give the end user
 			// Start Call Session between user and viewUser
-			startSessionTimeout = setSessionTimeout()
-				.then(() => {
-					console.log(`START CALL!`);
-				})
-				// .then(() =>
-				// 	request.post(routes.api.call, {
-				// 		operator: viewUser.username
-				// 	})
-				// )
-				// .then(({ data }) => data)
-				// .then(({ proxyPhoneNumber, callSession }) => {
-				// 	// Add callsession to user state
-				// 	setUser({
-				// 		...user,
-				// 		callSession: callSession.caller
-				// 	});
+			setSessionTimeout(() => {
+				request
+					.post(routes.api.call, {
+						operator: viewUser.username
+					})
+					.then(({ data }) => data)
+					.then(({ proxyPhoneNumber, callSession }) => {
+						// Add callsession to user state
+						setUser({
+							...user,
+							callSession: callSession.caller
+						});
 
-				// 	// Add callsession to view user state
-				// 	setViewUser({
-				// 		...viewUser,
-				// 		callSession: callSession.operator
-				// 	});
+						// Add callsession to view user state
+						setViewUser({
+							...viewUser,
+							callSession: callSession.operator
+						});
 
-				// 	// Check if mobile and latest browsers, and if so use tel:
-				// 	if (md.phone()) {
-				// 		window.location.href = `tel:${proxyPhoneNumber}`;
-				// 	}
-				// })
-				// .catch((e) => {
-				// 	const { data: err = e } = e.response || {}; // Get error body, otherwise default to returned error.
-				// 	// Check if err is common and toast/react accordingly.
-				// 	switch (err.type) {
-				// 		case ERROR_TYPES.paymentMethodRequired:
-				// 			toaster.info(
-				// 				`A payment method is required to make calls. Please wait while we redirect you to your wallet...`
-				// 			);
-				// 			router.push(routes.page.settings.wallet);
-				// 			break;
-				// 		case ERROR_TYPES.paymentMethodInvalid:
-				// 			toaster.negative(
-				// 				`Your selected payment method is not valid or has insufficient funds. Please wait while we redirect you to your wallet...`
-				// 			);
-				// 			router.push(routes.page.settings.wallet);
-				// 			break;
-				// 		case ERROR_TYPES.operatorUnavailable:
-				// 			toaster.negative(
-				// 				`A call cannot be made. The operator is unavailable.`
-				// 			);
-				// 			// Reload the page her to ensure latest view user status to displayed.
-				// 			router.reload();
-				// 			break;
-				// 		case ERROR_TYPES.operatorBusy:
-				// 			toaster.negative(
-				// 				`The operator is currently in a call. Please check back later.`
-				// 			);
-				// 			break;
-				// 		case ERROR_TYPES.callSessionExists:
-				// 			toaster.warning(
-				// 				`You're already in a call session with another operator. You can only be in one call session at a time.`
-				// 			);
-				// 			break;
-				// 		case ERROR_TYPES.operatorRequired:
-				// 		case ERROR_TYPES.userBlocked:
-				// 			alerts.error();
-				// 			break;
-				// 		default:
-				// 			handleException(err);
-				// 			alerts.error();
-				// 			break;
-				// 	}
-				// })
-				.finally(() => {
-					done();
-				});
+						// Check if mobile and latest browsers, and if so use tel:
+						if (md.phone()) {
+							window.location.href = `tel:${proxyPhoneNumber}`;
+						}
+					})
+					.catch((e) => {
+						const { data: err = e } = e.response || {}; // Get error body, otherwise default to returned error.
+						// Check if err is common and toast/react accordingly.
+						switch (err.type) {
+							case ERROR_TYPES.paymentMethodRequired:
+								toaster.info(
+									`A payment method is required to make calls. Please wait while we redirect you to your wallet...`
+								);
+								router.push(routes.page.settings.wallet);
+								break;
+							case ERROR_TYPES.paymentMethodInvalid:
+								toaster.negative(
+									`Your selected payment method is not valid or has insufficient funds. Please wait while we redirect you to your wallet...`
+								);
+								router.push(routes.page.settings.wallet);
+								break;
+							case ERROR_TYPES.operatorUnavailable:
+								toaster.negative(
+									`A call cannot be made. The operator is unavailable.`
+								);
+								// Reload the page her to ensure latest view user status to displayed.
+								router.reload();
+								break;
+							case ERROR_TYPES.operatorBusy:
+								toaster.negative(
+									`The operator is currently in a call. Please check back later.`
+								);
+								break;
+							case ERROR_TYPES.callSessionExists:
+								toaster.warning(
+									`You're already in a call session with another operator. You can only be in one call session at a time.`
+								);
+								break;
+							case ERROR_TYPES.operatorRequired:
+							case ERROR_TYPES.userBlocked:
+								alerts.error();
+								break;
+							default:
+								handleException(err);
+								alerts.error();
+								break;
+						}
+					})
+					.finally(() => {
+						done();
+					});
+			});
 		},
 		[user, viewUser, startSessionTimeout]
 	);

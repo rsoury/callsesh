@@ -24,9 +24,12 @@ import InSessionTopBar from "@/frontend/components/Header/InSessionTopBar";
 import Layout from "@/frontend/components/Layout";
 import Emoji from "@/frontend/components/Emoji";
 import { ViewUserProps } from "@/frontend/utils/common-prop-types";
-import isUserOperator from "@/utils/is-operator";
 import useUser from "@/frontend/hooks/use-user";
-import { CALL_SESSION_STATUS, CALL_SESSION_START_TIMEOUT } from "@/constants";
+import {
+	CALL_SESSION_STATUS,
+	CALL_SESSION_START_TIMEOUT,
+	CALL_SESSION_USER_TYPE
+} from "@/constants";
 import Link from "@/frontend/components/Link";
 import * as routes from "@/routes";
 
@@ -62,7 +65,7 @@ const InSessionScreen = ({
 	const [startProgressValue, setStartProgressValue] = useState(0);
 
 	const { callSession } = user;
-	const isOperator = isUserOperator(user);
+	const isOperator = callSession.as === CALL_SESSION_USER_TYPE.operator;
 
 	const handleEndSession = manageLoadingState(onEnd, setEndingSession);
 	const handleUndoSession = onUndo;
@@ -76,6 +79,8 @@ const InSessionScreen = ({
 		progress = setInterval(() => {
 			setStartProgressValue((value) => (value < 100 ? value + 1 : value));
 		}, CALL_SESSION_START_TIMEOUT / 100);
+
+		return () => {};
 	}, []);
 
 	useEffect(() => {
@@ -92,6 +97,8 @@ const InSessionScreen = ({
 		) {
 			setInitiated(true);
 		}
+
+		return () => {};
 	}, [callSession, progress]);
 
 	return (
@@ -277,7 +284,8 @@ const InSessionScreen = ({
 										>
 											<strong>Connecting to your session...</strong>
 										</Paragraph>
-										{!isOperator && (
+										{/* Remove Undo button if call session is about to start */}
+										{!isOperator && startProgressValue < 95 && (
 											<div className={css({ marginTop: "10px" })}>
 												<Button
 													onClick={handleUndoSession}

@@ -6,7 +6,6 @@ import {
 	StatefulTooltip as Tooltip,
 	PLACEMENT as TOOLTIP_PLACEMENT
 } from "baseui/tooltip";
-import { Block } from "baseui/block";
 import isEmpty from "is-empty";
 
 import { ChildrenProps } from "@/frontend/utils/common-prop-types";
@@ -28,7 +27,11 @@ const HelpTooltip = ({ text, placement, size, style, children }) => {
 			})}
 		>
 			<Tooltip
-				content={() => <Block maxWidth="250px">{text}</Block>}
+				content={() => (
+					<span className={css({ display: "block", maxWidth: "250px" })}>
+						{text}
+					</span>
+				)}
 				showArrow
 				renderAll
 				autoFocus
