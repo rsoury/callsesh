@@ -33,6 +33,10 @@ export async function getServerSideProps({
 		// Get currently authed user
 		const user = await getUser(req, { withContext: true });
 
+		if (!user.emailVerified) {
+			throw new Error("Email not verified");
+		}
+
 		// If chat user does not exist, create it.
 		if (isEmpty(user.chatUser)) {
 			const {
@@ -41,7 +45,10 @@ export async function getServerSideProps({
 			} = await chat.createUser(user.email, user.name, user.username, {
 				appId: user.id
 			});
-			await chat.updateUser(chatUserId, { picture: user.picture });
+			await chat.updateUser(chatUserId, {
+				picture: user.picture,
+				verified: true
+			});
 			user.chatUser = {
 				id: chatUserId,
 				password: chatUserPassword
