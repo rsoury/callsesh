@@ -2,6 +2,7 @@
  * Endpoint to manage redirects to Auth0 Hosted page.
  */
 
+import isEmpty from "is-empty";
 import auth, { getUser } from "@/server/middleware/auth";
 import * as chat from "@/server/chat";
 
@@ -20,8 +21,10 @@ export default async function authCallback(req, res) {
 			try {
 				const user = await getUser(req, { withContext: true });
 				if ((user || {}).emailVerified) {
-					// Update chat user email verified status
-					await chat.updateUser(user.chatUser.id, { verified: true });
+					if (!isEmpty(user.chatUser)) {
+						// Update chat user email verified status
+						await chat.updateUser(user.chatUser.id, { verified: true });
+					}
 					res.writeHead(302, {
 						Location: `/#email_verified=true`
 					});
