@@ -4,6 +4,7 @@ import isEmpty from "is-empty";
 import { useStyletron, withStyle } from "baseui";
 import { Paragraph2 as Paragraph, ParagraphXSmall } from "baseui/typography";
 import { StyledSpinnerNext, SIZE as SPINNER_SIZE } from "baseui/spinner";
+import { ProgressBar } from "baseui/progress-bar";
 import {
 	Button,
 	SHAPE as BUTTON_SHAPE,
@@ -21,10 +22,11 @@ import {
 
 import InSessionTopBar from "@/frontend/components/Header/InSessionTopBar";
 import Layout from "@/frontend/components/Layout";
+import Emoji from "@/frontend/components/Emoji";
 import { ViewUserProps } from "@/frontend/utils/common-prop-types";
 import isUserOperator from "@/utils/is-operator";
 import useUser from "@/frontend/hooks/use-user";
-import { CALL_SESSION_STATUS } from "@/constants";
+import { CALL_SESSION_STATUS, CALL_SESSION_START_TIMEOUT } from "@/constants";
 import Link from "@/frontend/components/Link";
 import * as routes from "@/routes";
 
@@ -45,7 +47,8 @@ const manageLoadingState = (handler, setLoadingState) => () => {
 
 const InSessionScreen = ({
 	viewUser,
-	onEndSession,
+	onEnd,
+	onUndo,
 	onOpenChat,
 	onCall,
 	onToggleMeter
@@ -56,16 +59,30 @@ const InSessionScreen = ({
 	const [isEndingSession, setEndingSession] = useState(false);
 	const [isLoadingMeter, setLoadingMeter] = useState(false);
 	const [isInitiated, setInitiated] = useState(false);
+	const [startProgressValue, setStartProgressValue] = useState(0);
 
 	const { callSession } = user;
 	const isOperator = isUserOperator(user);
 
-	const handleEndSession = manageLoadingState(onEndSession, setEndingSession);
+	const handleEndSession = manageLoadingState(onEnd, setEndingSession);
+	const handleUndoSession = onUndo;
 	const handleOpenChat = onOpenChat;
 	const handleCall = manageLoadingState(onCall, setCalling);
 	const handleToggleMeter = manageLoadingState(onToggleMeter, setLoadingMeter);
 
+	let progress = null;
+
 	useEffect(() => {
+		progress = setInterval(() => {
+			setStartProgressValue((value) => (value < 100 ? value + 1 : value));
+		}, CALL_SESSION_START_TIMEOUT / 100);
+	}, []);
+
+	useEffect(() => {
+		if (!isEmpty(callSession.status) || startProgressValue >= 100) {
+			clearInterval(progress);
+			setStartProgressValue(100);
+		}
 		if (
 			[
 				CALL_SESSION_STATUS.active,
@@ -75,7 +92,7 @@ const InSessionScreen = ({
 		) {
 			setInitiated(true);
 		}
-	}, [callSession]);
+	}, [callSession, progress]);
 
 	return (
 		<Layout noHeader noFooter>
@@ -233,41 +250,78 @@ const InSessionScreen = ({
 								className={css({
 									textAlign: "center",
 									maxWidth: "300px",
-									margin: "0 auto",
-									display: "flex",
-									alignItems: "center",
-									flexDirection: "column"
+									margin: "0 auto"
 								})}
 							>
-								<Spinner $size={SPINNER_SIZE.large} />
 								{isEmpty(callSession.status) && (
-									<Paragraph
-										marginTop="25px"
-										color={theme.colors.contentTertiary}
+									<motion.div
+										animate={{ opacity: 1 }}
+										initial={{ opacity: 0 }}
+										className={css({
+											display: "flex",
+											alignItems: "center",
+											flexDirection: "column"
+										})}
 									>
-										<strong>Connecting to your session...</strong>
-									</Paragraph>
+										{isOperator ? (
+											<Spinner $size={SPINNER_SIZE.large} />
+										) : (
+											<ProgressBar
+												value={startProgressValue}
+												successValue={100}
+											/>
+										)}
+										<Paragraph
+											marginTop="25px"
+											color={theme.colors.contentTertiary}
+										>
+											<strong>Connecting to your session...</strong>
+										</Paragraph>
+										{!isOperator && (
+											<div className={css({ marginTop: "10px" })}>
+												<Button
+													onClick={handleUndoSession}
+													startEnhancer={() => <CancelSessionIcon size={24} />}
+													isLoading={isEndingSession}
+													kind={BUTTON_KIND.secondary}
+													shape={BUTTON_SHAPE.pill}
+												>
+													Undo
+												</Button>
+											</div>
+										)}
+									</motion.div>
 								)}
 								{callSession.status === CALL_SESSION_STATUS.pending && (
-									<Paragraph
-										marginTop="25px"
-										color={theme.colors.contentTertiary}
+									<motion.div
+										animate={{ opacity: 1 }}
+										initial={{ opacity: 0 }}
+										className={css({
+											display: "flex",
+											alignItems: "center",
+											flexDirection: "column"
+										})}
 									>
-										<strong>
-											Your call session has started.
-											<br />
-											{isOperator ? (
-												<span>
-													You are about to be called by {viewUser.givenName}!
-												</span>
-											) : (
-												<span>
-													You should receive an SMS with a phone number to call
-													that will connect you to your operator.
-												</span>
-											)}
-										</strong>
-									</Paragraph>
+										<Spinner $size={SPINNER_SIZE.large} />
+										<Paragraph
+											marginTop="25px"
+											color={theme.colors.contentTertiary}
+										>
+											<strong>
+												{isOperator ? (
+													<span>
+														You are about to be called by {viewUser.givenName}!
+													</span>
+												) : (
+													<span>
+														<Emoji label="phone" symbol="📞" />
+														&nbsp;&nbsp;We&apos;ve sent you an SMS! Call the
+														phone number to connect to your operator.
+													</span>
+												)}
+											</strong>
+										</Paragraph>
+									</motion.div>
 								)}
 								{callSession.status === CALL_SESSION_STATUS.ending && (
 									<Paragraph
@@ -277,17 +331,6 @@ const InSessionScreen = ({
 										<strong>Your call session is ending...</strong>
 									</Paragraph>
 								)}
-								<div className={css({ marginTop: "10px" })}>
-									<Button
-										onClick={handleEndSession}
-										startEnhancer={() => <CancelSessionIcon size={24} />}
-										isLoading={isEndingSession}
-										kind={BUTTON_KIND.secondary}
-										shape={BUTTON_SHAPE.pill}
-									>
-										Cancel Session
-									</Button>
-								</div>
 							</div>
 						)}
 					</motion.div>
@@ -299,14 +342,16 @@ const InSessionScreen = ({
 
 InSessionScreen.propTypes = {
 	viewUser: ViewUserProps.isRequired,
-	onEndSession: PropTypes.func,
+	onEnd: PropTypes.func,
+	onUndo: PropTypes.func,
 	onOpenChat: PropTypes.func,
 	onCall: PropTypes.func,
 	onToggleMeter: PropTypes.func
 };
 
 InSessionScreen.defaultProps = {
-	onEndSession() {},
+	onEnd() {},
+	onUndo() {},
 	onOpenChat() {},
 	onCall() {},
 	onToggleMeter() {}

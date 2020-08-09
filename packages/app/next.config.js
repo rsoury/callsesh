@@ -72,37 +72,31 @@ module.exports = (phase, ...nextParams) => {
 
 	// Print PUBLIC_URL for reference
 	console.log(chalk.cyan(`Application public url: ${env.PUBLIC_URL}`));
-	if (env.PUBLIC_PROXY_URL) {
+	if (env.PUBLIC_PROXY_URL && phase === PHASE_DEVELOPMENT_SERVER && !isProd) {
 		console.log(chalk.cyan(`Application proxy url: ${env.PUBLIC_PROXY_URL}`));
 		// If in development, set the proxy service callback and intercept automatically.
-		if (phase === PHASE_DEVELOPMENT_SERVER && !isProd) {
-			const twilioClient = new Twilio(
-				env.TWILIO_API_KEY,
-				env.TWILIO_API_SECRET,
-				{
-					accountSid: env.TWILIO_ACCOUNT_SID
-				}
-			);
-			twilioClient.proxy
-				.services(env.TWILIO_PROXY_SERVICE_SID)
-				.update({
-					callbackUrl: `${env.PUBLIC_PROXY_URL}/api/hooks/call-session`,
-					interceptCallbackUrl: `${env.PUBLIC_PROXY_URL}/api/hooks/call-session/intercept`
-				})
-				.then(() => {
-					console.log(
-						chalk.green(
-							`Successfully updated the Development Proxy Callback URLs`
-						)
-					);
-				})
-				.catch((e) => {
-					console.log(
-						chalk.red(`FAILED to update the Development Proxy Callback URLs`)
-					);
-					console.error(e);
-				});
-		}
+		const twilioClient = new Twilio(env.TWILIO_API_KEY, env.TWILIO_API_SECRET, {
+			accountSid: env.TWILIO_ACCOUNT_SID
+		});
+		twilioClient.proxy
+			.services(env.TWILIO_PROXY_SERVICE_SID)
+			.update({
+				callbackUrl: `${env.PUBLIC_PROXY_URL}/api/hooks/call-session`,
+				interceptCallbackUrl: `${env.PUBLIC_PROXY_URL}/api/hooks/call-session/intercept`
+			})
+			.then(() => {
+				console.log(
+					chalk.green(
+						`Successfully updated the Development Proxy Callback URLs`
+					)
+				);
+			})
+			.catch((e) => {
+				console.log(
+					chalk.red(`FAILED to update the Development Proxy Callback URLs`)
+				);
+				console.error(e);
+			});
 	}
 
 	const nextConfig = {

@@ -66,13 +66,15 @@ export default async function toggleCallSessionMeter(req, res) {
 		await comms.prolongSession(user.callSession.id);
 	}
 
+	const callSession = {
+		...user.callSession,
+		meterStamps
+	};
+
 	await authManager.updateUser(user.id, {
 		metadata: {
 			app: {
-				callSession: {
-					...user.callSession,
-					meterStamps
-				}
+				callSession
 			}
 		}
 	});
@@ -90,6 +92,7 @@ export default async function toggleCallSessionMeter(req, res) {
 	}
 
 	return res.json({
-		success: true
+		success: true,
+		callSession
 	});
 }

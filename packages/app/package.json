@@ -10,7 +10,7 @@
 	},
 	"homepage": "https://www.callsesh.com/",
 	"scripts": {
-		"dev": "next",
+		"dev": "node ./dev-server.js",
 		"build": "next build",
 		"start": "next start",
 		"export": "next export",
@@ -32,7 +32,7 @@
 		"@stripe/stripe-js": "^1.5.0",
 		"@uploadcare/react-widget": "^1.2.6",
 		"auth0": "^2.27.0",
-		"baseui": "9.85.0",
+		"baseui": "^9.93.0",
 		"better-queue": "^3.8.10",
 		"country-list": "^2.2.0",
 		"debounce-promise": "^3.1.2",
@@ -108,9 +108,12 @@
 		"jest": "^25.4.0",
 		"jest-mock-axios": "^3.2.0",
 		"next-compose-plugins": "^2.2.0",
+		"ngrok": "^3.2.7",
 		"pino-pretty": "^4.0.0",
 		"raw-loader": "^4.0.1",
 		"react-test-renderer": "^16.13.1",
-		"rimraf": "^3.0.2"
+		"rimraf": "^3.0.2",
+		"shelljs": "^0.8.4",
+		"yargs": "^15.4.1"
 	}
 }

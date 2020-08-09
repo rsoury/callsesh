@@ -22,8 +22,10 @@ import {
 	BellOff as RemoveNotifyIcon
 } from "react-feather";
 import isEmpty from "is-empty";
-import * as fees from "@/utils/fees";
+import { Tag, VARIANT as TAG_VARIANT, KIND as TAG_KIND } from "baseui/tag";
+import { StatefulTooltip as Tooltip } from "baseui/tooltip";
 
+import * as fees from "@/utils/fees";
 import useUser from "@/frontend/hooks/use-user";
 import Link from "@/frontend/components/Link";
 import Highlight from "@/frontend/components/Highlight";
@@ -164,17 +166,32 @@ const ViewUserOperatorAction = ({ viewUser, onStart, onToggleNotify }) => {
 									<span>
 										You will be charged only for metered and talk duration.
 									</span>
-									<HelpTooltip
-										size={18}
-										text="Only charged if your call session is successfully connected"
+									<br />
+									<Tooltip
+										content={() => (
+											<div>
+												Only charged if your call session is successfully
+												connected
+											</div>
+										)}
+										showArrow
 									>
-										<span>
-											Service fee: <strong>{fees.preAuth().toString()}</strong>
+										<span className={css({ display: "inline-block" })}>
+											<Tag closeable={false}>
+												{fees.preAuth().toString()} Fee
+											</Tag>
 										</span>
-									</HelpTooltip>
-									<span>
-										Currency: <strong>{viewUser.currency}</strong>
-									</span>
+									</Tooltip>
+									<Tooltip
+										content={() => (
+											<div>Session currency is {viewUser.currency}</div>
+										)}
+										showArrow
+									>
+										<span className={css({ display: "inline-block" })}>
+											<Tag closeable={false}>{viewUser.currency}</Tag>
+										</span>
+									</Tooltip>
 								</ParagraphXSmall>
 								<Button
 									startEnhancer={

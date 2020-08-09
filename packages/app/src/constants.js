@@ -35,6 +35,8 @@ export const CALL_SESSION_STATUS = {
 	ending: "ending" // The call session is ending
 };
 
+export const CALL_SESSION_START_TIMEOUT = 6 * 1000; // in milliseconds
+
 // Payouts
 export const PAYOUTS_SUBMISSION_FORM_URL =
 	"https://forms.gle/zYHyhTds5opadV8b8";

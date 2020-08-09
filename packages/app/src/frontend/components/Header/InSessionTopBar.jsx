@@ -64,52 +64,54 @@ const InSessionTopBar = () => {
 
 	return (
 		<>
-			<motion.div
-				initial={{ opacity: 0, y: -35 }}
-				animate={{ opacity: 1, y: 0 }}
-				className={css({
-					width: "100%",
-					backgroundColor: theme.colors[status.variant],
-					borderBottomLeftRadius: "4px",
-					borderBottomRightRadius: "4px",
-					display: "flex",
-					alignItems: "center",
-					justifyContent: "center",
-					color: status.textColor,
-					textAlign: "center",
-					position: "relative",
-					zIndex: "9999",
-					height: "35px",
-					padding: "5px",
-					transition: "background-color 0.25s, color 0.25s",
-					...theme.typography.ParagraphSmall
-				})}
-			>
-				<span
+			{!isEmpty(user.callSession.status) && (
+				<motion.div
+					initial={{ opacity: 0, y: -35 }}
+					animate={{ opacity: 1, y: 0 }}
 					className={css({
-						marginRight: "10px",
+						width: "100%",
+						backgroundColor: theme.colors[status.variant],
+						borderBottomLeftRadius: "4px",
+						borderBottomRightRadius: "4px",
 						display: "flex",
-						alignItems: "center"
+						alignItems: "center",
+						justifyContent: "center",
+						color: status.textColor,
+						textAlign: "center",
+						position: "relative",
+						zIndex: "9999",
+						height: "35px",
+						padding: "5px",
+						transition: "background-color 0.25s, color 0.25s",
+						...theme.typography.ParagraphSmall
 					})}
 				>
-					<status.Icon size={22} />
-				</span>
-				<Label
-					className={css({
-						display: "flex",
-						alignItems: "center"
-					})}
-				>
-					<strong
+					<span
 						className={css({
-							transition: "color 0.25s",
-							color: status.textColor
+							marginRight: "10px",
+							display: "flex",
+							alignItems: "center"
 						})}
 					>
-						{status.content}
-					</strong>
-				</Label>
-			</motion.div>
+						<status.Icon size={22} />
+					</span>
+					<Label
+						className={css({
+							display: "flex",
+							alignItems: "center"
+						})}
+					>
+						<strong
+							className={css({
+								transition: "color 0.25s",
+								color: status.textColor
+							})}
+						>
+							{status.content}
+						</strong>
+					</Label>
+				</motion.div>
+			)}
 			{shouldRedirectToSession && (
 				<FullscreenLoader>
 					<strong>
