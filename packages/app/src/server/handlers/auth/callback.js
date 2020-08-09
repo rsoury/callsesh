@@ -12,9 +12,10 @@ export default async function authCallback(req, res) {
 	} catch (error) {
 		// With throw if user already authenticated. Check if user is retrievable with verified email. If verified, redirect to index page
 		if (
-			error.message ===
-				"Invalid request, an initial state could not be found" ||
-			error.message === "state missing from the response"
+			[
+				"Invalid request, an initial state could not be found",
+				"state missing from the response"
+			].includes(error.message)
 		) {
 			try {
 				const user = await getUser(req, { withContext: true });
