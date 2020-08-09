@@ -6,6 +6,7 @@ import isEmpty from "is-empty";
 import set from "lodash/set";
 import get from "lodash/get";
 import isEmail from "is-email";
+import pickBy from "lodash/pickBy";
 
 import { onError } from "@/server/middleware";
 import { getUser, updateAndGetUser } from "@/server/middleware/auth";
@@ -141,19 +142,22 @@ export default async function updateUser(req, res) {
 			}
 			if (!isEmpty(stripeUpdateParams)) {
 				await stripe.customers.update(stripeCustomerId, stripeUpdateParams);
-				logger.info("Patch stripe customer data");
+				logger.info("Patch stripe customer data", { stripeUpdateParams });
 			}
 		}
 
 		// Register the same data against the rocket chat user
 		const { chatUser } = user;
 		if (!isEmpty(chatUser)) {
-			const chatUpdateParams = {
-				name: patchParams.name,
-				picture: patchParams.picture,
-				username: get(patchParams, "metadata.user.username"),
-				email: isNewEmail ? email : undefined
-			};
+			const chatUpdateParams = pickBy(
+				{
+					name: patchParams.name,
+					picture: patchParams.picture,
+					username: get(patchParams, "metadata.user.username"),
+					email: isNewEmail ? email : undefined
+				},
+				(value) => !isEmpty(value)
+			);
 			await chat.updateUser(chatUser.id, chatUpdateParams);
 			logger.info("Patch chat user data", {
 				chatUserId: chatUser.id,

@@ -42,7 +42,7 @@ export async function getServerSideProps({
 			const {
 				user: { _id: chatUserId },
 				password: chatUserPassword
-			} = await chat.createUser(user.email, user.name, user.username, {
+			} = await chat.createUser(user.email, user.nickname, user.username, {
 				appId: user.id
 			});
 			await chat.updateUser(chatUserId, {
