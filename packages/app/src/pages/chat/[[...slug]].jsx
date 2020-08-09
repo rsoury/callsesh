@@ -33,6 +33,31 @@ export async function getServerSideProps({
 		// Get currently authed user
 		const user = await getUser(req, { withContext: true });
 
+		// If chat user does not exist, create it.
+		if (isEmpty(user.chatUser)) {
+			const {
+				user: { _id: chatUserId },
+				password: chatUserPassword
+			} = await chat.createUser(user.email, user.name, user.username, {
+				appId: user.id
+			});
+			await chat.updateUser(chatUserId, { picture: user.picture });
+			user.chatUser = {
+				id: chatUserId,
+				password: chatUserPassword
+			};
+			req.log.info("Created chat user", { chatUserId });
+			const params = {
+				metadata: {
+					app: {
+						chatUser: user.chatUser
+					}
+				}
+			};
+			await authManager.updateUser(user.id, params);
+			req.log.info("Update user data", { params });
+		}
+
 		// Login to chat service and get encrypted password
 		const { data = {} } = await chat.login(
 			user.username,
