@@ -5,7 +5,7 @@ import { CALL_SESSION_STATUS } from "@/constants";
 import * as routes from "@/routes";
 import handleException, { alerts } from "@/utils/handle-exception";
 
-import { syncIds, subscribe, events } from "./client";
+import { syncIds, subscribe, events, getDocument } from "./client";
 import SyncAbstract from "./abstract";
 
 class CallSessionSync extends SyncAbstract {
@@ -85,6 +85,7 @@ class CallSessionSync extends SyncAbstract {
 
 		return request
 			.post(routes.api.endCall, { force: true, ts })
+			.then(({ data }) => data)
 			.catch((err) => {
 				handleException(err);
 				alerts.error();
@@ -94,7 +95,7 @@ class CallSessionSync extends SyncAbstract {
 	/**
 	 * Emit event to start meter from frontend
 	 */
-	static startMeter() {
+	static startMeter(sessionId) {
 		events.emit("meter", true);
 		// Run sync to backend
 		const ts = Date.now();
@@ -103,6 +104,15 @@ class CallSessionSync extends SyncAbstract {
 				ts,
 				start: true
 			})
+			.then(({ data }) =>
+				getDocument(syncIds.getCallSession(sessionId)).then((doc) => ({
+					...data,
+					callSession: {
+						...data.callSession,
+						...doc.value
+					}
+				}))
+			)
 			.catch((err) => {
 				handleException(err);
 				alerts.error();
@@ -113,7 +123,7 @@ class CallSessionSync extends SyncAbstract {
 	/**
 	 * Emit event to stop meter from frontend
 	 */
-	static stopMeter() {
+	static stopMeter(sessionId) {
 		events.emit("meter", false);
 		// Run sync to backend
 		const ts = Date.now();
@@ -122,6 +132,15 @@ class CallSessionSync extends SyncAbstract {
 				ts,
 				stop: true
 			})
+			.then(({ data }) =>
+				getDocument(syncIds.getCallSession(sessionId)).then((doc) => ({
+					...data,
+					callSession: {
+						...data.callSession,
+						...doc.value
+					}
+				}))
+			)
 			.catch((err) => {
 				handleException(err);
 				alerts.error();

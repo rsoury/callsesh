@@ -32,6 +32,7 @@ import {
 } from "@/constants";
 import Link from "@/frontend/components/Link";
 import * as routes from "@/routes";
+import isOperatorMeterActive from "@/utils/is-operator-meter-active";
 
 // import Notice from "./Notice";
 import With from "./With";
@@ -48,6 +49,8 @@ const manageLoadingState = (handler, setLoadingState) => () => {
 	handler(() => setLoadingState(false));
 };
 
+let progress = null;
+
 const InSessionScreen = ({
 	viewUser,
 	onEnd,
@@ -63,6 +66,7 @@ const InSessionScreen = ({
 	const [isLoadingMeter, setLoadingMeter] = useState(false);
 	const [isInitiated, setInitiated] = useState(false);
 	const [startProgressValue, setStartProgressValue] = useState(0);
+	const [isMetering, setMetering] = useState(false);
 
 	const { callSession } = user;
 	const isOperator = callSession.as === CALL_SESSION_USER_TYPE.operator;
@@ -72,8 +76,6 @@ const InSessionScreen = ({
 	const handleOpenChat = onOpenChat;
 	const handleCall = manageLoadingState(onCall, setCalling);
 	const handleToggleMeter = manageLoadingState(onToggleMeter, setLoadingMeter);
-
-	let progress = null;
 
 	useEffect(() => {
 		progress = setInterval(() => {
@@ -86,7 +88,6 @@ const InSessionScreen = ({
 	useEffect(() => {
 		if (!isEmpty(callSession.status) || startProgressValue >= 100) {
 			clearInterval(progress);
-			setStartProgressValue(100);
 		}
 		if (
 			[
@@ -99,7 +100,20 @@ const InSessionScreen = ({
 		}
 
 		return () => {};
-	}, [callSession, progress]);
+	}, [callSession, startProgressValue, progress]);
+
+	useEffect(() => {
+		// If user is operator
+		if (user.callSession.as === CALL_SESSION_USER_TYPE.operator) {
+			console.log(user);
+			console.log(
+				isOperatorMeterActive(user) ? `METER IS ACTIVE` : `METER NOT ACTIVE`
+			);
+			setMetering(isOperatorMeterActive(user));
+		}
+
+		return () => {};
+	}, [user]);
 
 	return (
 		<Layout noHeader noFooter>
@@ -182,22 +196,16 @@ const InSessionScreen = ({
 											<ActionButton
 												onClick={handleToggleMeter}
 												startEnhancer={
-													callSession.status === CALL_SESSION_STATUS.metering
+													isMetering
 														? () => <StopMeterIcon size={30} />
 														: () => <MeterIcon size={26} />
 												}
-												variant={
-													callSession.status === CALL_SESSION_STATUS.metering
-														? "accent"
-														: ""
-												}
+												variant={isMetering ? "accent" : ""}
 												retain
 												isLoading={isLoadingMeter}
 												disabled={isEndingSession}
 											>
-												{callSession.status === CALL_SESSION_STATUS.metering
-													? `Stop the meter`
-													: `Start the meter`}
+												{isMetering ? `Stop the meter` : `Start the meter`}
 											</ActionButton>
 										</div>
 									)}
@@ -285,7 +293,7 @@ const InSessionScreen = ({
 											<strong>Connecting to your session...</strong>
 										</Paragraph>
 										{/* Remove Undo button if call session is about to start */}
-										{!isOperator && startProgressValue < 95 && (
+										{!isOperator && startProgressValue < 100 && (
 											<div className={css({ marginTop: "10px" })}>
 												<Button
 													onClick={handleUndoSession}

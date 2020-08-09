@@ -62,3 +62,7 @@ export const subscribe = (uniqueId, handler) => {
 		.then((doc) => handler(doc))
 		.catch((e) => handleException(e));
 };
+
+// A method to retrieve a document
+export const getDocument = (id) =>
+	getSyncClient().then((client) => client.document(id));

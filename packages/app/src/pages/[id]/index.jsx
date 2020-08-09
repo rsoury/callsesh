@@ -31,6 +31,7 @@ import handleException, { alerts } from "@/utils/handle-exception";
 import ssrUser from "@/utils/ssr-user";
 import { useUserRouteReferrer } from "@/frontend/hooks/use-route-referrer";
 import { CallSessionSync } from "@/frontend/utils/sync";
+import isOperatorMeterActive from "@/utils/is-operator-meter-active";
 
 let startSessionTimeout = null; // instantiate outside of the component... no re-render should reinstantiate
 const setSessionTimeout = (cb) => {
@@ -255,15 +256,33 @@ const ViewUser = ({ viewUser: viewUserBase, error }) => {
 
 	const handleToggleMeter = useCallback(
 		(done = () => {}) => {
-			if (user.callSession.status === CALL_SESSION_STATUS.metering) {
+			if (isOperatorMeterActive(user)) {
 				// Stop the meter
-				CallSessionSync.stopMeter().finally(() => {
-					done();
-				});
+				CallSessionSync.stopMeter(user.callSession.id)
+					.then(({ callSession = {} }) => {
+						setUser({
+							...user,
+							callSession: {
+								...user.callSession,
+								...callSession
+							}
+						});
+					})
+					.finally(() => {
+						done();
+					});
 			} else {
 				// Start the meter
-				CallSessionSync.startMeter()
-					.then(() => {
+				CallSessionSync.startMeter(user.callSession.id)
+					.then(({ callSession = {} }) => {
+						setUser({
+							...user,
+							callSession: {
+								...user.callSession,
+								...callSession
+							}
+						});
+
 						toaster.info(
 							`${viewUser.givenName} has been notified that the meter has started!`
 						);

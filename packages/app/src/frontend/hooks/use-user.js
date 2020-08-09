@@ -39,7 +39,6 @@ function useUser({ required } = {}) {
 			return false;
 		}
 
-		// console.log(user);
 		const { isRegistered, callSession } = user;
 
 		// If user is not registered, redirect to register page.
@@ -75,8 +74,6 @@ function useUser({ required } = {}) {
 				});
 
 				callSessionSync.listen("onUpdate", (value) => {
-					console.log(value);
-
 					setUserState({
 						...user,
 						callSession: {
