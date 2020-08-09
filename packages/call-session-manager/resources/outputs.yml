@@ -1,8 +1,0 @@
-Outputs:
-  NotificationsTopic:
-    Description: "The ARN of the StateMachine Notifications Service"
-    Value: !Ref CSMNotificationsTopic
-  CallSessionEnder:
-    Description: "The ARN of the StateMachine CallSessionEnder"
-    Value:
-      Ref: CallSessionEnder

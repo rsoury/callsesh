@@ -9,17 +9,15 @@ import { useStyletron } from "baseui";
 import { Button } from "baseui/button";
 import { Grid, Cell } from "baseui/layout-grid";
 import { toaster } from "baseui/toast";
-import Router from "next/router";
 import ono from "@jsdevtools/ono";
 
 import * as routes from "@/routes";
 import OperatorOnboarding, {
 	initialValues,
 	validationSchema
-} from "@/components/Onboarding/OperatorStep";
-import { FormContainer } from "@/components/Onboarding/FormLayout";
+} from "@/frontend/components/Onboarding/OperatorStep";
+import { FormContainer } from "@/frontend/components/Onboarding/FormLayout";
 import isUserOperator from "@/utils/is-operator";
-import { UserProps } from "@/utils/common-prop-types";
 import request from "@/utils/request";
 import handleException, { alerts } from "@/utils/handle-exception";
 import ssrUser from "@/utils/ssr-user";
@@ -27,25 +25,21 @@ import ssrUser from "@/utils/ssr-user";
 // Activate operator field by default
 initialValues.operator = true;
 
-const BecomeAnOperator = ({ user }) => {
+const BecomeAnOperator = () => {
 	const [css] = useStyletron();
 
 	const handleSubmit = useCallback((values, actions) => {
 		// We're just going to post to the user endpoint to overwrite user
 		const params = {
-			firstName: user.givenName,
-			lastName: user.familyName,
-			username: user.username,
-			gender: user.gender,
-			dob: user.dob,
 			...values,
+			operator: true,
 			purpose: isEmpty(values.purpose.value)
 				? values.purpose.option.label
 				: values.purpose.value
 		};
 
 		request
-			.post(routes.api.user, params)
+			.patch(routes.api.user, params)
 			.then(() => {
 				// Redirect user back to home page
 				toaster.positive(
@@ -53,7 +47,7 @@ const BecomeAnOperator = ({ user }) => {
 				);
 
 				setTimeout(() => {
-					Router.push(routes.page.index);
+					window.location.href = routes.page.index;
 				}, 1000);
 			})
 			.catch((e) => {
@@ -78,7 +72,7 @@ const BecomeAnOperator = ({ user }) => {
 				return (
 					<Form>
 						<FormContainer>
-							<OperatorOnboarding {...props} />
+							<OperatorOnboarding noToggle {...props} />
 							<div>
 								<Grid gridGutters={16}>
 									<Cell span={12}>
@@ -127,9 +121,5 @@ export function getServerSideProps({ req, res }) {
 		};
 	});
 }
-
-BecomeAnOperator.propTypes = {
-	user: UserProps.isRequired
-};
 
 export default BecomeAnOperator;

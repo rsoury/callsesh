@@ -22,7 +22,8 @@ export const page = {
 	},
 	becomeAnOperator: "/become-an-operator",
 	referrals: "/referrals",
-	faq: "/faq"
+	faq: "/faq",
+	chat: "/chat"
 };
 
 export const build = {
@@ -32,8 +33,11 @@ export const build = {
 	invite(username) {
 		return `/${username}/invite`;
 	},
-	callUser(username) {
-		return `/api/u/${username}/call`;
+	card(id) {
+		return `/api/cards/${id}`;
+	},
+	notify(id) {
+		return `/api/notify/${id}`;
 	}
 };
 
@@ -45,12 +49,18 @@ export const api = {
 		signup: "/api/auth/signup"
 	},
 	user: "/api/user",
+	call: "/api/call",
+	endCall: "/api/call/end",
+	meter: "/api/call/meter",
 	cards: "/api/cards",
 	live: "/api/live",
+	liveNotify: "/api/live/notify",
 	usernameAvailable: "/api/username-available",
 	connect: {
 		start: "/api/connect",
 		redirect: "/api/connect/oauth"
 	},
-	callUser: `/api/u/:id/call`
+	resendEmail: `/api/resend-email`,
+	token: `/api/token`,
+	chatToken: `/api/token/chat`
 };

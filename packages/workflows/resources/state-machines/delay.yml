@@ -1,0 +1,30 @@
+id: CallseshDelay
+name: CallseshDelay-${opt:stage, self:provider.stage}
+events:
+  - http:
+      path: "/delay"
+      method: "POST"
+notifications:
+  ABORTED:
+    - sns: ${self:resources.Outputs.NotificationsTopic.Value}
+  FAILED:
+    - sns: ${self:resources.Outputs.NotificationsTopic.Value}
+  TIMED_OUT:
+    - sns: ${self:resources.Outputs.NotificationsTopic.Value}
+  SUCCEEDED:
+    - sns: ${self:resources.Outputs.NotificationsTopic.Value}
+role:
+  Fn::GetAtt: [StateMachinePassRole, Arn]
+definition:
+  Comment: "Delay then fire webhook"
+  StartAt: Delay
+  States:
+    Delay:
+      Type: Wait
+      Seconds: 65 # (TTL + 5 seconds) 65 seconds to expire
+      Next: Fire
+    Fire:
+      Type: Task
+      Resource:
+        Fn::GetAtt: [hook, Arn]
+      End: true

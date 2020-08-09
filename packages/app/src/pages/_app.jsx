@@ -10,8 +10,8 @@ import Router from "next/router";
 
 import { engine, debug } from "@config/styletron";
 import seoConfig from "@config/seo";
-import UserProvider from "@/components/Providers/UserProvider";
-import RouteReferrerProvider from "@/components/Providers/RouteReferrerProvider";
+import UserProvider from "@/frontend/components/Providers/UserProvider";
+import RouteReferrerProvider from "@/frontend/components/Providers/RouteReferrerProvider";
 import { setup as setupSignals } from "@/utils/signals";
 
 import "setimmediate";
@@ -41,9 +41,7 @@ const theme = {
 };
 
 const Container = styled("div", {
-	maxWidth: "1024px",
-	margin: "0 auto",
-	width: "100%"
+	position: "relative"
 });
 
 class App extends NextApp {

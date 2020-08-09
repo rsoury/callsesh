@@ -4,44 +4,72 @@
  */
 
 import { useEffect, useState, useCallback } from "react";
-import { useStyletron } from "baseui";
 import isEmpty from "is-empty";
-import { Grid, Cell } from "baseui/layout-grid";
-import debounce from "lodash/debounce";
 import { toaster } from "baseui/toast";
-import Router from "next/router";
+import { useRouter } from "next/router";
 import MobileDetect from "mobile-detect";
 import ono from "@jsdevtools/ono";
+import * as authManager from "@/server/auth-manager";
 
-import Layout from "@/components/Layout";
-import ScreenContainer from "@/components/ScreenContainer";
-import * as ViewUserScreen from "@/components/Screens/ViewUser";
+import ViewUserScreen from "@/frontend/components/Screens/ViewUser";
+import InSessionScreen from "@/frontend/components/Screens/InSession";
+import SessionPageTitle from "@/frontend/components/SessionPageTitle";
 import request from "@/utils/request";
 import {
-	UserProps,
 	ViewUserProps,
 	ErrorPageProps
-} from "@/utils/common-prop-types";
-import isUserOperator from "@/utils/is-operator";
+} from "@/frontend/utils/common-prop-types";
 import * as routes from "@/routes";
-import { useSetUser } from "@/hooks/use-user";
-import { ERROR_TYPES } from "@/constants";
+import useUser, { useSetUser } from "@/frontend/hooks/use-user";
+import {
+	ERROR_TYPES,
+	CALL_SESSION_STATUS,
+	CALL_SESSION_USER_TYPE,
+	CALL_SESSION_START_TIMEOUT
+} from "@/constants";
 import handleException, { alerts } from "@/utils/handle-exception";
 import ssrUser from "@/utils/ssr-user";
-import * as authManager from "@callsesh/utils/auth-manager";
-import { useUserRouteReferrer } from "@/hooks/use-route-referrer";
+import { useUserRouteReferrer } from "@/frontend/hooks/use-route-referrer";
+import { CallSessionSync } from "@/frontend/utils/sync";
+import isOperatorMeterActive from "@/utils/is-operator-meter-active";
+
+let startSessionTimeout = null; // instantiate outside of the component... no re-render should reinstantiate
+const setSessionTimeout = (cb) => {
+	startSessionTimeout = setTimeout(cb, CALL_SESSION_START_TIMEOUT);
+	return startSessionTimeout;
+};
 
 // We're referring to the currently viewed user, as the viewUser
-const ViewUser = ({ user, viewUser: viewUserBase, error }) => {
-	const [css, theme] = useStyletron();
-	const [isStartingCall, setStartingCall] = useState(false);
+const ViewUser = ({ viewUser: viewUserBase, error }) => {
 	const [viewUser, setViewUser] = useState(viewUserBase);
+	const [user] = useUser();
 	const setUser = useSetUser();
 	const [, setUserRouteReferrer] = useUserRouteReferrer();
-
-	const isOperator = isUserOperator(viewUser);
+	const router = useRouter();
 
 	const md = new MobileDetect(window.navigator.userAgent);
+
+	// EMULATE: Add users into session
+	// useEffect(() => {
+	// 	if (isEmpty(error) && !isEmpty(user)) {
+	// 		setTimeout(() => {
+	// 			setUser({
+	// 				...user,
+	// 				callSession: {
+	// 					as: "caller",
+	// 					with: viewUser.username
+	// 				}
+	// 			});
+	// 			setViewUser({
+	// 				...viewUser,
+	// 				callSession: {
+	// 					as: "caller",
+	// 					with: user.username
+	// 				}
+	// 			});
+	// 		}, 1000);
+	// 	}
+	// }, []);
 
 	// Set current pathname to userRouteReferrer state if error is empty.
 	useEffect(() => {
@@ -50,126 +78,261 @@ const ViewUser = ({ user, viewUser: viewUserBase, error }) => {
 		}
 	}, [error]);
 
-	const startCallSession = useCallback(
-		debounce(() => {
-			// Start Call Session between user and viewUser
-			setStartingCall(true);
-			request
-				.post(routes.build.callUser(viewUser.username))
-				.then(({ data }) => data)
-				.then(({ proxyPhoneNumber, callSession }) => {
-					// Add callsession to user state
-					setUser({
-						...user,
-						callSession: callSession.caller
-					});
+	const handleStartCallSession = useCallback(
+		(done = () => {}) => {
+			// Add to an undoable session state
+			setUser({
+				...user,
+				callSession: {
+					with: viewUser.username,
+					as: CALL_SESSION_USER_TYPE.caller
+				}
+			});
 
-					// Add callsession to view user state
+			// Set a timeout before starting the call session to give the end user
+			// Start Call Session between user and viewUser
+			setSessionTimeout(() => {
+				request
+					.post(routes.api.call, {
+						operator: viewUser.username
+					})
+					.then(({ data }) => data)
+					.then(({ proxyPhoneNumber, callSession }) => {
+						// Add callsession to user state
+						setUser({
+							...user,
+							callSession: callSession.caller
+						});
+
+						// Add callsession to view user state
+						setViewUser({
+							...viewUser,
+							callSession: callSession.operator
+						});
+
+						// Check if mobile and latest browsers, and if so use tel:
+						if (md.phone()) {
+							window.location.href = `tel:${proxyPhoneNumber}`;
+						}
+					})
+					.catch((e) => {
+						const { data: err = e } = e.response || {}; // Get error body, otherwise default to returned error.
+						// Check if err is common and toast/react accordingly.
+						switch (err.type) {
+							case ERROR_TYPES.paymentMethodRequired:
+								toaster.info(
+									`A payment method is required to make calls. Please wait while we redirect you to your wallet...`
+								);
+								router.push(routes.page.settings.wallet);
+								break;
+							case ERROR_TYPES.paymentMethodInvalid:
+								toaster.negative(
+									`Your selected payment method is not valid or has insufficient funds. Please wait while we redirect you to your wallet...`
+								);
+								router.push(routes.page.settings.wallet);
+								break;
+							case ERROR_TYPES.operatorUnavailable:
+								toaster.negative(
+									`A call cannot be made. The operator is unavailable.`
+								);
+								// Reload the page her to ensure latest view user status to displayed.
+								router.reload();
+								break;
+							case ERROR_TYPES.operatorBusy:
+								toaster.negative(
+									`The operator is currently in a call. Please check back later.`
+								);
+								break;
+							case ERROR_TYPES.callSessionExists:
+								toaster.warning(
+									`You're already in a call session with another operator. You can only be in one call session at a time.`
+								);
+								break;
+							case ERROR_TYPES.operatorRequired:
+							case ERROR_TYPES.userBlocked:
+								alerts.error();
+								break;
+							default:
+								handleException(err);
+								alerts.error();
+								break;
+						}
+					})
+					.finally(() => {
+						done();
+					});
+			});
+		},
+		[user, viewUser, startSessionTimeout]
+	);
+
+	const handleUndoCallSession = useCallback(() => {
+		// Add to an undoable session state
+		setUser({
+			...user,
+			callSession: {}
+		});
+
+		clearTimeout(startSessionTimeout);
+	}, [user, startSessionTimeout]);
+
+	// Handle notification toggle
+	const handleToggleNotify = useCallback(
+		(done = () => {}) => {
+			const { notified: notifiedUsers = [] } = viewUser;
+			const isNotified = notifiedUsers.includes(user.username);
+			const notifyRoute = routes.build.notify(viewUser.username);
+			(isNotified ? request.delete(notifyRoute) : request.post(notifyRoute))
+				.then(({ data }) => data)
+				.then(({ notified = [] }) => {
+					// Set current viewUser notified list to one retrieved from server
 					setViewUser({
 						...viewUser,
-						callSession: callSession.operator
+						notified
 					});
-
-					// Toast to the user that they're about to receive a call.
-					toaster.positive(
-						`Your call session has started. You should receive an SMS with a phone number to call that will connect you to operator.`
-					);
-
-					// Check if mobile and latest browsers, and if so use tel:
-					if (md.phone()) {
-						window.location.href = `tel:${proxyPhoneNumber}`;
-					}
 				})
-				.catch((e) => {
-					const { data: err = e } = e.response || {}; // Get error body, otherwise default to returned error.
-					// Check if err is common and toast/react accordingly.
-					switch (err.type) {
-						case ERROR_TYPES.paymentMethodRequired:
-							toaster.info(
-								`A payment method is required to make calls. Please wait while we redirect you to your wallet...`
-							);
-							Router.push(routes.page.settings.wallet);
-							break;
-						case ERROR_TYPES.operatorUnavailable:
-							toaster.negative(
-								`A call cannot be made. The operator is unavailable.`
-							);
-							break;
-						case ERROR_TYPES.operatorBusy:
-							toaster.negative(
-								`The operator is currently in a call. Please check back later.`
-							);
-							break;
-						case ERROR_TYPES.callSessionExists:
-							toaster.warning(
-								`You're already in a call session with another operator. You can only be in one call session at a time.`
-							);
-							break;
-						case ERROR_TYPES.operatorRequired:
-						case ERROR_TYPES.userBlocked:
-							alerts.error();
-							break;
-						default:
-							handleException(err);
-							alerts.error();
-							break;
-					}
+				.catch((err) => {
+					handleException(err);
+					alerts.error();
 				})
 				.finally(() => {
-					setStartingCall(false);
+					done();
 				});
-		}, 500),
+		},
 		[user, viewUser]
 	);
 
-	return (
-		<Layout
-			style={{
-				[theme.mediaQuery.maxSmall]: {
-					paddingBottom: "200px"
+	const handleEndSession = useCallback(
+		(done = () => {}) => {
+			toaster.info(`Ending your session with ${viewUser.givenName}...`);
+
+			// End the session
+			CallSessionSync.end()
+				.then(() => {
+					// Remove call session from user state
+					setUser({
+						...user,
+						callSession: {}
+					});
+
+					// Remove call session from view user state
+					setViewUser({
+						...viewUser,
+						callSession: {}
+					});
+				})
+				.finally(() => {
+					done();
+				});
+		},
+		[user]
+	);
+
+	const handleCall = useCallback((done = () => {}) => {
+		// Send an SMS and Toast when desktop, otherwise trigger tel:
+		request
+			.get(routes.api.call, {
+				params: {
+					sms: !md.phone()
 				}
-			}}
-		>
-			{isEmpty(error) ? (
-				<ScreenContainer id="callsesh-view-user">
-					<ViewUserScreen.Introduction viewUser={viewUser} />
-					{isOperator ? (
-						<Grid gridGutters="0px">
-							<Cell span={[12, 5, 7]}>
-								<ViewUserScreen.OperatorDetails viewUser={viewUser} />
-							</Cell>
-							<Cell span={[12, 3, 5]}>
-								<ViewUserScreen.OperatorAction
-									viewUser={viewUser}
-									onStart={startCallSession}
-									isStarting={isStartingCall}
-								/>
-							</Cell>
-						</Grid>
-					) : (
-						<ViewUserScreen.Visitor />
-					)}
-				</ScreenContainer>
+			})
+			.then(({ proxyPhoneNumber }) => {
+				if (md.phone()) {
+					window.location.href = `tel:${proxyPhoneNumber}`;
+				} else {
+					toaster.info(
+						`You should receive an SMS with a phone number to call that will connect you to operator.`
+					);
+				}
+			})
+			.catch((err) => {
+				handleException(err);
+				alerts.error();
+			})
+			.finally(() => {
+				done();
+			});
+	}, []);
+
+	const handleToggleMeter = useCallback(
+		(done = () => {}) => {
+			if (isOperatorMeterActive(user)) {
+				// Stop the meter
+				CallSessionSync.stopMeter(user.callSession.id)
+					.then(({ callSession = {} }) => {
+						setUser({
+							...user,
+							callSession: {
+								...user.callSession,
+								...callSession
+							}
+						});
+					})
+					.finally(() => {
+						done();
+					});
+			} else {
+				// Start the meter
+				CallSessionSync.startMeter(user.callSession.id)
+					.then(({ callSession = {} }) => {
+						setUser({
+							...user,
+							callSession: {
+								...user.callSession,
+								...callSession
+							}
+						});
+
+						toaster.info(
+							`${viewUser.givenName} has been notified that the meter has started!`
+						);
+					})
+					.finally(() => {
+						done();
+					});
+			}
+		},
+		[user, viewUser]
+	);
+
+	// If users in session with each other, show full screen InSessionScreen
+	// If chat is open, render chat page
+	return (
+		<>
+			{!isEmpty(user.callSession) ? (
+				<>
+					<SessionPageTitle
+						name={viewUser.givenName}
+						status={user.callSession.status}
+					/>
+					<InSessionScreen
+						viewUser={viewUser}
+						onEnd={handleEndSession}
+						onUndo={handleUndoCallSession}
+						onCall={handleCall}
+						onToggleMeter={handleToggleMeter}
+					/>
+				</>
 			) : (
-				<ScreenContainer
-					id="callsesh-view-user-error"
-					className={css({ margin: "auto" })}
-				>
-					<ViewUserScreen.Error error={error} />
-				</ScreenContainer>
+				<ViewUserScreen
+					error={error}
+					viewUser={viewUser}
+					actions={{
+						onStart: handleStartCallSession,
+						onToggleNotify: handleToggleNotify
+					}}
+				/>
 			)}
-		</Layout>
+		</>
 	);
 };
 
 ViewUser.propTypes = {
-	user: UserProps,
 	viewUser: ViewUserProps,
 	error: ErrorPageProps
 };
 
 ViewUser.defaultProps = {
-	user: {},
 	viewUser: {},
 	error: {
 		code: 404,

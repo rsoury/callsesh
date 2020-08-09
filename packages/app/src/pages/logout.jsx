@@ -1,5 +1,5 @@
 import isEmpty from "is-empty";
-import { getSession } from "@/middleware/auth";
+import { getSession } from "@/server/middleware/auth";
 import * as routes from "@/routes";
 
 const Logout = () => null;

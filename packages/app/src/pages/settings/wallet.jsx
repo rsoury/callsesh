@@ -6,41 +6,49 @@
 import { useState, useEffect, useCallback } from "react";
 import { useStyletron } from "baseui";
 import { Grid, Cell } from "baseui/layout-grid";
-import { H5 as SmallHeading, Label2 as Label } from "baseui/typography";
+import {
+	H5 as SmallHeading,
+	Label2 as Label,
+	ParagraphMedium as Paragraph
+} from "baseui/typography";
 import isEmpty from "is-empty";
 import {
 	Button,
 	SIZE as BUTTON_SIZE,
 	KIND as BUTTON_KIND
 } from "baseui/button";
-import ono from "@jsdevtools/ono";
 import { toaster } from "baseui/toast";
 import {
 	Trash2 as DeleteIcon,
 	AlertCircle as AlertIcon,
 	CheckCircle as DefaultCardIcon
 } from "react-feather";
-import { Notification, KIND as NOTIFICATION_KIND } from "baseui/notification";
+import { KIND as NOTIFICATION_KIND } from "baseui/notification";
 import Skeleton from "react-loading-skeleton";
 import { ListItem, ListItemLabel, ARTWORK_SIZES } from "baseui/list";
 import { Block } from "baseui/block";
 
-import PaymentCardIcon from "@/components/PaymentCardIcon";
-import Layout from "@/components/Layout";
-import useUser from "@/hooks/use-user";
-import SettingsSkeleton from "@/components/Settings/Skeleton";
+import PaymentCardIcon from "@/frontend/components/PaymentCardIcon";
+import Highlight from "@/frontend/components/Highlight";
+import Notice from "@/frontend/components/Notice";
+import Layout from "@/frontend/components/Layout";
+import useUser from "@/frontend/hooks/use-user";
+import SettingsSkeleton from "@/frontend/components/Settings/Skeleton";
 import * as routes from "@/routes";
 import request from "@/utils/request";
-import CreditCard from "@/components/CreditCard";
+import CreditCard from "@/frontend/components/CreditCard";
 import handleException, { alerts } from "@/utils/handle-exception";
-import ScreenContainer from "@/components/ScreenContainer";
-import Header from "@/components/Settings/Header";
+import ScreenContainer from "@/frontend/components/ScreenContainer";
+import Header from "@/frontend/components/Settings/Header";
 
 const Wallet = () => {
 	const [css, theme] = useStyletron();
 	const [user, isUserLoading] = useUser({ required: true });
 	const [cards, setCards] = useState([]);
 	const [isLoading, setLoading] = useState(false);
+
+	const isPageLoading =
+		isUserLoading || isEmpty(user) || !(user || {}).isRegistered;
 
 	const listItemProps = {
 		artworkSize: ARTWORK_SIZES.LARGE,
@@ -92,13 +100,15 @@ const Wallet = () => {
 			const resp = window.confirm(`Are you sure you want to remove this card?`);
 			if (resp) {
 				setCards(cards.filter((card) => card.id !== id));
-				const params = { id };
 				request
-					.delete(routes.api.cards, { params })
+					.delete(routes.build.card(id))
 					.then(() => {
 						toaster.positive(`Successfully removed payment method.`);
 					})
-					.catch((err) => ono(err, params));
+					.catch((e) => {
+						alerts.error();
+						throw e;
+					});
 			}
 		},
 		[cards]
@@ -112,13 +122,15 @@ const Wallet = () => {
 				return card;
 			});
 			setCards(newCards);
-			const params = { id };
 			request
-				.patch(routes.api.cards, params)
+				.patch(routes.build.card(id))
 				.then(() => {
 					toaster.positive(`Successfully set new default payment method.`);
 				})
-				.catch((err) => ono(err, params));
+				.catch((e) => {
+					alerts.error();
+					throw e;
+				});
 		},
 		[cards]
 	);
@@ -175,8 +187,13 @@ const Wallet = () => {
 	return (
 		<Layout>
 			<ScreenContainer id="callsesh-wallet-settings">
-				<Header title="Wallet" />
-				{isUserLoading || isEmpty(user) ? (
+				<Header title="Wallet">
+					<Paragraph>
+						Add, remove and select the payment method to use when{" "}
+						<Highlight>making calls</Highlight>
+					</Paragraph>
+				</Header>
+				{isPageLoading ? (
 					<SettingsSkeleton />
 				) : (
 					<Grid>
@@ -185,32 +202,20 @@ const Wallet = () => {
 								Configure your payment methods
 							</SmallHeading>
 							{showDefaultError && (
-								<Notification
+								<Notice
 									kind={NOTIFICATION_KIND.negative}
 									overrides={{
 										Body: {
 											style: {
-												width: "100%",
 												marginBottom: "40px"
 											}
 										}
 									}}
+									icon={AlertIcon}
 								>
-									{() => (
-										<div
-											className={css({ display: "flex", alignItems: "center" })}
-										>
-											<div className={css({ marginRight: "10px" })}>
-												<AlertIcon size={20} />
-											</div>
-											<Label>
-												No default payment method set. Add a new payment method,
-												or set a default payment method to continue using
-												Callsesh.
-											</Label>
-										</div>
-									)}
-								</Notification>
+									No default payment method set. Add a new payment method, or
+									set a default payment method to continue using Callsesh.
+								</Notice>
 							)}
 							<div className={css({ marginBottom: "10px" })}>
 								{isLoading ? (

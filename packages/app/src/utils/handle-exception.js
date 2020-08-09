@@ -7,7 +7,8 @@ const sentryOptions = {
 	dsn: sentry.dsn,
 	enabled: process.env.NODE_ENV !== "test",
 	release: sentry.release,
-	environment: process.env.NODE_ENV
+	environment: process.env.NODE_ENV,
+	attachStacktrace: true
 };
 
 // If developing locally
@@ -22,9 +23,9 @@ if (!isProd) {
 			debugger: false
 		})
 	];
+	sentryOptions.maxBreadcrumbs = 10;
 } else {
 	sentryOptions.maxBreadcrumbs = 50;
-	sentryOptions.attachStacktrace = true;
 	sentryOptions.ignoreErrors = ["Non-Error exception captured"];
 }
 
@@ -62,7 +63,7 @@ export const alerts = {
 	}
 };
 
-export default (err, ctx) => {
+const handleException = (err, ctx) => {
 	Sentry.configureScope((scope) => {
 		if (err.message) {
 			// De-duplication currently doesn't work correctly for SSR / browser errors
@@ -104,3 +105,5 @@ export default (err, ctx) => {
 
 	return Sentry.captureException(err);
 };
+
+export default handleException;

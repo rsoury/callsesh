@@ -2,6 +2,7 @@
 
 require("dotenv").config({ path: require("find-config")(".env") }); // eslint-disable-line
 const withSourceMaps = require("@zeit/next-source-maps")();
+const withPlugins = require("next-compose-plugins");
 const {
 	PHASE_PRODUCTION_SERVER,
 	PHASE_DEVELOPMENT_SERVER
@@ -9,10 +10,15 @@ const {
 const SentryWebpackPlugin = require("@sentry/webpack-plugin");
 const filenamify = require("filenamify");
 const isEmpty = require("is-empty");
+const Twilio = require("twilio");
+const chalk = require("chalk");
+
 const { alias } = require("./config/alias");
 const pkg = require("./package.json");
 
-module.exports = (phase) => {
+const isProd = process.env.NODE_ENV === "production";
+
+module.exports = (phase, ...nextParams) => {
 	// Explicitly define environment variables to be used at build time for both frontend and server
 	// dotenv.config should automatically configure process.env for local development
 
@@ -27,16 +33,23 @@ module.exports = (phase) => {
 		STRIPE_CONNECT_ID: process.env.STRIPE_CONNECT_ID || "",
 		SENTRY_DSN: process.env.SENTRY_DSN || "",
 		UPLOADCARE_PUBLIC_KEY: process.env.UPLOADCARE_PUBLIC_KEY || "",
-		GA_TRACKING_ID: process.env.GA_TRACKING_ID || ""
+		GA_TRACKING_ID: process.env.GA_TRACKING_ID || "",
+		CHAT_URL: process.env.CHAT_URL || ""
 	};
 	const serverEnv = {
 		SESSION_SECRET: process.env.SESSION_SECRET || "",
 		TWILIO_ACCOUNT_SID: process.env.TWILIO_ACCOUNT_SID || "",
-		TWILIO_AUTH_TOKEN: process.env.TWILIO_AUTH_TOKEN || "",
 		TWILIO_PROXY_SERVICE_SID: process.env.TWILIO_PROXY_SERVICE_SID || "",
+		TWILIO_SYNC_SERVICE_SID: process.env.TWILIO_SYNC_SERVICE_SID || "default",
+		TWILIO_API_KEY: process.env.TWILIO_API_KEY || "",
+		TWILIO_API_SECRET: process.env.TWILIO_API_SECRET || "",
 		AUTH0_CLIENT_SECRET: process.env.AUTH0_CLIENT_SECRET || "",
 		STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY || "",
-		CALL_SESSION_MANAGER_URL: process.env.CALL_SESSION_MANAGER_URL || ""
+		WORKFLOWS_URL: process.env.WORKFLOWS_URL || "",
+		CHAT_USER: process.env.CHAT_USER || "",
+		CHAT_PASS: process.env.CHAT_PASS || "",
+		POSTMARK_API_TOKEN: process.env.POSTMARK_API_TOKEN || "",
+		PUBLIC_PROXY_URL: process.env.PUBLIC_PROXY_URL || ""
 	};
 
 	let env = frontendEnv;
@@ -50,13 +63,41 @@ module.exports = (phase) => {
 	Object.entries(env).forEach(([key, value]) => {
 		if (isEmpty(value)) {
 			console.log(
-				`WARNING: ${key} is a required environment variable. The application may not behave as expected.`
+				chalk.yellow(
+					`WARNING: ${key} is a required environment variable. The application may not behave as expected.`
+				)
 			);
 		}
 	});
 
 	// Print PUBLIC_URL for reference
-	console.log(`Application public url: ${env.PUBLIC_URL}`);
+	console.log(chalk.cyan(`Application public url: ${env.PUBLIC_URL}`));
+	if (env.PUBLIC_PROXY_URL && phase === PHASE_DEVELOPMENT_SERVER && !isProd) {
+		console.log(chalk.cyan(`Application proxy url: ${env.PUBLIC_PROXY_URL}`));
+		// If in development, set the proxy service callback and intercept automatically.
+		const twilioClient = new Twilio(env.TWILIO_API_KEY, env.TWILIO_API_SECRET, {
+			accountSid: env.TWILIO_ACCOUNT_SID
+		});
+		twilioClient.proxy
+			.services(env.TWILIO_PROXY_SERVICE_SID)
+			.update({
+				callbackUrl: `${env.PUBLIC_PROXY_URL}/api/hooks/call-session`,
+				interceptCallbackUrl: `${env.PUBLIC_PROXY_URL}/api/hooks/call-session/intercept`
+			})
+			.then(() => {
+				console.log(
+					chalk.green(
+						`Successfully updated the Development Proxy Callback URLs`
+					)
+				);
+			})
+			.catch((e) => {
+				console.log(
+					chalk.red(`FAILED to update the Development Proxy Callback URLs`)
+				);
+				console.error(e);
+			});
+	}
 
 	const nextConfig = {
 		// Explicitly define environment variables to be used at build time.
@@ -76,17 +117,17 @@ module.exports = (phase) => {
 			);
 
 			// Add alias to Webpack
-			Object.entries(alias).forEach(([key, value]) => {
-				config.resolve.alias[key] = value;
-			});
-
-			// Add react alias -- this allows us to link other projects without referencing duplicate react libraries.
-			config.resolve.alias.react = require.resolve("react");
-			config.resolve.alias.formik = require.resolve("formik");
+			const aliasToApply = {
+				...config.resolve.alias,
+				...alias,
+				// Add react alias -- this allows us to link other projects without referencing duplicate react libraries.
+				react: require.resolve("react"),
+				formik: require.resolve("formik")
+			};
 
 			if (!isServer) {
 				// Sentry alias
-				config.resolve.alias["@sentry/node"] = "@sentry/browser";
+				aliasToApply["@sentry/node"] = "@sentry/browser";
 
 				// Resolve node related dependencies.
 				config.node = {
@@ -99,6 +140,8 @@ module.exports = (phase) => {
 					child_process: "empty"
 				};
 			}
+
+			config.resolve.alias = aliasToApply;
 
 			// When all the Sentry configuration env variables are available/configured
 			// The Sentry webpack plugin gets pushed to the webpack plugins to build
@@ -135,5 +178,5 @@ module.exports = (phase) => {
 	};
 
 	// Next plugins expect a config object and respond with an object.
-	return withSourceMaps(nextConfig);
+	return withPlugins([withSourceMaps], nextConfig)(phase, ...nextParams);
 };

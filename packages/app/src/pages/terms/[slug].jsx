@@ -9,8 +9,8 @@ import { Block } from "baseui/block";
 import isEmpty from "is-empty";
 
 import { publicUrl } from "@/env-config";
-import Layout from "@/components/Layout";
-import ScreenContainer from "@/components/ScreenContainer";
+import Layout from "@/frontend/components/Layout";
+import ScreenContainer from "@/frontend/components/ScreenContainer";
 
 const TermsTemplate = ({ title, date, body, contents }) => {
 	const [, theme] = useStyletron();

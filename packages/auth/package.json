@@ -1,6 +1,6 @@
 {
 	"name": "@callsesh/auth",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"private": true,
 	"per-env": {
 		"production": {
@@ -38,11 +38,11 @@
 		"build:deploy": "yarn build && yarn deploy"
 	},
 	"dependencies": {
-		"@callsesh/utils": "^1.0.0",
+		"@callsesh/utils": "^1.0.1",
 		"@sentry/browser": "^5.15.5",
 		"@sentry/integrations": "^5.15.5",
 		"auth0-js": "^9.13.2",
-		"baseui": "9.80.2",
+		"baseui": "^9.93.0",
 		"formik": "^2.1.4",
 		"formik-wizard": "^3.1.2",
 		"is-empty": "^1.2.0",

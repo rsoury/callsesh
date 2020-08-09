@@ -19,52 +19,59 @@ import {
 	Image as PictureIcon,
 	AlignLeft as PurposeIcon,
 	Users as GenderIcon,
-	Calendar as CalendarIcon
+	Calendar as CalendarIcon,
+	Mail as EmailIcon
 } from "react-feather";
 import { Avatar } from "baseui/avatar";
 import { Button, SIZE as BUTTON_SIZE } from "baseui/button";
 import nl2br from "nl2br";
 import ono from "@jsdevtools/ono";
 import { toaster } from "baseui/toast";
+import * as fees from "@/utils/fees";
 
-import Layout from "@/components/Layout";
-import LabelControl from "@/components/LabelControl";
-import EditEnhancer from "@/components/Settings/EditEnhancer";
-import EditModal from "@/components/Settings/EditModal";
-import useUser from "@/hooks/use-user";
+import Layout from "@/frontend/components/Layout";
+import LabelControl from "@/frontend/components/LabelControl";
+import EditEnhancer from "@/frontend/components/Settings/EditEnhancer";
+import EditModal from "@/frontend/components/Settings/EditModal";
+import useUser from "@/frontend/hooks/use-user";
 import {
 	schemaProperties as generalSchemaProperties,
 	genderOptions
-} from "@/components/Onboarding/GeneralStep";
+} from "@/frontend/components/Onboarding/GeneralStep";
 import {
 	schemaProperties as operatorSchemaProperties,
 	purposeOptions
-} from "@/components/Onboarding/OperatorStep";
-import validate from "@/utils/settings-validate";
-import SettingsSkeleton from "@/components/Settings/Skeleton";
+} from "@/frontend/components/Onboarding/OperatorStep";
+import validate from "@/frontend/utils/settings-validate";
+import SettingsSkeleton from "@/frontend/components/Settings/Skeleton";
 import * as routes from "@/routes";
 import { publicUrl } from "@/env-config";
 import request from "@/utils/request";
-import TextField from "@/components/Fields/Text";
-import SelectField from "@/components/Fields/Select";
-import FileUploaderField from "@/components/Fields/FileUploader";
-import DateField from "@/components/Fields/Date";
-import FeeCalculator from "@/components/Onboarding/FeeCalculator";
+import TextField from "@/frontend/components/Fields/Text";
+import MoneyField from "@/frontend/components/Fields/Money";
+import SelectField from "@/frontend/components/Fields/Select";
+import LinksField from "@/frontend/components/Fields/Links";
+import FileUploaderField from "@/frontend/components/Fields/FileUploader";
+import DateField from "@/frontend/components/Fields/Date";
+import FeeCalculator from "@/frontend/components/FeeCalculator";
 import isUserOperator from "@/utils/is-operator";
 import handleException, { alerts } from "@/utils/handle-exception";
-import ScreenContainer from "@/components/ScreenContainer";
-import Header from "@/components/Settings/Header";
+import ScreenContainer from "@/frontend/components/ScreenContainer";
+import Header from "@/frontend/components/Settings/Header";
+import { OPERATOR_LINK_TYPES } from "@/constants";
 
 const EDIT_TYPES = {
 	firstName: "firstName",
 	lastName: "lastName",
 	username: "username",
+	email: "email",
 	gender: "gender",
 	dob: "dob",
 	hourlyRate: "hourlyRate",
 	profilePicture: "profilePicture",
 	purpose: "purpose",
-	messageBroadcast: "messageBroadcast"
+	messageBroadcast: "messageBroadcast",
+	links: "links"
 };
 
 const fieldGridProps = {
@@ -153,7 +160,34 @@ const getEditConfig = (user, type) => {
 							name={EDIT_TYPES.username}
 						/>
 						<Label marginTop="10px">
-							Note: Changing your username will change your user link.
+							Changing your username will change your user link.
+						</Label>
+					</Cell>
+				</Grid>
+			)
+		},
+		[EDIT_TYPES.email]: {
+			title: "Email",
+			validate(values) {
+				return validate(
+					{
+						[EDIT_TYPES.email]: generalSchemaProperties.email.required()
+					},
+					values
+				);
+			},
+			initialValue: user.email,
+			Component: (props) => (
+				<Grid {...fieldGridProps}>
+					<Cell span={12}>
+						<TextField
+							{...props}
+							placeholder="your.email@provider.com"
+							maxLength={250}
+							name={EDIT_TYPES.email}
+						/>
+						<Label marginTop="10px">
+							Changing your email requires email verification.
 						</Label>
 					</Cell>
 				</Grid>
@@ -197,6 +231,30 @@ const getEditConfig = (user, type) => {
 					</Cell>
 				</Grid>
 			)
+		},
+		[EDIT_TYPES.profilePicture]: {
+			title: "Profile Picture",
+			validate(values) {
+				return validate(
+					{
+						[EDIT_TYPES.profilePicture]: generalSchemaProperties.profilePicture.required()
+					},
+					values
+				);
+			},
+			initialValue: user.profilePicture || { cdnUrl: user.picture },
+			Component: (props) => (
+				<Grid {...fieldGridProps}>
+					<Cell span={12}>
+						<FileUploaderField
+							{...props}
+							caption="Must be a JPEG or PNG with a max size of 2MB"
+							images
+							name={EDIT_TYPES.profilePicture}
+						/>
+					</Cell>
+				</Grid>
+			)
 		}
 	};
 	if (isUserOperator(user)) {
@@ -225,44 +283,18 @@ const getEditConfig = (user, type) => {
 					);
 				},
 				initialValue: user.hourlyRate,
-				// eslint-disable-next-line
-				Component: ({ values: { hourlyRate }, ...props }) => (
+				Component: (props) => (
 					<Grid {...fieldGridProps}>
 						<Cell span={12}>
-							<TextField
+							<MoneyField
 								{...props}
 								label="What is your hourly rate?"
 								startEnhancer={() => <HourlyRateIcon />}
 								endEnhancer={() => <span>/hour</span>}
 								caption={`Callers will be charged per second based on this rate. Currency is in ${user.currency}.`}
 								placeholder="30"
-								numeric
 								name={EDIT_TYPES.hourlyRate}
-							/>
-							<FeeCalculator hourlyRate={hourlyRate} />
-						</Cell>
-					</Grid>
-				)
-			},
-			[EDIT_TYPES.profilePicture]: {
-				title: "Profile Picture",
-				validate(values) {
-					return validate(
-						{
-							[EDIT_TYPES.profilePicture]: operatorSchemaProperties.profilePicture.required()
-						},
-						values
-					);
-				},
-				initialValue: user.profilePicture || { cdnUrl: user.picture },
-				Component: (props) => (
-					<Grid {...fieldGridProps}>
-						<Cell span={12}>
-							<FileUploaderField
-								{...props}
-								caption="Must be a JPEG or PNG with a max size of 2MB"
-								images
-								name={EDIT_TYPES.profilePicture}
+								calculator
 							/>
 						</Cell>
 					</Grid>
@@ -335,6 +367,30 @@ const getEditConfig = (user, type) => {
 						</Cell>
 					</Grid>
 				)
+			},
+			[EDIT_TYPES.links]: {
+				title: "Links",
+				validate(values) {
+					return validate(
+						{
+							[EDIT_TYPES.links]: operatorSchemaProperties.links
+						},
+						values
+					);
+				},
+				initialValue: user.links,
+				Component: (props) => (
+					<Grid {...fieldGridProps}>
+						<Cell span={12}>
+							<LinksField
+								{...props}
+								name={EDIT_TYPES.links}
+								label="Manage your website and social URLs"
+								caption="Give a way for a callers to qualify you"
+							/>
+						</Cell>
+					</Grid>
+				)
 			}
 		};
 	}
@@ -347,6 +403,9 @@ const Profile = () => {
 	const [css, theme] = useStyletron();
 	const [user, isUserLoading, { setUser }] = useUser({ required: true });
 	const [editType, setEditType] = useState("");
+
+	const isPageLoading =
+		isUserLoading || isEmpty(user) || !(user || {}).isRegistered;
 
 	const {
 		Component: EditModalField = null,
@@ -390,12 +449,12 @@ const Profile = () => {
 		<Layout>
 			<ScreenContainer id="callsesh-profile-settings">
 				<Header title="Profile" />
-				{isUserLoading || isEmpty(user) ? (
+				{isPageLoading ? (
 					<SettingsSkeleton />
 				) : (
 					<div>
 						<Grid>
-							<Cell span={[12, 4, 6]}>
+							<Cell span={[12, 8, 8]}>
 								<LabelControl
 									label="First Name"
 									endEnhancer={() => (
@@ -406,8 +465,6 @@ const Profile = () => {
 								>
 									<Paragraph margin="0">{user.givenName}</Paragraph>
 								</LabelControl>
-							</Cell>
-							<Cell span={[12, 4, 6]}>
 								<LabelControl
 									label="Last Name"
 									endEnhancer={() => (
@@ -418,16 +475,6 @@ const Profile = () => {
 								>
 									<Paragraph margin="0">{user.familyName}</Paragraph>
 								</LabelControl>
-							</Cell>
-							<Cell span={[12, 4, 6]}>
-								<LabelControl
-									label="Phone Number"
-									startEnhancer={() => <PhoneIcon size={20} />}
-								>
-									<Paragraph margin="0">{user.phoneNumber}</Paragraph>
-								</LabelControl>
-							</Cell>
-							<Cell span={[12, 4, 6]}>
 								<LabelControl
 									label="Username"
 									startEnhancer={() => <UserIcon size={20} />}
@@ -439,8 +486,6 @@ const Profile = () => {
 								>
 									<Paragraph margin="0">{user.username}</Paragraph>
 								</LabelControl>
-							</Cell>
-							<Cell span={[12, 4, 6]}>
 								<LabelControl
 									label="Gender"
 									startEnhancer={() => <GenderIcon size={20} />}
@@ -453,7 +498,60 @@ const Profile = () => {
 									<Paragraph margin="0">{user.gender}</Paragraph>
 								</LabelControl>
 							</Cell>
-							<Cell span={[12, 4, 6]}>
+							<Cell span={[12, 8, 4]}>
+								<LabelControl label="Profile Picture" noBg>
+									<div>
+										<Avatar
+											name="profilePicture"
+											size="scale4800"
+											src={user.picture}
+										/>
+										<div className={css({ paddingTop: "10px" })}>
+											<Button
+												onClick={() => setEditType(EDIT_TYPES.profilePicture)}
+												startEnhancer={() => <PictureIcon size={20} />}
+												size={BUTTON_SIZE.compact}
+											>
+												Edit Profile Picture
+											</Button>
+										</div>
+									</div>
+								</LabelControl>
+							</Cell>
+						</Grid>
+						<Grid>
+							<Cell span={12}>
+								<div
+									className={css({
+										borderBottom: `1px solid ${theme.colors.borderOpaque}`,
+										marginBottom: "20px"
+									})}
+								>
+									<SmallHeading marginBottom="0px">Account</SmallHeading>
+									<Paragraph marginBottom="10px" marginTop="5px">
+										These settings are hidden and will never be publicy
+										available.
+									</Paragraph>
+								</div>
+							</Cell>
+							<Cell span={12}>
+								<LabelControl
+									label="Phone Number"
+									startEnhancer={() => <PhoneIcon size={20} />}
+								>
+									<Paragraph margin="0">{user.phoneNumber}</Paragraph>
+								</LabelControl>
+								<LabelControl
+									label="Email"
+									startEnhancer={() => <EmailIcon size={20} />}
+									endEnhancer={() => (
+										<EditEnhancer
+											onClick={() => setEditType(EDIT_TYPES.email)}
+										/>
+									)}
+								>
+									<Paragraph margin="0">{user.email}</Paragraph>
+								</LabelControl>
 								<LabelControl
 									label="Date of birth"
 									startEnhancer={() => <CalendarIcon size={20} />}
@@ -462,11 +560,13 @@ const Profile = () => {
 									)}
 								>
 									<Paragraph margin="0">
-										{new Intl.DateTimeFormat("en-US", {
-											year: "numeric",
-											month: "long",
-											day: "numeric"
-										}).format(new Date(user.dob))}
+										{isEmpty(user.dob)
+											? ""
+											: new Intl.DateTimeFormat("en-US", {
+													year: "numeric",
+													month: "long",
+													day: "numeric"
+											  }).format(new Date(user.dob))}
 									</Paragraph>
 								</LabelControl>
 							</Cell>
@@ -474,36 +574,20 @@ const Profile = () => {
 						{isUserOperator(user) && (
 							<Grid>
 								<Cell span={12}>
-									<SmallHeading>Operator Profile</SmallHeading>
-								</Cell>
-								<Cell span={12}>
-									<LabelControl label="Profile Picture" noBg>
-										<div>
-											<Avatar
-												name="profilePicture"
-												size="scale4800"
-												src={user.picture}
-											/>
-											<div className={css({ paddingTop: "10px" })}>
-												<Button
-													onClick={() => setEditType(EDIT_TYPES.profilePicture)}
-													startEnhancer={() => <PictureIcon size={20} />}
-													size={BUTTON_SIZE.compact}
-												>
-													Edit Profile Picture
-												</Button>
-											</div>
-										</div>
-									</LabelControl>
+									<div
+										className={css({
+											borderBottom: `1px solid ${theme.colors.borderOpaque}`,
+											marginBottom: "20px"
+										})}
+									>
+										<SmallHeading marginBottom="10px">Operator</SmallHeading>
+									</div>
 								</Cell>
 								<Cell span={12}>
 									<div
 										className={css({
-											padding: "20px 0",
+											padding: "0 0 10px 0",
 											margin: "10px 0 20px",
-											borderTopWidth: "1px",
-											borderTopStyle: "solid",
-											borderTopColor: theme.colors.borderOpaque,
 											borderBottomWidth: "1px",
 											borderBottomStyle: "solid",
 											borderBottomColor: theme.colors.borderOpaque
@@ -531,7 +615,9 @@ const Profile = () => {
 												<FeeCalculator hourlyRate={user.hourlyRate} />
 											)}
 										>
-											<Paragraph margin="0">{user.hourlyRate}</Paragraph>
+											<Paragraph margin="0">
+												{fees.format(user.hourlyRate, true)}
+											</Paragraph>
 										</LabelControl>
 									</div>
 								</Cell>
@@ -563,6 +649,42 @@ const Profile = () => {
 												__html: nl2br(user.messageBroadcast)
 											}}
 										/>
+									</LabelControl>
+								</Cell>
+								<Cell span={12}>
+									<LabelControl
+										label="Manage your website and social URLs"
+										endEnhancer={() => (
+											<EditEnhancer
+												onClick={() => setEditType(EDIT_TYPES.links)}
+											/>
+										)}
+									>
+										<div>
+											{Object.entries(user.links || {}).map(
+												([linkType, linkValue]) => {
+													const { Icon } = OPERATOR_LINK_TYPES[linkType];
+
+													return (
+														<LabelControl
+															noBg
+															startEnhancer={() => <Icon size={16} />}
+															overrides={{
+																ControlContainer: {
+																	style: {
+																		marginTop: "-10px",
+																		marginBottom: "-10px",
+																		marginLeft: "-10px"
+																	}
+																}
+															}}
+														>
+															<Paragraph margin="0">{linkValue}</Paragraph>
+														</LabelControl>
+													);
+												}
+											)}
+										</div>
 									</LabelControl>
 								</Cell>
 							</Grid>

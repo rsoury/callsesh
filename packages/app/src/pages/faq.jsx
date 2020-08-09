@@ -2,16 +2,25 @@
  * A FAQs page.
  */
 
+import { useStyletron } from "baseui";
 import { H1 as Heading, Paragraph2 as Paragraph } from "baseui/typography";
 import { Accordion, Panel } from "baseui/accordion";
+import { Bell as NotifyIcon } from "react-feather";
+import {
+	Button,
+	SIZE as BUTTON_SIZE,
+	KIND as BUTTON_KIND
+} from "baseui/button";
 
-import ScreenContainer from "@/components/ScreenContainer";
-import Layout from "@/components/Layout";
-import Highlight from "@/components/Highlight";
-import Link from "@/components/Link";
+import ScreenContainer from "@/frontend/components/ScreenContainer";
+import Layout from "@/frontend/components/Layout";
+import Highlight from "@/frontend/components/Highlight";
+import Link from "@/frontend/components/Link";
 import * as routes from "@/routes";
 
 const Faq = () => {
+	const [css] = useStyletron();
+
 	return (
 		<Layout>
 			<ScreenContainer id="callsesh-faq">
@@ -28,7 +37,35 @@ const Faq = () => {
 								}
 							}
 						}}
+						renderAll
 					>
+						<Panel title="Where can I find Operators?">
+							<Paragraph>
+								Callsesh Operators will share their links around the internet,
+								on their <Highlight>social media or freelancer</Highlight>{" "}
+								profiles. If an Operator is live, feel free to make a call.
+								<span className={css({ display: "block", marginTop: "10px" })}>
+									You can also{" "}
+									<Button
+										startEnhancer={() => <NotifyIcon size={16} />}
+										overrides={{
+											BaseButton: {
+												style: {
+													pointerEvents: "none",
+													transform: "translateY(2.5px)",
+													margin: "0 5px"
+												}
+											}
+										}}
+										kind={BUTTON_KIND.secondary}
+										size={BUTTON_SIZE.mini}
+									>
+										Get notified
+									</Button>{" "}
+									when your Operator goes live.
+								</span>
+							</Paragraph>
+						</Panel>
 						<Panel title="How do I sign up?">
 							<Paragraph>
 								To create an account, click{" "}
@@ -61,9 +98,12 @@ const Faq = () => {
 						</Panel>
 						<Panel title="Is my personal information secure?">
 							<Paragraph>
-								Your profile information is shared on your Call page, but your
-								personal contact information will never be shared with any third
-								party, or any other user on Callsesh.
+								We use leading services to protect user data and authenticate
+								user accounts. Public information such as your first name is
+								shared on your Call page. Other personal information is never
+								and will never be shared between Callsesh users or third-party
+								services that do not serve a purpose to further protect user
+								accounts.
 							</Paragraph>
 						</Panel>
 						<Panel title="Can a caller or operator see my phone number?">
@@ -115,12 +155,6 @@ const Faq = () => {
 							<Paragraph>
 								Contact Callsesh Support and leave us a comment. We&apos;re
 								eager to hear more from you!
-							</Paragraph>
-						</Panel>
-						<Panel title="Where is Callsesh based?">
-							<Paragraph>
-								We are based in Sydney, Australia but we service users around
-								the globe!
 							</Paragraph>
 						</Panel>
 					</Accordion>

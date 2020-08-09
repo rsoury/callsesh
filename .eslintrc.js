@@ -1,8 +1,6 @@
 const { alias: appAlias } = require("./packages/app/config/alias");
 const { alias: authAlias } = require("./packages/auth/config/alias");
-const {
-	alias: csmAlias
-} = require("./packages/call-session-manager/config/alias");
+const { alias: workflowsAlias } = require("./packages/workflows/config/alias");
 
 module.exports = {
 	extends: [
@@ -39,7 +37,10 @@ module.exports = {
 			settings: {
 				"import/resolver": {
 					alias: {
-						map: Object.entries(appAlias)
+						map: [
+							...Object.entries(appAlias),
+							["react-native", "react-native-web"]
+						]
 					}
 				}
 			}
@@ -55,11 +56,11 @@ module.exports = {
 			}
 		},
 		{
-			files: ["packages/call-session-manager/**/*"],
+			files: ["packages/workflows/**/*"],
 			settings: {
 				"import/resolver": {
 					alias: {
-						map: Object.entries(csmAlias)
+						map: Object.entries(workflowsAlias)
 					}
 				}
 			}
@@ -72,6 +73,8 @@ module.exports = {
 		"import/prefer-default-export": 0,
 		"no-console": ["warn"],
 		"no-unused-vars": ["error", { ignoreRestSiblings: true }],
+		"no-template-curly-in-string": 0,
+		"no-underscore-dangle": 0,
 		"class-methods-use-this": 0,
 		"no-param-reassign": 0,
 		"react/jsx-props-no-spreading": 0,

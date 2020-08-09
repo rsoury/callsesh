@@ -1,20 +1,18 @@
 import isEmpty from "is-empty";
 
-import Layout from "@/components/Layout";
-import UserHomeScreen from "@/components/Screens/UserHome";
-import PublicHomeScreen from "@/components/Screens/PublicHome";
+import UserHomeScreen from "@/frontend/components/Screens/UserHome";
+import PublicHomeScreen from "@/frontend/components/Screens/PublicHome";
 import * as routes from "@/routes";
-import { UserProps } from "@/utils/common-prop-types";
+import { UserProps } from "@/frontend/utils/common-prop-types";
 import ssrUser from "@/utils/ssr-user";
 
 const Index = ({ user }) => {
 	const isAuthenticated = !isEmpty(user);
 
-	return (
-		<Layout>
-			{isAuthenticated ? <UserHomeScreen /> : <PublicHomeScreen />}
-		</Layout>
-	);
+	if (isAuthenticated) {
+		return <UserHomeScreen />;
+	}
+	return <PublicHomeScreen />;
 };
 
 export function getServerSideProps({

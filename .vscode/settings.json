@@ -3,7 +3,7 @@
 		"./",
 		"./packages/app",
 		"./packages/auth",
-		"./packages/call-session-manager",
+		"./packages/workflows",
 		"./packages/utils"
 	],
 	"eslint.validate": ["javascript", "javascriptreact"],
