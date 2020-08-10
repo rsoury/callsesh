@@ -5,6 +5,7 @@
 import isEmpty from "is-empty";
 import auth, { getUser } from "@/server/middleware/auth";
 import * as chat from "@/server/chat";
+import * as routes from "@/routes";
 
 export default async function authCallback(req, res) {
 	try {
@@ -13,13 +14,18 @@ export default async function authCallback(req, res) {
 	} catch (error) {
 		// With throw if user already authenticated. Check if user is retrievable with verified email. If verified, redirect to index page
 		if (
-			[
-				"Invalid request, an initial state could not be found",
-				"state missing from the response"
-			].includes(error.message)
+			error.message ===
+				"Invalid request, an initial state could not be found" ||
+			error.message === "state missing from the response"
 		) {
 			try {
 				const user = await getUser(req, { withContext: true });
+				if (isEmpty(user)) {
+					res.writeHead(302, {
+						Location: routes.page.login
+					});
+					return res.end();
+				}
 				if ((user || {}).emailVerified) {
 					if (!isEmpty(user.chatUser)) {
 						// Update chat user email verified status

@@ -3,9 +3,10 @@
  */
 
 import auth from "@/server/middleware/auth";
+import { publicUrl } from "@/env-config";
 
 export default async function authLogout(req, res) {
-	const { return_url: returnUrl = "/" } = req.query;
+	const { return_url: returnUrl = `${publicUrl}/` } = req.query;
 	await auth.handleLogin(req, res, {
 		authParams: {
 			action: "signup",

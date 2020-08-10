@@ -293,7 +293,7 @@ const InSessionScreen = ({
 											<strong>Connecting to your session...</strong>
 										</Paragraph>
 										{/* Remove Undo button if call session is about to start */}
-										{!isOperator && startProgressValue < 100 && (
+										{!isOperator && startProgressValue < 90 && (
 											<div className={css({ marginTop: "10px" })}>
 												<Button
 													onClick={handleUndoSession}

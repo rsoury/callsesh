@@ -66,4 +66,5 @@ export const shouldSignup = () => config.internalOptions?.action === "signup";
 /**
  * Get return url
  */
-export const getReturnUrl = () => config.internalOptions?.returnUrl || "";
+export const getReturnUrl = () =>
+	config.internalOptions?.returnUrl || "https://www.callsesh.com";
