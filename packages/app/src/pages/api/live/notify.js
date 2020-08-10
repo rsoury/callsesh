@@ -4,6 +4,7 @@
 
 import isEmpty from "is-empty";
 import Queue from "better-queue";
+import MemoryStore from "better-queue-memory";
 import ono from "@jsdevtools/ono";
 
 import getHandler from "@/server/middleware";
@@ -88,7 +89,7 @@ handler.use(requireAuthentication).post(async (req, res) => {
 					done(ono(err, { usernameToNotify }));
 				});
 		},
-		{ concurrent: 3 }
+		{ concurrent: 3, store: new MemoryStore() }
 	);
 
 	q.on("task_finish", (taskId, result) => {

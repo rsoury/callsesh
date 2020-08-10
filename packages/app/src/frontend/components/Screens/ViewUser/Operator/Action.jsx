@@ -27,6 +27,7 @@ import Link from "@/frontend/components/Link";
 import Highlight from "@/frontend/components/Highlight";
 import { ViewUserProps } from "@/frontend/utils/common-prop-types";
 import checkCallSession from "@/utils/check-call-session";
+import appendReturnUrl from "@/frontend/utils/append-return-url";
 import * as routes from "@/routes";
 
 const ViewUserOperatorAction = ({ viewUser, onStart, onToggleNotify }) => {
@@ -136,7 +137,7 @@ const ViewUserOperatorAction = ({ viewUser, onStart, onToggleNotify }) => {
 					</StyledBody>
 					<StyledAction>
 						{!isAuthenticated && (
-							<Link href={routes.page.signup} button>
+							<Link href={appendReturnUrl(routes.page.signup, true)} button>
 								<Button
 									startEnhancer={() => <LockIcon size={20} />}
 									endEnhancer={() => <ArrowRight size={20} />}

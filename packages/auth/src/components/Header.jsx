@@ -30,21 +30,15 @@ const Header = () => (
 					<Button
 						kind={BUTTON_KIND.tertiary}
 						startEnhancer={() => <ChevronLeft size={24} />}
-						{...(isEmpty(returnUrl)
-							? {
-									onClick: () => window.history.back()
-							  }
-							: {
-									$as: "a",
-									href: returnUrl,
-									overrides: {
-										BaseButton: {
-											style: {
-												textDecoration: "none"
-											}
-										}
-									}
-							  })}
+						$as="a"
+						href={returnUrl}
+						overrides={{
+							BaseButton: {
+								style: {
+									textDecoration: "none"
+								}
+							}
+						}}
 					>
 						Back to Callsesh
 					</Button>
