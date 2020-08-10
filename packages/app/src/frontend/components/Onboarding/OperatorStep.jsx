@@ -316,7 +316,7 @@ const OperatorStep = ({ noToggle, values }) => {
 								name="messageBroadcast"
 								label="Have a message for your callers? Could be your biography, or a note about your calls"
 								placeholder="Hey! One thing you should know about me is..."
-								maxLength={240}
+								maxLength={480}
 								area
 								overrides={{
 									Input: {
