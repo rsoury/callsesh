@@ -1,7 +1,7 @@
 import isEmpty from "is-empty";
 
-import UserHomeScreen from "@/frontend/components/Screens/UserHome";
-import PublicHomeScreen from "@/frontend/components/Screens/PublicHome";
+import UserHomeScreen from "@/frontend/screens/UserHome";
+import PublicHomeScreen from "@/frontend/screens/PublicHome";
 import * as routes from "@/routes";
 import { UserProps } from "@/frontend/utils/common-prop-types";
 import ssrUser from "@/utils/ssr-user";

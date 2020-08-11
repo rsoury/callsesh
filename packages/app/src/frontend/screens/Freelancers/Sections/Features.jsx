@@ -3,7 +3,7 @@ import { useStyletron } from "baseui";
 import { Grid, Cell } from "baseui/layout-grid";
 import { H3 as Heading } from "baseui/typography";
 
-import FeatureViewer from "../FeatureViewer";
+import FeatureViewer from "@/frontend/components/FeatureViewer";
 
 const FeaturesSection = () => {
 	const [css] = useStyletron();

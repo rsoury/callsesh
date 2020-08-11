@@ -3,7 +3,6 @@
  */
 
 import React from "react";
-import isEmpty from "is-empty";
 import { Button, KIND as BUTTON_KIND } from "baseui/button";
 import {
 	HeaderNavigation,

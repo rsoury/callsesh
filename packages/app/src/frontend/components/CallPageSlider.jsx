@@ -1,4 +1,5 @@
 import React from "react";
+import PropTypes from "prop-types";
 import { useStyletron } from "baseui";
 import ArrowRight from "baseui/icon/arrow-right";
 import ArrowLeft from "baseui/icon/arrow-left";
@@ -45,7 +46,7 @@ const sliderSettings = {
 	arrow: false
 };
 
-const CallPageSlider = () => {
+const CallPageSlider = ({ tilt }) => {
 	const [css, theme] = useStyletron();
 	const slider = React.createRef();
 
@@ -83,7 +84,9 @@ const CallPageSlider = () => {
 			</div>
 			<div
 				className={css({
-					transform: "rotate(3deg) scale(0.9) translate3d(0, 0, 0)"
+					transform: tilt
+						? "rotate(3deg) scale(0.9) translate3d(0, 0, 0)"
+						: "translate3d(0, 0, 0)"
 				})}
 			>
 				<PhoneMockup>
@@ -117,6 +120,13 @@ const CallPageSlider = () => {
 			</div>
 		</div>
 	);
+};
+
+CallPageSlider.propTypes = {
+	tilt: PropTypes.bool
+};
+CallPageSlider.defaultProps = {
+	tilt: true
 };
 
 export default CallPageSlider;

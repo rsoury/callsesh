@@ -10,8 +10,8 @@ import Router from "next/router";
 
 import { engine, debug } from "@config/styletron";
 import seoConfig from "@config/seo";
-import UserProvider from "@/frontend/components/Providers/UserProvider";
-import RouteReferrerProvider from "@/frontend/components/Providers/RouteReferrerProvider";
+import UserProvider from "@/frontend/providers/User";
+import RouteReferrerProvider from "@/frontend/providers/RouteReferrer";
 import { setup as setupSignals } from "@/utils/signals";
 
 import "setimmediate";

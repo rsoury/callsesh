@@ -14,7 +14,7 @@ import {
 } from "react-feather";
 import kebabCase from "lodash/kebabCase";
 
-import Background from "../Background";
+import Background from "@/frontend/components/SectionBackground";
 
 const UseCasesSection = () => {
 	const [css, theme] = useStyletron();
@@ -56,7 +56,7 @@ const UseCasesSection = () => {
 							</Heading>
 							<Paragraph marginTop="0px">
 								A freelancer is anyone who delivers value to a customer on their
-								own schedule at their own rates.
+								schedule at their rates.
 								<br />
 								What value you offer with Callsesh is entirely up to you.
 							</Paragraph>

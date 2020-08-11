@@ -105,10 +105,6 @@ const InSessionScreen = ({
 	useEffect(() => {
 		// If user is operator
 		if (user.callSession.as === CALL_SESSION_USER_TYPE.operator) {
-			console.log(user);
-			console.log(
-				isOperatorMeterActive(user) ? `METER IS ACTIVE` : `METER NOT ACTIVE`
-			);
 			setMetering(isOperatorMeterActive(user));
 		}
 

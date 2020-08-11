@@ -3,7 +3,7 @@ import { useStyletron } from "baseui";
 import { H3 as Heading } from "baseui/typography";
 import { Grid, Cell } from "baseui/layout-grid";
 
-import SignupActionButton from "@/frontend/components/SignupActionButton";
+import SignupActionButton from "@/frontend/components/Buttons/SignupAction";
 import Highlight from "@/frontend/components/Highlight";
 
 const UseCasesSection = () => {

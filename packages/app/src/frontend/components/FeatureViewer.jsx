@@ -28,7 +28,7 @@ const FeatureViewer = () => {
 			title: "Freelance",
 			content: (
 				<Paragraph marginTop="0px">
-					Determine your own schedule and set your own hourly rate.
+					Determine your schedule and set your hourly rate.
 					<br />
 					Use the <Highlight>Go Live</Highlight> switch to set when you&apos;re
 					available to accept calls.
@@ -99,12 +99,12 @@ const FeatureViewer = () => {
 			content: (
 				<Paragraph marginTop="0px">
 					Messages, links, files, voice and more can be exchanged through the
-					full featured Callsesh Chat.
+					full-featured Callsesh Chat.
 					<br />
-					Search chat history to pickup where you left off. <br />
+					Search chat history to pick up where you left off. <br />
 					Get out of email and communicate with your clients as you would with
-					your teammates. Retain your contacts after your session has finished
-					and organise follow up call sessions.
+					your teammates. Retain your contacts and organise follow up call
+					sessions.
 				</Paragraph>
 			),
 			image: (
@@ -149,7 +149,7 @@ const FeatureViewer = () => {
 			title: "Payments",
 			content: (
 				<Paragraph marginTop="0px">
-					Callers must have a valid payment method associated to their account
+					Callers must have a valid payment method associated with their account
 					to make a call. We ensure all your clients are paying for your premium
 					attention.
 				</Paragraph>

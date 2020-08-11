@@ -1,11 +1,11 @@
 const description =
-	"Offer your clients metered call sessions to solve their problems on-the-fly, whether it takes 10 minutes or a day. Callsesh is agile engagement and collaboration for your freelance business.";
+	"Earn money offering your premium attention through metered call sessions. Share your skills, expert advice, instant assistance and personality with your audience and customers.";
 const url = "https://www.callsesh.com/";
 
 module.exports = {
 	url,
-	titleTemplate: "Callsesh - %s",
-	title: "Call sessions to solve your client's problems on-the-fly",
+	titleTemplate: "%s | Callsesh",
+	title: "Earn money for your premium time",
 	description,
 	canonical: url,
 	openGraph: {

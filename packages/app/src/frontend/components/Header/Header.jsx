@@ -127,6 +127,15 @@ const Header = () => {
 	} else if (isEmpty(user)) {
 		navProps.mainNav = [
 			{
+				item: {
+					label: "Are you a Freelancer?",
+					href: routes.page.freelancers,
+					pass: true
+				},
+				mapItemToNode: NavItem,
+				mapItemToString: NavItemLabel
+			},
+			{
 				icon: getNavIcon(LoginIcon),
 				item: {
 					label: "Log In",

@@ -17,8 +17,8 @@ const SessionPageTitle = ({ status, name }) => {
 	return (
 		<Head>
 			<title>
-				Callsesh | {statusTitle}
-				{withName}
+				{statusTitle}
+				{withName} | Callsesh
 			</title>
 		</Head>
 	);

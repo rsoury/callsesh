@@ -4,8 +4,8 @@ import { Grid, Cell } from "baseui/layout-grid";
 import { H3 as Heading, ParagraphLarge as Paragraph } from "baseui/typography";
 
 import Highlight from "@/frontend/components/Highlight";
+import Background from "@/frontend/components/SectionBackground";
 
-import Background from "../Background";
 import AgileProjectLifeCycle from "../AgileProjectLifeCycle";
 
 const HowSection = () => {
