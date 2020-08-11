@@ -10,7 +10,7 @@ import { toaster } from "baseui/toast";
 
 import * as routes from "@/routes";
 import appendReturnUrl from "@/frontend/utils/append-return-url";
-import { UserContext } from "@/frontend/components/Providers/UserProvider";
+import { UserContext } from "@/frontend/providers/User";
 import stripTrailingSlash from "@/utils/strip-trailing-slash";
 import isUserOperator from "@/utils/is-operator";
 import { LiveOperatorSync, CallSessionSync } from "@/frontend/utils/sync";

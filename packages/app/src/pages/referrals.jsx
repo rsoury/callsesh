@@ -3,7 +3,7 @@ import { H3, Paragraph2 as Paragraph } from "baseui/typography";
 import { Grid, Cell } from "baseui/layout-grid";
 
 import Layout from "@/frontend/components/Layout";
-import SignupActionButton from "@/frontend/components/SignupActionButton";
+import SignupActionButton from "@/frontend/components/Buttons/SignupAction";
 import Highlight from "@/frontend/components/Highlight";
 
 const Referrals = () => {

@@ -11,8 +11,8 @@ import MobileDetect from "mobile-detect";
 import ono from "@jsdevtools/ono";
 import * as authManager from "@/server/auth-manager";
 
-import ViewUserScreen from "@/frontend/components/Screens/ViewUser";
-import InSessionScreen from "@/frontend/components/Screens/InSession";
+import ViewUserScreen from "@/frontend/screens/ViewUser";
+import InSessionScreen from "@/frontend/screens/InSession";
 import SessionPageTitle from "@/frontend/components/SessionPageTitle";
 import request from "@/utils/request";
 import {
@@ -23,7 +23,6 @@ import * as routes from "@/routes";
 import useUser, { useSetUser } from "@/frontend/hooks/use-user";
 import {
 	ERROR_TYPES,
-	CALL_SESSION_STATUS,
 	CALL_SESSION_USER_TYPE,
 	CALL_SESSION_START_TIMEOUT
 } from "@/constants";

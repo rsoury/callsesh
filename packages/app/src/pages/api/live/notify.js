@@ -44,7 +44,7 @@ handler.use(requireAuthentication).post(async (req, res) => {
 	});
 
 	// const notificationBuffer = 60 * 60 * 24 * 1000; // 1 day
-	const notificationBuffer = 60 * 60 * 3 * 1000; // 3 hours
+	const notificationBuffer = 60 * 60 * 1 * 1000; // 1 hour
 	const ts = Date.now();
 	const safeToContinue = isEmpty(lastNotificationTime)
 		? true

@@ -101,7 +101,9 @@ const HowSection = () => {
 					<Label marginBottom="5px" marginTop="5px">
 						<strong>{title}</strong>
 					</Label>
-					<LabelMedium opacity="0.8">{caption}</LabelMedium>
+					<LabelMedium className={css({ opacity: "0.8" })}>
+						{caption}
+					</LabelMedium>
 				</div>
 			))}
 		</div>
