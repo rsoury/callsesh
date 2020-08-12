@@ -1,6 +1,9 @@
 import React from "react";
 import { useStyletron } from "baseui";
-import { LabelMedium, LabelLarge as Label } from "baseui/typography";
+import {
+	LabelLarge as Label,
+	ParagraphMedium as Paragraph
+} from "baseui/typography";
 import {
 	PhoneCall as PhoneIcon,
 	Clock as MeterIcon,
@@ -101,9 +104,9 @@ const HowSection = () => {
 					<Label marginBottom="5px" marginTop="5px">
 						<strong>{title}</strong>
 					</Label>
-					<LabelMedium className={css({ opacity: "0.8" })}>
+					<Paragraph className={css({ opacity: "0.8", marginTop: "0px" })}>
 						{caption}
-					</LabelMedium>
+					</Paragraph>
 				</div>
 			))}
 		</div>

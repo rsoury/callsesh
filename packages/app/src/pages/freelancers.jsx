@@ -12,8 +12,8 @@ import HeroSection from "@/frontend/screens/Freelancers/Sections/Hero";
 import HowSection from "@/frontend/screens/Freelancers/Sections/How";
 import FeaturesSection from "@/frontend/screens/Freelancers/Sections/Features";
 import UseCasesSection from "@/frontend/screens/Freelancers/Sections/UseCases";
-import CallToAction from "@/frontend/screens/Freelancers/Sections/CallToAction";
 import CredebilitySection from "@/frontend/screens/Freelancers/Sections/Credebility";
+import CallToAction from "@/frontend/components/CallToAction";
 
 const Freelancers = () => {
 	const [css] = useStyletron();
