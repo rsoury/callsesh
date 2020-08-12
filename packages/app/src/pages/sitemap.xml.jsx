@@ -38,7 +38,14 @@ export async function getServerSideProps({ req, res }) {
 	try {
 		[
 			...Object.values(
-				pick(pageRoutes, ["index", "faq", "referrals", "login", "signup"])
+				pick(pageRoutes, [
+					"index",
+					"freelancers",
+					"faq",
+					"referrals",
+					"login",
+					"signup"
+				])
 			),
 			...Object.values(pageRoutes.terms)
 		].forEach((url) => {
