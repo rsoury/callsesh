@@ -473,11 +473,12 @@ export default async function endCallSession(req, res) {
 		)
 	]);
 
-	// Ensure both users can remain in contact over chat by ensuring direct message session is created.
-	if (!isEmpty(user.chatUser.id)) {
+	try {
+		// Ensure both users can remain in contact over chat by ensuring direct message session is created.
+		const chatUser = await chat.getOrCreateUser(user);
 		const { data: { authToken: chatAuthToken = "" } = {} } = await chat.login(
 			user.username,
-			user.chatUser.password
+			chatUser.password
 		);
 		const { room = {} } = await chat
 			.getClient()
@@ -487,7 +488,7 @@ export default async function endCallSession(req, res) {
 					username: counterpartUser.username
 				},
 				{
-					headers: chat.getAuthHeaderParams(user.chatUser.id, chatAuthToken)
+					headers: chat.getAuthHeaderParams(chatUser.id, chatAuthToken)
 				}
 			)
 			.then(({ data: d }) => d)
@@ -495,8 +496,9 @@ export default async function endCallSession(req, res) {
 				handleException(e);
 			});
 		logger.info(`User direct message session ensured`, { room });
-	} else {
-		logger.warn(`No chat user exists for user`);
+	} catch (e) {
+		handleException(e);
+		logger.error(`Failed to create direct user session`, e);
 	}
 
 	return res.json({

@@ -6,6 +6,7 @@ import isEmpty from "is-empty";
 import auth, { getUser } from "@/server/middleware/auth";
 import * as chat from "@/server/chat";
 import * as routes from "@/routes";
+import handleException from "@/utils/handle-exception";
 
 export default async function authCallback(req, res) {
 	try {
@@ -29,7 +30,12 @@ export default async function authCallback(req, res) {
 				if ((user || {}).emailVerified) {
 					if (!isEmpty(user.chatUser)) {
 						// Update chat user email verified status
-						await chat.updateUser(user.chatUser.id, { verified: true });
+						try {
+							await chat.updateUser(user.chatUser.id, { verified: true });
+						} catch (e) {
+							handleException(e);
+							req.log.error(e);
+						}
 					}
 					res.writeHead(302, {
 						Location: `/#email_verified=true`
