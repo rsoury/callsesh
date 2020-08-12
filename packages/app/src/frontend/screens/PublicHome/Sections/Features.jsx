@@ -129,7 +129,7 @@ const PublicHomeFeaturesSection = () => {
 						{
 							title: "Earn on referrals",
 							content:
-								"Refer an Operator and earn 5% commission on their call session transactions."
+								"Refer an Operator and earn a 5% commission on their call session transactions."
 						}
 					].map(({ title, content }) => (
 						<Cell span={[12, 4, 6]} key={kebabCase(title.toLowerCase())}>

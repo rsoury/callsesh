@@ -66,9 +66,9 @@ const PublicHomeGetStartedSection = () => {
 				<Grid gridGutter={16}>
 					{[
 						"Register with your phone number",
-						"Setup your account, banking details, and hourly rate",
-						"Go live, and share your call link to your clients to start accepting metered calls",
-						"Get paid automatically after successful call sessions"
+						"Setup your profile, set your hourly rate and input your banking details",
+						"Go live and share your call link with your clients to start accepting metered calls",
+						"Get paid automatically after call sessions"
 					].map((stepMessage, index) => (
 						<Cell span={[6, 4, 6]} key={kebabCase(stepMessage.toLowerCase())}>
 							<div
