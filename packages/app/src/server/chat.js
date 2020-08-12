@@ -162,8 +162,7 @@ export const getOrCreateUser = async (user) => {
 		};
 		await authManager.updateUser(user.id, params);
 
-		console.log(`Chat user created`);
-		console.log(chatUser.id);
+		console.log(`Chat user created`, { id: chatUser.id });
 	}
 
 	return chatUser;
