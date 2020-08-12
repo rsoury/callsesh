@@ -3,6 +3,7 @@ import { useStyletron } from "baseui";
 import { Grid, Cell } from "baseui/layout-grid";
 import { Avatar } from "baseui/avatar";
 import { H1 as Heading } from "baseui/typography";
+import { NextSeo } from "next-seo";
 
 import Highlight from "@/frontend/components/Highlight";
 import { ViewUserProps } from "@/frontend/utils/common-prop-types";
@@ -24,6 +25,14 @@ const ViewUserIntroduction = ({ viewUser }) => {
 	return (
 		<Grid>
 			<Cell span={12}>
+				<NextSeo
+					title={`Meet ${viewUser.givenName}! ${ownerPronoun} ${
+						isOperator
+							? `offering ${viewUser.purpose} over a
+										call session`
+							: `making calls on Callsesh. You can too!`
+					}`}
+				/>
 				<div
 					className={css({
 						display: "flex",
