@@ -476,6 +476,7 @@ export default async function endCallSession(req, res) {
 	try {
 		// Ensure both users can remain in contact over chat by ensuring direct message session is created.
 		const chatUser = await chat.getOrCreateUser(user);
+		await chat.getOrCreateUser(counterpartUser); // ensure the user is created for counterpart user.
 		const { data: { authToken: chatAuthToken = "" } = {} } = await chat.login(
 			user.username,
 			chatUser.password

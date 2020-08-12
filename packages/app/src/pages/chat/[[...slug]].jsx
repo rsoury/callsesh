@@ -70,6 +70,7 @@ export async function getServerSideProps({
 			});
 			const { isSame: isInSameSession } = checkSession(user, withUser);
 			if (isInSameSession) {
+				await chat.getOrCreateUser(withUser); // ensure the user is created for counterpart user.
 				const { room = {} } = await chat
 					.getClient()
 					.post(
