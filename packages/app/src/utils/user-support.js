@@ -1,42 +1,84 @@
-import isEmpty from "is-empty";
-import { getCode } from "country-list";
-
-const stripeConnectSupportedCountries = [
-	"Australia",
+/**
 	"Austria",
+	"Australia",
 	"Belgium",
-	// "Bulgaria",
+	"Bulgaria",
+	"Brazil",
 	"Canada",
-	// "Czech Republic",
+	"Switzerland",
+	"Cyprus",
+	"Czechia",
+	"Germany",
 	"Denmark",
 	"Estonia",
+	"Spain",
 	"Finland",
 	"France",
-	"Germany",
+	"United Kingdom of Great Britain and Northern Ireland",
 	"Greece",
 	"Hong Kong",
 	"Ireland",
+	"India",
 	"Italy",
 	"Japan",
-	"Latvia",
 	"Lithuania",
 	"Luxembourg",
-	// "Mexico",
+	"Latvia",
+	"Malta",
+	"Malaysia",
 	"Netherlands",
-	"New Zealand",
 	"Norway",
+	"New Zealand",
 	"Poland",
 	"Portugal",
-	// "Romania",
-	"Singapore",
-	"Slovakia",
-	"Slovenia",
-	"Spain",
+	"Romania",
 	"Sweden",
-	"Switzerland",
-	"United Kingdom",
-	"United States"
-].map((name) => ({ code: getCode(name), name }));
+	"Singapore",
+	"Slovenia",
+	"Slovakia",
+	"United States of America"
+ */
+
+const stripeConnectSupportedCountries = [
+	"AT",
+	"AU",
+	"BE",
+	"BG",
+	"BR",
+	"CA",
+	"CH",
+	"CY",
+	"CZ",
+	"DE",
+	"DK",
+	"EE",
+	"ES",
+	"FI",
+	"FR",
+	"GB",
+	"GR",
+	"HK",
+	"IE",
+	"IN",
+	"IT",
+	"JP",
+	"LT",
+	"LU",
+	"LV",
+	"MT",
+	"MY",
+	"NL",
+	"NO",
+	"NZ",
+	"PL",
+	"PT",
+	"RO",
+	"SE",
+	"SG",
+	"SI",
+	"SK",
+	"US"
+];
 
 /**
  * Is Stripe Connect available for this given country
@@ -44,10 +86,5 @@ const stripeConnectSupportedCountries = [
  * @var {string} userCountry Can be ISO code 2 or country name
  * @return {boolean}
  */
-export const isStripeConnectAvailable = (userCountry) => {
-	return !isEmpty(
-		stripeConnectSupportedCountries.find(
-			({ name, code }) => name === userCountry || code === userCountry
-		)
-	);
-};
+export const isStripeConnectAvailable = (userCountry) =>
+	stripeConnectSupportedCountries.includes(userCountry);
