@@ -123,7 +123,7 @@ const ViewUserOperatorAction = ({ viewUser, onStart, onToggleNotify }) => {
 								</Label>
 							</div>
 						)}
-						{!viewUser.isLive && (
+						{!viewUser.isLive && isAuthenticated && (
 							<div>
 								<Label>
 									<strong>{viewUser.givenName} is not available.</strong>
