@@ -34,7 +34,10 @@ export default async function authCallback(req, res) {
 							await chat.updateUser(user.chatUser.id, { verified: true });
 						} catch (e) {
 							handleException(e);
-							req.log.error(e);
+							req.log.error(
+								`Failed to update Chat User email verified status`,
+								e
+							);
 						}
 					}
 					res.writeHead(302, {

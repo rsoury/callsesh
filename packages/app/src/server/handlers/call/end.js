@@ -498,7 +498,7 @@ export default async function endCallSession(req, res) {
 		logger.info(`User direct message session ensured`, { room });
 	} catch (e) {
 		handleException(e);
-		logger.error(`Failed to create direct user session`, e);
+		logger.error(`Failed to create user direct message session`, e);
 	}
 
 	return res.json({
