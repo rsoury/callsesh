@@ -65,7 +65,7 @@ const PublicHomeHeroSection = () => {
 							</strong>
 						</h1>
 						<h2 className={css({ ...theme.typography.HeadingSmall })}>
-							Eliminate the hassle out of quoting, time tracking, invoicing and
+							Eliminate the hassle in quoting, time tracking, invoicing and
 							payment collection for your over-the-phone consultations. Now you
 							can set your rate and get paid automatically, on demand.
 						</h2>
