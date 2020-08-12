@@ -1,3 +1,5 @@
+/* eslint-disable no-console */
+
 import isEmpty from "is-empty";
 import { getRequest } from "@callsesh/utils";
 import ono from "@jsdevtools/ono";
@@ -6,6 +8,7 @@ import pickBy from "lodash/pickBy";
 import { chat as config } from "@/env-config";
 import handleException from "@/utils/handle-exception";
 import generateId from "@/utils/generate-id";
+import * as authManager from "@/server/auth-manager";
 
 const request = getRequest({
 	baseURL: `${config.url}/api/v1/`
@@ -124,4 +127,44 @@ export const updateUser = async (userId, params = {}) => {
 		});
 	}
 	return Promise.resolve();
+};
+
+/**
+ * Get Chat User, otherwise create the user.
+ *
+ * @param   {Object}  user  User Object with Context
+ */
+export const getOrCreateUser = async (user) => {
+	let { chatUser = {} } = user;
+
+	if (isEmpty(chatUser)) {
+		// If user.chatUser has not been created, create it.
+		const {
+			user: { _id: chatUserId },
+			password: chatUserPassword
+		} = await createUser(user.email, user.nickname, user.username, {
+			appId: user.id
+		});
+		await updateUser(chatUserId, {
+			picture: user.picture,
+			verified: true
+		});
+		chatUser = {
+			id: chatUserId,
+			password: chatUserPassword
+		};
+		const params = {
+			metadata: {
+				app: {
+					chatUser
+				}
+			}
+		};
+		await authManager.updateUser(user.id, params);
+
+		console.log(`Chat user created`);
+		console.log(chatUser.id);
+	}
+
+	return chatUser;
 };

@@ -37,39 +37,10 @@ export async function getServerSideProps({
 			throw new Error("Email not verified");
 		}
 
-		// If chat user does not exist, create it.
-		if (isEmpty(user.chatUser)) {
-			const {
-				user: { _id: chatUserId },
-				password: chatUserPassword
-			} = await chat.createUser(user.email, user.nickname, user.username, {
-				appId: user.id
-			});
-			await chat.updateUser(chatUserId, {
-				picture: user.picture,
-				verified: true
-			});
-			user.chatUser = {
-				id: chatUserId,
-				password: chatUserPassword
-			};
-			req.log.info("Created chat user", { chatUserId });
-			const params = {
-				metadata: {
-					app: {
-						chatUser: user.chatUser
-					}
-				}
-			};
-			await authManager.updateUser(user.id, params);
-			req.log.info("Update user data", { params });
-		}
+		const chatUser = await chat.getOrCreateUser(user);
 
 		// Login to chat service and get encrypted password
-		const { data = {} } = await chat.login(
-			user.username,
-			user.chatUser.password
-		);
+		const { data = {} } = await chat.login(user.username, chatUser.password);
 		const token = data.authToken || "";
 
 		// If deep linking to a room by the chat service, use rid query param
@@ -79,7 +50,7 @@ export async function getServerSideProps({
 				redirectUrl.set("query", {
 					...redirectUrl.query,
 					resumeToken: token,
-					userId: user.chatUser.id,
+					userId: chatUser.id,
 					return_url: path,
 					remove_cache: true
 				});
@@ -107,7 +78,7 @@ export async function getServerSideProps({
 							username: withUsername
 						},
 						{
-							headers: chat.getAuthHeaderParams(user.chatUser.id, token)
+							headers: chat.getAuthHeaderParams(chatUser.id, token)
 						}
 					)
 					.then(({ data: d }) => d)
@@ -125,7 +96,7 @@ export async function getServerSideProps({
 			...redirectUrl.query,
 			remove_cache: true,
 			resumeToken: token,
-			userId: user.chatUser.id
+			userId: chatUser.id
 		};
 		if (!isEmpty(roomId)) {
 			qs.return_url = `/direct/${roomId}`;
