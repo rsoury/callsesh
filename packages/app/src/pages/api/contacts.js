@@ -4,6 +4,8 @@
 
 import isEmpty from "is-empty";
 import pick from "lodash/pick";
+import mapKeys from "lodash/mapKeys";
+import camelCase from "lodash/camelCase";
 
 import getHandler from "@/server/middleware";
 import { requireAuthentication, getUser } from "@/server/middleware/auth";
@@ -16,21 +18,28 @@ handler.use(requireAuthentication).get(async (req, res) => {
 
 	let contacts = [];
 	if (!isEmpty(user.contacts)) {
-		contacts = await Promise.all(
-			user.contacts.map((contactUsername) =>
-				authManager
-					.getUserByUsername(contactUsername)
-					.then((contactUserData) =>
-						pick(contactUserData, [
-							"name",
-							"nickname",
-							"username",
-							"picture",
-							"givenName",
-							"familyName"
-						])
-					)
-			)
+		const contactsRawData = await authManager.getClient().getUsers({
+			search_engine: "v3",
+			page: 0,
+			per_page: 10,
+			q: `app_metadata.usernamespace:(${user.contacts
+				.map((contactUsername) => `"${contactUsername.toLowerCase()}"`)
+				.join(" OR ")})`,
+			fields: [
+				"name",
+				"nickname",
+				"user_metadata",
+				"family_name",
+				"given_name",
+				"picture"
+			]
+		});
+
+		contacts = contactsRawData.map(
+			({ user_metadata: { username }, ...data }) => ({
+				username,
+				...mapKeys(data, (value, key) => camelCase(key))
+			})
 		);
 	}
 
