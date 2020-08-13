@@ -1,6 +1,6 @@
 {
 	"name": "@callsesh/app",
-	"version": "1.0.1",
+	"version": "1.0.2",
 	"description": "Callsesh Web App",
 	"private": true,
 	"author": "Ryan Soury <ryan@webdoodle.com.au>",
@@ -22,7 +22,7 @@
 	},
 	"dependencies": {
 		"@auth0/nextjs-auth0": "^0.13.0",
-		"@callsesh/utils": "^1.0.1",
+		"@callsesh/utils": "^1.0.2",
 		"@jsdevtools/ono": "^7.1.2",
 		"@sentry/browser": "^5.15.5",
 		"@sentry/integrations": "^5.15.5",
