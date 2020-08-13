@@ -105,7 +105,8 @@ const formatUser = async (rawUser, withContext = false) => {
 			  }
 			: {
 					callSession: appMetadata.callSession || {},
-					notified: appMetadata.notified || []
+					notified: appMetadata.notified || [],
+					contacts: appMetadata.contacts || []
 			  })
 	};
 

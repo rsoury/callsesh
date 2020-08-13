@@ -468,7 +468,7 @@ export default async function endCallSession(req, res) {
 				} went for ${readableDuration} and metered ${fees.format(
 					totalChargeAmount
 				)}.`,
-				`We hope you're happy with the call! Have issues? Contact Callsesh support.`
+				`We hope you're happy with the outcome! Have issues? Contact Callsesh support.`
 			].join("\n") // new line: https://stackoverflow.com/questions/24218945/how-do-i-add-a-line-break-in-my-twilio-sms-message
 		)
 	]);

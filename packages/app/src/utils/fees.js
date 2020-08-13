@@ -50,6 +50,13 @@ export function getRate(hourlyRate) {
 			return wrapDinero(rate);
 		},
 		/**
+		 * Get hour rate based on hourly rate
+		 */
+		toHour() {
+			const rate = Dinero({ amount: hourlyRate });
+			return wrapDinero(rate);
+		},
+		/**
 		 * Get minute rate based on hourly rate
 		 */
 		toMinute() {

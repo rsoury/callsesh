@@ -24,7 +24,8 @@ export const page = {
 	referrals: "/referrals",
 	faq: "/faq",
 	chat: "/chat",
-	freelancers: "/freelancers"
+	freelancers: "/freelancers",
+	contacts: "/contacts"
 };
 
 export const build = {
@@ -38,7 +39,10 @@ export const build = {
 		return `/api/cards/${id}`;
 	},
 	notify(id) {
-		return `/api/notify/${id}`;
+		return `/api/u/${id}/notify`;
+	},
+	work(id) {
+		return `/api/u/${id}/work`;
 	}
 };
 
@@ -63,5 +67,6 @@ export const api = {
 	},
 	resendEmail: `/api/resend-email`,
 	token: `/api/token`,
-	chatToken: `/api/token/chat`
+	chatToken: `/api/token/chat`,
+	contacts: `/api/contacts`
 };

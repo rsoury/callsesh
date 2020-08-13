@@ -185,7 +185,7 @@ const constructUser = async (
 	}
 
 	// Get publicly viewable call session data
-	const { callSession = {} } = appMetadata;
+	const { callSession = {}, notified = [], contacts = [] } = appMetadata;
 
 	// Get email attributes
 	const emailAttributes = {
@@ -209,6 +209,8 @@ const constructUser = async (
 		...sessionUser,
 		...userMetadata,
 		callSession,
+		notified,
+		contacts,
 		phoneNumber,
 		familyName,
 		givenName,

@@ -14,7 +14,8 @@ import {
 	LogOut as LogoutIcon,
 	LogIn as LoginIcon,
 	Edit2 as SignupIcon,
-	MessageSquare as ChatIcon
+	MessageSquare as ChatIcon,
+	Briefcase as WorkIcon
 } from "react-feather";
 import isEmpty from "is-empty";
 import { Unstable_AppNavBar as AppNavBar } from "baseui/app-nav-bar";
@@ -105,6 +106,8 @@ const Header = () => {
 	const [css, theme] = useStyletron();
 	const [user, isLoading] = useUser();
 	const router = useRouter();
+
+	const isOperator = isUserOperator(user);
 
 	const navProps = {};
 
@@ -199,6 +202,14 @@ const Header = () => {
 				mapItemToNode: NavItemButton,
 				mapItemToString: NavItemLabel
 			},
+			isOperator
+				? {
+						icon: getNavIcon(WorkIcon),
+						item: { label: "Contacts", href: routes.page.contacts },
+						mapItemToNode: NavItem,
+						mapItemToString: NavItemLabel
+				  }
+				: {},
 			{
 				icon: getNavIcon(ProfileIcon),
 				item: { label: "Profile", href: routes.page.settings.profile },
@@ -214,7 +225,7 @@ const Header = () => {
 				mapItemToNode: NavItem,
 				mapItemToString: NavItemLabel
 			}
-		];
+		].filter((navItem) => !isEmpty(navItem));
 	}
 
 	return (
@@ -282,7 +293,7 @@ const Header = () => {
 								</div>
 							</Tooltip>
 						</div>
-						{isUserOperator(user) && !!(user || {}).isLive && (
+						{isOperator && !!(user || {}).isLive && (
 							<motion.div
 								initial={{
 									x: -20,

@@ -35,7 +35,7 @@ const CallLinkCard = ({ ...props }) => {
 		<Card {...cardProps} {...props}>
 			<Paragraph>
 				Share your call link with your audience or clients. Visitors can call
-				you if you&apos;re live and get notified when your go live.
+				you if you&apos;re live and get notified when you go live.
 			</Paragraph>
 			<CopyToClipboard
 				text={operatorLink}

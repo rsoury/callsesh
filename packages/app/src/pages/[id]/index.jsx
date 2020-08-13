@@ -95,10 +95,11 @@ const ViewUser = ({ viewUser: viewUserBase, error }) => {
 			setSessionTimeout(() => {
 				request
 					.post(routes.api.call, {
-						operator: viewUser.username
+						with: viewUser.username,
+						as: CALL_SESSION_USER_TYPE.caller
 					})
 					.then(({ data }) => data)
-					.then(({ proxyPhoneNumber, callSession }) => {
+					.then(({ callSession }) => {
 						// Add callsession to user state
 						setUser({
 							...user,
@@ -113,7 +114,7 @@ const ViewUser = ({ viewUser: viewUserBase, error }) => {
 
 						// Check if mobile and latest browsers, and if so use tel:
 						if (md.phone()) {
-							window.location.href = `tel:${proxyPhoneNumber}`;
+							window.location.href = `tel:${callSession.caller.proxyPhoneNumber}`;
 						}
 					})
 					.catch((e) => {
@@ -141,7 +142,7 @@ const ViewUser = ({ viewUser: viewUserBase, error }) => {
 								break;
 							case ERROR_TYPES.operatorBusy:
 								toaster.negative(
-									`The operator is currently in a call. Please check back later.`
+									`The operator is currently in a call session. Please check back later.`
 								);
 								break;
 							case ERROR_TYPES.callSessionExists:
@@ -205,10 +206,16 @@ const ViewUser = ({ viewUser: viewUserBase, error }) => {
 
 	const handleEndSession = useCallback(
 		(done = () => {}) => {
+			// eslint-disable-next-line
+			const resp = window.confirm(`Are you sure you want to end this session?`);
+			if (!resp) {
+				return done();
+			}
+
 			toaster.info(`Ending your session with ${viewUser.givenName}...`);
 
 			// End the session
-			CallSessionSync.end()
+			return CallSessionSync.end()
 				.then(() => {
 					// Remove call session from user state
 					setUser({
@@ -229,31 +236,35 @@ const ViewUser = ({ viewUser: viewUserBase, error }) => {
 		[user]
 	);
 
-	const handleCall = useCallback((done = () => {}) => {
-		// Send an SMS and Toast when desktop, otherwise trigger tel:
-		request
-			.get(routes.api.call, {
-				params: {
-					sms: !md.phone()
-				}
-			})
-			.then(({ proxyPhoneNumber }) => {
-				if (md.phone()) {
-					window.location.href = `tel:${proxyPhoneNumber}`;
-				} else {
-					toaster.info(
-						`You should receive an SMS with a phone number to call that will connect you to operator.`
-					);
-				}
-			})
-			.catch((err) => {
-				handleException(err);
-				alerts.error();
-			})
-			.finally(() => {
+	const handleCall = useCallback(
+		(done = () => {}) => {
+			// Send an SMS and Toast when desktop, otherwise trigger tel:
+			if (md.phone()) {
+				window.location.href = `tel:${user.callSession.proxyPhoneNumber}`;
 				done();
-			});
-	}, []);
+			} else {
+				request
+					.get(routes.api.call, {
+						params: {
+							sms: true
+						}
+					})
+					.then(() => {
+						toaster.info(
+							`You should receive an SMS with a phone number to call that will connect you to ${viewUser.givenName}.`
+						);
+					})
+					.catch((err) => {
+						handleException(err);
+						alerts.error();
+					})
+					.finally(() => {
+						done();
+					});
+			}
+		},
+		[user]
+	);
 
 	const handleToggleMeter = useCallback(
 		(done = () => {}) => {
@@ -296,6 +307,44 @@ const ViewUser = ({ viewUser: viewUserBase, error }) => {
 		[user, viewUser]
 	);
 
+	// Handle working toggle
+	const handleToggleWork = useCallback(
+		(done = () => {}) => {
+			const { contacts: workingContacts = [] } = viewUser;
+			const isWorkingContact = workingContacts.includes(user.username);
+			if (isWorkingContact) {
+				// eslint-disable-next-line
+				const resp = window.confirm(
+					`Are you sure you want to stop working with ${viewUser.givenName}?`
+				);
+				if (!resp) {
+					return done();
+				}
+			}
+			const workRoute = routes.build.work(viewUser.username);
+			return (isWorkingContact
+				? request.delete(workRoute)
+				: request.post(workRoute)
+			)
+				.then(({ data }) => data)
+				.then(({ contacts = [] }) => {
+					// Set current viewUser notified list to one retrieved from server
+					setViewUser({
+						...viewUser,
+						contacts
+					});
+				})
+				.catch((err) => {
+					handleException(err);
+					alerts.error();
+				})
+				.finally(() => {
+					done();
+				});
+		},
+		[user, viewUser]
+	);
+
 	// If users in session with each other, show full screen InSessionScreen
 	// If chat is open, render chat page
 	return (
@@ -320,7 +369,8 @@ const ViewUser = ({ viewUser: viewUserBase, error }) => {
 					viewUser={viewUser}
 					actions={{
 						onStart: handleStartCallSession,
-						onToggleNotify: handleToggleNotify
+						onToggleNotify: handleToggleNotify,
+						onToggleWork: handleToggleWork
 					}}
 				/>
 			)}
@@ -344,7 +394,7 @@ ViewUser.defaultProps = {
 export async function getServerSideProps({
 	req,
 	res,
-	query: { return_url: returnUrl = "/", id: username }
+	query: { id: username }
 }) {
 	return ssrUser({ req, res }, async (user) => {
 		// If user does exist...
@@ -352,7 +402,9 @@ export async function getServerSideProps({
 			// If user is not registered, redirect to register page
 			if (!user.isRegistered) {
 				res.writeHead(302, {
-					Location: `${routes.page.register}?return_url=${returnUrl}`
+					Location: `${routes.page.register}?return_url=${routes.build.user(
+						username
+					)}`
 				});
 				res.end();
 			}

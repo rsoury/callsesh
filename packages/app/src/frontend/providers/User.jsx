@@ -1,6 +1,7 @@
 import React, { createContext, useState, useEffect } from "react";
 import isEmpty from "is-empty";
 import get from "lodash/get";
+import once from "lodash/once";
 
 import { ChildrenProps } from "@/frontend/utils/common-prop-types";
 import * as routes from "@/routes";
@@ -33,31 +34,23 @@ const UserContextProvider = ({ children }) => {
 		return paramUser;
 	};
 	const removeUser = () => setUser({});
-	const getUser = async (cookie = "") => {
+	const getUser = (cb) => {
 		setLoading(true);
-		try {
-			const retrievedUser = await request
-				.get(
-					routes.api.user,
-					cookie
-						? {
-								headers: {
-									cookie
-								}
-						  }
-						: {}
-				)
-				.then(({ data }) => data);
-
-			setUser(retrievedUser);
-
-			return retrievedUser;
-		} catch (e) {
-			return null;
-		} finally {
-			setLoading(false);
-		}
+		request
+			.get(routes.api.user)
+			.then(({ data }) => data)
+			.then((retrievedUser) => {
+				setUser(retrievedUser);
+				cb(retrievedUser);
+			})
+			.catch(() => {
+				return null;
+			})
+			.finally(() => {
+				setLoading(false);
+			});
 	};
+	const getUserOnce = once(getUser);
 
 	// If user sourced from SSR, apply to third party services
 	useEffect(() => {
@@ -74,6 +67,7 @@ const UserContextProvider = ({ children }) => {
 				setUser,
 				removeUser,
 				getUser,
+				getUserOnce,
 				loading
 			}}
 		>

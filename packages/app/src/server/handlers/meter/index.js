@@ -9,6 +9,7 @@ import * as authManager from "@/server/auth-manager";
 import * as comms from "@/server/comms";
 import { CALL_SESSION_USER_TYPE } from "@/constants";
 import { publicUrl } from "@/env-config";
+import * as routes from "@/routes";
 
 export default async function toggleCallSessionMeter(req, res) {
 	// Accepts a timestamp to use to mark start time
@@ -87,7 +88,11 @@ export default async function toggleCallSessionMeter(req, res) {
 		);
 		await comms.sms(
 			callerUser.phoneNumber,
-			`${user.givenName} is metering your call session! To end the session visit ${publicUrl}/${user.username}`
+			`${
+				user.givenName
+			} is metering your call session! To end the session visit ${publicUrl}${routes.build.user(
+				user.username
+			)}`
 		);
 	}
 

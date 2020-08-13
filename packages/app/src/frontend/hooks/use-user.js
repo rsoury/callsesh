@@ -28,6 +28,7 @@ function useUser({ required } = {}) {
 	const {
 		user,
 		removeUser,
+		getUserOnce,
 		getUser,
 		loading,
 		setUser: setUserState
@@ -151,7 +152,7 @@ function useUser({ required } = {}) {
 		// Start user fetch
 		let isMounted = true;
 
-		getUser().then((newUser) => {
+		getUserOnce((newUser) => {
 			// Only use the user if the component is still mounted
 			// -- in case the component unmounts between initial request and promise resolve.
 			if (isMounted) {

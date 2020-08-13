@@ -1,6 +1,6 @@
 {
 	"name": "@callsesh/auth",
-	"version": "1.0.1",
+	"version": "1.0.2",
 	"private": true,
 	"per-env": {
 		"production": {
@@ -38,7 +38,7 @@
 		"build:deploy": "yarn build && yarn deploy"
 	},
 	"dependencies": {
-		"@callsesh/utils": "^1.0.1",
+		"@callsesh/utils": "^1.0.2",
 		"@sentry/browser": "^5.15.5",
 		"@sentry/integrations": "^5.15.5",
 		"auth0-js": "^9.13.2",
