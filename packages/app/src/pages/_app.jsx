@@ -53,14 +53,16 @@ class App extends NextApp {
 	}
 
 	render() {
-		const { Component, pageProps } = this.props;
+		const { Component, pageProps = {} } = this.props;
+
+		const { seo = {} } = pageProps;
 
 		return (
 			<StyletronProvider value={engine} debug={debug} debugAfterHydration>
 				<BaseProvider theme={theme}>
 					<UserProvider>
 						<RouteReferrerProvider>
-							<DefaultSeo {...seoConfig} />
+							<DefaultSeo {...seoConfig} {...seo} />
 							<ToasterContainer
 								placement={TOOLTIP_PLACEMENT.topRight}
 								autoHideDuration={10000}

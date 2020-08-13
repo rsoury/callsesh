@@ -31,6 +31,8 @@ import ssrUser from "@/utils/ssr-user";
 import { useUserRouteReferrer } from "@/frontend/hooks/use-route-referrer";
 import { CallSessionSync } from "@/frontend/utils/sync";
 import isOperatorMeterActive from "@/utils/is-operator-meter-active";
+import getUserPronoun from "@/utils/get-user-pronoun";
+import isUserOperator from "@/utils/is-operator";
 
 let startSessionTimeout = null; // instantiate outside of the component... no re-render should reinstantiate
 const setSessionTimeout = (cb) => {
@@ -373,6 +375,14 @@ export async function getServerSideProps({
 				props: {
 					user,
 					viewUser,
+					seo: {
+						title: `Meet ${viewUser.givenName}! ${getUserPronoun(viewUser)} ${
+							isUserOperator(viewUser)
+								? `offering ${viewUser.purpose} over a
+											call session`
+								: `making calls on Callsesh. You can too!`
+						}`
+					},
 					error: {}
 				}
 			};

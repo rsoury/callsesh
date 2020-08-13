@@ -3,36 +3,21 @@ import { useStyletron } from "baseui";
 import { Grid, Cell } from "baseui/layout-grid";
 import { Avatar } from "baseui/avatar";
 import { H1 as Heading } from "baseui/typography";
-import { NextSeo } from "next-seo";
 
 import Highlight from "@/frontend/components/Highlight";
 import { ViewUserProps } from "@/frontend/utils/common-prop-types";
 import isUserOperator from "@/utils/is-operator";
 import * as fees from "@/utils/fees";
+import getUserPronoun from "@/utils/get-user-pronoun";
 
 const ViewUserIntroduction = ({ viewUser }) => {
 	const [css, theme] = useStyletron();
-
-	let ownerPronoun = "They're";
-	if (viewUser.gender.toLowerCase() === "male") {
-		ownerPronoun = "He's";
-	} else if (viewUser.gender.toLowerCase() === "female") {
-		ownerPronoun = "She's";
-	}
 
 	const isOperator = isUserOperator(viewUser);
 
 	return (
 		<Grid>
 			<Cell span={12}>
-				<NextSeo
-					title={`Meet ${viewUser.givenName}! ${ownerPronoun} ${
-						isOperator
-							? `offering ${viewUser.purpose} over a
-										call session`
-							: `making calls on Callsesh. You can too!`
-					}`}
-				/>
 				<div
 					className={css({
 						display: "flex",
@@ -70,7 +55,7 @@ const ViewUserIntroduction = ({ viewUser }) => {
 									...theme.typography.HeadingXLarge
 								})}
 							>
-								{ownerPronoun}{" "}
+								{getUserPronoun(viewUser)}{" "}
 								{isOperator ? (
 									<span>
 										offering <Highlight>{viewUser.purpose}</Highlight> over a
