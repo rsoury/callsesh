@@ -1,7 +1,13 @@
 import React, { useState } from "react";
 import PropTypes from "prop-types";
 import { useStyletron } from "baseui";
-import { Label1 as Label, ParagraphSmall } from "baseui/typography";
+import {
+	Label1 as Label,
+	ParagraphSmall,
+	H2 as Heading,
+	ParagraphLarge,
+	ParagraphMedium as Paragraph
+} from "baseui/typography";
 import { Card as BaseCard, StyledBody, StyledAction } from "baseui/card";
 import ArrowRight from "baseui/icon/arrow-right";
 import {
@@ -15,11 +21,13 @@ import {
 	PhoneOff as PhoneUnavailableIcon,
 	Lock as LockIcon,
 	Bell as NotifyIcon,
-	BellOff as RemoveNotifyIcon
+	BellOff as RemoveNotifyIcon,
+	XCircle as StopWorkIcon,
+	Briefcase as StartWorkIcon
 } from "react-feather";
 import isEmpty from "is-empty";
-import { Tag } from "baseui/tag";
-import { StatefulTooltip as Tooltip } from "baseui/tooltip";
+import { Drawer } from "baseui/drawer";
+import Check from "baseui/icon/check";
 
 import * as fees from "@/utils/fees";
 import useUser from "@/frontend/hooks/use-user";
@@ -27,14 +35,24 @@ import Link from "@/frontend/components/Link";
 import Highlight from "@/frontend/components/Highlight";
 import { ViewUserProps } from "@/frontend/utils/common-prop-types";
 import checkCallSession from "@/utils/check-call-session";
+import getUserPronoun from "@/utils/get-user-pronoun";
 import appendReturnUrl from "@/frontend/utils/append-return-url";
 import * as routes from "@/routes";
 
-const ViewUserOperatorAction = ({ viewUser, onStart, onToggleNotify }) => {
+import ActionTags from "./ActionTags";
+
+const ViewUserOperatorAction = ({
+	viewUser,
+	onStart,
+	onToggleNotify,
+	onToggleWork
+}) => {
 	const [css, theme] = useStyletron();
 	const [user] = useUser();
 	const [isStarting, setStarting] = useState(false);
 	const [isTogglingNotify, setTogglingNotify] = useState(false);
+	const [isTogglingWork, setTogglingWork] = useState(false);
+	const [isWorkDrawerOpen, setWorkDrawerOpen] = useState(false);
 
 	const isAuthenticated = !isEmpty(user);
 	const isSameUser = isAuthenticated
@@ -46,9 +64,12 @@ const ViewUserOperatorAction = ({ viewUser, onStart, onToggleNotify }) => {
 		isSame: inSessionWithViewUser
 	} = checkCallSession(user, viewUser);
 
-	const minuteRate = fees.getRate(viewUser.hourlyRate).toMinute().toString();
-
+	const rate = fees.getRate(viewUser.hourlyRate);
+	const minuteRate = rate.toMinute().toString();
+	const hourRate = rate.toHour().toString();
+	const viewUserPronoun = getUserPronoun(viewUser);
 	const isNotified = (viewUser.notified || []).includes(user.username);
+	const isWorkingContact = (viewUser.contacts || []).includes(user.username);
 
 	const handleStart = () => {
 		setStarting(true);
@@ -58,6 +79,18 @@ const ViewUserOperatorAction = ({ viewUser, onStart, onToggleNotify }) => {
 	const handleToggleNotify = () => {
 		setTogglingNotify(true);
 		return onToggleNotify(() => setTogglingNotify(false));
+	};
+
+	const handleToggleWork = () => {
+		setTogglingWork(true);
+		return onToggleWork(() => {
+			setWorkDrawerOpen(false);
+			setTogglingWork(false);
+		});
+	};
+
+	const handleStartWork = () => {
+		setWorkDrawerOpen(true);
 	};
 
 	return (
@@ -149,53 +182,13 @@ const ViewUserOperatorAction = ({ viewUser, onStart, onToggleNotify }) => {
 										}
 									}}
 								>
-									Sign up to call {viewUser.givenName}
+									Sign up to work with {viewUser.givenName}
 								</Button>
 							</Link>
 						)}
 						{isAuthenticated && viewUser.isLive && (
 							<div>
-								<div
-									className={css({
-										marginLeft: "-5px",
-										marginRight: "-5px",
-										marginBottom: theme.sizing.scale400
-									})}
-								>
-									<Tooltip
-										showArrow
-										content={() => (
-											<div>
-												Only charged if your call session is successfully
-												connected
-											</div>
-										)}
-									>
-										<span
-											className={css({
-												display: "inline-block"
-											})}
-										>
-											<Tag closeable={false}>
-												<span>
-													Service Fee:{" "}
-													<strong>{fees.preAuth().toString()}</strong>
-												</span>
-											</Tag>
-										</span>
-									</Tooltip>
-									<span
-										className={css({
-											display: "inline-block"
-										})}
-									>
-										<Tag closeable={false}>
-											<span>
-												Currency: <strong>{viewUser.currency}</strong>
-											</span>
-										</Tag>
-									</span>
-								</div>
+								<ActionTags currency={viewUser.currency} />
 								<Button
 									startEnhancer={
 										viewUserInSession && !inSessionWithViewUser
@@ -229,6 +222,50 @@ const ViewUserOperatorAction = ({ viewUser, onStart, onToggleNotify }) => {
 											Call {viewUser.givenName} for {minuteRate}
 											/minute
 										</span>
+									)}
+								</Button>
+							</div>
+						)}
+						{isAuthenticated && (
+							<div className={css({ marginTop: "10px", textAlign: "center" })}>
+								<Button
+									startEnhancer={
+										isWorkingContact
+											? () => <StopWorkIcon size={20} />
+											: () => <StartWorkIcon size={20} />
+									}
+									onClick={
+										isWorkingContact ? handleToggleWork : handleStartWork
+									}
+									overrides={{
+										BaseButton: {
+											style: {
+												width: "100%",
+												pointerEvents: isTogglingWork ? "none" : "auto",
+												paddingRight: "20px",
+												paddingLeft: "20px",
+												...(isWorkingContact
+													? {
+															backgroundColor: theme.colors.negative,
+															":hover": {
+																backgroundColor: theme.colors.negative500
+															}
+													  }
+													: {})
+											}
+										}
+									}}
+									isLoading={isTogglingWork}
+									kind={
+										isWorkingContact
+											? BUTTON_KIND.primary
+											: BUTTON_KIND.secondary
+									}
+								>
+									{isWorkingContact ? (
+										<span>Stop working with {viewUser.givenName}</span>
+									) : (
+										<span>Work with {viewUser.givenName}</span>
 									)}
 								</Button>
 							</div>
@@ -267,6 +304,71 @@ const ViewUserOperatorAction = ({ viewUser, onStart, onToggleNotify }) => {
 					</Button>
 				</div>
 			)}
+			{/* Work Drawer */}
+			<Drawer
+				isOpen={isWorkDrawerOpen}
+				autoFocus
+				onClose={() => setWorkDrawerOpen(false)}
+			>
+				<div className={css({ padding: "20px 0" })}>
+					<Heading className={css({ marginTop: "0px" })}>
+						<strong className={css({ fontWeight: "900" })}>
+							Work with {viewUser.givenName}
+						</strong>
+					</Heading>
+					<ParagraphLarge>
+						Grant {viewUser.givenName} permission to create metered call
+						sessions with you whenever {viewUserPronoun.toLowerCase()} working
+						on your tasks.
+					</ParagraphLarge>
+					<ul className={css({ margin: "10px" })}>
+						<li>
+							<ParagraphSmall>
+								Service fee will apply per session created
+							</ParagraphSmall>
+						</li>
+						<li>
+							<ParagraphSmall>
+								You will be notified when the call session starts with the
+								option to cancel and stop working with {viewUser.givenName}.
+							</ParagraphSmall>
+						</li>
+						<li>
+							<ParagraphSmall>
+								You will not be charged until a call session has started
+							</ParagraphSmall>
+						</li>
+					</ul>
+					<div className={css({ marginTop: "40px" })}>
+						<ParagraphLarge className={css({ marginBottom: "10px" })}>
+							Total:{" "}
+							<strong className={css({ fontWeight: "900" })}>
+								{hourRate}/hour
+							</strong>
+						</ParagraphLarge>
+						<ActionTags currency={viewUser.currency} />
+						<Button
+							endEnhancer={<Check size={24} />}
+							onClick={handleToggleWork}
+							overrides={{
+								BaseButton: {
+									style: {
+										pointerEvents: isTogglingWork ? "none" : "auto"
+									}
+								}
+							}}
+							isLoading={isTogglingWork}
+							size={BUTTON_SIZE.large}
+						>
+							{isWorkingContact ? (
+								<span>Stop working with {viewUser.givenName}</span>
+							) : (
+								<span>Work with {viewUser.givenName}</span>
+							)}
+						</Button>
+					</div>
+				</div>
+			</Drawer>
 		</div>
 	);
 };
@@ -274,12 +376,14 @@ const ViewUserOperatorAction = ({ viewUser, onStart, onToggleNotify }) => {
 ViewUserOperatorAction.propTypes = {
 	viewUser: ViewUserProps.isRequired,
 	onStart: PropTypes.func,
-	onToggleNotify: PropTypes.func
+	onToggleNotify: PropTypes.func,
+	onToggleWork: PropTypes.func
 };
 
 ViewUserOperatorAction.defaultProps = {
 	onStart() {},
-	onToggleNotify() {}
+	onToggleNotify() {},
+	onToggleWork() {}
 };
 
 export default ViewUserOperatorAction;

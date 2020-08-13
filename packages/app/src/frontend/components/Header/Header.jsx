@@ -14,7 +14,8 @@ import {
 	LogOut as LogoutIcon,
 	LogIn as LoginIcon,
 	Edit2 as SignupIcon,
-	MessageSquare as ChatIcon
+	MessageSquare as ChatIcon,
+	Briefcase as WorkIcon
 } from "react-feather";
 import isEmpty from "is-empty";
 import { Unstable_AppNavBar as AppNavBar } from "baseui/app-nav-bar";
@@ -197,6 +198,12 @@ const Header = () => {
 					newWindow: true
 				},
 				mapItemToNode: NavItemButton,
+				mapItemToString: NavItemLabel
+			},
+			{
+				icon: getNavIcon(WorkIcon),
+				item: { label: "Contacts", href: routes.page.contacts },
+				mapItemToNode: NavItem,
 				mapItemToString: NavItemLabel
 			},
 			{

@@ -205,10 +205,16 @@ const ViewUser = ({ viewUser: viewUserBase, error }) => {
 
 	const handleEndSession = useCallback(
 		(done = () => {}) => {
+			// eslint-disable-next-line
+			const resp = window.confirm(`Are you sure you want to end this session?`);
+			if (!resp) {
+				return done();
+			}
+
 			toaster.info(`Ending your session with ${viewUser.givenName}...`);
 
 			// End the session
-			CallSessionSync.end()
+			return CallSessionSync.end()
 				.then(() => {
 					// Remove call session from user state
 					setUser({
@@ -296,6 +302,44 @@ const ViewUser = ({ viewUser: viewUserBase, error }) => {
 		[user, viewUser]
 	);
 
+	// Handle working toggle
+	const handleToggleWork = useCallback(
+		(done = () => {}) => {
+			const { contacts: workingContacts = [] } = viewUser;
+			const isWorkingContact = workingContacts.includes(user.username);
+			if (isWorkingContact) {
+				// eslint-disable-next-line
+				const resp = window.confirm(
+					`Are you sure you want to stop working with ${viewUser.givenName}?`
+				);
+				if (!resp) {
+					return done();
+				}
+			}
+			const workRoute = routes.build.work(viewUser.username);
+			return (isWorkingContact
+				? request.delete(workRoute)
+				: request.post(workRoute)
+			)
+				.then(({ data }) => data)
+				.then(({ contacts = [] }) => {
+					// Set current viewUser notified list to one retrieved from server
+					setViewUser({
+						...viewUser,
+						contacts
+					});
+				})
+				.catch((err) => {
+					handleException(err);
+					alerts.error();
+				})
+				.finally(() => {
+					done();
+				});
+		},
+		[user, viewUser]
+	);
+
 	// If users in session with each other, show full screen InSessionScreen
 	// If chat is open, render chat page
 	return (
@@ -320,7 +364,8 @@ const ViewUser = ({ viewUser: viewUserBase, error }) => {
 					viewUser={viewUser}
 					actions={{
 						onStart: handleStartCallSession,
-						onToggleNotify: handleToggleNotify
+						onToggleNotify: handleToggleNotify,
+						onToggleWork: handleToggleWork
 					}}
 				/>
 			)}
