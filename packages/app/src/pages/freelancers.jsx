@@ -4,7 +4,6 @@
 
 import React from "react";
 import { useStyletron } from "baseui";
-import { NextSeo } from "next-seo";
 
 import Layout from "@/frontend/components/Layout";
 
@@ -20,10 +19,6 @@ const Freelancers = () => {
 
 	return (
 		<Layout>
-			<NextSeo
-				title="Solve your client's problems on-the-fly"
-				description="Offer your clients metered call sessions to solve their problems on-the-fly, whether it takes 10 minutes or a day. Callsesh is agile engagement and collaboration for your freelance business."
-			/>
 			<div
 				id="callsesh-public-freelancers-screen"
 				className={css({ maxWidth: "100%" })}
@@ -38,5 +33,17 @@ const Freelancers = () => {
 		</Layout>
 	);
 };
+
+export function getStaticProps() {
+	return {
+		props: {
+			seo: {
+				title: "Solve your client's problems on-the-fly",
+				description:
+					"Offer your clients call sessions to solve their problems on-the-fly. Callsesh is agile engagement and collaboration for your freelance business."
+			}
+		}
+	};
+}
 
 export default Freelancers;

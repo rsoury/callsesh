@@ -1,5 +1,5 @@
 const description =
-	"Earn money offering your attention through metered call sessions. Eliminate the hassle out of quoting, time tracking, invoicing, and payment collection for your over-the-phone consultations.";
+	"Earn money through metered call sessions. Eliminate the hassle out of quoting, time tracking, invoicing, and payments for your over-the-phone consultations.";
 const url = "https://www.callsesh.com/";
 
 module.exports = {
