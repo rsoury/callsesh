@@ -67,5 +67,6 @@ export const api = {
 	},
 	resendEmail: `/api/resend-email`,
 	token: `/api/token`,
-	chatToken: `/api/token/chat`
+	chatToken: `/api/token/chat`,
+	contacts: `/api/contacts`
 };

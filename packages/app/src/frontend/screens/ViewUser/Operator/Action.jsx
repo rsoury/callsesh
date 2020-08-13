@@ -324,13 +324,13 @@ const ViewUserOperatorAction = ({
 					<ul className={css({ margin: "10px" })}>
 						<li>
 							<ParagraphSmall>
-								Service fee will apply per session created
+								You will be notified when the call session starts with the
+								option to cancel and stop working with {viewUser.givenName}.
 							</ParagraphSmall>
 						</li>
 						<li>
 							<ParagraphSmall>
-								You will be notified when the call session starts with the
-								option to cancel and stop working with {viewUser.givenName}.
+								The service fee will apply per session created
 							</ParagraphSmall>
 						</li>
 						<li>
