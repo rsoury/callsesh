@@ -335,13 +335,13 @@ const ViewUserOperatorAction = ({
 						</li>
 						<li>
 							<ParagraphSmall>
-								You will not be charged until a call session has started
+								You will not be charged until a call session is complete
 							</ParagraphSmall>
 						</li>
 					</ul>
 					<div className={css({ marginTop: "40px" })}>
 						<ParagraphLarge className={css({ marginBottom: "10px" })}>
-							Total:{" "}
+							Rate:{" "}
 							<strong className={css({ fontWeight: "900" })}>
 								{hourRate}/hour
 							</strong>

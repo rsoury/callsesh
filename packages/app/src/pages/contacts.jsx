@@ -32,16 +32,16 @@ import request from "@/utils/request";
 import handleException, { alerts } from "@/utils/handle-exception";
 import ScreenContainer from "@/frontend/components/ScreenContainer";
 import InSessionScreen from "@/frontend/screens/InSession";
-import { CALL_SESSION_START_TIMEOUT, ERROR_TYPES } from "@/constants";
-// import ssrUser from "@/utils/ssr-user";
-// import isUserOperator from "@/utils/is-operator";
+import {
+	CALL_SESSION_START_TIMEOUT,
+	ERROR_TYPES,
+	CALL_SESSION_USER_TYPE
+} from "@/constants";
 
 const Spinner = withStyle(StyledSpinnerNext, {
 	width: "40px",
 	height: "40px"
 });
-
-let contactsRetrieved = false;
 
 let startSessionTimeout = null; // instantiate outside of the component... no re-render should reinstantiate
 const setSessionTimeout = (cb) => {
@@ -60,8 +60,9 @@ const Contacts = () => {
 		setSessionUser(contact);
 		setSessionTimeout(() => {
 			request
-				.post(routes.api.contacts, {
-					contact: contact.username
+				.post(routes.api.call, {
+					with: contact.username,
+					as: CALL_SESSION_USER_TYPE.operator
 				})
 				.then(({ data }) => data) // Will automatically start redirecting due to LiveOperator Sync
 				.catch((e) => {
@@ -111,10 +112,8 @@ const Contacts = () => {
 		if (!isEmpty(user) && !isUserLoading) {
 			if (isEmpty(user.contacts)) {
 				setLoading(false);
+				return () => {};
 			}
-			return () => {};
-		}
-		if (!contactsRetrieved) {
 			request
 				.get(routes.api.contacts)
 				.then(({ data }) => data)
@@ -125,11 +124,9 @@ const Contacts = () => {
 				.catch((e) => {
 					handleException(e);
 					alerts.error();
-				})
-				.finally(() => {
-					contactsRetrieved = true;
 				});
 		}
+
 		return () => {};
 	}, [user, isUserLoading]);
 

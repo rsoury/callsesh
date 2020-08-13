@@ -95,7 +95,8 @@ const ViewUser = ({ viewUser: viewUserBase, error }) => {
 			setSessionTimeout(() => {
 				request
 					.post(routes.api.call, {
-						operator: viewUser.username
+						with: viewUser.username,
+						as: CALL_SESSION_USER_TYPE.caller
 					})
 					.then(({ data }) => data)
 					.then(({ callSession }) => {
@@ -393,7 +394,7 @@ ViewUser.defaultProps = {
 export async function getServerSideProps({
 	req,
 	res,
-	query: { return_url: returnUrl = "/", id: username }
+	query: { id: username }
 }) {
 	return ssrUser({ req, res }, async (user) => {
 		// If user does exist...
@@ -401,7 +402,9 @@ export async function getServerSideProps({
 			// If user is not registered, redirect to register page
 			if (!user.isRegistered) {
 				res.writeHead(302, {
-					Location: `${routes.page.register}?return_url=${returnUrl}`
+					Location: `${routes.page.register}?return_url=${routes.build.user(
+						username
+					)}`
 				});
 				res.end();
 			}

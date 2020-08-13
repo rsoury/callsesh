@@ -33,14 +33,15 @@ const CallerStep = ({ formValues }) => {
 				<Cell span={12}>
 					<Heading>
 						<strong className={css({ fontWeight: 800 })}>
-							Making calls?&nbsp;&nbsp;
+							Get results and answers fast&nbsp;&nbsp;
 							<Emoji label="pen" symbol="🖋" />
 						</strong>
 					</Heading>
 					<Subheader>
-						Learn from experts, consult a professional, or hang out with someone
-						unique
+						Consult and collaborate with Callsesh Operators as if they were your
+						co-workers.
 					</Subheader>
+					<Paragraph>Provide a payment method to get started...</Paragraph>
 				</Cell>
 			</Grid>
 			<Grid>
