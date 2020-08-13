@@ -182,7 +182,7 @@ const ViewUserOperatorAction = ({
 										}
 									}}
 								>
-									Sign up to work with {viewUser.givenName}
+									Sign up to call {viewUser.givenName}
 								</Button>
 							</Link>
 						)}
@@ -226,50 +226,44 @@ const ViewUserOperatorAction = ({
 								</Button>
 							</div>
 						)}
-						{isAuthenticated && (
-							<div className={css({ marginTop: "10px", textAlign: "center" })}>
-								<Button
-									startEnhancer={
-										isWorkingContact
-											? () => <StopWorkIcon size={20} />
-											: () => <StartWorkIcon size={20} />
-									}
-									onClick={
-										isWorkingContact ? handleToggleWork : handleStartWork
-									}
-									overrides={{
-										BaseButton: {
-											style: {
-												width: "100%",
-												pointerEvents: isTogglingWork ? "none" : "auto",
-												paddingRight: "20px",
-												paddingLeft: "20px",
-												...(isWorkingContact
-													? {
-															backgroundColor: theme.colors.negative,
-															":hover": {
-																backgroundColor: theme.colors.negative500
-															}
-													  }
-													: {})
-											}
+						<div className={css({ marginTop: "10px", textAlign: "center" })}>
+							<Button
+								startEnhancer={
+									isWorkingContact
+										? () => <StopWorkIcon size={20} />
+										: () => <StartWorkIcon size={20} />
+								}
+								onClick={isWorkingContact ? handleToggleWork : handleStartWork}
+								overrides={{
+									BaseButton: {
+										style: {
+											width: "100%",
+											pointerEvents: isTogglingWork ? "none" : "auto",
+											paddingRight: "20px",
+											paddingLeft: "20px",
+											...(isWorkingContact
+												? {
+														backgroundColor: theme.colors.negative,
+														":hover": {
+															backgroundColor: theme.colors.negative500
+														}
+												  }
+												: {})
 										}
-									}}
-									isLoading={isTogglingWork}
-									kind={
-										isWorkingContact
-											? BUTTON_KIND.primary
-											: BUTTON_KIND.secondary
 									}
-								>
-									{isWorkingContact ? (
-										<span>Stop working with {viewUser.givenName}</span>
-									) : (
-										<span>Work with {viewUser.givenName}</span>
-									)}
-								</Button>
-							</div>
-						)}
+								}}
+								isLoading={isTogglingWork}
+								kind={
+									isWorkingContact ? BUTTON_KIND.primary : BUTTON_KIND.secondary
+								}
+							>
+								{isWorkingContact ? (
+									<span>Stop working with {viewUser.givenName}</span>
+								) : (
+									<span>Work with {viewUser.givenName}</span>
+								)}
+							</Button>
+						</div>
 					</StyledAction>
 				</BaseCard>
 			</div>
@@ -321,11 +315,11 @@ const ViewUserOperatorAction = ({
 						sessions with you whenever {viewUserPronoun.toLowerCase()} working
 						on your tasks.
 					</ParagraphLarge>
-					<ul className={css({ margin: "10px" })}>
+					<ul className={css({ margin: "10px", paddingLeft: "20px" })}>
 						<li>
 							<ParagraphSmall>
-								You will be notified when the call session starts with the
-								option to cancel and stop working with {viewUser.givenName}.
+								You will be notified when a call session starts with the option
+								to cancel and stop working with {viewUser.givenName}.
 							</ParagraphSmall>
 						</li>
 						<li>
@@ -347,25 +341,37 @@ const ViewUserOperatorAction = ({
 							</strong>
 						</ParagraphLarge>
 						<ActionTags currency={viewUser.currency} />
-						<Button
-							endEnhancer={<Check size={24} />}
-							onClick={handleToggleWork}
-							overrides={{
-								BaseButton: {
-									style: {
-										pointerEvents: isTogglingWork ? "none" : "auto"
+						{isAuthenticated ? (
+							<Button
+								endEnhancer={<Check size={24} />}
+								onClick={handleToggleWork}
+								overrides={{
+									BaseButton: {
+										style: {
+											pointerEvents: isTogglingWork ? "none" : "auto"
+										}
 									}
-								}
-							}}
-							isLoading={isTogglingWork}
-							size={BUTTON_SIZE.large}
-						>
-							{isWorkingContact ? (
-								<span>Stop working with {viewUser.givenName}</span>
-							) : (
-								<span>Work with {viewUser.givenName}</span>
-							)}
-						</Button>
+								}}
+								isLoading={isTogglingWork}
+								size={BUTTON_SIZE.large}
+							>
+								{isWorkingContact ? (
+									<span>Stop working with {viewUser.givenName}</span>
+								) : (
+									<span>Work with {viewUser.givenName}</span>
+								)}
+							</Button>
+						) : (
+							<Link href={appendReturnUrl(routes.page.signup, true)} button>
+								<Button
+									startEnhancer={() => <LockIcon size={20} />}
+									endEnhancer={() => <ArrowRight size={20} />}
+									size={BUTTON_SIZE.large}
+								>
+									Sign up to work with {viewUser.givenName}
+								</Button>
+							</Link>
+						)}
 					</div>
 				</div>
 			</Drawer>
