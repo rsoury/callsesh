@@ -107,6 +107,8 @@ const Header = () => {
 	const [user, isLoading] = useUser();
 	const router = useRouter();
 
+	const isOperator = isUserOperator(user);
+
 	const navProps = {};
 
 	if (isLoading) {
@@ -200,12 +202,14 @@ const Header = () => {
 				mapItemToNode: NavItemButton,
 				mapItemToString: NavItemLabel
 			},
-			{
-				icon: getNavIcon(WorkIcon),
-				item: { label: "Contacts", href: routes.page.contacts },
-				mapItemToNode: NavItem,
-				mapItemToString: NavItemLabel
-			},
+			isOperator
+				? {
+						icon: getNavIcon(WorkIcon),
+						item: { label: "Contacts", href: routes.page.contacts },
+						mapItemToNode: NavItem,
+						mapItemToString: NavItemLabel
+				  }
+				: {},
 			{
 				icon: getNavIcon(ProfileIcon),
 				item: { label: "Profile", href: routes.page.settings.profile },
@@ -221,7 +225,7 @@ const Header = () => {
 				mapItemToNode: NavItem,
 				mapItemToString: NavItemLabel
 			}
-		];
+		].filter((navItem) => !isEmpty(navItem));
 	}
 
 	return (
@@ -289,7 +293,7 @@ const Header = () => {
 								</div>
 							</Tooltip>
 						</div>
-						{isUserOperator(user) && !!(user || {}).isLive && (
+						{isOperator && !!(user || {}).isLive && (
 							<motion.div
 								initial={{
 									x: -20,

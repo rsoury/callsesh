@@ -31,6 +31,8 @@ import * as routes from "@/routes";
 import request from "@/utils/request";
 import handleException, { alerts } from "@/utils/handle-exception";
 import ScreenContainer from "@/frontend/components/ScreenContainer";
+import InSessionScreen from "@/frontend/screens/InSession";
+import { CALL_SESSION_START_TIMEOUT, ERROR_TYPES } from "@/constants";
 // import ssrUser from "@/utils/ssr-user";
 // import isUserOperator from "@/utils/is-operator";
 
@@ -41,14 +43,72 @@ const Spinner = withStyle(StyledSpinnerNext, {
 
 let contactsRetrieved = false;
 
+let startSessionTimeout = null; // instantiate outside of the component... no re-render should reinstantiate
+const setSessionTimeout = (cb) => {
+	startSessionTimeout = setTimeout(cb, CALL_SESSION_START_TIMEOUT);
+	return startSessionTimeout;
+};
+
 const Contacts = () => {
 	const [css, theme] = useStyletron();
 	const [user, isUserLoading] = useUser({ required: true });
 	const [isLoading, setLoading] = useState(true);
 	const [contacts, setContacts] = useState([]);
+	const [sessionUser, setSessionUser] = useState({});
 
-	const handleStartSession = useCallback((contactUsername) => {
-		console.log(`Start a call session with: ${contactUsername}`);
+	const handleStartSession = useCallback(
+		(contact) => {
+			setSessionUser(contact);
+			setSessionTimeout(() => {
+				request
+					.post(routes.api.contacts, {
+						contact: contact.username
+					})
+					.then(({ data }) => data) // Will automatically start redirecting due to LiveOperator Sync
+					.catch((e) => {
+						const { data: err = e } = e.response || {}; // Get error body, otherwise default to returned error.
+						// Check if err is common and toast/react accordingly.
+						switch (err.type) {
+							case ERROR_TYPES.paymentMethodRequired:
+								toaster.info(
+									`Your contact's payment method is required. Please inform your contact of this issue.`
+								);
+								break;
+							case ERROR_TYPES.paymentMethodInvalid:
+								toaster.info(
+									`Your contact's payment method is not valid or has insufficient funds. Please inform your contact of this issue.`
+								);
+								break;
+							case ERROR_TYPES.operatorBusy:
+								toaster.negative(
+									`You are already currently in a call session. Please try again later.`
+								);
+								break;
+							case ERROR_TYPES.callSessionExists:
+								toaster.warning(
+									`This user is currently in a call session. Please try again later.`
+								);
+								break;
+							case ERROR_TYPES.operatorRequired:
+							case ERROR_TYPES.userBlocked:
+								alerts.error();
+								break;
+							default:
+								handleException(err);
+								alerts.error();
+								break;
+						}
+
+						setSessionUser({});
+					});
+			});
+		},
+		[sessionUser]
+	);
+
+	const handleUndoStartSession = useCallback(() => {
+		setSessionUser({});
+		clearTimeout(startSessionTimeout);
 	}, []);
 
 	useEffect(() => {
@@ -77,6 +137,12 @@ const Contacts = () => {
 		return () => {};
 	}, [user, isUserLoading]);
 
+	if (!isEmpty(sessionUser)) {
+		return (
+			<InSessionScreen viewUser={sessionUser} onUndo={handleUndoStartSession} />
+		);
+	}
+
 	return (
 		<Layout>
 			<ScreenContainer id="callsesh-contacts">
@@ -84,7 +150,7 @@ const Contacts = () => {
 					<Cell span={12}>
 						<Heading marginBottom="0px">Work Contacts</Heading>
 						<ParagraphLarge>
-							View and <Highlight>create sessions</Highlight> with contacts who
+							View and <Highlight>start sessions</Highlight> with contacts who
 							are actively working with you.
 						</ParagraphLarge>
 						<div>
@@ -133,77 +199,73 @@ const Contacts = () => {
 												margin: "20px 0"
 											})}
 										>
-											{contacts.map(
-												({ givenName, name, picture, username }) => (
-													<div
-														className={css({
-															display: "flex",
-															alignItems: "center",
-															justifyContent: "space-between",
-															padding: "10px",
-															borderBottom: `1px solid ${theme.colors.borderOpaque}`,
-															":last-child": {
-																borderBottom: "none"
-															}
-														})}
-														key={username}
-													>
-														<div className={css({ display: "flex" })}>
-															<div
-																className={css({
-																	marginRight: "10px",
-																	display: "flex"
-																})}
-															>
-																<Avatar
-																	name={givenName}
-																	size="scale800"
-																	src={picture}
-																/>
-															</div>
-															<Link
-																href={routes.build.user(username)}
-																standard
-																newWindow
-																button
-																style={{
-																	textUnderline: "none !important",
-																	transition: "opacity 0.15s",
-																	":hover": {
-																		opacity: "0.5"
-																	}
-																}}
-															>
-																<Label>
-																	<strong
-																		className={css({ fontWeight: "900" })}
-																	>
-																		{name}
-																	</strong>
-																</Label>
-															</Link>
+											{contacts.map((contact) => (
+												<div
+													className={css({
+														display: "flex",
+														alignItems: "center",
+														justifyContent: "space-between",
+														padding: "10px",
+														borderBottom: `1px solid ${theme.colors.borderOpaque}`,
+														":last-child": {
+															borderBottom: "none"
+														}
+													})}
+													key={contact.username}
+												>
+													<div className={css({ display: "flex" })}>
+														<div
+															className={css({
+																marginRight: "10px",
+																display: "flex"
+															})}
+														>
+															<Avatar
+																name={contact.givenName}
+																size="scale800"
+																src={contact.picture}
+															/>
 														</div>
-														<div>
-															<Button
-																shape={BUTTON_SHAPE.pill}
-																size={BUTTON_SIZE.compact}
-																onClick={() => handleStartSession(username)}
-																endEnhancer={() => <ArrowRight size={16} />}
-																overrides={{
-																	BaseButton: {
-																		style: {
-																			paddingLeft: "20px",
-																			paddingRight: "20px"
-																		}
-																	}
-																}}
-															>
-																Start Session
-															</Button>
-														</div>
+														<Link
+															href={routes.build.user(contact.username)}
+															standard
+															newWindow
+															button
+															style={{
+																textUnderline: "none !important",
+																transition: "opacity 0.15s",
+																":hover": {
+																	opacity: "0.5"
+																}
+															}}
+														>
+															<Label>
+																<strong className={css({ fontWeight: "900" })}>
+																	{contact.name}
+																</strong>
+															</Label>
+														</Link>
 													</div>
-												)
-											)}
+													<div>
+														<Button
+															shape={BUTTON_SHAPE.pill}
+															size={BUTTON_SIZE.compact}
+															onClick={() => handleStartSession(contact)}
+															endEnhancer={() => <ArrowRight size={16} />}
+															overrides={{
+																BaseButton: {
+																	style: {
+																		paddingLeft: "20px",
+																		paddingRight: "20px"
+																	}
+																}
+															}}
+														>
+															Start Session
+														</Button>
+													</div>
+												</div>
+											))}
 										</div>
 									)}
 								</>

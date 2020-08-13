@@ -98,7 +98,7 @@ const ViewUser = ({ viewUser: viewUserBase, error }) => {
 						operator: viewUser.username
 					})
 					.then(({ data }) => data)
-					.then(({ proxyPhoneNumber, callSession }) => {
+					.then(({ callSession }) => {
 						// Add callsession to user state
 						setUser({
 							...user,
@@ -113,7 +113,7 @@ const ViewUser = ({ viewUser: viewUserBase, error }) => {
 
 						// Check if mobile and latest browsers, and if so use tel:
 						if (md.phone()) {
-							window.location.href = `tel:${proxyPhoneNumber}`;
+							window.location.href = `tel:${callSession.caller.proxyPhoneNumber}`;
 						}
 					})
 					.catch((e) => {
@@ -141,7 +141,7 @@ const ViewUser = ({ viewUser: viewUserBase, error }) => {
 								break;
 							case ERROR_TYPES.operatorBusy:
 								toaster.negative(
-									`The operator is currently in a call. Please check back later.`
+									`The operator is currently in a call session. Please check back later.`
 								);
 								break;
 							case ERROR_TYPES.callSessionExists:
@@ -235,31 +235,35 @@ const ViewUser = ({ viewUser: viewUserBase, error }) => {
 		[user]
 	);
 
-	const handleCall = useCallback((done = () => {}) => {
-		// Send an SMS and Toast when desktop, otherwise trigger tel:
-		request
-			.get(routes.api.call, {
-				params: {
-					sms: !md.phone()
-				}
-			})
-			.then(({ proxyPhoneNumber }) => {
-				if (md.phone()) {
-					window.location.href = `tel:${proxyPhoneNumber}`;
-				} else {
-					toaster.info(
-						`You should receive an SMS with a phone number to call that will connect you to operator.`
-					);
-				}
-			})
-			.catch((err) => {
-				handleException(err);
-				alerts.error();
-			})
-			.finally(() => {
+	const handleCall = useCallback(
+		(done = () => {}) => {
+			// Send an SMS and Toast when desktop, otherwise trigger tel:
+			if (md.phone()) {
+				window.location.href = `tel:${user.callSession.proxyPhoneNumber}`;
 				done();
-			});
-	}, []);
+			} else {
+				request
+					.get(routes.api.call, {
+						params: {
+							sms: true
+						}
+					})
+					.then(() => {
+						toaster.info(
+							`You should receive an SMS with a phone number to call that will connect you to ${viewUser.givenName}.`
+						);
+					})
+					.catch((err) => {
+						handleException(err);
+						alerts.error();
+					})
+					.finally(() => {
+						done();
+					});
+			}
+		},
+		[user]
+	);
 
 	const handleToggleMeter = useCallback(
 		(done = () => {}) => {

@@ -198,7 +198,8 @@ export default async function createCallSession(req, res) {
 	// Create the proxy call session
 	const {
 		session: proxySession,
-		caller: { proxyIdentifier: proxyPhoneNumber }
+		caller: { proxyIdentifier: callerProxyPhoneNumber },
+		operator: { proxyIdentifier: operatorProxyPhoneNumber }
 	} = await comms.createSession(
 		{
 			name: user.nickname,
@@ -217,8 +218,19 @@ export default async function createCallSession(req, res) {
 		}
 	);
 
-	if (isEmpty(proxyPhoneNumber)) {
+	if (isEmpty(callerProxyPhoneNumber)) {
 		throw ono(new Error("No proxy phone number found for caller"), {
+			type: ERROR_TYPES.proxyPhoneNumberRequired,
+			context: {
+				callSessionId: proxySession.sid,
+				callerId: user.id,
+				operatorId: operatorUser.id
+			}
+		});
+	}
+
+	if (isEmpty(operatorProxyPhoneNumber)) {
+		throw ono(new Error("No proxy phone number found for operator"), {
 			type: ERROR_TYPES.proxyPhoneNumberRequired,
 			context: {
 				callSessionId: proxySession.sid,
@@ -240,12 +252,14 @@ export default async function createCallSession(req, res) {
 	const callerCallSession = {
 		id: proxySession.sid,
 		with: operatorUser.username,
-		as: CALL_SESSION_USER_TYPE.caller
+		as: CALL_SESSION_USER_TYPE.caller,
+		proxyPhoneNumber: callerProxyPhoneNumber
 	};
 	const operatorCallSession = {
 		id: proxySession.sid,
 		with: user.username,
-		as: CALL_SESSION_USER_TYPE.operator
+		as: CALL_SESSION_USER_TYPE.operator,
+		proxyPhoneNumber: operatorProxyPhoneNumber
 	};
 
 	// Create sync document for Live Operator user
@@ -279,12 +293,12 @@ export default async function createCallSession(req, res) {
 		// Notify operator of an incoming caller.
 		comms.sms(
 			operatorUser.phoneNumber,
-			`You have a Callsesh caller! ${user.givenName} will call you from ${proxyPhoneNumber}. Check your session at ${publicUrl}`
+			`You have a Callsesh caller! ${user.givenName} will call you from ${operatorProxyPhoneNumber}. Check your session at ${publicUrl}`
 		),
 		// Notify caller with proxy phone number
 		comms.sms(
 			user.phoneNumber,
-			utils.getUserSMSMessage(proxyPhoneNumber, operatorUser.givenName)
+			utils.getUserSMSMessage(callerProxyPhoneNumber, operatorUser.givenName)
 		)
 	]);
 
@@ -293,7 +307,6 @@ export default async function createCallSession(req, res) {
 	// Response should be the proxy phone number
 	return res.json({
 		success: true,
-		proxyPhoneNumber,
 		callSession: {
 			caller: callerCallSession,
 			operator: operatorCallSession

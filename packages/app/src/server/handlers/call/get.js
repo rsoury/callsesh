@@ -59,7 +59,7 @@ export default async function getCallSession(req, res) {
 					? user
 					: counterpartUser;
 
-			const proxyPhoneNumber = await utils.getProxyPhoneNumber(callerUser);
+			const proxyPhoneNumber = await utils.getProxyPhoneNumber(user);
 
 			// Get session details to find if status is still open.
 			logger.info(`User in call session with counterpart user`, {
