@@ -56,55 +56,51 @@ const Contacts = () => {
 	const [contacts, setContacts] = useState([]);
 	const [sessionUser, setSessionUser] = useState({});
 
-	const handleStartSession = useCallback(
-		(contact) => {
-			setSessionUser(contact);
-			setSessionTimeout(() => {
-				request
-					.post(routes.api.contacts, {
-						contact: contact.username
-					})
-					.then(({ data }) => data) // Will automatically start redirecting due to LiveOperator Sync
-					.catch((e) => {
-						const { data: err = e } = e.response || {}; // Get error body, otherwise default to returned error.
-						// Check if err is common and toast/react accordingly.
-						switch (err.type) {
-							case ERROR_TYPES.paymentMethodRequired:
-								toaster.info(
-									`Your contact's payment method is required. Please inform your contact of this issue.`
-								);
-								break;
-							case ERROR_TYPES.paymentMethodInvalid:
-								toaster.info(
-									`Your contact's payment method is not valid or has insufficient funds. Please inform your contact of this issue.`
-								);
-								break;
-							case ERROR_TYPES.operatorBusy:
-								toaster.negative(
-									`You are already currently in a call session. Please try again later.`
-								);
-								break;
-							case ERROR_TYPES.callSessionExists:
-								toaster.warning(
-									`This user is currently in a call session. Please try again later.`
-								);
-								break;
-							case ERROR_TYPES.operatorRequired:
-							case ERROR_TYPES.userBlocked:
-								alerts.error();
-								break;
-							default:
-								handleException(err);
-								alerts.error();
-								break;
-						}
-
-						setSessionUser({});
-					});
-			});
-		},
-		[sessionUser]
-	);
+	const handleStartSession = useCallback((contact) => {
+		setSessionUser(contact);
+		setSessionTimeout(() => {
+			request
+				.post(routes.api.contacts, {
+					contact: contact.username
+				})
+				.then(({ data }) => data) // Will automatically start redirecting due to LiveOperator Sync
+				.catch((e) => {
+					const { data: err = e } = e.response || {}; // Get error body, otherwise default to returned error.
+					// Check if err is common and toast/react accordingly.
+					switch (err.type) {
+						case ERROR_TYPES.paymentMethodRequired:
+							toaster.info(
+								`Your contact's payment method is required. Please inform your contact of this issue.`
+							);
+							break;
+						case ERROR_TYPES.paymentMethodInvalid:
+							toaster.info(
+								`Your contact's payment method is not valid or has insufficient funds. Please inform your contact of this issue.`
+							);
+							break;
+						case ERROR_TYPES.operatorBusy:
+							toaster.negative(
+								`You are already currently in a call session. Please try again later.`
+							);
+							break;
+						case ERROR_TYPES.callSessionExists:
+							toaster.warning(
+								`This user is currently in a call session. Please try again later.`
+							);
+							break;
+						case ERROR_TYPES.operatorRequired:
+						case ERROR_TYPES.userBlocked:
+							alerts.error();
+							break;
+						default:
+							handleException(err);
+							alerts.error();
+							break;
+					}
+					setSessionUser({});
+				});
+		});
+	}, []);
 
 	const handleUndoStartSession = useCallback(() => {
 		setSessionUser({});
@@ -150,8 +146,8 @@ const Contacts = () => {
 					<Cell span={12}>
 						<Heading marginBottom="0px">Work Contacts</Heading>
 						<ParagraphLarge>
-							View and <Highlight>start sessions</Highlight> with contacts who
-							are actively working with you.
+							<Highlight>Start sessions</Highlight> with contacts who are
+							actively working with you.
 						</ParagraphLarge>
 						<div>
 							{isLoading ? (

@@ -16,6 +16,7 @@ import * as comms from "@/server/comms";
 import stripe from "@/server/stripe";
 import * as fees from "@/utils/fees";
 import { publicUrl } from "@/env-config";
+import * as routes from "@/routes";
 
 const customerErrResponse = {
 	success: false,
@@ -25,7 +26,7 @@ const customerErrResponse = {
 };
 
 export default async function startContactsSession(req, res) {
-	const { contact: callerUsername, message = "" } = req.query;
+	const { contact: callerUsername, message = "" } = req.body;
 
 	// Get caller user
 	const callerUser = await authManager.getUserByUsername(callerUsername, {
@@ -206,7 +207,7 @@ export default async function startContactsSession(req, res) {
 				}
 			}
 		}),
-		authManager.updateUser(user.id, {
+		authManager.updateUser(callerUser.id, {
 			metadata: {
 				app: {
 					callSession: {
@@ -224,8 +225,8 @@ export default async function startContactsSession(req, res) {
 		comms.updateDocument(syncIds.getLiveOperator(user.id), {
 			callSession: operatorCallSession
 		}),
-		// Update CallSession Sync document to set metering state
-		comms.updateDocument(syncIds.getCallSession(operatorCallSession.id), {
+		// Create CallSession Sync document and set metering status
+		comms.createDocument(syncIds.getCallSession(operatorCallSession.id), {
 			status: CALL_SESSION_STATUS.metering
 		})
 	]);
@@ -233,9 +234,11 @@ export default async function startContactsSession(req, res) {
 	// SMS the Caller User notifying about the session creation
 	await comms.sms(
 		callerUser.phoneNumber,
-		`${user.givenName} has started a session to work for you${
+		`${
+			user.givenName
+		} has started a metered call session to complete work for you${
 			message ? `: "${message}"` : `.`
-		} Check your session at ${publicUrl}`
+		} To end the session visit ${publicUrl}${routes.build.user(user.username)}`
 	);
 
 	return res.json({

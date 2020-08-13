@@ -97,6 +97,11 @@ const InSessionScreen = ({
 			].includes(callSession.status)
 		) {
 			setInitiated(true);
+			setEndingSession(false);
+		}
+		// Set ending state if call session status becomes ending
+		if (callSession.status === CALL_SESSION_STATUS.ending) {
+			setEndingSession(true);
 		}
 
 		return () => {};
@@ -274,7 +279,7 @@ const InSessionScreen = ({
 											flexDirection: "column"
 										})}
 									>
-										{isOperator ? (
+										{isOperator || !isEmpty(callSession.id) ? (
 											<Spinner $size={SPINNER_SIZE.large} />
 										) : (
 											<ProgressBar
@@ -289,19 +294,23 @@ const InSessionScreen = ({
 											<strong>Connecting to your session...</strong>
 										</Paragraph>
 										{/* Remove Undo button if call session is about to start */}
-										{!isOperator && startProgressValue < 90 && (
-											<div className={css({ marginTop: "10px" })}>
-												<Button
-													onClick={handleUndoSession}
-													startEnhancer={() => <CancelSessionIcon size={24} />}
-													isLoading={isEndingSession}
-													kind={BUTTON_KIND.secondary}
-													shape={BUTTON_SHAPE.pill}
-												>
-													Undo
-												</Button>
-											</div>
-										)}
+										{!isOperator &&
+											startProgressValue < 90 &&
+											isEmpty(callSession.id) && (
+												<div className={css({ marginTop: "10px" })}>
+													<Button
+														onClick={handleUndoSession}
+														startEnhancer={() => (
+															<CancelSessionIcon size={24} />
+														)}
+														isLoading={isEndingSession}
+														kind={BUTTON_KIND.secondary}
+														shape={BUTTON_SHAPE.pill}
+													>
+														Undo
+													</Button>
+												</div>
+											)}
 									</motion.div>
 								)}
 								{callSession.status === CALL_SESSION_STATUS.pending && (
