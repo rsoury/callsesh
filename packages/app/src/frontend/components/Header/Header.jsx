@@ -25,7 +25,7 @@ import Url from "url-parse";
 import { Tag, KIND as TAG_KIND, VARIANT as TAG_VARIANT } from "baseui/tag";
 import { StatefulTooltip as Tooltip } from "baseui/tooltip";
 import ArrowRight from "baseui/icon/arrow-right";
-import ChevronRight from "baseui/icon/chevron-right";
+// import ChevronRight from "baseui/icon/chevron-right";
 import { motion } from "framer-motion";
 
 import Link from "@/frontend/components/Link";
@@ -130,16 +130,16 @@ const Header = () => {
 		}));
 	} else if (isEmpty(user)) {
 		navProps.mainNav = [
-			{
-				icon: getNavIcon(ChevronRight),
-				item: {
-					label: "Are you a Freelancer?",
-					href: routes.page.freelancers,
-					pass: true
-				},
-				mapItemToNode: NavItem,
-				mapItemToString: NavItemLabel
-			},
+			// {
+			// 	icon: getNavIcon(ChevronRight),
+			// 	item: {
+			// 		label: "Are you a Freelancer?",
+			// 		href: routes.page.freelancers,
+			// 		pass: true
+			// 	},
+			// 	mapItemToNode: NavItem,
+			// 	mapItemToString: NavItemLabel
+			// },
 			{
 				icon: getNavIcon(LoginIcon),
 				item: {

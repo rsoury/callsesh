@@ -54,20 +54,23 @@ const PublicHomeHeroSection = () => {
 								fontWeight: "900",
 								marginTop: "0px",
 								marginBottom: "0px",
-								maxWidth: "600px",
 								marginLeft: "auto",
 								marginRight: "auto"
 							})}
 						>
 							<strong className={css({ fontWeight: "900" })}>
-								Offer your time over a call session and{" "}
-								<Highlight>get paid</Highlight>.
+								Work with your clients <Highlight>on-the-fly</Highlight>
 							</strong>
 						</h1>
-						<h2 className={css({ ...theme.typography.HeadingSmall })}>
-							Eliminate the hassle in quoting, time tracking, invoicing and
-							payment collection for your over-the-phone consultations. Now you
-							can set your rate and get paid automatically, on demand.
+						<h2
+							className={css({
+								...theme.typography.HeadingSmall,
+								paddingBottom: "20px"
+							})}
+						>
+							With metered call sessions in Callsesh, you can action tasks,
+							collaborate and consult your clients all while charging for your
+							time.
 						</h2>
 						<div
 							className={css({

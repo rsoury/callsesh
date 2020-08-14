@@ -19,7 +19,8 @@ import {
 	Send as PayoutsIcon,
 	Clock as MeterIcon,
 	MessageSquare as ChatIcon,
-	CreditCard as PaymentsIcon
+	CreditCard as PaymentsIcon,
+	Users as ContactsIcon
 } from "react-feather";
 
 const PublicHomeFeaturesSection = () => {
@@ -53,6 +54,12 @@ const PublicHomeFeaturesSection = () => {
 							content: "Your personal contact phone number remains private."
 						},
 						{
+							Icon: ChatIcon,
+							title: "Chat",
+							content:
+								"Fully-featured chat for digital collaboration. Share links, messages, TODO lists, and much more."
+						},
+						{
 							Icon: NotifyIcon,
 							title: "Live email notifications",
 							content: "Notify your subscribers whenever you go live."
@@ -61,13 +68,13 @@ const PublicHomeFeaturesSection = () => {
 							Icon: MeterIcon,
 							title: "Metering",
 							content:
-								"Continue metering your time outside of a phone call. Bring your favourite tools to collaborate in."
+								"Meter your time outside of a phone call. Bring your favourite tools to collaborate in."
 						},
 						{
-							Icon: ChatIcon,
-							title: "Chat",
+							Icon: ContactsIcon,
+							title: "Work Contacts",
 							content:
-								"Fully-featured chat for digital collaboration. Share links, messages, TODO lists, and much more."
+								"Start metered sessions with your active working contacts whenever you're working on their tasks direct from your Callsesh Dashboard."
 						},
 						{
 							Icon: PaymentsIcon,
