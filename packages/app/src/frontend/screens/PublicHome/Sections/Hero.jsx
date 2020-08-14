@@ -54,20 +54,18 @@ const PublicHomeHeroSection = () => {
 								fontWeight: "900",
 								marginTop: "0px",
 								marginBottom: "0px",
-								maxWidth: "600px",
 								marginLeft: "auto",
 								marginRight: "auto"
 							})}
 						>
 							<strong className={css({ fontWeight: "900" })}>
-								Offer your time over a call session and{" "}
-								<Highlight>get paid</Highlight>.
+								Consult and collaborate on-the-fly through{" "}
+								<Highlight>metered</Highlight> call sessions.
 							</strong>
 						</h1>
 						<h2 className={css({ ...theme.typography.HeadingSmall })}>
 							Eliminate the hassle in quoting, time tracking, invoicing and
-							payment collection for your over-the-phone consultations. Now you
-							can set your rate and get paid automatically, on demand.
+							payment collection for ad-hoc engagements.
 						</h2>
 						<div
 							className={css({
