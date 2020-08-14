@@ -303,6 +303,13 @@ const ViewUserOperatorAction = ({
 				isOpen={isWorkDrawerOpen}
 				autoFocus
 				onClose={() => setWorkDrawerOpen(false)}
+				overrides={{
+					DrawerBody: {
+						style: {
+							maxWidth: "100%"
+						}
+					}
+				}}
 			>
 				<div className={css({ padding: "20px 0" })}>
 					<Heading className={css({ marginTop: "0px" })}>

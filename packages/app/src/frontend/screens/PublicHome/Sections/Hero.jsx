@@ -59,13 +59,18 @@ const PublicHomeHeroSection = () => {
 							})}
 						>
 							<strong className={css({ fontWeight: "900" })}>
-								Consult and collaborate on-the-fly through{" "}
-								<Highlight>metered</Highlight> call sessions.
+								Work with your clients <Highlight>on-the-fly</Highlight>
 							</strong>
 						</h1>
-						<h2 className={css({ ...theme.typography.HeadingSmall })}>
-							Eliminate the hassle in quoting, time tracking, invoicing and
-							payment collection for ad-hoc engagements.
+						<h2
+							className={css({
+								...theme.typography.HeadingSmall,
+								paddingBottom: "20px"
+							})}
+						>
+							With metered call sessions in Callsesh, you can action tasks,
+							collaborate and consult your clients all while charging for your
+							time.
 						</h2>
 						<div
 							className={css({

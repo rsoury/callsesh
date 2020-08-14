@@ -14,7 +14,7 @@ import Link from "@/frontend/components/Link";
 import Layout from "@/frontend/components/Layout";
 import PayoutsCard from "@/frontend/components/Cards/Payouts";
 import GoLiveCard from "@/frontend/components/Cards/GoLive";
-import CallLinkCard from "@/frontend/components/Cards/CallLink";
+import SharePageCard from "@/frontend/components/Cards/SharePage";
 import InviteLinkCard from "@/frontend/components/Cards/InviteLink";
 import BecomeAnOperatorCard from "@/frontend/components/Cards/BecomeAnOperator";
 import useUser from "@/frontend/hooks/use-user";
@@ -74,7 +74,7 @@ const UserHomeScreen = () => {
 								<GoLiveCard overrides={cardOverrides} />
 							</Cell>
 							<Cell span={12}>
-								<CallLinkCard overrides={cardOverrides} />
+								<SharePageCard overrides={cardOverrides} />
 							</Cell>
 							<Cell span={12}>
 								<PayoutsCard

@@ -53,8 +53,11 @@ const PublicHomeNarrowSection = () => {
 								...containerStyle,
 								backgroundColor: "#000",
 								backgroundImage: `url("/static/assets/man-drawing-designs-freelancing.jpg")`,
+								backgroundPosition: "center",
+								backgroundSize: "cover",
 								position: "relative",
 								boxShadow: `-5px 5px ${theme.colors.primary}`,
+								marginBottom: "20px",
 								":before": {
 									content: '""',
 									position: "absolute",
@@ -108,7 +111,8 @@ const PublicHomeNarrowSection = () => {
 							className={css({
 								...containerStyle,
 								backgroundColor: theme.colors.warning300,
-								boxShadow: `-5px 5px ${theme.colors.primary}`
+								boxShadow: `-5px 5px ${theme.colors.primary}`,
+								marginBottom: "20px"
 							})}
 						>
 							<Heading
