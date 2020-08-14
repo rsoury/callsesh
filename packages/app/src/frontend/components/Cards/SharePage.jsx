@@ -36,9 +36,9 @@ const listItemProps = {
 			style: {
 				paddingBottom: "10px",
 				justifyContent: "flex-start",
-				width: "20px",
-				minWidth: "20px",
-				marginRight: "20px"
+				width: "24px",
+				minWidth: "24px",
+				marginRight: "15px"
 			}
 		},
 		Content: {
@@ -103,11 +103,11 @@ const SharePageCard = ({ ...props }) => {
 						}
 					}}
 				>
-					Copy Call Link
+					Copy Callsesh Link
 				</Button>
 			</CopyToClipboard>
 			<ParagraphXSmall>
-				Or you can visit your call link here{" "}
+				Or you can visit your Callsesh link here{" "}
 				<Link href={operatorLink} standard newWindow highlight>
 					<strong>{operatorLink}</strong>
 				</Link>
