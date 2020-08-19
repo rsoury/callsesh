@@ -122,14 +122,12 @@ const PublicHomeNarrowSection = () => {
 								})}
 							>
 								<strong className={css({ fontWeight: "900" })}>
-									Looking for answers?
+									Looking for results and answers?
 								</strong>
 							</Heading>
 							<Paragraph className={css({ fontWeight: "500" })}>
-								Operators share their call links to their customers and
-								audience, but may also be able to help you. Tell us more about
-								your problems and we can suggest Operators to connect with based
-								on your preferences.
+								We can help you connect with the best Callsesh Operators for the
+								job. Tell us more about your problems and the tasks at hand.
 							</Paragraph>
 							<div>
 								<Link

@@ -430,8 +430,7 @@ export async function getServerSideProps({
 					seo: {
 						title: `Meet ${viewUser.givenName}! ${getUserPronoun(viewUser)} ${
 							isUserOperator(viewUser)
-								? `offering ${viewUser.purpose} over a
-											call session`
+								? `offering ${viewUser.purpose} over a call session`
 								: `making calls on Callsesh. You can too!`
 						}`
 					},

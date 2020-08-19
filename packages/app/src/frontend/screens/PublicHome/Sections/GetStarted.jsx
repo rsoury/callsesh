@@ -67,7 +67,7 @@ const PublicHomeGetStartedSection = () => {
 					{[
 						"Register with your phone number",
 						"Setup your profile, set your hourly rate and input your banking details",
-						"Go live and share your call link with your clients to start accepting metered calls",
+						"Go live and share your Callsesh link with your clients to start accepting metered calls",
 						"Get paid automatically after call sessions"
 					].map((stepMessage, index) => (
 						<Cell span={[6, 4, 6]} key={kebabCase(stepMessage.toLowerCase())}>
