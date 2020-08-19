@@ -55,7 +55,8 @@ const PublicHomeHeroSection = () => {
 								marginTop: "0px",
 								marginBottom: "0px",
 								marginLeft: "auto",
-								marginRight: "auto"
+								marginRight: "auto",
+								maxWidth: "600px"
 							})}
 						>
 							<strong className={css({ fontWeight: "900" })}>
