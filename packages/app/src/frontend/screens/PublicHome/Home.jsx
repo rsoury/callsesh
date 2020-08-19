@@ -9,7 +9,7 @@ import Layout from "@/frontend/components/Layout";
 import CallToActionSection from "@/frontend/components/CallToAction";
 
 import HeroSection from "./Sections/Hero";
-// import GetStartedSection from "./Sections/GetStarted";
+import GetStartedSection from "./Sections/GetStarted";
 import HowItWorksSection from "./Sections/HowItWorks";
 import FeaturesSection from "./Sections/Features";
 import NarrowSection from "./Sections/Narrow";
@@ -24,6 +24,7 @@ const PublicHomeScreen = () => {
 				className={css({ maxWidth: "100%" })}
 			>
 				<HeroSection />
+				<GetStartedSection />
 				<HowItWorksSection />
 				<FeaturesSection />
 				<CallToActionSection />

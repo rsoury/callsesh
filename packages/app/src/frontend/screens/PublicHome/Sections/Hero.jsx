@@ -59,7 +59,8 @@ const PublicHomeHeroSection = () => {
 							})}
 						>
 							<strong className={css({ fontWeight: "900" })}>
-								Work with your clients <Highlight>on-the-fly</Highlight>
+								Offer yourself over a call session and{" "}
+								<Highlight>get paid</Highlight>.
 							</strong>
 						</h1>
 						<h2
@@ -68,9 +69,10 @@ const PublicHomeHeroSection = () => {
 								paddingBottom: "20px"
 							})}
 						>
-							With metered call sessions in Callsesh, you can action tasks,
-							collaborate and consult your clients all while charging for your
-							time.
+							Eliminate the hassle in quoting, time tracking, invoicing and
+							payment collection. With metered call sessions in Callsesh, you
+							can collaborate and consult your callers all while charging for
+							your time.
 						</h2>
 						<div
 							className={css({
