@@ -6,7 +6,7 @@ You can collaborate and consult with your callers all while charging for your ti
 
 ![Callsesh Logo](https://github.com/rsoury/callsesh/blob/master/packages/app/public/static/logo/callsesh-logo%40300.png)
 
-[See some examples images of the application](https://github.com/rsoury/callsesh/blob/master/packages/app/public/static/assets/features/)
+[See some example images of the application](https://github.com/rsoury/callsesh/blob/master/packages/app/public/static/assets/features/)
 
 ## Software
 
