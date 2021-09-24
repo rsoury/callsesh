@@ -2,14 +2,14 @@ import React from "react";
 import PropTypes from "prop-types";
 import { Field } from "formik";
 import snakeCase from "lodash/snakeCase";
-import { format } from "@callsesh/utils";
 import { Widget } from "@uploadcare/react-widget";
-import { uploadcare as config } from "@/env-config";
 import { toaster } from "baseui/toast";
 import { Avatar } from "baseui/avatar";
 import isEmpty from "is-empty";
 import { useStyletron } from "baseui";
+import { format } from "@callsesh/utils";
 
+import { uploadcare as config } from "@/env-config";
 import LabelControl from "@/frontend/components/LabelControl";
 
 const FileUploaderField = ({ name, label, caption, images, fileSizeLimit }) => {

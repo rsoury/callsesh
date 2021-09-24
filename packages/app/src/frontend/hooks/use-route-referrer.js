@@ -4,9 +4,8 @@ import isEmpty from "is-empty";
 import { RouteReferrerContext } from "@/frontend/providers/RouteReferrer";
 
 export const useUserRouteReferrer = () => {
-	const { userRouteReferrer, setUserRouteReferrer } = useContext(
-		RouteReferrerContext
-	);
+	const { userRouteReferrer, setUserRouteReferrer } =
+		useContext(RouteReferrerContext);
 
 	return [userRouteReferrer, setUserRouteReferrer];
 };

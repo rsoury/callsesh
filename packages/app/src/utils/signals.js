@@ -6,12 +6,14 @@ import isUserOperator from "@/utils/is-operator";
 import { Sentry } from "@/utils/handle-exception";
 
 // Helper to ensure production
-const mw = (fn) => (...params) => {
-	if (!isProd) {
-		return false;
-	}
-	return fn(...params);
-};
+const mw =
+	(fn) =>
+	(...params) => {
+		if (!isProd) {
+			return false;
+		}
+		return fn(...params);
+	};
 
 const getLogRocket = () => import("logrocket").then((m) => m.default || m);
 

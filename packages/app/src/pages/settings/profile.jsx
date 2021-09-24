@@ -237,7 +237,8 @@ const getEditConfig = (user, type) => {
 			validate(values) {
 				return validate(
 					{
-						[EDIT_TYPES.profilePicture]: generalSchemaProperties.profilePicture.required()
+						[EDIT_TYPES.profilePicture]:
+							generalSchemaProperties.profilePicture.required()
 					},
 					values
 				);
@@ -277,7 +278,8 @@ const getEditConfig = (user, type) => {
 				validate(values) {
 					return validate(
 						{
-							[EDIT_TYPES.hourlyRate]: operatorSchemaProperties.hourlyRate.required()
+							[EDIT_TYPES.hourlyRate]:
+								operatorSchemaProperties.hourlyRate.required()
 						},
 						values
 					);
@@ -340,7 +342,8 @@ const getEditConfig = (user, type) => {
 				validate(values) {
 					return validate(
 						{
-							[EDIT_TYPES.messageBroadcast]: operatorSchemaProperties.messageBroadcast.required()
+							[EDIT_TYPES.messageBroadcast]:
+								operatorSchemaProperties.messageBroadcast.required()
 						},
 						values
 					);

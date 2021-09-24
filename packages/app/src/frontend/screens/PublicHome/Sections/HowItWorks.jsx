@@ -9,7 +9,6 @@ import kebabCase from "lodash/kebabCase";
 import {
 	HeadingSmall as Heading,
 	ParagraphLarge,
-	ParagraphMedium,
 	LabelLarge
 } from "baseui/typography";
 import { PhoneCall as CallIcon, Briefcase as WorkIcon } from "react-feather";

@@ -8,9 +8,8 @@ import { useEffect, useContext } from "react";
 import { CountryContext } from "@/CountryProvider";
 
 function useCountry() {
-	const { country, setCountry, getCountry, loading } = useContext(
-		CountryContext
-	);
+	const { country, setCountry, getCountry, loading } =
+		useContext(CountryContext);
 
 	useEffect(() => {
 		// If country already fetched

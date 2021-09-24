@@ -95,8 +95,7 @@ const Footer = () => {
 								},
 								{
 									title: "Callsesh Youtube",
-									href:
-										"https://www.youtube.com/channel/UCZzu7-fmT4daZZcvYSVGMCg",
+									href: "https://www.youtube.com/channel/UCZzu7-fmT4daZZcvYSVGMCg",
 									Icon: YoutubeIcon
 								}
 							].map(({ title, href, Icon }, index) => (

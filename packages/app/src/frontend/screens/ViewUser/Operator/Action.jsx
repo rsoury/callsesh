@@ -5,8 +5,7 @@ import {
 	Label1 as Label,
 	ParagraphSmall,
 	H2 as Heading,
-	ParagraphLarge,
-	ParagraphMedium as Paragraph
+	ParagraphLarge
 } from "baseui/typography";
 import { Card as BaseCard, StyledBody, StyledAction } from "baseui/card";
 import ArrowRight from "baseui/icon/arrow-right";

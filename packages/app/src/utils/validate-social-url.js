@@ -13,25 +13,27 @@ import isEmpty from "is-empty";
  *
  * @return  {boolean}             [return description]
  */
-const validateSocialUrl = (hostname, { subdomain = false } = {}) => (value) => {
-	if (!value) {
-		return true;
-	}
-	if (isUrl(value)) {
-		const url = new Url(value);
-
-		if (subdomain) {
-			const [, ...pieces] = url.host.split(".");
-			const domain = pieces.join(".");
-			return domain === value;
+const validateSocialUrl =
+	(hostname, { subdomain = false } = {}) =>
+	(value) => {
+		if (!value) {
+			return true;
 		}
+		if (isUrl(value)) {
+			const url = new Url(value);
 
-		return (
-			(url.host === hostname || url.host === `www.${hostname}`) &&
-			!isEmpty(url.pathname.slice(1))
-		);
-	}
-	return false;
-};
+			if (subdomain) {
+				const [, ...pieces] = url.host.split(".");
+				const domain = pieces.join(".");
+				return domain === value;
+			}
+
+			return (
+				(url.host === hostname || url.host === `www.${hostname}`) &&
+				!isEmpty(url.pathname.slice(1))
+			);
+		}
+		return false;
+	};
 
 export default validateSocialUrl;

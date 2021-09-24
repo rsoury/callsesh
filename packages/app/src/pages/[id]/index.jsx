@@ -322,9 +322,8 @@ const ViewUser = ({ viewUser: viewUserBase, error }) => {
 				}
 			}
 			const workRoute = routes.build.work(viewUser.username);
-			return (isWorkingContact
-				? request.delete(workRoute)
-				: request.post(workRoute)
+			return (
+				isWorkingContact ? request.delete(workRoute) : request.post(workRoute)
 			)
 				.then(({ data }) => data)
 				.then(({ contacts = [] }) => {

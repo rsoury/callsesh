@@ -72,7 +72,7 @@ const IntroButton = () => {
 						src="https://www.youtube-nocookie.com/embed/_gOmJp6eCF4"
 						frameBorder=""
 						allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
-						allowFullscreen
+						allowFullScreen
 					/>
 				</ModalBody>
 			</Modal>

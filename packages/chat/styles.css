@@ -4,16 +4,16 @@
 	display: -ms-flexbox;
 	display: flex;
 	-webkit-box-align: center;
-	    -ms-flex-align: center;
-	        align-items: center;
+	-ms-flex-align: center;
+	align-items: center;
 	-webkit-box-pack: center;
-	    -ms-flex-pack: center;
-	        justify-content: center;
+	-ms-flex-pack: center;
+	justify-content: center;
 	text-align: center;
 	-webkit-box-orient: vertical;
 	-webkit-box-direction: normal;
-	    -ms-flex-direction: column;
-	        flex-direction: column;
+	-ms-flex-direction: column;
+	flex-direction: column;
 	height: 100%;
 	width: 100%;
 }
@@ -58,7 +58,7 @@ body:not(.admin_show_form) #login-card {
 
 /* Chat Window */
 /* Remove Directory Icon */
-header.sidebar__header button[aria-label="Directory"]{
+header.sidebar__header button[aria-label="Directory"] {
 	display: none !important;
 }
 
@@ -71,6 +71,6 @@ header.sidebar__header button[aria-label="Directory"]{
 }
 
 /* Page Specific */
-body.account-profile-page .rcx-field__hint{
+body.account-profile-page .rcx-field__hint {
 	display: none !important;
 }

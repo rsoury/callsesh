@@ -98,9 +98,8 @@ const NavItemButton = (props) => <NavItemButtonPrimitive {...props} />;
 
 const NavItemLabel = ({ label }) => label;
 
-const getNavIcon = (Icon) => (props) => (
-	<Icon {...props} size={30} style={{ marginRight: "10px" }} />
-);
+const getNavIcon = (Icon) => (props) =>
+	<Icon {...props} size={30} style={{ marginRight: "10px" }} />;
 
 const Header = () => {
 	const [css, theme] = useStyletron();
