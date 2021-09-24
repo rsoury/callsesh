@@ -2,12 +2,7 @@
 	"name": "@callsesh/app",
 	"version": "1.0.2",
 	"description": "Callsesh Web App",
-	"private": true,
 	"author": "Ryan Soury <ryan@webdoodle.com.au>",
-	"repository": {
-		"type": "git",
-		"url": "git@https://gitlab.com/web-doodle/callsesh.git"
-	},
 	"homepage": "https://www.callsesh.com/",
 	"scripts": {
 		"dev": "node ./dev-server.js",

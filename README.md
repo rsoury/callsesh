@@ -12,7 +12,6 @@ You can collaborate and consult with your callers all while charging for your ti
 
 This web application uses Twilio (Proxy and Sync) and Stripe to facilitate real-time metered call sessions between users.
 
-
 ## Packages
 
 - `app`
@@ -37,6 +36,7 @@ This package uses a number of cloud/software services
 - [Uploadcare](https://uploadcare.com/) for Jamstack compatible file uploads -- Can be removed. Used only for Profile Images.
 - [Postmark](https://postmark.com/) for Transactional Emails
 - Google Analytics for website tracking
+- [Sentry](https://sentry.io) for Bug Tracking
 
 ## Secret Management
 
@@ -60,12 +60,12 @@ This will allow cloud operations to still function, like Twilio Callbacks and Wo
 See the `package.json` file to review build & deployment scripts.
 
 1. `chat` scripts and styles are to be applied manually to a fresh instance of Rocket.Chat. We found Rocket.Chat on Docker was simplest deployment method for this Chat Application. You can follow a guide here on how to proceed with Rocket.Chat installation: [https://docs.rocket.chat/installing-and-updating/docker-containers](https://docs.rocket.chat/installing-and-updating/docker-containers).
-	Once Rocket.Chat is operational either remotely or locally, be sure to add update your environment variables accordingly.
+   Once Rocket.Chat is operational either remotely or locally, be sure to add update your environment variables accordingly.
 2. `workflow` does not require a build process, and is simply deployed using the Serverless CLI `sls deploy -s prod`.
-	The result API Gateway endpoint is then to be added as an environment variable to the `.env.[production|development]` file.
+   The result API Gateway endpoint is then to be added as an environment variable to the `.env.[production|development]` file.
 3. `app` package is desiged to be deployed to Vercel, however, can be modified to deploy to anywhere Next.js can.
 4. `auth` package will build static files that can be deployed to S3 and loaded into the Auth0 Hosted Page Template.
-	In the `vercel.json` file, we're using a Proxy of the S3 Bucket to simplify `auth` static file distribution over a CDN, however, this is entirely optional.
+   In the `vercel.json` file, we're using a Proxy of the S3 Bucket to simplify `auth` static file distribution over a CDN, however, this is entirely optional.
 5. `utils` is built during other package build processes
 
 ## (Optional) Secure development -- Local HTTPS
@@ -81,7 +81,6 @@ Simply fork this repo and make it your own, or create a pull request and we can 
 ## Enterprise Support
 
 Managing a fleet of freelance customer support specialists? Contact us at [Web Doodle](https://www.webdoodle.com.au/) to discuss tailored solutions.
-
 
 ## Found this repo interesting?
 

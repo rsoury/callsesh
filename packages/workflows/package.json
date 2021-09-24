@@ -9,13 +9,6 @@
 		"src": "src",
 		"tests": "tests"
 	},
-	"repository": {
-		"type": "git",
-		"url": "git+ssh://git@gitlab.com/web-doodle/callsesh.git"
-	},
-	"bugs": {
-		"url": "https://gitlab.com/web-doodle/callsesh/issues"
-	},
 	"scripts": {
 		"deploy": "per-env",
 		"deploy:development": "chamber exec callsesh-dev -- sls deploy -v",

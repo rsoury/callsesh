@@ -2,7 +2,7 @@
 	"name": "callsesh",
 	"version": "1.0.0",
 	"description": "Callsesh project monorepo",
-	"repository": "git@gitlab.com:web-doodle/callsesh.git",
+	"repository": "git@github.com:rsoury/callsesh.git",
 	"author": "Ryan Soury <ryan@webdoodle.com.au>",
 	"private": true,
 	"workspaces": [
