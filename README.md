@@ -1,7 +1,5 @@
 # Callsesh
 
-![Callsesh Banner](https://github.com/rsoury/callsesh/blob/master/packages/app/public/static/assets/features/metering.jpg)
-
 Meter your phone calls with Callsesh.
 Eliminate the hassle in quoting, time tracking, invoicing and payment collection.
 You can collaborate and consult with your callers all while charging for your time.
@@ -9,6 +7,8 @@ You can collaborate and consult with your callers all while charging for your ti
 ![Callsesh Logo](https://github.com/rsoury/callsesh/blob/master/packages/app/public/static/logo/callsesh-logo%40300.png)
 
 [See example images](https://github.com/rsoury/callsesh/blob/master/packages/app/public/static/assets/features/)
+
+![Callsesh Banner](https://github.com/rsoury/callsesh/blob/master/packages/app/public/static/assets/features/metering.jpg)
 
 ## Software
 
